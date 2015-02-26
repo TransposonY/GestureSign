@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.ScreenBrightness.ScreenBrightnessUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="70" d:DesignWidth="320">
+    <Grid>
+        <ComboBox x:Name="cboMethod" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Margin="54,0,0,0" SelectedIndex="0">
+            <ComboBoxItem Content="增大屏幕亮度"/>
+            <ComboBoxItem Content="减小屏幕亮度"/>
+        </ComboBox>
+        <TextBlock HorizontalAlignment="Left" Margin="0" TextWrapping="Wrap" Text="每次" VerticalAlignment="Center"/>
+
+        <Controls:NumericUpDown x:Name="numPercent" Value="20"
+                                        TextAlignment="Left"
+                                        Minimum="0"
+                                        Maximum="100" 
+                                Interval="5" HorizontalAlignment="Right" Margin="0,22" Width="109"/>
+    </Grid>
+</UserControl>

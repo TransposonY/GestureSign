@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.RunCommand.RunCommand"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="320">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="命令" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtCommand" HorizontalAlignment="Left" Margin="10,30,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="234"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,94,0,0" TextWrapping="Wrap" Text="参数" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtArguments" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="300"/>
+        <Button x:Name="cmdSelectFile" Content="浏览.." HorizontalAlignment="Left" Margin="266,29,0,0" VerticalAlignment="Top" Width="44" Click="cmdSelectFile_Click" FontSize="12" FontFamily="Microsoft YaHei UI"/>
+
+    </Grid>
+</UserControl>

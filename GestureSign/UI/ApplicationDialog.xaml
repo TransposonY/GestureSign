@@ -1,0 +1,274 @@
+﻿<controls:MetroWindow x:Class="GestureSign.UI.ApplicationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:MyControl="clr-namespace:GestureSign.UI"  
+                      xmlns:local="clr-namespace:GestureSign.UI"
+                      BorderBrush="{StaticResource AccentColorBrush}"
+        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ShowTitleBar="True" ResizeMode="NoResize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False">
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
+            <local:MatchUsingConverter x:Key="matchUsingConverter"></local:MatchUsingConverter>
+            <local:MatchUsingToStringConverter x:Key="matchUsingToStringConverter"></local:MatchUsingToStringConverter>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </controls:MetroWindow.Resources>
+    <Canvas>
+        <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330">
+            <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
+            <TabControl x:Name="tcApplications" Height="358" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto">
+                <TabItem Header="已保存">
+                    <Canvas>
+                        <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="111" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
+                        <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="64" FontSize="14" FontWeight="Bold"/>
+                        <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="122" FontSize="14" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.MatchUsing,Converter={StaticResource matchUsingToStringConverter}}" Canvas.Left="111" TextWrapping="Wrap" Canvas.Top="64" FontSize="14" Width="193"/>
+                        <TextBlock Text="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.MatchString}" Canvas.Left="111" TextWrapping="Wrap" Canvas.Top="123" FontSize="14" Width="193"/>
+                        <Button x:Name="DelAppButton" Content="删除该程序信息" Style="{DynamicResource SquareButtonStyle}" Canvas.Left="10" Canvas.Top="170" Click="DelAppButton_Click"/>
+                    </Canvas>
+                </TabItem>
+                <TabItem Header="运行中" FontSize="14">
+                    <Grid Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48*"/>
+                            <RowDefinition Height="272*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="42*"/>
+                            <ColumnDefinition Width="131*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock HorizontalAlignment="Left" Margin="11,12,0,0" TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Height="18" Width="70" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                        <ComboBox x:Name="cmbMatchUsingRunning" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="218" SelectionChanged="cmbMatchUsingRunning_SelectionChanged" Grid.Column="1" Height="26" FontSize="14" FontFamily="Microsoft YaHei UI"/>
+                        <ListView x:Name="alvRunningApplications"  Margin="5,10" BorderThickness="1" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="{StaticResource AccentColorBrush}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="图标" Width="55">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Source="{Binding ApplicationIcon}" Height="35" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="程序文件名及标题" Width="300">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
+                                                    <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="自定义">
+                    <Grid>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,17,0,0" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                        <ComboBox x:Name="cmbMatchUsingCustom" SelectedIndex="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,10,0,0" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="87,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI"/>
+                        <CheckBox x:Name="chkRegex" IsChecked="{Binding SelectedItem.IsRegEx, ElementName=cmbExistingApplication, Mode=OneWay}" Content="使用正则表达式" HorizontalAlignment="Left" Margin="87,117,0,0" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI"/>
+                        <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" Margin="229,111,0,0" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"/>
+                        <TextBlock TextWrapping="Wrap" Text="将左侧图标拖至你想忽略的程序窗口上以选择窗口，然后释放" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="217" FontSize="14" Height="49"/>
+
+                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Grid.Row="2"/>
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+        <StackPanel Canvas.Left="354" Canvas.Top="10" Width="330">
+            <TextBlock Text="选择手势" FontSize="24"/>
+            <ComboBox x:Name="availableGesturesComboBox"
+                          HorizontalContentAlignment="Left"
+                           HorizontalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                           Margin="10,5,5,5"
+                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True"  IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="300" Width="280">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Image}" Height="65" Stretch="Uniform"  StretchDirection="DownOnly" Width="200" HorizontalAlignment="Stretch" />
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <!--<ComboBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ComboBox.ItemsPanel>-->
+                <ComboBox.Resources>
+                    <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="Foreground" Value="{StaticResource AccentSelectedColorBrush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource HighlightBrush}" />
+                        <Setter Property="Background" Value="White" />
+                        <Setter Property="SnapsToDevicePixels" Value="true"/>
+                        <!--<Setter Property="OverridesDefaultStyle" Value="true"/>-->
+                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="MinWidth" Value="50"/>
+                        <Setter Property="MinHeight" Value="32"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Grid>
+                                        <ToggleButton
+                                Name="ToggleButton"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Foreground}"
+                                Grid.Column="2"
+                                Focusable="false"
+                                IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press">
+                                            <ToggleButton.Style>
+                                                <Style  TargetType="ToggleButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Border
+                          x:Name="Border"
+                          Grid.ColumnSpan="2"
+                          CornerRadius="0"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="1" />
+                                                                    <Border
+                          Grid.Column="0"
+                          CornerRadius="0"
+                          Background="Transparent"
+                          BorderBrush="Transparent"
+                          BorderThickness="10" />
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsEnabled" Value="False">
+                                                                        <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                                        <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>
+                                        <ContentPresenter
+                                Name="ContentSite"
+                                IsHitTestVisible="False"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                Margin="10,3,30,3"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" />
+                                        <TextBox x:Name="PART_EditableTextBox"
+                                Style="{x:Null}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="3,3,23,3"
+                                Focusable="True"                               
+                                Visibility="Hidden"
+                                IsReadOnly="{TemplateBinding IsReadOnly}">
+                                            <TextBox.Template>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border x:Name="PART_ContentHost" Focusable="True" />
+                                                </ControlTemplate>
+                                            </TextBox.Template>
+                                        </TextBox>
+                                        <Popup
+                                Name="Popup"
+                                Placement="Bottom"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                PopupAnimation="Slide">
+                                            <Grid
+                                  Name="DropDown"
+                                  SnapsToDevicePixels="True"               
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                                <Border
+                                        x:Name="DropDownBorder"
+                                        Background="White"
+                                        BorderThickness="2"
+                                        BorderBrush="Gray"/>
+                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                                </ScrollViewer>
+                                            </Grid>
+                                        </Popup>
+
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="HasItems" Value="false">
+                                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                                        </Trigger>
+                                        <Trigger Property="IsGrouping" Value="true">
+                                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                        </Trigger>
+                                        <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                            <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                                            <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEditable" Value="true">
+                                            <Setter Property="IsTabStop" Value="false"/>
+                                            <Setter TargetName="PART_EditableTextBox" Property="Visibility"    Value="Visible"/>
+                                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+
+                </ComboBox.Resources>
+            </ComboBox>
+            <TextBlock Text="选择想执行的动作" FontSize="24"/>
+            <StackPanel Margin="0,5" Orientation="Vertical">
+                <ComboBox x:Name="cmbPlugins"
+        		Margin="10"
+        		DisplayMemberPath="DisplayText" SelectionChanged="cmbPlugins_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" MaxDropDownHeight="300" />
+                <ContentControl x:Name="SettingsContent"  Margin="5,10,5,5"/>
+            </StackPanel>
+        </StackPanel>
+        <Button x:Name="cmdCancel"
+        	Content="取消"
+        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="95" Canvas.Left="222" Canvas.Top="480" FontFamily="Microsoft YaHei UI" Click="cmdCancel_Click" />
+        <Button x:Name="cmdDone"
+        	Content="保存"
+        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="cmdDone_Click" Width="95" Canvas.Left="388" Canvas.Top="480" IsDefault="True"  />
+        <Canvas Height="58" Canvas.Top="408" Width="674" Canvas.Left="10">
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
+            <TextBox x:Name="txtApplicationName" TextWrapping="Wrap" 
+            	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80" FontFamily="Microsoft YaHei UI">
+                <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="OneWay">
+                    <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="OneWay"/>
+                    <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="OneWay"/>
+                    <Binding ElementName="tcApplications" Path="SelectedIndex"  Mode="OneWay"/>
+                </MultiBinding>
+            </TextBox>
+            <TextBlock TextWrapping="Wrap" Text="动作名称" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
+            <TextBox x:Name="txtActionName"
+            	controls:TextBoxHelper.Watermark="请输入动作名称"
+            	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
+        </Canvas>
+    </Canvas>
+</controls:MetroWindow>

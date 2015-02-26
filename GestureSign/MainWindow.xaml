@@ -1,0 +1,52 @@
+﻿<controls:MetroWindow x:Class="GestureSign.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+        xmlns:local="clr-namespace:GestureSign.UI" Closed="MetroWindow_Closed"
+        Title="设置" Height="450" Width="680" ShowIconOnTitleBar="False" ShowTitleBar="True"  Icon="Resources/normal.ico" BorderThickness="1" BorderBrush="{StaticResource AccentColorBrush}" ResizeMode="CanMinimize">
+    <!--GlowBrush="{StaticResource AccentColorBrush}"-->
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl >
+            <local:RuningApplicationsFlyout x:Name="runingAppFlyout"></local:RuningApplicationsFlyout>
+            <local:CustomApplicationsFlyout x:Name="CustomAppFlyout" ></local:CustomApplicationsFlyout>
+            <!--<local:EditActionFlyout DataContext="{Binding ElementName=availableAction,Path=SelectedItem}"></local:EditActionFlyout>-->
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button x:Name="StudyModeButton" Content="学习模式 关闭" Click="StudyModeButton_Click" />
+            <Button x:Name="DisableGesturesButton" Content="手势识别 就绪" Click="DisableGesturesButton_Click" >
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+    <Grid>
+        <TabControl TabStripPlacement="Left"  >
+            <TabItem Header="动作">
+                <local:AvailableAction x:Name="availableAction"></local:AvailableAction>
+            </TabItem>
+            <TabItem Header="手势">
+                <local:AvailableGestures x:Name="availableGestures"></local:AvailableGestures>
+            </TabItem>
+            <TabItem Header="忽略清单">
+                <local:IgnoredApplications x:Name="ignoredApplications"/>
+            </TabItem>
+            <TabItem Header="首选项">
+                <local:Options Width="Auto" Height="Auto"/>
+            </TabItem>
+            <TabItem Header="关于">
+                <StackPanel > 
+                    <TextBlock TextWrapping="Wrap" Text="GestureSign" Margin="10,10,0,0" FontWeight="Bold" FontSize="16"/>
+                    <TextBox x:Name="AboutTextBox" HorizontalAlignment="Left" Height="372" Margin="10,10,0,0" Text="Author: TransposonY&#xA;&#xA;如有发现bug或建议，欢迎反馈：&#xA;553078206@qq.com&#xA;&#xA;&#xA;&#xA;&#xA;This project base on the following project:&#xA;http://highsign.codeplex.com/&#xA;license:http://highsign.codeplex.com/license&#xA;&#xA;mahapps.metro：&#xA;https://github.com/MahApps/MahApps.Metro&#xA;license:http://www.opensource.org/licenses/MS-PL&#xA;" VerticalAlignment="Top" BorderThickness="0" IsReadOnly="True" FontFamily="Microsoft YaHei UI"/>
+                  
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</controls:MetroWindow>

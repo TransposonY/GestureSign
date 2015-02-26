@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.SendKeystrokes.SendKeystrokesControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="320">
+    <Grid>
+        <TextBox x:Name="txtSendKeys" HorizontalAlignment="Left" Height="80" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Margin="10,30,0,0">
+            <TextBox.ContextMenu>
+                <ContextMenu  >
+                    <MenuItem Header="退出" Click="MenuItem_Click"/>
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="适用标准的SendKeys语法. " VerticalAlignment="Top" Margin="10,10,0,0"/>
+
+    </Grid>
+</UserControl>

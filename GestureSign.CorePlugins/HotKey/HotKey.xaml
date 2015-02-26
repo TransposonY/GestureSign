@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.HotKey.HotKey"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="70" d:DesignWidth="320">
+    <Grid PreviewKeyDown="Grid_PreviewKeyDown">
+        <ToggleButton x:Name="chkWin"
+                          Content="Win" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="14,35,0,0" />
+        <ToggleButton x:Name="chkControl"
+                          Content="Ctrl" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="74,35,0,0" />
+        <ToggleButton x:Name="chkAlt"
+                          Content="Alt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="134,35,0,0" />
+        <ToggleButton x:Name="chkShift"
+                          Content="Shift" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="195,35,0,0" />
+        <TextBlock HorizontalAlignment="Left" Margin="14,10,0,0" TextWrapping="Wrap" Text="快捷键（请先切换至英文输入）" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtKey" HorizontalAlignment="Left" Height="23" Margin="256,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54" GotFocus="txtKey_GotFocus" LostFocus="txtKey_LostFocus"/>
+    </Grid>
+</UserControl>

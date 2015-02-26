@@ -1,0 +1,42 @@
+﻿<controls:MetroWindow x:Class="GestureSign.UI.GestureDefinition"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+                      xmlns:c="clr-namespace:GestureSign.Common.UI;assembly=GestureSign.Common"
+                      BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="1"
+        Title="手势定义" Height="288.308" Width="353.077" Loaded="Window_Loaded" Closing="Window_Closing" ResizeMode="NoResize"  SizeToContent="Height"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" Topmost="True" ShowIconOnTitleBar="False" Icon="/GestureSign;component/Resources/normal.ico">
+    <controls:MetroWindow.Resources>
+    </controls:MetroWindow.Resources>
+    <StackPanel>
+        <Image x:Name="imgGestureThumbnail" Height="65" Margin="0,10,0,0" StretchDirection="DownOnly"/>
+        <TextBlock x:Name="ExistingTextBlock" TextWrapping="Wrap" Text="已存在相似手势：" Canvas.Left="10" FontSize="14" HorizontalAlignment="Center"/>
+        <Image x:Name="ExistingGestureImage" Height="65" StretchDirection="DownOnly" Margin="5" />
+        <TextBox x:Name="txtGestureName" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type controls:MetroWindow}},   Path=GName, Mode=TwoWay,
+                                                    ValidatesOnDataErrors=True,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    NotifyOnValidationError=True}"
+ Controls:TextBoxHelper.Watermark="请输入手势名称" TextWrapping="Wrap" Width="303" FontFamily="Microsoft YaHei UI" FontSize="14" >
+            <!--<TextBox.Text>
+                <Binding Path="name" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <c:GestureNameRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>-->
+        </TextBox>
+        <!--Text="{Binding ElementName=textGestureName,Path=Text,Mode=OneWay}"-->
+        <DockPanel Margin="10,20,10,10">
+            <Button x:Name="cmdCancel"
+        		Content="取消"
+        		Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdCancel_Click" FontFamily="Microsoft YaHei UI" IsCancel="True" />
+            <Button x:Name="cmdDone"
+            	Content="保存"
+            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdDone_Click" Canvas.Left="143" FontFamily="Microsoft YaHei UI" DockPanel.Dock="Right" />
+            <Button x:Name="cmdNext"
+            	Content="下一步"
+            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdNext_Click"  FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" IsDefault="True"/>
+        </DockPanel>
+
+    </StackPanel>
+</controls:MetroWindow>
