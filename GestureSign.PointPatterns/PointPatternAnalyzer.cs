@@ -78,7 +78,7 @@ namespace GestureSign.PointPatterns
         public PointPatternMatchResult GetPointPatternMatchResult(PointsPatternSet CompareTo, Point[] Points)
         {
             PointPatternMatchResult comparisonResults = new PointPatternMatchResult();
-            if (CompareTo.Points.Length == 1 || Points.Length == 1)
+            if (CompareTo.Points.Length == 1 || Points.Length <= 1)
             {
                 if (Points.Length == CompareTo.Points.Length)
                 {

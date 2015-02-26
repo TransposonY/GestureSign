@@ -27,7 +27,7 @@
             <Controls:FlipView.Items>
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36" Margin="0" Canvas.Left="10" Canvas.Top="10" Text="请点击本窗口以完成初始化"/>
-                    <Ellipse x:Name="TouchPoint" Height="60" Canvas.Left="247" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="{StaticResource AccentColorBrush}" StrokeThickness="6" Canvas.Top="167" Width="60" Fill="{StaticResource AccentColorBrush4}" RenderTransformOrigin="0.5,0.5" Opacity="1" Margin="0,80,0,0">
+                    <Ellipse x:Name="TouchPoint" Height="60" Canvas.Left="247" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="{StaticResource AccentColorBrush}" StrokeThickness="6" Canvas.Top="167" Width="60" Fill="{StaticResource AccentColorBrush4}" RenderTransformOrigin="0.5,0.5" Opacity="0" Margin="0,80,0,0">
                         <Ellipse.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>

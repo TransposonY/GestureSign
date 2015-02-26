@@ -37,7 +37,11 @@ namespace GestureSign.UI
         {
             _CapturedPoints = capturedPoints;
         }
-
+        /// <summary>
+        /// Edit gesture
+        /// </summary>
+        /// <param name="capturedPoints"></param>
+        /// <param name="gestureName"></param>
         public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints, string gestureName)
             : this(capturedPoints)
         {
@@ -125,7 +129,7 @@ namespace GestureSign.UI
                 {
                     this.ExistingGestureImage.Source = GestureImage.CreateImage(Gestures.GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65));
                 }
-                GName = Gestures.GestureManager.Instance.GestureName;//this.txtGestureName.Text
+                this.txtGestureName.Text = GName = Gestures.GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
             }
             // Disable drawing gestures
@@ -145,8 +149,8 @@ namespace GestureSign.UI
             if (SaveGesture())
             {
                 this.Close();
-
             }
+            else txtGestureName.Focus();
         }
 
         private void cmdCancel_Click(object sender, RoutedEventArgs e)
@@ -162,6 +166,7 @@ namespace GestureSign.UI
                 ApplicationDialog ad = new ApplicationDialog(Gestures.GestureManager.Instance.GestureName);
                 ad.Show();
             }
+            else txtGestureName.Focus();
         }
 
         #region Private Methods
