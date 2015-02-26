@@ -38,7 +38,6 @@ namespace GestureSign
                 Input.TouchCapture.Instance.Load();
                 Gestures.GestureManager.Instance.Load();
                 UI.FormManager.Instance.Load();
-                //Drawing.Compatibility.Surface.Instance.Load();
                 Applications.ApplicationManager.Instance.Load();
                 Plugins.PluginManager.Instance.Load();
                 UI.TrayManager.Instance.Load();
@@ -46,7 +45,7 @@ namespace GestureSign
                 UI.Surface surface = new UI.Surface();
                 Input.TouchCapture.Instance.EnableTouchCapture();
 
-                var accent = ThemeManager.GetAccent(Common.UI.WindowsHelper.GetSystemAccent());//"Green"
+                var accent = ThemeManager.GetAccent(Common.UI.WindowsHelper.GetSystemAccent());
                 ThemeManager.ChangeAppStyle(Application.Current, accent, Common.UI.WindowsHelper.GetAppTheme());
 
 
