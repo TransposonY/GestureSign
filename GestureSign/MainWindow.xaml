@@ -19,13 +19,6 @@
             <!--<local:EditActionFlyout DataContext="{Binding ElementName=availableAction,Path=SelectedItem}"></local:EditActionFlyout>-->
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    <controls:MetroWindow.RightWindowCommands>
-        <controls:WindowCommands>
-            <Button x:Name="StudyModeButton" Content="学习模式 关闭" Click="StudyModeButton_Click" />
-            <Button x:Name="DisableGesturesButton" Content="手势识别 就绪" Click="DisableGesturesButton_Click" >
-            </Button>
-        </controls:WindowCommands>
-    </controls:MetroWindow.RightWindowCommands>
     <Grid>
         <TabControl TabStripPlacement="Left"  >
             <TabItem Header="动作">

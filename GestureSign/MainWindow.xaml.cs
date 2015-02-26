@@ -36,17 +36,6 @@ namespace GestureSign
         public MainWindow()
         {
             InitializeComponent();
-            this.StudyModeButton.Content = GestureSign.Configuration.AppConfig.Teaching ? "学习模式 开启" : "学习模式 关闭";
-            if (Input.TouchCapture.Instance.State == CaptureState.UserDisabled)
-            {
-                this.DisableGesturesButton.Content = "手势识别 关闭";
-                this.StudyModeButton.IsEnabled = false;
-            }
-            else
-            {
-                this.DisableGesturesButton.Content = "手势识别 就绪";
-                this.StudyModeButton.IsEnabled = true;
-            }
             SetAboutInfo();
         }
 
@@ -60,26 +49,6 @@ namespace GestureSign
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
         }
 
-        private void StudyModeButton_Click(object sender, RoutedEventArgs e)
-        {
-            UI.TrayManager.Instance.ToggleTeaching();
-            this.StudyModeButton.Content = GestureSign.Configuration.AppConfig.Teaching ? "学习模式 开启" : "学习模式 关闭";
-        }
-
-        private void DisableGesturesButton_Click(object sender, RoutedEventArgs e)
-        {
-            Input.TouchCapture.Instance.ToggleUserDisableTouchCapture();
-            if (Input.TouchCapture.Instance.State == CaptureState.UserDisabled)
-            {
-                this.DisableGesturesButton.Content = "手势识别 关闭";
-                this.StudyModeButton.IsEnabled = false;
-            }
-            else
-            {
-                this.DisableGesturesButton.Content = "手势识别 就绪";
-                this.StudyModeButton.IsEnabled = true;
-            }
-        }
 
         private void SetAboutInfo()
         {
