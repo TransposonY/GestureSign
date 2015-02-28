@@ -71,15 +71,20 @@
                 </TabItem>
                 <TabItem Header="自定义">
                     <Grid>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,16,0,0" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-                        <ComboBox x:Name="cmbMatchUsingCustom" SelectedIndex="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,10,0,0" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI"/>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI"/>
-                        <CheckBox x:Name="chkRegex" IsChecked="{Binding SelectedItem.IsRegEx, ElementName=cmbExistingApplication, Mode=OneWay}" Content="使用正则表达式" HorizontalAlignment="Left" Margin="87,117,0,0" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI"/>
-                        <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" Margin="229,111,0,0" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"/>
-                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="217" FontSize="14" Height="49"><Run Text="将左侧图标拖至你想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="，然后释放"/><Run Text="以选择窗口"/></TextBlock>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto" MinHeight="58"/>
+                            <RowDefinition Height="Auto" MinHeight="59"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,16,0,0" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56"/>
+                        <ComboBox x:Name="cmbMatchUsingCustom" SelectedIndex="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,10,0,0" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70"/>
+                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26"/>
+                        <CheckBox x:Name="chkRegex" IsChecked="{Binding SelectedItem.IsRegEx, ElementName=cmbExistingApplication, Mode=OneWay}" Content="使用正则表达式" HorizontalAlignment="Left" Margin="10,18,0,0" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Height="18" Width="108"/>
+                        <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" Margin="238,12,0,0" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14" Grid.Row="1" Height="30" Width="66" RenderTransformOrigin="0.788,1.167"/>
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" FontSize="14" Grid.Row="2" Width="206" Height="37"><Run Text="将左侧图标拖至你想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="，然后释放"/><Run Text="以选择窗口"/></TextBlock>
 
-                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,23"/>
+                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,11" Grid.Row="2" Height="36" Width="36"/>
 
                     </Grid>
                 </TabItem>
