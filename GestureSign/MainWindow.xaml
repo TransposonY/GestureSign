@@ -36,7 +36,7 @@
             <TabItem Header="关于">
                 <StackPanel > 
                     <TextBlock TextWrapping="Wrap" Text="GestureSign" Margin="10,10,0,0" FontWeight="Bold" FontSize="16"/>
-                    <TextBox x:Name="AboutTextBox" HorizontalAlignment="Left" Height="372" Margin="10,10,0,0" Text="Author: TransposonY&#xA;&#xA;如有发现bug或建议，欢迎反馈：&#xA;553078206@qq.com&#xA;&#xA;&#xA;&#xA;&#xA;This project base on the following project:&#xA;http://highsign.codeplex.com/&#xA;license:http://highsign.codeplex.com/license&#xA;&#xA;mahapps.metro：&#xA;https://github.com/MahApps/MahApps.Metro&#xA;license:http://www.opensource.org/licenses/MS-PL&#xA;" VerticalAlignment="Top" BorderThickness="0" IsReadOnly="True" FontFamily="Microsoft YaHei UI"/>
+                    <TextBox x:Name="AboutTextBox" HorizontalAlignment="Left" Height="372" Margin="10,10,0,0" Text="Author:   TransposonY&#xA;&#xA;如有发现bug或建议，欢迎反馈：&#xA;553078206@qq.com&#xA;&#xA;&#xA;&#xA;&#xA;This project base on the following project:&#xA;http://highsign.codeplex.com/&#xA;license:http://highsign.codeplex.com/license&#xA;&#xA;MahApps.Metro&#xA;https://github.com/MahApps/MahApps.Metro&#xA;license:http://www.opensource.org/licenses/MS-PL&#xA;" VerticalAlignment="Top" BorderThickness="0" IsReadOnly="True" FontFamily="Microsoft YaHei UI"/>
                   
                 </StackPanel>
             </TabItem>

@@ -46,7 +46,7 @@ namespace GestureSign.UI
             try
             {
                 // Try to load saved settings
-              //  GestureSign.Configuration.AppConfig.Reload();
+                //  GestureSign.Configuration.AppConfig.Reload();
 
                 _VisualFeedbackColor = GestureSign.Configuration.AppConfig.VisualFeedbackColor;
                 VisualFeedbackWidthSlider.Value = GestureSign.Configuration.AppConfig.VisualFeedbackWidth;
@@ -89,13 +89,14 @@ namespace GestureSign.UI
             _VisualFeedbackColor.G = cdColorPicker.Color.G;
             GestureSign.Configuration.AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
             UpdateVisualFeedbackExample();
+            OnOptionsChanged();
         }
 
         private void VisualFeedbackWidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateVisualFeedbackExample();
 
-          GestureSign.Configuration.AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
+            GestureSign.Configuration.AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
             OnOptionsChanged();
         }
 

@@ -29,13 +29,13 @@
         <DockPanel Margin="10,20,10,10">
             <Button x:Name="cmdCancel"
         		Content="取消"
-        		Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdCancel_Click" FontFamily="Microsoft YaHei UI" IsCancel="True" />
+        		Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdCancel_Click" FontFamily="Microsoft YaHei UI" IsCancel="True" Focusable="False" />
             <Button x:Name="cmdDone"
             	Content="保存"
-            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdDone_Click" Canvas.Left="143" FontFamily="Microsoft YaHei UI" DockPanel.Dock="Right" />
+            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdDone_Click" Canvas.Left="143" FontFamily="Microsoft YaHei UI" DockPanel.Dock="Right" Focusable="False" />
             <Button x:Name="cmdNext"
             	Content="下一步"
-            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdNext_Click"  FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" IsDefault="True"/>
+            	Style="{DynamicResource SquareButtonStyle}" Width="80" Click="cmdNext_Click"  FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" IsDefault="True" Focusable="False"/>
         </DockPanel>
 
     </StackPanel>

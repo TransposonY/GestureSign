@@ -32,7 +32,7 @@ namespace GestureSign.UI
     /// </summary>
     public partial class AvailableAction : UserControl, IDisposable
     {
-       // public static event EventHandler StartCapture;
+        // public static event EventHandler StartCapture;
         public AvailableAction()
         {
             InitializeComponent();
@@ -177,7 +177,7 @@ namespace GestureSign.UI
             Applications.ApplicationManager.Instance.CurrentApplication = selectedApplication;
             Gestures.GestureManager.Instance.GestureName = selectedGesture;
 
-            ApplicationDialog applicationDialog = new ApplicationDialog(this,selectedAction);
+            ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction);
             applicationDialog.Show();
         }
 
@@ -257,6 +257,15 @@ namespace GestureSign.UI
 
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
         {
+            if (Gestures.GestureManager.Instance.Gestures.Length == 0)
+            {
+                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("无可用手势", "添加动作前需要先添加至少一项手势 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                {
+                    AffirmativeButtonText = "确定",
+                    ColorScheme = MetroDialogColorScheme.Accented
+                });
+                return;
+            }
             ApplicationDialog applicationDialog = new ApplicationDialog(this);
             applicationDialog.Show();
         }

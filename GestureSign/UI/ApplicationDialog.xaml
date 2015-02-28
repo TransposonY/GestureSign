@@ -5,7 +5,7 @@
         xmlns:MyControl="clr-namespace:GestureSign.UI"  
                       xmlns:local="clr-namespace:GestureSign.UI"
                       BorderBrush="{StaticResource AccentColorBrush}"
-        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ShowTitleBar="True" ResizeMode="NoResize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False">
+        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ShowTitleBar="True" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
@@ -23,7 +23,7 @@
                 <TabItem Header="已保存">
                     <Canvas>
                         <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="111" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="16" FontSize="14" FontWeight="Bold"/>
                         <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="64" FontSize="14" FontWeight="Bold"/>
                         <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="122" FontSize="14" FontWeight="Bold"/>
                         <TextBlock Text="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.MatchUsing,Converter={StaticResource matchUsingToStringConverter}}" Canvas.Left="111" TextWrapping="Wrap" Canvas.Top="64" FontSize="14" Width="193"/>
@@ -41,7 +41,7 @@
                             <ColumnDefinition Width="42*"/>
                             <ColumnDefinition Width="131*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock HorizontalAlignment="Left" Margin="11,12,0,0" TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Height="18" Width="70" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="11,16,0,0" TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Height="18" Width="70" FontWeight="Bold" Grid.ColumnSpan="2"/>
                         <ComboBox x:Name="cmbMatchUsingRunning" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="218" SelectionChanged="cmbMatchUsingRunning_SelectionChanged" Grid.Column="1" Height="26" FontSize="14" FontFamily="Microsoft YaHei UI"/>
                         <ListView x:Name="alvRunningApplications"  Margin="5,10" BorderThickness="1" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="{StaticResource AccentColorBrush}">
                             <ListView.View>
@@ -71,15 +71,15 @@
                 </TabItem>
                 <TabItem Header="自定义">
                     <Grid>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,17,0,0" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,16,0,0" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
                         <ComboBox x:Name="cmbMatchUsingCustom" SelectedIndex="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,10,0,0" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI"/>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="87,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" Margin="87,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI"/>
                         <CheckBox x:Name="chkRegex" IsChecked="{Binding SelectedItem.IsRegEx, ElementName=cmbExistingApplication, Mode=OneWay}" Content="使用正则表达式" HorizontalAlignment="Left" Margin="87,117,0,0" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI"/>
                         <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" Margin="229,111,0,0" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"/>
-                        <TextBlock TextWrapping="Wrap" Text="将左侧图标拖至你想忽略的程序窗口上以选择窗口，然后释放" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="217" FontSize="14" Height="49"/>
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="217" FontSize="14" Height="49"><Run Text="将左侧图标拖至你想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="，然后释放"/><Run Text="以选择窗口"/></TextBlock>
 
-                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Grid.Row="2"/>
+                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,23"/>
 
                     </Grid>
                 </TabItem>
