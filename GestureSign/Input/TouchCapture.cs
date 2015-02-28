@@ -26,7 +26,7 @@ namespace GestureSign.Input
 
         // Create enumeration to identify Touch buttons
         public IntPtr MessageWindowHandle { get { return messageWindow.Handle; } }
-        public MessageWindow MessageWindow { get { return messageWindow; } } 
+        public MessageWindow MessageWindow { get { return messageWindow; } }
 
         #endregion
 
@@ -251,7 +251,6 @@ namespace GestureSign.Input
         {
             // Notify subscribers that gesture capture has been canceled
             OnCaptureCanceled(new PointsCapturedEventArgs(_PointsCaptured, State));
-
         }
 
         private void AddPoint(RawTouchData[] Point)
@@ -260,13 +259,12 @@ namespace GestureSign.Input
             for (int i = 0; i < Math.Min(_PointsCaptured.Count, Point.Length); i++)
             {
                 // Don't accept point if it's within specified distance of last point unless it's the first point
-                if (Point[i].Num >= _PointsCaptured.Count ||
-                    _PointsCaptured[i].Count() > 0 &&
-                    PointPatterns.PointPatternMath.GetDistance(_PointsCaptured[Point[i].Num].Last(), Point[i].RawPointsData) < GestureSign.Configuration.AppConfig.MinimumPointDistance)
+                if (_PointsCaptured[i].Count() > 0 &&
+                    PointPatterns.PointPatternMath.GetDistance(_PointsCaptured[i].Last(), Point[i].RawPointsData) < GestureSign.Configuration.AppConfig.MinimumPointDistance)
                     continue;
                 getNewPoint = true;
                 // Add point to captured points list
-                _PointsCaptured[Point[i].Num].Add(Point[i].RawPointsData);
+                _PointsCaptured[i].Add(Point[i].RawPointsData);
 
             }
             if (getNewPoint)

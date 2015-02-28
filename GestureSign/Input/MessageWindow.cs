@@ -47,11 +47,11 @@ namespace GestureSign.Input
         static bool? IsAxisCorresponds = null;
         public event PointsMessageEventHandler PointsIntercepted;
 
-        bool IsIntTouchData;
-        RawTouchData[] outputTouchs;
+        bool IsIntTouchData = false;
+        List<RawTouchData> outputTouchs;
         int requiringTouchDataCount = 0;
-        int touchdataCount;
-        int touchlength;
+        int touchdataCount = 0;
+        int touchlength = 0;
         static public int NumberOfTouchscreens { get; set; }
 
         #region DllImports
@@ -387,14 +387,16 @@ namespace GestureSign.Input
                             if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0)
                             {
                                 IsIntTouchData = true;
-                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / Marshal.SizeOf(typeof(iTouchData));
                                 touchlength = Marshal.SizeOf(typeof(iTouchData));
+                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / touchlength;
+
                             }
                             else
                             {
                                 IsIntTouchData = false;
-                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / Marshal.SizeOf(typeof(sTouchData));
                                 touchlength = Marshal.SizeOf(typeof(sTouchData));
+                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / touchlength;
+
                             }
                         }
                         int activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
@@ -402,7 +404,7 @@ namespace GestureSign.Input
                         if (activeTouchCount != 0)
                         {
                             requiringTouchDataCount = activeTouchCount;
-                            outputTouchs = new RawTouchData[activeTouchCount];
+                            outputTouchs = new List<RawTouchData>(activeTouchCount);
                         }
                         switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
                         {
@@ -429,23 +431,24 @@ namespace GestureSign.Input
 
                         for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                         {
-                           byte[] rawtouch = new byte[touchlength];
+                            byte[] rawtouch = new byte[touchlength];
                             Array.Copy(rawdate, raw.header.dwSize - raw.data.hid.dwSizHid + 1 + dataIndex * touchlength, rawtouch, 0, touchlength);
+
                             if (IsIntTouchData)
                             {
                                 iTouchData touch = (iTouchData)BytesToStruct(rawtouch, typeof(iTouchData));
-                                outputTouchs[requiringTouchDataCount - 1] = new RawTouchData(
+                                outputTouchs.Add(new RawTouchData(
                                     Convert.ToBoolean(touch.status),
                                     touch.num,
-                                    IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position));
+                                    IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
                             }
                             else
                             {
                                 sTouchData touch = (sTouchData)BytesToStruct(rawtouch, typeof(sTouchData));
-                                outputTouchs[requiringTouchDataCount - 1] = new RawTouchData(
+                                outputTouchs.Add(new RawTouchData(
                                      Convert.ToBoolean(touch.status),
                                      touch.num,
-                                     IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position));
+                                     IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
                             }
                             if (GestureSign.Configuration.AppConfig.XRatio == 0 && dataIndex == 0)
                             {
@@ -455,12 +458,12 @@ namespace GestureSign.Input
                                     double rateX;
                                     double rateY;
                                     rateX = XAxisDirection.Value ?
-                                        ((double)outputTouchs[requiringTouchDataCount - 1].RawPointsData.X / (double)c.X) :
-                                        (double)outputTouchs[requiringTouchDataCount - 1].RawPointsData.X / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - c.X);
+                                        ((double)outputTouchs.Last().RawPointsData.X / (double)c.X) :
+                                        (double)outputTouchs.Last().RawPointsData.X / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - c.X);
 
                                     rateY = YAxisDirection.Value ?
-                                        ((double)outputTouchs[requiringTouchDataCount - 1].RawPointsData.Y / (double)c.Y) :
-                                        (double)outputTouchs[requiringTouchDataCount - 1].RawPointsData.Y / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height - c.Y);
+                                        ((double)outputTouchs.Last().RawPointsData.Y / (double)c.Y) :
+                                        (double)outputTouchs.Last().RawPointsData.Y / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height - c.Y);
 
                                     if (XRatioHistory.Count >= HistoryCount)
                                     {
@@ -483,12 +486,14 @@ namespace GestureSign.Input
                             }
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
-                                outputTouchs[requiringTouchDataCount - 1].RawPointsData = new Point((int)Math.Round(XAxisDirection.Value ?
-                                    (outputTouchs[requiringTouchDataCount - 1].RawPointsData.X / GestureSign.Configuration.AppConfig.XRatio) :
-                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - outputTouchs[requiringTouchDataCount - 1].RawPointsData.X / GestureSign.Configuration.AppConfig.XRatio),
+                                outputTouchs[outputTouchs.Count - 1] = new RawTouchData(outputTouchs.Last().Status,
+                                    outputTouchs.Last().Num,
+                                    new Point((int)Math.Round(XAxisDirection.Value ?
+                                    (outputTouchs.Last().RawPointsData.X / GestureSign.Configuration.AppConfig.XRatio) :
+                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - outputTouchs.Last().RawPointsData.X / GestureSign.Configuration.AppConfig.XRatio),
                                     (int)Math.Round(YAxisDirection.Value ?
-                                    (outputTouchs[requiringTouchDataCount - 1].RawPointsData.Y / GestureSign.Configuration.AppConfig.YRatio) :
-                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - outputTouchs[requiringTouchDataCount - 1].RawPointsData.Y / GestureSign.Configuration.AppConfig.YRatio));
+                                    (outputTouchs.Last().RawPointsData.Y / GestureSign.Configuration.AppConfig.YRatio) :
+                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - outputTouchs.Last().RawPointsData.Y / GestureSign.Configuration.AppConfig.YRatio)));
                             }
                             if (--requiringTouchDataCount == 0) break;
                         }
