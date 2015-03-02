@@ -367,7 +367,8 @@ namespace GestureSign.Input
                         Marshal.Copy(buffer, rawdate, 0, (int)dwSize);
                         if (touchdataCount == 0)
                         {
-                            if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0)
+                            if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
+                               (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
                             {
                                 IsIntTouchData = true;
                                 touchlength = Marshal.SizeOf(typeof(iTouchData));
@@ -433,7 +434,7 @@ namespace GestureSign.Input
                                      touch.num,
                                      IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
                             }
-                          
+
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
                                 outputTouchs[outputTouchs.Count - 1] = new RawTouchData(outputTouchs.Last().Status,
