@@ -36,12 +36,8 @@ namespace GestureSign.Input
         private const int VK_OEM_CLEAR = 0xFE;
         private const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
 
-        private const int HistoryCount = 10;
         #endregion const definitions
 
-        static Queue<Point> cursorHistory = new Queue<Point>(HistoryCount);
-        static List<double> XRatioHistory = new List<double>(HistoryCount);
-        static List<double> YRatioHistory = new List<double>(HistoryCount);
         static bool? XAxisDirection = null;
         static bool? YAxisDirection = null;
         static bool? IsAxisCorresponds = null;
@@ -104,7 +100,6 @@ namespace GestureSign.Input
             [MarshalAs(UnmanagedType.U4)]
             public uint dwCount;
         }
-
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RAWINPUTDEVICE
@@ -231,7 +226,6 @@ namespace GestureSign.Input
 
         private int EnumerateDevices()
         {
-
             int NumberOfDevices = 0;
             uint deviceCount = 0;
             int dwSize = (Marshal.SizeOf(typeof(RAWINPUTDEVICELIST)));
@@ -319,17 +313,6 @@ namespace GestureSign.Input
 
         #region ProcessInputCommand( Message message )
 
-        private static double GetEquationa()
-        {
-
-
-            double average = XRatioHistory.Average() + YRatioHistory.Average();
-            double fto = 0;
-            for (int i = 0; i < XRatioHistory.Count; i++)
-                fto += Math.Pow((XRatioHistory[i] + YRatioHistory[i] - average), 2);
-            double equation = fto / XRatioHistory.Count;
-            return equation;
-        }
 
         private Object BytesToStruct(Byte[] bytes, Type strcutType)
         {
@@ -450,40 +433,7 @@ namespace GestureSign.Input
                                      touch.num,
                                      IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
                             }
-                            if (GestureSign.Configuration.AppConfig.XRatio == 0 && dataIndex == 0)
-                            {
-                                Point c;
-                                if (GetCursorPos(out c))
-                                {
-                                    double rateX;
-                                    double rateY;
-                                    rateX = XAxisDirection.Value ?
-                                        ((double)outputTouchs.Last().RawPointsData.X / (double)c.X) :
-                                        (double)outputTouchs.Last().RawPointsData.X / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - c.X);
-
-                                    rateY = YAxisDirection.Value ?
-                                        ((double)outputTouchs.Last().RawPointsData.Y / (double)c.Y) :
-                                        (double)outputTouchs.Last().RawPointsData.Y / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height - c.Y);
-
-                                    if (XRatioHistory.Count >= HistoryCount)
-                                    {
-                                        XRatioHistory.RemoveAt(0);
-                                        YRatioHistory.RemoveAt(0);
-                                        cursorHistory.Dequeue();
-                                    }
-                                    cursorHistory.Enqueue(c);
-                                    XRatioHistory.Add(rateX);
-                                    YRatioHistory.Add(rateY);
-                                    if (XRatioHistory.Count == HistoryCount &&
-                                        GetEquationa() < 1E-5 &&
-                                       !c.Equals(cursorHistory.Peek()))
-                                    {
-                                        GestureSign.Configuration.AppConfig.XRatio = XRatioHistory.Average();
-                                        GestureSign.Configuration.AppConfig.YRatio = YRatioHistory.Average();
-                                    }
-                                }
-
-                            }
+                          
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
                                 outputTouchs[outputTouchs.Count - 1] = new RawTouchData(outputTouchs.Last().Status,
