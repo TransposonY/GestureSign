@@ -42,8 +42,13 @@ namespace GestureSign.Input
         static bool? YAxisDirection = null;
         static bool? IsAxisCorresponds = null;
         public event PointsMessageEventHandler PointsIntercepted;
-
-        bool IsIntTouchData = false;
+        enum TouchDataType
+        {
+            IntTouchData,
+            ShortTouchData,
+            TouchDataWithGap
+        }
+        TouchDataType touchDataType;
         List<RawTouchData> outputTouchs;
         int requiringTouchDataCount = 0;
         int touchdataCount = 0;
@@ -159,6 +164,21 @@ namespace GestureSign.Input
             public int y_position;
         }
 
+        [StructLayoutAttribute(LayoutKind.Sequential)]
+        private struct gTouchData
+        {
+            /// BYTE->unsigned char
+            public byte status;
+            /// BYTE->unsigned char
+            public byte num;
+            /// short
+            public short x_position;
+            /// short
+            public short y_position;
+
+            [MarshalAs(UnmanagedType.U4)]
+            public int gap;
+        }
         #endregion Windows.h structure declarations
 
         public MessageWindow()
@@ -365,24 +385,8 @@ namespace GestureSign.Input
                     {
                         byte[] rawdate = new byte[dwSize];
                         Marshal.Copy(buffer, rawdate, 0, (int)dwSize);
-                        if (touchdataCount == 0)
-                        {
-                            if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
-                               (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
-                            {
-                                IsIntTouchData = true;
-                                touchlength = Marshal.SizeOf(typeof(iTouchData));
-                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / touchlength;
 
-                            }
-                            else
-                            {
-                                IsIntTouchData = false;
-                                touchlength = Marshal.SizeOf(typeof(sTouchData));
-                                touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / touchlength;
 
-                            }
-                        }
                         int activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
                         ushort timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 3);
                         if (activeTouchCount != 0)
@@ -390,6 +394,26 @@ namespace GestureSign.Input
                             requiringTouchDataCount = activeTouchCount;
                             outputTouchs = new List<RawTouchData>(activeTouchCount);
                         }
+
+                        if (activeTouchCount > 1 && rawdate[31] == 0 && rawdate[32] == 0)
+                        {
+                            touchDataType = TouchDataType.TouchDataWithGap;
+                            touchlength = Marshal.SizeOf(typeof(gTouchData));
+                        }
+                        else if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
+                                (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
+                        {
+                            touchDataType = TouchDataType.IntTouchData;
+                            touchlength = Marshal.SizeOf(typeof(iTouchData));
+                        }
+                        else
+                        {
+                            touchDataType = TouchDataType.ShortTouchData;
+                            touchlength = Marshal.SizeOf(typeof(sTouchData));
+
+                        }
+                        touchdataCount = (int)(raw.data.hid.dwSizHid - 4) / touchlength;
+
                         switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
                         {
                             case System.Windows.Forms.ScreenOrientation.Angle0:
@@ -418,23 +442,36 @@ namespace GestureSign.Input
                             byte[] rawtouch = new byte[touchlength];
                             Array.Copy(rawdate, raw.header.dwSize - raw.data.hid.dwSizHid + 1 + dataIndex * touchlength, rawtouch, 0, touchlength);
 
-                            if (IsIntTouchData)
+                            switch (touchDataType)
                             {
-                                iTouchData touch = (iTouchData)BytesToStruct(rawtouch, typeof(iTouchData));
-                                outputTouchs.Add(new RawTouchData(
-                                    Convert.ToBoolean(touch.status),
-                                    touch.num,
-                                    IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
+                                case TouchDataType.IntTouchData:
+                                    {
+                                        iTouchData touch = (iTouchData)BytesToStruct(rawtouch, typeof(iTouchData));
+                                        outputTouchs.Add(new RawTouchData(
+                                            Convert.ToBoolean(touch.status),
+                                            touch.num,
+                                            IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
+                                        break;
+                                    }
+                                case TouchDataType.ShortTouchData:
+                                    {
+                                        sTouchData touch = (sTouchData)BytesToStruct(rawtouch, typeof(sTouchData));
+                                        outputTouchs.Add(new RawTouchData(
+                                             Convert.ToBoolean(touch.status),
+                                             touch.num,
+                                             IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
+                                        break;
+                                    }
+                                case TouchDataType.TouchDataWithGap:
+                                    {
+                                        gTouchData touch = (gTouchData)BytesToStruct(rawtouch, typeof(gTouchData));
+                                        outputTouchs.Add(new RawTouchData(
+                                            Convert.ToBoolean(touch.status),
+                                            touch.num,
+                                            IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
+                                        break;
+                                    }
                             }
-                            else
-                            {
-                                sTouchData touch = (sTouchData)BytesToStruct(rawtouch, typeof(sTouchData));
-                                outputTouchs.Add(new RawTouchData(
-                                     Convert.ToBoolean(touch.status),
-                                     touch.num,
-                                     IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
-                            }
-
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
                                 outputTouchs[outputTouchs.Count - 1] = new RawTouchData(outputTouchs.Last().Status,
