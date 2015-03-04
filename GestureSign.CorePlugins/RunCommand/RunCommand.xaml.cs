@@ -28,7 +28,6 @@ namespace GestureSign.CorePlugins.RunCommand
         public RunCommand()
         {
             InitializeComponent();
-
         }
 
         public RunCommandSettings Settings
@@ -37,7 +36,7 @@ namespace GestureSign.CorePlugins.RunCommand
             {
                 _Settings = new RunCommandSettings();
                 _Settings.Command = txtCommand.Text.Trim();
-                _Settings.Arguments = txtArguments.Text.Trim();
+                _Settings.ShowCmd =this.showCmdCheckBox.IsChecked.Value;
 
                 return _Settings;
             }
@@ -45,7 +44,7 @@ namespace GestureSign.CorePlugins.RunCommand
             {
                 _Settings = value;
                 txtCommand.Text = _Settings.Command;
-                txtArguments.Text = _Settings.Arguments;
+                this.showCmdCheckBox.IsChecked = _Settings.ShowCmd;
             }
         }
 
@@ -55,7 +54,7 @@ namespace GestureSign.CorePlugins.RunCommand
             Microsoft.Win32.OpenFileDialog ofDialog = new Microsoft.Win32.OpenFileDialog();
 
             // Set initial directory if path is valid
-            if (IsValidPath(txtCommand.Text.Trim()))
+            if (System.IO.File.Exists(txtCommand.Text.Trim()))
                 ofDialog.InitialDirectory = System.IO.Path.GetDirectoryName(txtCommand.Text.Trim());
 
             if (ofDialog.ShowDialog().Value)
@@ -63,9 +62,9 @@ namespace GestureSign.CorePlugins.RunCommand
 
         }
 
-        private bool IsValidPath(string path)
-        {
-            return !System.IO.Path.GetInvalidPathChars().Any(fnc => path.Contains(fnc)) && path != String.Empty;
-        }
+        //private bool IsValidPath(string path)
+        //{
+        //    return !System.IO.Path.GetInvalidPathChars().Any(fnc => path.Contains(fnc)) && path != String.Empty;
+        //}
     }
 }

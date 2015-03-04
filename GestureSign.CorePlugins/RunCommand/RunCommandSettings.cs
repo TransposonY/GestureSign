@@ -24,7 +24,7 @@ namespace GestureSign.CorePlugins.RunCommand
 		public string Command { get; set; }
 
 		[DataMember]
-		public string Arguments { get; set; }
+		public bool ShowCmd { get; set; }
 
 		#endregion
 	}
