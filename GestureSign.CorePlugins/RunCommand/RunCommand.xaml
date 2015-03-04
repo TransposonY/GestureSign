@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="150" d:DesignWidth="320">
+             d:DesignHeight="150" d:DesignWidth="310">
     <Grid>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="命令" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtCommand" HorizontalAlignment="Left" Margin="10,30,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="300" Height="77" MaxLines="5"/>
-        <Button x:Name="cmdSelectFile" Content="浏览.." HorizontalAlignment="Left" Margin="266,113,0,0" VerticalAlignment="Top" Width="44" Click="cmdSelectFile_Click" FontSize="12" FontFamily="Microsoft YaHei UI"/>
+        <TextBox x:Name="txtCommand" HorizontalAlignment="Left" Margin="10,30,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="290" Height="77" MaxLines="5"/>
+        <Button x:Name="cmdSelectFile" Content="浏览.." HorizontalAlignment="Left" Margin="256,113,0,0" VerticalAlignment="Top" Width="44" Click="cmdSelectFile_Click" FontSize="12" FontFamily="Microsoft YaHei UI"/>
         <CheckBox x:Name="showCmdCheckBox" Content="显示CMD窗口" HorizontalAlignment="Left" Height="28" Margin="10,112,0,0" VerticalAlignment="Top" Width="136"/>
 
     </Grid>
