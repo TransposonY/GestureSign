@@ -52,7 +52,7 @@ namespace GestureSign
 
         private void SetAboutInfo()
         {
-            string version = "Version:   " + Application.ResourceAssembly.GetName().Version.ToString() + (Environment.Is64BitProcess ? "  64-bit" : "  32-bit");
+            string version = "Version:   " + System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion + (Environment.Is64BitProcess ? "  64-bit" : "  32-bit");
             string releaseDate = "\r\nReleaseDate:   " +
                 new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build).AddSeconds(Application.ResourceAssembly.GetName().Version.Revision * 2).ToString();
             this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + releaseDate + "\r\n");
