@@ -53,7 +53,7 @@ namespace GestureSign.UI
                 MinimumPointDistanceSlider.Value = GestureSign.Configuration.AppConfig.MinimumPointDistance;
                 chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = GestureSign.Configuration.AppConfig.Opacity;
-
+                chkOrderByLocation.IsChecked = GestureSign.Configuration.AppConfig.IsOrderByLocation;
                 return true;
             }
             catch
@@ -160,21 +160,6 @@ namespace GestureSign.UI
             OpacitySlider.IsEnabled = ManagedWinapi.Windows.DesktopWindowManager.IsCompositionEnabled();
         }
 
-        private void chkWindowsStartup_Click(object sender, RoutedEventArgs e)
-        {
-            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-            try
-            {
-                if (chkWindowsStartup.IsChecked.Value)
-                {
-                    CreateLnk(lnkPath);
-                }
-                else System.IO.File.Delete(lnkPath);
-            }
-            catch (Exception ex)
-            { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
-        }
         private void CreateLnk(string lnkPath)
         {
             if (!System.IO.File.Exists(lnkPath))
@@ -189,6 +174,42 @@ namespace GestureSign.UI
                 shortCut.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();// Application.ResourceAssembly.;
                 shortCut.Save();
             }
+        }
+
+        private void chkWindowsStartup_Checked(object sender, RoutedEventArgs e)
+        {
+            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+            try
+            {
+                CreateLnk(lnkPath);
+            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+
+        }
+
+        private void chkWindowsStartup_Unchecked(object sender, RoutedEventArgs e)
+        {
+            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+              "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+            try
+            {
+                if (System.IO.File.Exists(lnkPath))
+                    System.IO.File.Delete(lnkPath);
+            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+        private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
+        {
+            GestureSign.Configuration.AppConfig.IsOrderByLocation = true;
+        }
+
+        private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
+        {
+            GestureSign.Configuration.AppConfig.IsOrderByLocation = false;
         }
 
     }

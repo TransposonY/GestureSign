@@ -111,6 +111,18 @@ namespace GestureSign.Configuration
             }
         }
 
+        public static bool IsOrderByLocation
+        {
+            get
+            {
+                return (bool)GetValue("IsOrderByLocation", true);
+            }
+            set
+            {
+                SetValue("IsOrderByLocation", value);
+            }
+        }
+
         static AppConfig()
         {
             config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);

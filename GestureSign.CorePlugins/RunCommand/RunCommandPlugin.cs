@@ -148,7 +148,7 @@ namespace GestureSign.CorePlugins.RunCommand
                 Process Process = new Process();
                 // Expand environment variable to support %SYSTEMROOT%, etc.
                 Process.StartInfo.FileName = "cmd.exe";
-                Process.StartInfo.Arguments = (rcSettings.ShowCmd ? "/k " : "/C ") + string.Join(" & ", rcSettings.Command.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
+                Process.StartInfo.Arguments = (rcSettings.ShowCmd ? "/K " : "/C ") + string.Join(" & ", rcSettings.Command.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
                 Process.StartInfo.WindowStyle = rcSettings.ShowCmd ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
                 Process.Start();
             }
