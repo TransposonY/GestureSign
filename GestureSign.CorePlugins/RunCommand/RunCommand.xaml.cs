@@ -36,7 +36,7 @@ namespace GestureSign.CorePlugins.RunCommand
             {
                 _Settings = new RunCommandSettings();
                 _Settings.Command = txtCommand.Text.Trim();
-                _Settings.ShowCmd =this.showCmdCheckBox.IsChecked.Value;
+                _Settings.ShowCmd = this.showCmdCheckBox.IsChecked.Value;
 
                 return _Settings;
             }
@@ -52,13 +52,15 @@ namespace GestureSign.CorePlugins.RunCommand
         {
             // Create open file dialog to let user select file to open
             Microsoft.Win32.OpenFileDialog ofDialog = new Microsoft.Win32.OpenFileDialog();
-
-            // Set initial directory if path is valid
-            if (System.IO.File.Exists(txtCommand.Text.Trim()))
-                ofDialog.InitialDirectory = System.IO.Path.GetDirectoryName(txtCommand.Text.Trim());
-
+            try
+            {
+                // Set initial directory if path is valid
+                if (System.IO.File.Exists(txtCommand.Text.Trim()))
+                    ofDialog.InitialDirectory = System.IO.Path.GetDirectoryName(txtCommand.Text.Trim());
+            }
+            catch { }
             if (ofDialog.ShowDialog().Value)
-                txtCommand.Text = ofDialog.FileName;
+                txtCommand.Text = "\"" + ofDialog.FileName + "\"";
 
         }
 
