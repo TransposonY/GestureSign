@@ -81,12 +81,30 @@ namespace GestureSign.Configuration.IO
                 // Return results of serialization
                 return objBuffer;
             }
+            catch (System.Runtime.Serialization.SerializationException)
+            {
+                BackupFile(Filename);
+                return default(T);
+            }
             catch (Exception)
             {
                 return default(T);
             }
         }
 
+        private static void BackupFile(string filename)
+        {
+            try
+            {
+                string path = Path.Combine("Data", filename);
+                string backupFileName = Path.Combine("Data",
+                    Path.GetFileNameWithoutExtension(path) +
+            DateTime.Now.ToString("yyMMddHHmmssffff") +
+            Path.GetExtension(path));
+                File.Copy(path, backupFileName, true);
+            }
+            catch { }
+        }
         #endregion
     }
 }
