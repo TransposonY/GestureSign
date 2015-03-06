@@ -150,7 +150,7 @@ namespace GestureSign.Input
             public int y_position;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
         private struct gTouchData
         {
             /// BYTE->unsigned char
@@ -384,11 +384,11 @@ namespace GestureSign.Input
                             requiringTouchDataCount = activeTouchCount;
                             outputTouchs = new List<RawTouchData>(activeTouchCount);
                         }
-
+                        //If no position data
+                        if (rawdate[27] == 0 && rawdate[28] == 0) return;
                         if (activeTouchCount > 1 && rawdate[31] == 0 && rawdate[32] == 0)
                         {
                             touchDataType = typeof(gTouchData);
-
                         }
                         else if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
                                 (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
