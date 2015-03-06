@@ -14,7 +14,7 @@
                           Content="Alt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="134,35,0,0" Focusable="False" />
         <ToggleButton x:Name="chkShift"
                           Content="Shift" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="195,35,0,0" Focusable="False" />
-        <TextBlock HorizontalAlignment="Left" Margin="14,10,0,0" TextWrapping="Wrap" Text="快捷键（请将输入法切换至英文，用键盘录入快捷键）" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtKey" HorizontalAlignment="Left" Height="23" Margin="256,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54" GotFocus="txtKey_GotFocus" LostFocus="txtKey_LostFocus"/>
+        <TextBlock HorizontalAlignment="Left" Margin="14,10,0,0" TextWrapping="Wrap" Text="快捷键（请用键盘录入快捷键）" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtKey" InputMethod.IsInputMethodEnabled="False"  HorizontalAlignment="Left" Height="23" Margin="256,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54" GotFocus="txtKey_GotFocus" LostFocus="txtKey_LostFocus"/>
     </Grid>
 </UserControl>

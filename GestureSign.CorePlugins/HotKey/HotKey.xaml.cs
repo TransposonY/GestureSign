@@ -99,7 +99,11 @@ namespace GestureSign.CorePlugins.HotKey
         public IHostControl HostControl
         {
             get { return _HostControl; }
-            set { _HostControl = value; }
+            set
+            {
+                _HostControl = value;
+                this.txtKey.Focus();
+            }
         }
 
         #endregion
