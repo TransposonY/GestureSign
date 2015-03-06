@@ -687,6 +687,7 @@ namespace GestureSign.UI
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             // 按对应值做决策
+            //cmbExistingApplication alvRunningApplications tabControlApplications
             int index = (int)values[2];
             if (index == 0)
             {
