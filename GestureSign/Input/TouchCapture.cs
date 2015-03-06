@@ -210,14 +210,16 @@ namespace GestureSign.Input
             {
                 foreach (RawTouchData rawTouchData in FirstTouch.OrderBy(rtd => rtd.RawPointsData.X))
                 {
-                    _PointsCaptured.Add(rawTouchData.Num, new List<Point>(30));
+                    if (!_PointsCaptured.ContainsKey(rawTouchData.Num))
+                        _PointsCaptured.Add(rawTouchData.Num, new List<Point>(30));
                 }
             }
             else
             {
                 foreach (RawTouchData rawTouchData in FirstTouch)
                 {
-                    _PointsCaptured.Add(rawTouchData.Num, new List<Point>(30));
+                    if (!_PointsCaptured.ContainsKey(rawTouchData.Num))
+                        _PointsCaptured.Add(rawTouchData.Num, new List<Point>(30));
                 }
             }
             AddPoint(FirstTouch);
