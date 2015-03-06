@@ -130,9 +130,15 @@ namespace GestureSign.Configuration
 
         public static void Save()
         {
-            // Save the configuration file.    
-            config.AppSettings.SectionInformation.ForceSave = true;
-            config.Save(ConfigurationSaveMode.Minimal);
+            try
+            {
+                // Save the configuration file.    
+                config.AppSettings.SectionInformation.ForceSave = true;
+                config.Save(ConfigurationSaveMode.Minimal);
+            }
+            catch(Exception)
+            {
+            }
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
         }
