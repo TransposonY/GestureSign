@@ -67,10 +67,6 @@ namespace GestureSign.Input
         [DllImport("User32.dll")]
         extern static uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out Point lpPoint);
-
         #endregion DllImports
 
         #region  Windows.h structure declarations
@@ -164,6 +160,41 @@ namespace GestureSign.Input
 
             [MarshalAs(UnmanagedType.U4)]
             public int gap;
+        }
+        // HID#FTSC0001&Col01#4&14bbeed5&0&0000#
+        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
+        private struct dTouchData
+        {
+            /// BYTE->unsigned char
+            public byte status;
+            /// BYTE->unsigned char
+            public byte num;
+            /// short
+            private short x;
+            public short x_position;
+            /// short
+            private short y;
+            public short y_position;
+
+            [MarshalAs(UnmanagedType.U4)]
+            public int gap;
+        }
+        //HID#WCOM5008&Col01#4&2b144297&0&0000
+        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
+        private struct wcTouchData
+        {
+            /// BYTE->unsigned char
+            private byte TouchDataStatus;
+            /// BYTE->unsigned char
+            public byte num;
+            /// short
+            private byte gap;
+
+            public short x_position;
+            /// short
+            public short y_position;
+
+            public bool status { get { return TouchDataStatus == (0x05); } }
         }
         #endregion Windows.h structure declarations
 
@@ -324,21 +355,6 @@ namespace GestureSign.Input
         #region ProcessInputCommand( Message message )
 
 
-        private Object BytesToStruct(Byte[] bytes, Type strcutType)
-        {
-            int size = Marshal.SizeOf(strcutType);
-            IntPtr buffer = Marshal.AllocHGlobal(size);
-            try
-            {
-                Marshal.Copy(bytes, 0, buffer, size);
-                return Marshal.PtrToStructure(buffer, strcutType);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-
         /// <summary>
         /// Processes WM_INPUT messages to retrieve information about any
         /// touch events that occur.
@@ -375,29 +391,47 @@ namespace GestureSign.Input
                     {
                         byte[] rawdate = new byte[dwSize];
                         Marshal.Copy(buffer, rawdate, 0, (int)dwSize);
+                        int activeTouchCount;
+                        ushort timeStamp;
+                        int offset = 1;
+                        //If no position data
+                        if (rawdate[27] == 0 && rawdate[28] == 0) return;
 
+                        if (rawdate[24] == 0x0C && rawdate[25] == 0x00)
+                        {
+                            activeTouchCount = rawdate[26];
+                            timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 2);
+                            offset = 3;
+                            touchDataType = typeof(wcTouchData);
+                        }
+                        else
+                        {
+                            activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
+                            timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 3);
 
-                        int activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
-                        ushort timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 3);
+                            if (rawdate[27] == rawdate[29] && rawdate[28] == rawdate[30] &&
+                                rawdate[31] == rawdate[33] && rawdate[32] == rawdate[34])
+                            {
+                                touchDataType = typeof(dTouchData);
+                            }
+                            else if (activeTouchCount > 1 && rawdate[31] == 0 && rawdate[32] == 0)
+                            {
+                                touchDataType = typeof(gTouchData);
+                            }
+                            else if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
+                                    (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
+                            {
+                                touchDataType = typeof(iTouchData);
+                            }
+                            else
+                            {
+                                touchDataType = typeof(sTouchData);
+                            }
+                        }
                         if (activeTouchCount != 0)
                         {
                             requiringTouchDataCount = activeTouchCount;
                             outputTouchs = new List<RawTouchData>(activeTouchCount);
-                        }
-                        //If no position data
-                        if (rawdate[27] == 0 && rawdate[28] == 0) return;
-                        if (activeTouchCount > 1 && rawdate[31] == 0 && rawdate[32] == 0)
-                        {
-                            touchDataType = typeof(gTouchData);
-                        }
-                        else if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
-                                (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
-                        {
-                            touchDataType = typeof(iTouchData);
-                        }
-                        else
-                        {
-                            touchDataType = typeof(sTouchData);
                         }
                         touchlength = Marshal.SizeOf(touchDataType);
                         touchdataCount = (int)(raw.hid.dwSizHid - 4) / touchlength;
@@ -427,11 +461,8 @@ namespace GestureSign.Input
 
                         for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                         {
-                            byte[] rawtouch = new byte[touchlength];
-                            Array.Copy(rawdate, raw.header.dwSize - raw.hid.dwSizHid + 1 + dataIndex * touchlength, rawtouch, 0, touchlength);
-
-                            dynamic touch = BytesToStruct(rawtouch, touchDataType);
-
+                            dynamic touch = Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dataIndex * touchlength), touchDataType);
+                           
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
                                 int X = IsAxisCorresponds.Value ? touch.x_position : touch.y_position;
