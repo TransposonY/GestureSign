@@ -45,9 +45,12 @@ namespace GestureSign
                 UI.Surface surface = new UI.Surface();
                 Input.TouchCapture.Instance.EnableTouchCapture();
 
-                var accent = ThemeManager.GetAccent(Common.UI.WindowsHelper.GetSystemAccent());
-                ThemeManager.ChangeAppStyle(Application.Current, accent, Common.UI.WindowsHelper.GetAppTheme());
-
+                var systemAccent = Common.UI.WindowsHelper.GetSystemAccent();
+                if (systemAccent != null)
+                {
+                    var accent = ThemeManager.GetAccent(systemAccent);
+                    ThemeManager.ChangeAppStyle(Application.Current, accent, MahApps.Metro.ThemeManager.GetAppTheme("BaseLight"));
+                }
 
                 if (GestureSign.Input.MessageWindow.NumberOfTouchscreens == 0)
                 {

@@ -15,24 +15,17 @@ namespace GestureSign.Common.UI
 {
     public class WindowsHelper
     {
-        public static AppTheme GetAppTheme()
+      
+        public static ResourceDictionary GetSystemAccent()
         {
             SolidColorBrush AccentColorBrush = (SolidColorBrush)SystemParameters.WindowGlassBrush;
             Double dY = AccentColorBrush.Color.R * 0.299 + AccentColorBrush.Color.G * 0.587 + AccentColorBrush.Color.B * 0.114;
-            if (dY >= 192)
+            if (dY >= 192 || dY < 50)
             {
-                return MahApps.Metro.ThemeManager.GetAppTheme("BaseDark");
+                return null;
             }
-            else
-            {
-                return MahApps.Metro.ThemeManager.GetAppTheme("BaseLight");
-            }
-        }
-        public static ResourceDictionary GetSystemAccent()
-        {
             ResourceDictionary rd = new ResourceDictionary();
 
-            SolidColorBrush AccentColorBrush = (SolidColorBrush)SystemParameters.WindowGlassBrush;
             Color AccentColor = AccentColorBrush.Color;
 
             Color HighlightColor = Color.Multiply(AccentColor, 0.73f);
