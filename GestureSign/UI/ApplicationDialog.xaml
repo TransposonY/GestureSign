@@ -5,7 +5,7 @@
         xmlns:MyControl="clr-namespace:GestureSign.UI"  
                       xmlns:local="clr-namespace:GestureSign.UI"
                       BorderBrush="{StaticResource AccentColorBrush}"
-        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ShowTitleBar="True" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False">
+        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
