@@ -77,13 +77,13 @@ namespace GestureSign.CorePlugins.RunCommand
             return true;
         }
 
-        public void Deserialize(string SerializedData)
+        public bool Deserialize(string SerializedData)
         {
             // Clear existing settings if nothing was passed in
             if (String.IsNullOrEmpty(SerializedData))
             {
                 _Settings = new RunCommandSettings();
-                return;
+                return true;
             }
             try
             {
@@ -99,14 +99,17 @@ namespace GestureSign.CorePlugins.RunCommand
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                return false;
             }
             if (_Settings == null)
                 _Settings = new RunCommandSettings();
+            return true;
         }
 
         public string Serialize()
         {
-            _Settings = _GUI.Settings;
+            if (_GUI != null)
+                _Settings = _GUI.Settings;
 
             if (_Settings == null)
                 _Settings = new RunCommandSettings();

@@ -79,14 +79,17 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             }
         }
 
-        public void Deserialize(string SerializedData)
+        public bool Deserialize(string SerializedData)
         {
             TypedGUI.txtSendKeys.Text = SerializedData;
+            return true;
         }
 
         public string Serialize()
         {
-            return TypedGUI.txtSendKeys.Text;
+            if (TypedGUI.txtSendKeys != null)
+                return TypedGUI.txtSendKeys.Text;
+            else return "";
         }
 
         #endregion

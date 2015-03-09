@@ -78,13 +78,13 @@ namespace GestureSign.CorePlugins.HotKey
             return true;
         }
 
-        public void Deserialize(string SerializedData)
+        public bool Deserialize(string SerializedData)
         {
             // Clear existing settings if nothing was passed in
             if (String.IsNullOrEmpty(SerializedData))
             {
                 _Settings = new HotKeySettings();
-                return;
+                return true;
             }
 
             // Create memory stream from serialized data string
@@ -93,17 +93,19 @@ namespace GestureSign.CorePlugins.HotKey
             // Create json serializer to deserialize json file
             DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(HotKeySettings));
             try
-            {            // Deserialize json file into actions list
+            {
+                // Deserialize json file into actions list
                 _Settings = jSerial.ReadObject(memStream) as HotKeySettings;
             }
             catch (System.Runtime.Serialization.SerializationException)
-            { LoadOldSetting(SerializedData); }
-
-            finally
             {
-                if (_Settings == null)
-                    _Settings = new HotKeySettings();
+                LoadOldSetting(SerializedData);
+                return false;
             }
+
+            if (_Settings == null)
+                _Settings = new HotKeySettings();
+            return true;
         }
 
         private void LoadOldSetting(string SerializedData)
@@ -112,7 +114,8 @@ namespace GestureSign.CorePlugins.HotKey
 
             DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(oldHotKeySettings));
             try
-            {            // Deserialize json file into actions list
+            {
+                // Deserialize json file into actions list
                 var oldSettings = jSerial.ReadObject(memStream) as oldHotKeySettings;
                 _Settings = new HotKeySettings()
                 {
@@ -124,12 +127,13 @@ namespace GestureSign.CorePlugins.HotKey
                 };
                 _Settings.KeyCode.Add(oldSettings.KeyCode);
             }
-            catch { }
+            catch { _Settings = new HotKeySettings(); }
         }
 
         public string Serialize()
         {
-            _Settings = _GUI.Settings;
+            if (_GUI != null)
+                _Settings = _GUI.Settings;
 
             if (_Settings == null)
                 _Settings = new HotKeySettings();

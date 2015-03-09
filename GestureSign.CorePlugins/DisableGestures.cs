@@ -58,8 +58,9 @@ namespace GestureSign.CorePlugins
 			return true;
 		}
 
-		public void Deserialize(string SerializedData)
+		public bool Deserialize(string SerializedData)
 		{
+            return true;
 			// Nothing to deserialize
 		}
 

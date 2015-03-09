@@ -85,13 +85,13 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             return AdjustBrightness(_Settings);
         }
 
-        public void Deserialize(string SerializedData)
+        public bool Deserialize(string SerializedData)
         {
             // Clear existing settings if nothing was passed in
             if (String.IsNullOrEmpty(SerializedData))
             {
                 _Settings = new BrightnessSettings();
-                return;
+                return true;
             }
 
             // Create memory stream from serialized data string
@@ -105,11 +105,13 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
             if (_Settings == null)
                 _Settings = new BrightnessSettings();
+            return true;
         }
 
         public string Serialize()
         {
-            _Settings = _GUI.Settings;
+            if (_GUI != null)
+                _Settings = _GUI.Settings;
 
             if (_Settings == null)
                 _Settings = new BrightnessSettings();

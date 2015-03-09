@@ -309,8 +309,8 @@ namespace GestureSign.UI
                 IPluginInfo pluginInfo = Plugins.PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
 
                 // Feed settings to plugin
-                pluginInfo.Plugin.Deserialize(currentAction.ActionSettings);
-
+                if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
+                    currentAction.ActionSettings = pluginInfo.Plugin.Serialize();
                 // Get handle of action gesture
                 IGesture actionGesture = Gestures.GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
 

@@ -25,7 +25,7 @@ namespace GestureSign.Common.Plugins
 
 		void Initialize();
 		bool Gestured(PointInfo ActionPoint);
-		void Deserialize(string SerializedData);
+		bool Deserialize(string SerializedData);
 		string Serialize();
 
 		#endregion
