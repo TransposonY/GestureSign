@@ -275,6 +275,7 @@ namespace GestureSign.UI
         public void BindActions()
         {
             ActionInfos.Clear();
+            this.CopyActionMenuItem.Items.Clear();
             //Task task = new Task(() =>
             //{
             //    this.Dispatcher.BeginInvoke(new Action(() =>
@@ -298,6 +299,13 @@ namespace GestureSign.UI
         }
         private void AddActionsToGroup(string ApplicationName, IEnumerable<IAction> Actions)
         {
+
+            MenuItem menuItem = new MenuItem() { Header = ApplicationName };
+            menuItem.Click += CopyActionMenuItem_Click;
+            this.CopyActionMenuItem.Items.Add(menuItem);
+
+
+
             // Loop through each global action
             foreach (Applications.Action currentAction in Actions)
             {
@@ -410,5 +418,39 @@ namespace GestureSign.UI
             }
         }
 
+        private void CopyActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
+            if (selectedItem == null) return;
+            var menuItem = (MenuItem)sender;
+            var targetApplication = Applications.ApplicationManager.Instance.Applications.FirstOrDefault(
+                   a => !(a is IgnoredApplication) && a.Name == menuItem.Header.ToString().Trim());
+
+            if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
+            {
+                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在",  String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header ,selectedItem.ActionName), 
+                    MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                    {
+                        AffirmativeButtonText = "确定",
+                        ColorScheme = MetroDialogColorScheme.Accented
+                    });
+                return;
+            }      
+            IAction selectedAction = Applications.ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
+            Applications.Action newAction = new Applications.Action()
+            {
+                ActionSettings = selectedAction.ActionSettings,
+                GestureName = selectedAction.GestureName,
+                IsEnabled = selectedAction.IsEnabled,
+                Name = selectedAction.Name,
+                PluginClass = selectedAction.PluginClass,
+                PluginFilename = selectedAction.PluginFilename
+            };
+            targetApplication.AddAction(selectedAction);
+
+            BindActions();
+
+            Applications.ApplicationManager.Instance.SaveApplications();
+        }
     }
 }
