@@ -22,13 +22,6 @@ namespace GestureSign
 
             if (createdNew)
             {
-                OperatingSystem os = Environment.OSVersion;
-                if (os.Platform != PlatformID.Win32NT || os.Version.CompareTo(new Version(6, 2)) < 0)
-                {
-                    MessageBox.Show("Require Windows 8 or better OS.", "Error");
-                    return;
-                }
-
                 string newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
