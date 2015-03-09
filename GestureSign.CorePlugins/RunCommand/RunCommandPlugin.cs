@@ -134,7 +134,7 @@ namespace GestureSign.CorePlugins.RunCommand
         private RunCommand CreateGUI()
         {
             RunCommand newGUI = new RunCommand() { Settings = _Settings };
-            //newGUI.Shown += (o, e) => { TypedGUI.Settings = _Settings; };
+            newGUI.Loaded += (o, e) => { TypedGUI.Settings = _Settings; };
 
             return newGUI;
         }

@@ -106,6 +106,7 @@ namespace GestureSign.CorePlugins.HotKey
 
                 if (_Settings.KeyCode != null)
                     _KeyCode = _Settings.KeyCode;
+                else _KeyCode.Clear();
                 //txtKey.Text = _Settings.KeyCode.ToString();
                 if (_KeyCode.Count > 0)
                 {

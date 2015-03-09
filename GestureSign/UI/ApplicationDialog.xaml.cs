@@ -215,7 +215,7 @@ namespace GestureSign.UI
         {
 
             if (cmbPlugins.SelectedItem == null) return;
-            LoadPlugin(((IPluginInfo)cmbPlugins.SelectedItem).Class, ((IPluginInfo)cmbPlugins.SelectedItem).Filename);
+            LoadPlugin((IPluginInfo)cmbPlugins.SelectedItem);
         }
 
         private void cmdCancel_Click(object sender, RoutedEventArgs e)
@@ -589,33 +589,35 @@ namespace GestureSign.UI
             cmbPlugins.SelectedIndex = 0;
         }
 
-        private void LoadPlugin(string PluginClass, string PluginFilename)
+        private void LoadPlugin(IPluginInfo selectedPlugin)
         {
             // Try to load plugin, and set current plugin to newly selected plugin
-            _PluginInfo = Plugins.PluginManager.Instance.FindPluginByClassAndFilename(PluginClass, PluginFilename);
+            _PluginInfo = selectedPlugin;
 
             // Set action name
-            if (IsPluginMatch(_CurrentAction, PluginClass, PluginFilename))
+            if (IsPluginMatch(_CurrentAction, selectedPlugin.Class, selectedPlugin.Filename))
+            {
                 txtActionName.Text = _CurrentAction.Name;
+                // Load action settings or no settings
+                _PluginInfo.Plugin.Deserialize(_CurrentAction.ActionSettings);
+            }
             else
+            {
                 txtActionName.Text = _PluginInfo.Plugin.Name;
-
-            // Load action settings or no settings
-            _PluginInfo.Plugin.Deserialize(IsPluginMatch(_CurrentAction, PluginClass, PluginFilename) ? _CurrentAction.ActionSettings : "");
-
+                _PluginInfo.Plugin.Deserialize("");
+            }
             // Does the plugin have a graphical interface
             if (_PluginInfo.Plugin.GUI != null)
                 // Show plugins graphical interface
                 ShowSettings(_PluginInfo);
             else
                 // There is no interface for this plugin, hide settings but leave action name input box
-                HideSettings(false);
+                HideSettings();
         }
 
         private void ShowSettings(IPluginInfo PluginInfo)
         {
-            DependencyObject parent = PluginInfo.Plugin.GUI.Parent;
-            if (parent != null)
+            if (PluginInfo.Plugin.GUI.Parent != null)
             {
                 this.SettingsContent.Content = null;
             }
@@ -625,9 +627,8 @@ namespace GestureSign.UI
             this.SettingsContent.Height = PluginInfo.Plugin.GUI.Height;
             this.SettingsContent.Visibility = Visibility.Visible;
         }
-        private void HideSettings(bool CollapseFully)
+        private void HideSettings()
         {
-
             this.SettingsContent.Height = 0;
             this.SettingsContent.Visibility = Visibility.Collapsed;
         }
