@@ -92,12 +92,39 @@ namespace GestureSign.CorePlugins.HotKey
 
             // Create json serializer to deserialize json file
             DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(HotKeySettings));
+            try
+            {            // Deserialize json file into actions list
+                _Settings = jSerial.ReadObject(memStream) as HotKeySettings;
+            }
+            catch (System.Runtime.Serialization.SerializationException)
+            { LoadOldSetting(SerializedData); }
 
-            // Deserialize json file into actions list
-            _Settings = jSerial.ReadObject(memStream) as HotKeySettings;
+            finally
+            {
+                if (_Settings == null)
+                    _Settings = new HotKeySettings();
+            }
+        }
 
-            if (_Settings == null)
-                _Settings = new HotKeySettings();
+        private void LoadOldSetting(string SerializedData)
+        {
+            MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
+
+            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(oldHotKeySettings));
+            try
+            {            // Deserialize json file into actions list
+                var oldSettings = jSerial.ReadObject(memStream) as oldHotKeySettings;
+                _Settings = new HotKeySettings()
+                {
+                    Windows = oldSettings.Windows,
+                    Alt = oldSettings.Alt,
+                    Control = oldSettings.Control,
+                    KeyCode = new List<System.Windows.Forms.Keys>(2),
+                    Shift = oldSettings.Shift
+                };
+                _Settings.KeyCode.Add(oldSettings.KeyCode);
+            }
+            catch { }
         }
 
         public string Serialize()
@@ -139,7 +166,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         private string GetDescription(HotKeySettings Settings)
         {
-            if (Settings == null)
+            if (Settings == null || Settings.KeyCode == null)
                 return "发送快捷键组合到程序";
 
             // Create string to store key combination and final output description
@@ -159,7 +186,10 @@ namespace GestureSign.CorePlugins.HotKey
             if (Settings.Shift)
                 strKeyCombo += "Shift + ";
 
-            strKeyCombo += Settings.KeyCode.ToString();
+            foreach (var k in Settings.KeyCode)
+                strKeyCombo += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+            strKeyCombo = strKeyCombo.Substring(0, strKeyCombo.Length - 2);
+            //   strKeyCombo += Settings.KeyCode.ToString();
 
             // Return final formatted string
             return String.Format(strFormattedOutput, strKeyCombo);
@@ -175,7 +205,6 @@ namespace GestureSign.CorePlugins.HotKey
             ManagedWinapi.KeyboardKey controlKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LControlKey);
             ManagedWinapi.KeyboardKey altKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LMenu);
             ManagedWinapi.KeyboardKey shiftKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LShiftKey);
-            ManagedWinapi.KeyboardKey modifierKey = new ManagedWinapi.KeyboardKey(Settings.KeyCode);
 
             // Deceide which keys to press
             // Windows
@@ -195,9 +224,13 @@ namespace GestureSign.CorePlugins.HotKey
                 shiftKey.Press();
 
             // Modifier
-            if (!String.IsNullOrEmpty(modifierKey.KeyName))
-                modifierKey.PressAndRelease();
-
+            if (Settings.KeyCode != null)
+                foreach (var k in Settings.KeyCode)
+                {
+                    ManagedWinapi.KeyboardKey modifierKey = new ManagedWinapi.KeyboardKey(k);
+                    if (!String.IsNullOrEmpty(modifierKey.KeyName))
+                        modifierKey.PressAndRelease();
+                }
             // Release Shift
             if (Settings.Shift)
                 shiftKey.Release();

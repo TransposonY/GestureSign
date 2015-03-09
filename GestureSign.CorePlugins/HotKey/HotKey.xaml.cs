@@ -26,7 +26,7 @@ namespace GestureSign.CorePlugins.HotKey
         #region Private Variables
 
         HotKeySettings _Settings = null;
-        System.Windows.Forms.Keys _KeyCode;
+        List<System.Windows.Forms.Keys> _KeyCode = new List<System.Windows.Forms.Keys>(2);
         IHostControl _HostControl = null;
 
         #endregion
@@ -35,7 +35,11 @@ namespace GestureSign.CorePlugins.HotKey
             InitializeComponent();
         }
 
-
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _KeyCode.Clear();
+            txtKey.Text = String.Empty;
+        }
 
         private void txtKey_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -59,8 +63,16 @@ namespace GestureSign.CorePlugins.HotKey
                 chkShift.IsChecked = true;
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
                 chkWin.IsChecked = true;
-            _KeyCode = (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
-            txtKey.Text = new ManagedWinapi.KeyboardKey(_KeyCode).KeyName;
+            var keyCode = (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
+            if (_KeyCode.Contains(keyCode)) return;
+            else
+            {
+                _KeyCode.Add(keyCode);
+                string keyCodes = string.Empty;
+                foreach (var k in _KeyCode)
+                    keyCodes += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+                txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
+            }
         }
 
 
@@ -91,8 +103,18 @@ namespace GestureSign.CorePlugins.HotKey
                 chkControl.IsChecked = _Settings.Control;
                 chkShift.IsChecked = _Settings.Shift;
                 chkAlt.IsChecked = _Settings.Alt;
-                _KeyCode = _Settings.KeyCode;
-                txtKey.Text = _Settings.KeyCode.ToString();
+
+                if (_Settings.KeyCode != null)
+                    _KeyCode = _Settings.KeyCode;
+                //txtKey.Text = _Settings.KeyCode.ToString();
+                if (_KeyCode.Count > 0)
+                {
+                    string keyCodes = string.Empty;
+                    foreach (var k in _KeyCode)
+                        keyCodes += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+                    txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
+                }
+                else txtKey.Text = "";
             }
         }
 
@@ -107,6 +129,8 @@ namespace GestureSign.CorePlugins.HotKey
         }
 
         #endregion
+
+     
 
 
     }
