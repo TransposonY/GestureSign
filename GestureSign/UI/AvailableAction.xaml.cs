@@ -178,7 +178,25 @@ namespace GestureSign.UI
             Gestures.GestureManager.Instance.GestureName = selectedGesture;
 
             ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction);
-            applicationDialog.Show();
+            applicationDialog.ShowDialog();
+            SelectAction(strApplicationHeader, selectedItem.ActionName, false);
+        }
+
+        private void SelectAction(string applicationName, string actionName, bool scrollIntoView)
+        {
+            foreach (ActionInfo ai in lstAvailableActions.Items)
+            {
+                if (ai.ApplicationName.Equals(applicationName) && ai.ActionName.Equals(actionName))
+                {
+                    lstAvailableActions.SelectedItem = ai;
+                    if (scrollIntoView)
+                    {
+                        lstAvailableActions.UpdateLayout();
+                        lstAvailableActions.ScrollIntoView(ai);
+                    }
+                    return;
+                }
+            }
         }
 
         private async void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
@@ -428,14 +446,14 @@ namespace GestureSign.UI
 
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
             {
-                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在",  String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header ,selectedItem.ActionName), 
+                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在", String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header, selectedItem.ActionName),
                     MessageDialogStyle.Affirmative, new MetroDialogSettings()
                     {
                         AffirmativeButtonText = "确定",
                         ColorScheme = MetroDialogColorScheme.Accented
                     });
                 return;
-            }      
+            }
             IAction selectedAction = Applications.ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
             Applications.Action newAction = new Applications.Action()
             {
@@ -449,7 +467,7 @@ namespace GestureSign.UI
             targetApplication.AddAction(selectedAction);
 
             BindActions();
-
+            SelectAction(targetApplication.Name, newAction.Name, true);
             Applications.ApplicationManager.Instance.SaveApplications();
         }
     }

@@ -617,14 +617,15 @@ namespace GestureSign.UI
 
         private void ShowSettings(IPluginInfo PluginInfo)
         {
-            if (PluginInfo.Plugin.GUI.Parent != null)
+            var PluginGUI = PluginInfo.Plugin.GUI;
+            if (PluginGUI.Parent != null)
             {
                 this.SettingsContent.Content = null;
             }
             // Add settings to settings panel
-            this.SettingsContent.Content = PluginInfo.Plugin.GUI;
+            this.SettingsContent.Content = PluginGUI;
 
-            this.SettingsContent.Height = PluginInfo.Plugin.GUI.Height;
+            this.SettingsContent.Height = PluginGUI.Height;
             this.SettingsContent.Visibility = Visibility.Visible;
         }
         private void HideSettings()
