@@ -77,7 +77,11 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <ListBox x:Name="lstAvailableActions" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Height="350" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="lstAvailableActions" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." />
@@ -133,7 +137,7 @@
                            HorizontalAlignment="Center"
                           VerticalContentAlignment="Center"
                            Margin="10,5,5,5"
-                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280">
+                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280" MinWidth="250">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -333,7 +337,7 @@
             </ListView.View>-->
         </ListBox>
         <Button x:Name="btnAddAction"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,130,5" Click="btnAddAction_Click" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,120,10" Click="btnAddAction_Click" Grid.Row="1" 
                         >
             <Rectangle Width="20"
                            Height="20">
@@ -343,7 +347,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="cmdEdit"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Click="cmdEditAction_Click" Margin="0,0,75,5" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Click="cmdEditAction_Click" Margin="0,0,65,10" Grid.Row="1" 
                         >
             <Rectangle Width="20"
                            Height="20"
@@ -355,7 +359,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="cmdDelete"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,20,5" Click="cmdDeleteAction_Click" >
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,10,10" Click="cmdDeleteAction_Click" Grid.Row="1" >
             <Rectangle Width="18"
                            Height="20"
                                     Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
