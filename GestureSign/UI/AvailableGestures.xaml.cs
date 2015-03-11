@@ -28,7 +28,7 @@ namespace GestureSign.UI
     {
 
         public static event EventHandler StartCapture;
-        public static event EventHandler DelGesture;
+        public static event EventHandler GestureChanged;
 
 
         public AvailableGestures()
@@ -85,14 +85,16 @@ namespace GestureSign.UI
                 //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "删除此手势会删除关联的动作\n确定删除这些手势吗？",
-                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
+            if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除这手势吗？",
+                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消", AnimateHide = false }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
                     Gestures.GestureManager.Instance.DeleteGesture(listItem.Name);
-                if (DelGesture != null)
-                    DelGesture(this, new EventArgs());
+                if (GestureChanged != null)
+                    GestureChanged(this, new EventArgs());
+
                 BindGestures();
+                Gestures.GestureManager.Instance.SaveGestures();
             }
         }
         private async void btnEditGesture_Click(object sender, RoutedEventArgs e)
@@ -108,8 +110,9 @@ namespace GestureSign.UI
             UI.GestureDefinition gd = new UI.GestureDefinition(
                 Gestures.GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
                 ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name);
-            gd.Show();
-
+            gd.ShowDialog();
+            if (GestureChanged != null)
+                GestureChanged(this, new EventArgs());
         }
 
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)

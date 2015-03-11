@@ -92,8 +92,6 @@ namespace GestureSign.Gestures
         public event RecognitionEventHandler GestureRecognized;
         public event RecognitionEventHandler GestureNotRecognized;
 
-        // Define events to notify subscribers that a gesture has been deleted
-        public event GestureEventHandler GestureDeleted;
         public event GestureEventHandler GestureEdited;
         // Define protected method to notifiy subscribers of events
         protected virtual void OnGestureRecognized(RecognitionEventArgs e)
@@ -106,10 +104,6 @@ namespace GestureSign.Gestures
             if (GestureNotRecognized != null) GestureNotRecognized(this, e);
         }
 
-        protected virtual void OnGestureDeleted(GestureEventArgs e)
-        {
-            if (GestureDeleted != null) GestureDeleted(this, e);
-        }
         protected virtual void OnGestureEdited(GestureEventArgs e)
         {
             if (GestureEdited != null) GestureEdited(this, e);
@@ -237,17 +231,13 @@ namespace GestureSign.Gestures
 
         public void DeleteGesture(string GestureName)
         {
-            _Gestures.RemoveAll(g => g.Name.ToLower().Trim() == GestureName.Trim().ToLower());
-            SaveGestures();
-
-            OnGestureDeleted(new GestureEventArgs(GestureName));
+            _Gestures.RemoveAll(g => g.Name.Trim() == GestureName.Trim());
         }
 
         public void RenameGesture(string gestureName, string newGestureName)
         {
             if (gestureName.Equals(newGestureName)) return;
             _Gestures.Find(g => g.Name == gestureName).Name = newGestureName;
-            SaveGestures();
 
             OnGestureEdited(new GestureEventArgs(gestureName, newGestureName));
         }

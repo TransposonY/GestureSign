@@ -56,8 +56,6 @@ namespace GestureSign.Applications
             Input.TouchCapture.Instance.CaptureStarted += new PointsCapturedEventHandler(TouchCapture_CaptureStarted);
             Input.TouchCapture.Instance.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
 
-            // Consume Gesture Deleted events
-            Gestures.GestureManager.Instance.GestureDeleted += new GestureEventHandler(GestureManager_GestureDeleted);
             Gestures.GestureManager.Instance.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
             if (!LoadApplications())
@@ -88,17 +86,7 @@ namespace GestureSign.Applications
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
-
-        protected void GestureManager_GestureDeleted(object sender, GestureEventArgs e)
-        {
-            // Remove any global actions that use this gesture
-            GetGlobalApplication().RemoveAllActions(a => a.GestureName == e.GestureName);
-
-            // Remove any user application actions that use this gesture
-            foreach (UserApplication uApp in Applications.OfType<UserApplication>())
-                uApp.RemoveAllActions(a => a.GestureName == e.GestureName);
-            SaveApplications();
-        }
+              
         protected void GestureManager_GestureEdited(object sender, GestureEventArgs e)
         {
             GetGlobalApplication().Actions.FindAll(a => a.GestureName == e.GestureName).ForEach(a => a.GestureName = e.NewGestureName);

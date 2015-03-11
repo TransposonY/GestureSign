@@ -43,7 +43,7 @@ namespace GestureSign.UI
 
             ApplicationDialog.ActionsChanged += ActionDefinition_ActionsChanged;
 
-            AvailableGestures.DelGesture += ActionDefinition_ActionsChanged;
+            AvailableGestures.GestureChanged += ActionDefinition_ActionsChanged;
         }
 
 
