@@ -27,12 +27,12 @@ namespace GestureSign.Configuration.IO
 
         #region Public Methods
 
-        public static bool SaveObject<T>(object SerializableObject, string Filename)
+        public static bool SaveObject<T>(object SerializableObject, string filePath)
         {
-            return SaveObject<T>(SerializableObject, Filename, null);
+            return SaveObject<T>(SerializableObject, filePath, null);
         }
 
-        public static bool SaveObject<T>(object SerializableObject, string Filename, Type[] KnownTypes)
+        public static bool SaveObject<T>(object SerializableObject, string filePath, Type[] KnownTypes)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace GestureSign.Configuration.IO
                 DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
 
                 // Open json file
-                StreamWriter sWrite = new StreamWriter(Path.Combine("Data", Filename));
+                StreamWriter sWrite = new StreamWriter(filePath);
 
                 // Serialize actions into json file
                 jSerial.WriteObject(sWrite.BaseStream, SerializableObject);
@@ -55,18 +55,13 @@ namespace GestureSign.Configuration.IO
             }
         }
 
-        public static T LoadObject<T>(string Filename)
-        {
-            return LoadObject<T>(Filename, null);
-        }
 
-        public static T LoadObject<T>(string Filename, Type[] KnownTypes)
+        public static T LoadObject<T>(string filePath, Type[] KnownTypes, bool backup)
         {
             try
             {
-                string path = Path.Combine("Data", Filename);
-                if (!File.Exists(path)) return default(T);
-                StreamReader sRead = new StreamReader(path);
+                if (!File.Exists(filePath)) return default(T);
+                StreamReader sRead = new StreamReader(filePath);
                 int BOM = sRead.BaseStream.ReadByte();
                 if (BOM == 0xEF)
                     sRead.BaseStream.Seek(3, SeekOrigin.Begin);
@@ -83,7 +78,8 @@ namespace GestureSign.Configuration.IO
             }
             catch (System.Runtime.Serialization.SerializationException)
             {
-                BackupFile(Filename);
+                if (backup)
+                    BackupFile(filePath);
                 return default(T);
             }
             catch (Exception)
@@ -92,16 +88,15 @@ namespace GestureSign.Configuration.IO
             }
         }
 
-        private static void BackupFile(string filename)
+        private static void BackupFile(string filePath)
         {
             try
             {
-                string path = Path.Combine("Data", filename);
-                string backupFileName = Path.Combine("Data",
-                    Path.GetFileNameWithoutExtension(path) +
+                string backupFileName = Path.Combine(Path.GetDirectoryName(filePath),
+                    Path.GetFileNameWithoutExtension(filePath) +
             DateTime.Now.ToString("yyMMddHHmmssffff") +
-            Path.GetExtension(path));
-                File.Copy(path, backupFileName, true);
+            Path.GetExtension(filePath));
+                File.Copy(filePath, backupFileName, true);
             }
             catch { }
         }

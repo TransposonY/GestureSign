@@ -146,7 +146,7 @@ namespace GestureSign.Gestures
             try
             {
                 // Load gestures from file, create empty list if load failed
-                _Gestures = Configuration.IO.FileManager.LoadObject<List<IGesture>>("Gestures.json", new Type[] { typeof(Gesture) });
+                _Gestures = Configuration.IO.FileManager.LoadObject<List<IGesture>>(Path.Combine("Data", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
 
                 if (Gestures == null)
                     return false;
@@ -164,7 +164,7 @@ namespace GestureSign.Gestures
             try
             {
                 // Save gestures to file
-                Configuration.IO.FileManager.SaveObject<List<IGesture>>(Gestures, "Gestures.json");
+                Configuration.IO.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine("Data", "Gestures.json"));
 
                 return true;
             }
@@ -182,7 +182,7 @@ namespace GestureSign.Gestures
 
         public string GetGestureSetNameMatch(List<List<Point>> Points)//PointF[]
         {
-            if (Points.Count==0|| Gestures.Length == 0) return null;
+            if (Points.Count == 0 || Gestures.Length == 0) return null;
             // Update gesture analyzer with latest gestures and get gesture match from current points array
             // Comparison results are sorted descending from highest to lowest probability
             IEnumerable<IGesture> gestures = Gestures.Where(g => g.Points.Count == Points.Count);
@@ -243,10 +243,10 @@ namespace GestureSign.Gestures
             OnGestureDeleted(new GestureEventArgs(GestureName));
         }
 
-        public void RenameGesture(string gestureName,string newGestureName)
+        public void RenameGesture(string gestureName, string newGestureName)
         {
             if (gestureName.Equals(newGestureName)) return;
-            _Gestures.Find(g => g.Name == gestureName).Name = newGestureName; 
+            _Gestures.Find(g => g.Name == gestureName).Name = newGestureName;
             SaveGestures();
 
             OnGestureEdited(new GestureEventArgs(gestureName, newGestureName));

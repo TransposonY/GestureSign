@@ -136,6 +136,58 @@ namespace GestureSign.UI
                 as IgnoredApplication).IsEnabled = false;
             ApplicationManager.Instance.SaveApplications();
         }
+
+        private void ImportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "忽略程序文件|*.json", Title = "导入忽略程序定义文件", CheckFileExists = true };
+            if (ofdApplications.ShowDialog().Value)
+            {
+                int addcount = 0;
+                List<IApplication> newApps = Configuration.IO.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                if (newApps != null)
+                    foreach (IApplication newApp in newApps)
+                    {
+                        if (newApp is IgnoredApplication)
+                        {
+                            if (Applications.ApplicationManager.Instance.ApplicationExists(newApp.Name))
+                            {
+                                var existingApp = Applications.ApplicationManager.Instance.Applications.Find(a => a is IgnoredApplication && a.Name == newApp.Name);
+                                DataConverter dc = new DataConverter();
+
+                                var result = MessageBox.Show(String.Format("{0} 已经存在 \"{1}\" ，是否覆盖？", dc.Convert(existingApp.MatchUsing, null, null, null), existingApp.MatchString), "已存在同名程序", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    Applications.ApplicationManager.Instance.RemoveApplication(newApp.Name);
+                                    Applications.ApplicationManager.Instance.AddApplication(newApp);
+                                    addcount++;
+                                }
+                                else if (result == MessageBoxResult.Cancel) goto End;
+                            }
+                            else
+                            {
+                                Applications.ApplicationManager.Instance.AddApplication(newApp);
+                                addcount++;
+                            }
+                        }
+                    }
+            End:
+                if (addcount != 0)
+                {
+                    BindIgnoredApplications();
+                    Applications.ApplicationManager.Instance.SaveApplications();
+                }
+                MessageBox.Show(String.Format("已添加 {0} 个程序", addcount), "导入完成");
+            }
+        }
+
+        private void ExportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.json", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            if (sfdApplications.ShowDialog().Value)
+            {
+                Configuration.IO.FileManager.SaveObject<List<IApplication>>(Applications.ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(IgnoredApplication) });
+            }
+        }
     }
 
     [ValueConversion(typeof(MatchUsing), typeof(string))]
@@ -161,7 +213,7 @@ namespace GestureSign.UI
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
-          
+
         }
     }
     [ValueConversion(typeof(bool), typeof(string))]

@@ -24,6 +24,12 @@
 
     <Grid >
         <ListView x:Name="lstIgnoredApplications" BorderThickness="0" Margin="0" SelectionChanged="lstIgnoredApplications_SelectionChanged">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="ImportIgnoredAppsMenuItem" Header="导入" Click="ImportIgnoredAppsMenuItem_Click"  />
+                    <MenuItem x:Name="ExportIgnoredAppsMenuItem" Header="导出" Click="ExportIgnoredAppsMenuItem_Click"  />
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>

@@ -441,7 +441,7 @@ namespace GestureSign.UI
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
-            var targetApplication = Applications.ApplicationManager.Instance.Applications.FirstOrDefault(
+            var targetApplication = Applications.ApplicationManager.Instance.Applications.Find(
                    a => !(a is IgnoredApplication) && a.Name == menuItem.Header.ToString().Trim());
 
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
@@ -469,6 +469,64 @@ namespace GestureSign.UI
             BindActions();
             SelectAction(targetApplication.Name, newAction.Name, true);
             Applications.ApplicationManager.Instance.SaveApplications();
+        }
+
+        private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "动作文件|*.json", Title = "导入动作定义文件", CheckFileExists = true };
+            if (ofdApplications.ShowDialog().Value)
+            {
+                int addcount = 0;
+                List<IApplication> newApps = Configuration.IO.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                if (newApps != null)
+                    foreach (IApplication newApp in newApps)
+                    {
+                        if (newApp is IgnoredApplication) continue;
+                        if (Applications.ApplicationManager.Instance.ApplicationExists(newApp.Name))
+                        {
+                            var existingApp = Applications.ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
+                            foreach (IAction newAction in newApp.Actions)
+                            {
+                                if (existingApp.Actions.Exists(action => action.Name.Equals(newAction.Name)))
+                                {
+                                    var result = MessageBox.Show(String.Format("在 \"{0}\" 中已经存在 \"{1}\" 动作，是否覆盖？", existingApp.Name, newAction.Name), "已存在同名动作", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                    if (result == MessageBoxResult.Yes)
+                                    {
+                                        existingApp.Actions.RemoveAll(ac => ac.Name.Equals(newAction.Name));
+                                        existingApp.AddAction(newAction);
+                                        addcount++;
+                                    }
+                                    else if (result == MessageBoxResult.Cancel) goto End;
+                                }
+                                else
+                                {
+                                    existingApp.AddAction(newAction);
+                                    addcount++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Applications.ApplicationManager.Instance.AddApplication(newApp);
+                        }
+                    }
+            End:
+                if (addcount != 0)
+                {
+                    Applications.ApplicationManager.Instance.SaveApplications();
+                    BindActions();
+                }
+                MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
+            }
+        }
+
+        private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            if (sfdApplications.ShowDialog().Value)
+            {
+                Configuration.IO.FileManager.SaveObject<List<IApplication>>(Applications.ApplicationManager.Instance.Applications.Select(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+            }
         }
     }
 }

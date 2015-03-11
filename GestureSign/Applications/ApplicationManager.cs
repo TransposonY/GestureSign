@@ -145,13 +145,13 @@ namespace GestureSign.Applications
         public bool SaveApplications()
         {
             // Save application list
-            return Configuration.IO.FileManager.SaveObject<List<IApplication>>(_Applications, "Applications.json", new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) });
+            return Configuration.IO.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) });
         }
 
         public bool LoadApplications()
         {
             // Load application list from file
-            _Applications = Configuration.IO.FileManager.LoadObject<List<IApplication>>("Applications.json", new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) });
+            _Applications = Configuration.IO.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) }, true);
 
             // Ensure we got an object back
             if (_Applications == null)

@@ -74,6 +74,12 @@
     </UserControl.Resources>
     <DockPanel>
         <ListBox x:Name="lstAvailableGestures"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableGestures_SelectionChanged" VerticalAlignment="Top" Height="325" DockPanel.Dock="Top">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="ImportGestureMenuItem" Header="导入手势" Click="ImportGestureMenuItem_Click" />
+                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出手势" Click="ExportGestureMenuItem_Click" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True"></WrapPanel>

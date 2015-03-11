@@ -81,6 +81,9 @@
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." />
+                    <Separator></Separator>
+                    <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" />
+                    <MenuItem x:Name="ExportActionMenuItem" Header="导出动作" Click="ExportActionMenuItem_Click" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.GroupStyle>

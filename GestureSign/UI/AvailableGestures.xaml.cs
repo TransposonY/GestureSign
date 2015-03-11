@@ -29,7 +29,7 @@ namespace GestureSign.UI
 
         public static event EventHandler StartCapture;
         public static event EventHandler DelGesture;
-    
+
 
         public AvailableGestures()
         {
@@ -123,7 +123,51 @@ namespace GestureSign.UI
                     StartCapture(this, new EventArgs());
             }
         }
+        private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofdGestures = new Microsoft.Win32.OpenFileDialog() { Filter = "手势文件|*.json", Title = "导入手势数据文件", CheckFileExists = true };
+            if (ofdGestures.ShowDialog().Value)
+            {
+                int addcount = 0;
+                List<IGesture> newGestures = Configuration.IO.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(GestureSign.Gestures.Gesture) }, false);
+                if (newGestures != null)
+                    foreach (IGesture newGesture in newGestures)
+                    {
+                        if (GestureSign.Gestures.GestureManager.Instance.GestureExists(newGesture.Name))
+                        {
+                            var result = MessageBox.Show(String.Format("已经存在手势 \"{0}\" ，是否覆盖？", newGesture.Name), "已存在同名手势", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                Gestures.GestureManager.Instance.DeleteGesture(newGesture.Name);
+                                Gestures.GestureManager.Instance.AddGesture(newGesture);
+                                addcount++;
+                            }
+                            else if (result == MessageBoxResult.Cancel) goto End;
+                        }
+                        else
+                        {
+                            Gestures.GestureManager.Instance.AddGesture(newGesture);
+                            addcount++;
+                        }
+                    }
+            End:
+                if (addcount != 0)
+                {
+                    Gestures.GestureManager.Instance.SaveGestures();
+                    BindGestures();
+                }
+                MessageBox.Show(String.Format("已添加 {0} 个手势", addcount), "导入完成");
+            }
+        }
 
+        private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog sfdGestures = new Microsoft.Win32.SaveFileDialog() { Filter = "手势文件|*.json", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            if (sfdGestures.ShowDialog().Value)
+            {
+                Configuration.IO.FileManager.SaveObject<List<IGesture>>(Gestures.GestureManager.Instance.Gestures, sfdGestures.FileName);
+            }
+        }
 
         #region Private Methods
 
@@ -156,6 +200,8 @@ namespace GestureSign.UI
         }
 
         #endregion
+
+
 
 
 
