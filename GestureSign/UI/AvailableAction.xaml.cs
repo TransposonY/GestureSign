@@ -339,19 +339,30 @@ namespace GestureSign.UI
                     currentAction.ActionSettings = pluginInfo.Plugin.Serialize();
                 // Get handle of action gesture
                 IGesture actionGesture = Gestures.GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
+               
+                ActionInfo ai;
 
-                // Continue if we don't have a gesture
                 if (actionGesture == null)
-                    continue;
+                {
+                    ai = new ActionInfo(
+                       !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginInfo.Plugin.Name,
+                       ApplicationName,
+                       pluginInfo.Plugin.Description,
+                       null,
+                       String.Empty,
+                       currentAction.IsEnabled);
 
-                ActionInfo ai = new ActionInfo(
-                   !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginInfo.Plugin.Name,
-                    ApplicationName,
-                    pluginInfo.Plugin.Description,
-                    GestureImage.CreateImage(actionGesture.Points, sizThumbSize),
-                    actionGesture.Name,
-                    currentAction.IsEnabled);
-
+                }
+                else
+                {
+                    ai = new ActionInfo(
+                      !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginInfo.Plugin.Name,
+                       ApplicationName,
+                       pluginInfo.Plugin.Description,
+                       GestureImage.CreateImage(actionGesture.Points, sizThumbSize),
+                       actionGesture.Name,
+                       currentAction.IsEnabled);
+                }
                 ActionInfos.Add(ai);
 
             }
