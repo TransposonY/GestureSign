@@ -137,9 +137,13 @@ namespace GestureSign.Applications
             _Applications.Remove(Application);
         }
 
-        public void RemoveApplication(string applicationName)
+        public void RemoveApplications(string applicationName)
         {
-            RemoveApplication(_Applications.Find(app => app.Name == applicationName));
+            _Applications.RemoveAll(app => app.Name.Equals(applicationName));
+        }
+        public void RemoveIgnoredApplications(string applicationName)
+        {
+            _Applications.RemoveAll(app => app is IgnoredApplication && app.Name.Equals(applicationName));
         }
 
         public bool SaveApplications()

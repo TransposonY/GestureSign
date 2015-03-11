@@ -83,16 +83,11 @@ namespace GestureSign.UI
         private void btnDeleteIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             foreach (IgnoredApplication lvItem in this.lstIgnoredApplications.SelectedItems)
-                RemoveIgnoredApplication(lvItem.Name);
+                ApplicationManager.Instance.RemoveIgnoredApplications(lvItem.Name);
             ApplicationManager.Instance.SaveApplications();
             BindIgnoredApplications();
         }
-
-        private void RemoveIgnoredApplication(string Name)
-        {
-            ApplicationManager.Instance.RemoveApplication(ApplicationManager.Instance.GetIgnoredApplications().Single(a => a.Name == Name));
-        }
-
+        
         private void btnEditIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             IgnoredApplication ia = this.lstIgnoredApplications.SelectedItem as IgnoredApplication;
@@ -157,7 +152,7 @@ namespace GestureSign.UI
                                 var result = MessageBox.Show(String.Format("{0} 已经存在 \"{1}\" ，是否覆盖？", dc.Convert(existingApp.MatchUsing, null, null, null), existingApp.MatchString), "已存在同名程序", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                 if (result == MessageBoxResult.Yes)
                                 {
-                                    Applications.ApplicationManager.Instance.RemoveApplication(newApp.Name);
+                                    Applications.ApplicationManager.Instance.RemoveIgnoredApplications(newApp.Name);
                                     Applications.ApplicationManager.Instance.AddApplication(newApp);
                                     addcount++;
                                 }
