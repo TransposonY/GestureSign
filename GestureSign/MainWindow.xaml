@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
         xmlns:local="clr-namespace:GestureSign.UI" Closed="MetroWindow_Closed"
-        Title="设置" Height="450" Width="680" ShowIconOnTitleBar="False" ShowTitleBar="True"  Icon="Resources/normal.ico" BorderThickness="1" BorderBrush="{StaticResource AccentColorBrush}" ResizeMode="CanMinimize">
+        Title="设置" Height="450" Width="640" ShowIconOnTitleBar="False" ShowTitleBar="True"  Icon="Resources/normal.ico" BorderThickness="1" BorderBrush="{StaticResource AccentColorBrush}" MinWidth="500" MinHeight="300">
     <!--GlowBrush="{StaticResource AccentColorBrush}"-->
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
@@ -21,19 +21,19 @@
     </controls:MetroWindow.Flyouts>
     <Grid>
         <TabControl TabStripPlacement="Left"  >
-            <TabItem Header="动作">
+            <TabItem Header="动作" controls:ControlsHelper.HeaderFontSize="32">
                 <local:AvailableAction x:Name="availableAction"></local:AvailableAction>
             </TabItem>
-            <TabItem Header="手势">
+            <TabItem Header="手势"    controls:ControlsHelper.HeaderFontSize="32">
                 <local:AvailableGestures x:Name="availableGestures"></local:AvailableGestures>
             </TabItem>
-            <TabItem Header="忽略清单">
+            <TabItem Header="忽略" controls:ControlsHelper.HeaderFontSize="32">
                 <local:IgnoredApplications x:Name="ignoredApplications"/>
             </TabItem>
-            <TabItem Header="首选项">
+            <TabItem Header="选项" controls:ControlsHelper.HeaderFontSize="32">
                 <local:Options Width="Auto" Height="Auto"/>
             </TabItem>
-            <TabItem Header="关于">
+            <TabItem Header="关于" controls:ControlsHelper.HeaderFontSize="32">
                 <StackPanel > 
                     <TextBlock TextWrapping="Wrap" Text="GestureSign" Margin="10,10,0,0" FontWeight="Bold" FontSize="16"/>
                     <TextBox x:Name="AboutTextBox" HorizontalAlignment="Left" Height="372" Margin="10,10,0,0" Text="Author:   TransposonY&#xA;&#xA;如有发现bug或建议，欢迎反馈：&#xA;553078206@qq.com&#xA;&#xA;&#xA;&#xA;&#xA;This project base on the following project:&#xA;http://highsign.codeplex.com/&#xA;license:http://highsign.codeplex.com/license&#xA;&#xA;MahApps.Metro&#xA;https://github.com/MahApps/MahApps.Metro&#xA;license:http://www.opensource.org/licenses/MS-PL&#xA;" VerticalAlignment="Top" BorderThickness="0" IsReadOnly="True" FontFamily="Microsoft YaHei UI"/>
