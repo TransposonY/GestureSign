@@ -120,81 +120,107 @@ namespace GestureSign.Input
             public int wParam;
         }
 
+        public interface TouchData
+        {
+            bool Status { get; }
+            int ID { get; }
+            int X { get; }
+            int Y { get; }
+        }
+
         [StructLayoutAttribute(LayoutKind.Sequential)]
-        private struct sTouchData
+        private struct sTouchData : TouchData
         {
             /// BYTE->unsigned char
-            public byte status;
+            private byte status;
             /// BYTE->unsigned char
-            public byte num;
+            private byte num;
             /// short
-            public short x_position;
+            private short x_position;
             /// short
-            public short y_position;
+            private short y_position;
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return Convert.ToBoolean(status); } }
         }
 
         [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct iTouchData
+        private struct iTouchData : TouchData
         {
             /// BYTE->unsigned char
-            public byte status;
+            private byte status;
             /// BYTE->unsigned char
-            public byte num;
+            private byte num;
             /// short
-            public int x_position;
+            private int x_position;
             /// short
-            public int y_position;
+            private int y_position;
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return Convert.ToBoolean(status); } }
         }
 
         [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct gTouchData
+        private struct gTouchData : TouchData
         {
             /// BYTE->unsigned char
-            public byte status;
+            private byte status;
             /// BYTE->unsigned char
-            public byte num;
+            private byte num;
             /// short
-            public short x_position;
+            private short x_position;
             /// short
-            public short y_position;
+            private short y_position;
 
             [MarshalAs(UnmanagedType.U4)]
-            public int gap;
+            private int gap;
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return Convert.ToBoolean(status); } }
         }
         // HID#FTSC0001&Col01#4&14bbeed5&0&0000#
         [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct dTouchData
+        private struct dTouchData : TouchData
         {
             /// BYTE->unsigned char
-            public byte status;
+            private byte status;
             /// BYTE->unsigned char
-            public byte num;
+            private byte num;
             /// short
             private short x;
-            public short x_position;
+            private short x_position;
             /// short
             private short y;
-            public short y_position;
+            private short y_position;
 
             [MarshalAs(UnmanagedType.U4)]
-            public int gap;
+            private int gap;
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return Convert.ToBoolean(status); } }
         }
         //HID#WCOM5008&Col01#4&2b144297&0&0000
         [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-        private struct wcTouchData
+        private struct wcTouchData : TouchData
         {
             /// BYTE->unsigned char
             private byte TouchDataStatus;
             /// BYTE->unsigned char
-            public byte num;
+            private byte num;
             /// short
             private byte gap;
 
-            public short x_position;
+            private short x_position;
             /// short
-            public short y_position;
-
-            public bool status { get { return TouchDataStatus == (0x05); } }
+            private short y_position;
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return TouchDataStatus == (0x05); } }
         }
         #endregion Windows.h structure declarations
 
@@ -207,11 +233,6 @@ namespace GestureSign.Input
                 NumberOfTouchscreens = EnumerateDevices();
             }
             catch (Exception) { }
-
-
-            //Load System.Dynamic.dll 
-            dynamic loader1 = 233;
-            int loader2 = loader1 + 1;
         }
 
         private void RegisterDevices(IntPtr hwnd)
@@ -461,12 +482,12 @@ namespace GestureSign.Input
 
                         for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                         {
-                            dynamic touch = Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dataIndex * touchlength), touchDataType);
-                           
+                            TouchData touch =(TouchData) Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dataIndex * touchlength), touchDataType);
+
                             if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                             {
-                                int X = IsAxisCorresponds.Value ? touch.x_position : touch.y_position;
-                                int Y = IsAxisCorresponds.Value ? touch.y_position : touch.x_position;
+                                int X = IsAxisCorresponds.Value ? touch.X : touch.Y;
+                                int Y = IsAxisCorresponds.Value ? touch.Y : touch.X;
 
                                 X = (int)Math.Round(XAxisDirection.Value ?
                                     X / GestureSign.Configuration.AppConfig.XRatio :
@@ -476,15 +497,15 @@ namespace GestureSign.Input
                                    Y / GestureSign.Configuration.AppConfig.YRatio :
                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Configuration.AppConfig.YRatio);
 
-                                outputTouchs.Add(new RawTouchData(Convert.ToBoolean(touch.status), touch.num, new Point(X, Y)));
+                                outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
 
                             }
                             else
                             {
                                 outputTouchs.Add(new RawTouchData(
-                                  Convert.ToBoolean(touch.status),
-                                  touch.num,
-                                  IsAxisCorresponds.Value ? new Point(touch.x_position, touch.y_position) : new Point(touch.y_position, touch.x_position)));
+                                 touch.Status,
+                                  touch.ID,
+                                  IsAxisCorresponds.Value ? new Point(touch.X, touch.Y) : new Point(touch.Y, touch.X)));
 
                             }
                             if (--requiringTouchDataCount == 0) break;
