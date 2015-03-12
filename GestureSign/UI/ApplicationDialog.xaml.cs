@@ -394,10 +394,10 @@ namespace GestureSign.UI
             MatchUsingComboBoxItem mciExecutableFilename = new MatchUsingComboBoxItem() { DisplayText = "文件名", MatchUsing = MatchUsing.ExecutableFilename };
 
             cmbMatchUsingRunning.DisplayMemberPath = cmbMatchUsingCustom.DisplayMemberPath = "DisplayText";
-            cmbMatchUsingRunning.ItemsSource = (new MatchUsingComboBoxItem[] { mciWindowClass, mciWindowTitle, mciExecutableFilename });
-            cmbMatchUsingCustom.ItemsSource = (new MatchUsingComboBoxItem[] { mciWindowClass, mciWindowTitle, mciExecutableFilename });
+            cmbMatchUsingRunning.ItemsSource = (new MatchUsingComboBoxItem[] { mciExecutableFilename, mciWindowTitle, mciWindowClass });
+            cmbMatchUsingCustom.ItemsSource = (new MatchUsingComboBoxItem[] { mciExecutableFilename, mciWindowTitle, mciWindowClass });
 
-            cmbMatchUsingRunning.SelectedItem = cmbMatchUsingCustom.SelectedItem = mciWindowClass;
+            cmbMatchUsingRunning.SelectedItem = cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
         }
 
 
