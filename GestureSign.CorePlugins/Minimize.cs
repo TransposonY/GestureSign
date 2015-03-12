@@ -62,9 +62,13 @@ namespace GestureSign.CorePlugins
         {
             try
             {
+                var className = ActionPoint.Window.ClassName;
                 // Don't attempt to minimize tool windows (including Windows Program Manager)
-                if (ActionPoint.Window.ClassName == "Windows.UI.Core.CoreWindow" ||
-                    (ActionPoint.Window.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) == WindowExStyleFlags.TOOLWINDOW)
+                if (className.Equals("Windows.UI.Core.CoreWindow") ||
+                   className.Equals("ImmersiveBackgroundWindow") ||
+                   className.Equals("ImmersiveLauncher") ||
+                   (ActionPoint.Window.Style & WindowStyleFlags.POPUP) == WindowStyleFlags.POPUP ||
+                   (ActionPoint.Window.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) == WindowExStyleFlags.TOOLWINDOW)
                     return false;
 
                 // Minimize window
