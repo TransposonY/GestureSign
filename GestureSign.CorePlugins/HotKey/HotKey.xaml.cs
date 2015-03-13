@@ -63,7 +63,8 @@ namespace GestureSign.CorePlugins.HotKey
                 chkShift.IsChecked = true;
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
                 chkWin.IsChecked = true;
-            var keyCode = (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
+            var keyCode = (e.Key == Key.System && e.SystemKey == Key.F10) ? (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(Key.F10) :
+                (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
             if (_KeyCode.Contains(keyCode)) return;
             else
             {
@@ -131,7 +132,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         #endregion
 
-     
+
 
 
     }
