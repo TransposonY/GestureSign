@@ -131,6 +131,7 @@
     <Compile Include="HotKey\HotKeySettings.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TouchKeyboard\TouchKeyboard.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -156,6 +157,9 @@
     <Compile Include="SendKeystrokes\SendKeystrokes.cs" />
     <Compile Include="SendKeystrokes\SendKeystrokesControl.xaml.cs">
       <DependentUpon>SendKeystrokesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TouchKeyboard\TouchKeyboardUI.xaml.cs">
+      <DependentUpon>TouchKeyboardUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Volume\Volume.xaml.cs">
       <DependentUpon>Volume.xaml</DependentUpon>
@@ -195,6 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SendKeystrokes\SendKeystrokesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TouchKeyboard\TouchKeyboardUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

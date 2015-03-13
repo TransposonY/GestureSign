@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.TouchKeyboard.TouchKeyboardUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="300">
+    <Grid>
+        <RadioButton x:Name="ShowTouchKeyboardRB" Content="显示键盘" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" GroupName="0" FontSize="20" FontFamily="Microsoft YaHei UI"/>
+        <RadioButton x:Name="HideTouchKeyboardRB" Content="隐藏键盘" HorizontalAlignment="Left" Margin="186,14,0,0" VerticalAlignment="Top" GroupName="0" FontSize="20" FontFamily="Microsoft YaHei UI"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,55,0,0" TextWrapping="Wrap" Text="提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度" VerticalAlignment="Top" FontSize="14" Width="280"/>
+
+    </Grid>
+</UserControl>
