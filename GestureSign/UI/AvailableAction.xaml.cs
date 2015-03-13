@@ -317,52 +317,58 @@ namespace GestureSign.UI
         }
         private void AddActionsToGroup(string ApplicationName, IEnumerable<IAction> Actions)
         {
-
             MenuItem menuItem = new MenuItem() { Header = ApplicationName };
             menuItem.Click += CopyActionMenuItem_Click;
             this.CopyActionMenuItem.Items.Add(menuItem);
 
-
-
+            string description = String.Empty;
+            DrawingImage Thumb = null;
+            string gestureName = String.Empty;
+            string pluginName = String.Empty;
             // Loop through each global action
             foreach (Applications.Action currentAction in Actions)
             {
                 // Ensure this action has a plugin
-                if (!Plugins.PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
-                    continue;
+                if (Plugins.PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
+                {
 
-                // Get plugin for this action
-                IPluginInfo pluginInfo = Plugins.PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
+                    // Get plugin for this action
+                    IPluginInfo pluginInfo = Plugins.PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
 
-                // Feed settings to plugin
-                if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
-                    currentAction.ActionSettings = pluginInfo.Plugin.Serialize();
+                    // Feed settings to plugin
+                    if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
+                        currentAction.ActionSettings = pluginInfo.Plugin.Serialize();
+
+                    pluginName = pluginInfo.Plugin.Name;
+                    description = pluginInfo.Plugin.Description;
+                }
+                else
+                {
+                    pluginName = String.Empty;
+                    description = "无关联动作";
+                }
                 // Get handle of action gesture
                 IGesture actionGesture = Gestures.GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
-               
-                ActionInfo ai;
+
 
                 if (actionGesture == null)
                 {
-                    ai = new ActionInfo(
-                       !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginInfo.Plugin.Name,
-                       ApplicationName,
-                       pluginInfo.Plugin.Description,
-                       null,
-                       String.Empty,
-                       currentAction.IsEnabled);
+                    Thumb = null;
+                    gestureName = String.Empty;
 
                 }
                 else
                 {
-                    ai = new ActionInfo(
-                      !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginInfo.Plugin.Name,
-                       ApplicationName,
-                       pluginInfo.Plugin.Description,
-                       GestureImage.CreateImage(actionGesture.Points, sizThumbSize),
-                       actionGesture.Name,
-                       currentAction.IsEnabled);
+                    Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize);
+                    gestureName = actionGesture.Name;
                 }
+                ActionInfo ai = new ActionInfo(
+                   !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
+                    ApplicationName,
+                    description,
+                    Thumb,
+                    gestureName,
+                    currentAction.IsEnabled);
                 ActionInfos.Add(ai);
 
             }
