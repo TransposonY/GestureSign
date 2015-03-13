@@ -171,7 +171,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         private string GetDescription(HotKeySettings Settings)
         {
-            if (Settings == null || Settings.KeyCode == null)
+            if (Settings == null || Settings.KeyCode == null || Settings.KeyCode.Count == 0)
                 return "发送快捷键组合到程序";
 
             // Create string to store key combination and final output description
