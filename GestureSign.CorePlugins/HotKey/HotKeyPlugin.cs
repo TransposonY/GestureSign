@@ -70,7 +70,8 @@ namespace GestureSign.CorePlugins.HotKey
 
         public bool Gestured(PointInfo ActionPoint)
         {
-            if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
+            if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
+                ActionPoint.Window != null)
                 ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
 
             SendShortcutKeys(_Settings);
