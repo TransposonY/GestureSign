@@ -479,38 +479,39 @@ namespace GestureSign.Input
                                 break;
                             default: break;
                         }
-
-                        for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
+                        for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
                         {
-                            TouchData touch =(TouchData) Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dataIndex * touchlength), touchDataType);
-
-                            if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
+                            for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                             {
-                                int X = IsAxisCorresponds.Value ? touch.X : touch.Y;
-                                int Y = IsAxisCorresponds.Value ? touch.Y : touch.X;
+                                TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
-                                X = (int)Math.Round(XAxisDirection.Value ?
-                                    X / GestureSign.Configuration.AppConfig.XRatio :
-                                    System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X / GestureSign.Configuration.AppConfig.XRatio);
+                                if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
+                                {
+                                    int X = IsAxisCorresponds.Value ? touch.X : touch.Y;
+                                    int Y = IsAxisCorresponds.Value ? touch.Y : touch.X;
 
-                                Y = (int)Math.Round(YAxisDirection.Value ?
-                                   Y / GestureSign.Configuration.AppConfig.YRatio :
-                                   System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Configuration.AppConfig.YRatio);
+                                    X = (int)Math.Round(XAxisDirection.Value ?
+                                        X / GestureSign.Configuration.AppConfig.XRatio :
+                                        System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X / GestureSign.Configuration.AppConfig.XRatio);
 
-                                outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
+                                    Y = (int)Math.Round(YAxisDirection.Value ?
+                                       Y / GestureSign.Configuration.AppConfig.YRatio :
+                                       System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Configuration.AppConfig.YRatio);
 
+                                    outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
+
+                                }
+                                else
+                                {
+                                    outputTouchs.Add(new RawTouchData(
+                                     touch.Status,
+                                      touch.ID,
+                                      IsAxisCorresponds.Value ? new Point(touch.X, touch.Y) : new Point(touch.Y, touch.X)));
+
+                                }
+                                if (--requiringTouchDataCount == 0) break;
                             }
-                            else
-                            {
-                                outputTouchs.Add(new RawTouchData(
-                                 touch.Status,
-                                  touch.ID,
-                                  IsAxisCorresponds.Value ? new Point(touch.X, touch.Y) : new Point(touch.Y, touch.X)));
-
-                            }
-                            if (--requiringTouchDataCount == 0) break;
                         }
-
                         if (requiringTouchDataCount < 1)
                         {
                             PointsIntercepted(this, new PointsMessageEventArgs(outputTouchs.OrderBy(rtd => rtd.Num).ToArray(), timeStamp));
