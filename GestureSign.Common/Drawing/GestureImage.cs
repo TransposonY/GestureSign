@@ -17,8 +17,6 @@ namespace GestureSign.Common.Drawing
     {
         #region  Private Variables
 
-        private static Pen _DrawingPen = new Pen(
-            ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush, 4) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         // static Point Dpi = GetPixelsPerXLogicalInch();
         #endregion
 
@@ -66,11 +64,12 @@ namespace GestureSign.Common.Drawing
             return ScaledStroke.ToArray();
         }
 
-        public static DrawingImage CreateImage(List<List<System.Drawing.Point>> points, Size size)
+        public static DrawingImage CreateImage(List<List<System.Drawing.Point>> points, Size size, Brush color)
         {
             if (points == null)
                 throw new Exception("You must provide a gesture before trying to generate a thumbnail");
-          //  System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            //  System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            Pen _DrawingPen = new Pen(color, 4) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
 
             Size _ScaledSize;
             PathGeometry pathGeometry = new PathGeometry();
@@ -96,12 +95,12 @@ namespace GestureSign.Common.Drawing
                     double iLeftOffset = (size.Width / 2) - (_ScaledSize.Width / 2);
                     double iTopOffset = (size.Height / 2) - (_ScaledSize.Height / 2);
                     Vector sizOffset = new Vector(iLeftOffset + i * size.Width, iTopOffset);
-                    sgc.BeginFigure(Point.Add(_ScaledPoints[0], sizOffset),false, false);
+                    sgc.BeginFigure(Point.Add(_ScaledPoints[0], sizOffset), false, false);
                     for (int j = 0; j < _ScaledPoints.Length; j++)
                     {
-                        sgc.LineTo(Point.Add(_ScaledPoints[j], sizOffset),true, true);
+                        sgc.LineTo(Point.Add(_ScaledPoints[j], sizOffset), true, true);
                     }
-                    DrawArrow(sgc, _ScaledPoints, sizOffset);
+                    DrawArrow(sgc, _ScaledPoints, sizOffset, _DrawingPen.Thickness);
                 }
                 sg.Freeze();
                 pathGeometry.AddGeometry(sg);
@@ -111,14 +110,14 @@ namespace GestureSign.Common.Drawing
             GeometryDrawing drawing = new GeometryDrawing(null, _DrawingPen, pathGeometry);
             drawing.Freeze();
             DrawingImage drawingImage = new DrawingImage(drawing);
-           // System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds.ToString());
+            // System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds.ToString());
             return drawingImage;
 
         }
-        private static void DrawArrow(StreamGeometryContext streamGeometryContext, Point[] points, Vector sizeOffset)
+        private static void DrawArrow(StreamGeometryContext streamGeometryContext, Point[] points, Vector sizeOffset, double thickness)
         {
-            double HeadWidth = _DrawingPen.Thickness;
-            double HeadHeight = _DrawingPen.Thickness * 0.8;
+            double HeadWidth = thickness;
+            double HeadHeight = thickness * 0.8;
 
             Point pt1 = Point.Add(points[points.Length - 2], sizeOffset);
             Point pt2 = Point.Add(points[points.Length - 1], sizeOffset);

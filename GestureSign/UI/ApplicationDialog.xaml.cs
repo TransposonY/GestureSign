@@ -353,13 +353,14 @@ namespace GestureSign.UI
             {
                 IEnumerable<IGesture> results = Gestures.GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
                 List<GestureItem> GestureItems = new List<GestureItem>(results.Count());
+                var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
                 foreach (IGesture gesture in results)
                 {
                     // Create new listviewitem to represent gestures, create a thumbnail of the latest version of each gesture
                     // and add it to image list, then to the output list      gestureName
                     GestureItem newItem = new GestureItem()
                     {
-                        Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65)),
+                        Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
                         Name = gesture.Name
                     };
                     GestureItems.Add(newItem);

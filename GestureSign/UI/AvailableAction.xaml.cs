@@ -359,7 +359,9 @@ namespace GestureSign.UI
                 }
                 else
                 {
-                    Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize);
+                    var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+
+                    Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize, brush);
                     gestureName = actionGesture.Name;
                 }
                 ActionInfo ai = new ActionInfo(

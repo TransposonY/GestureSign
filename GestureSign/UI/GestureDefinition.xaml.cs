@@ -118,6 +118,8 @@ namespace GestureSign.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+
             if (String.IsNullOrEmpty(Gestures.GestureManager.Instance.GestureName))
             {
                 this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
@@ -127,14 +129,14 @@ namespace GestureSign.UI
             {
                 if (!reName)
                 {
-                    this.ExistingGestureImage.Source = GestureImage.CreateImage(Gestures.GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65));
+                    this.ExistingGestureImage.Source = GestureImage.CreateImage(Gestures.GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
                 }
                 this.txtGestureName.Text = GName = Gestures.GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
             }
             // Disable drawing gestures
             Input.TouchCapture.Instance.DisableTouchCapture();
-            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65));
+            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
         }
 
 

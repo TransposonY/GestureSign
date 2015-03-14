@@ -187,6 +187,8 @@ namespace GestureSign.UI
             // Get all available gestures from gesture manager
             IEnumerable<IGesture> results = Gestures.GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
             System.Threading.Thread.Sleep(300);
+            var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+
             foreach (IGesture gesture in results)
             {
                 lstAvailableGestures.Dispatcher.BeginInvoke(new Action(() =>
@@ -194,7 +196,7 @@ namespace GestureSign.UI
                      // and add it to image list, then to the output list      gestureName
                      GestureItem newItem = new GestureItem()
                      {
-                         Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65)),
+                         Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
                          Name = gesture.Name
                      };
                      lstAvailableGestures.Items.Add(newItem);
