@@ -22,12 +22,6 @@ namespace GestureSign
 
             if (createdNew)
             {
-                string newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                newConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                newConfigFilePath = config.FilePath;
                 Input.TouchCapture.Instance.Load();
                 Gestures.GestureManager.Instance.Load();
                 UI.FormManager.Instance.Load();
