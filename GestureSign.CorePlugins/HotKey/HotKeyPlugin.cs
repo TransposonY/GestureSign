@@ -171,7 +171,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         private string GetDescription(HotKeySettings Settings)
         {
-            if (Settings == null || Settings.KeyCode == null || Settings.KeyCode.Count == 0)
+            if (Settings == null || Settings.KeyCode == null)
                 return "发送快捷键组合到程序";
 
             // Create string to store key combination and final output description
@@ -190,11 +190,12 @@ namespace GestureSign.CorePlugins.HotKey
 
             if (Settings.Shift)
                 strKeyCombo += "Shift + ";
-
-            foreach (var k in Settings.KeyCode)
-                strKeyCombo += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
-            strKeyCombo = strKeyCombo.Substring(0, strKeyCombo.Length - 2);
-            //   strKeyCombo += Settings.KeyCode.ToString();
+            if (Settings.KeyCode.Count != 0)
+            {
+                foreach (var k in Settings.KeyCode)
+                    strKeyCombo += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+            }
+            strKeyCombo = strKeyCombo.TrimEnd(' ', '+');
 
             // Return final formatted string
             return String.Format(strFormattedOutput, strKeyCombo);
