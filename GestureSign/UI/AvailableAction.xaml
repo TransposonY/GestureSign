@@ -287,7 +287,7 @@
                             </ComboBox.Resources>
                         </ComboBox>
                         <Canvas VerticalAlignment="Center" Height="55" DockPanel.Dock="Right" HorizontalAlignment="Right" Canvas.Left="330" Canvas.Top="15">
-                            <TextBlock TextWrapping="Wrap" Text="{Binding ActionName}" Margin="0,10,0,5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Canvas.Top="0" Width="150"/>
+                            <TextBlock TextWrapping="NoWrap" Text="{Binding ActionName}" Margin="0,10,0,5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Canvas.Top="0" Width="Auto"/>
                             <TextBlock TextWrapping="Wrap" Text="{Binding Description}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Canvas.Top="32" Width="150" Foreground="{StaticResource HighlightBrush}"/>
                         </Canvas>
                     </Canvas>
