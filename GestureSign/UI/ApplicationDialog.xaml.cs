@@ -43,7 +43,7 @@ namespace GestureSign.UI
         {
             gestureName = newGestureName;
         }
-        //Add action by acquired gesture
+        //Add action by existing gesture
         public ApplicationDialog(AvailableAction source)
             : this()
         {
@@ -322,7 +322,6 @@ namespace GestureSign.UI
         {
             this.ShowMessageAsync(title, message,
                 MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
-            _CurrentAction = null;
             return false;
         }
 
@@ -526,6 +525,7 @@ namespace GestureSign.UI
                 {
                     if (Applications.ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()))
                     {
+                        _CurrentAction = null;
                         return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", txtActionName.Text.Trim()));
                     }
                 }
@@ -533,6 +533,7 @@ namespace GestureSign.UI
                 {
                     if (Applications.ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()))
                     {
+                        _CurrentAction = null;
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), Applications.ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
