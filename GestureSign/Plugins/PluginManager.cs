@@ -58,14 +58,14 @@ namespace GestureSign.Plugins
             {
                 // Exit if there is no action configured
                 if (executableAction == null || !executableAction.IsEnabled)
-                    return;
+                    continue;
 
                 // Locate the plugin associated with this action
                 IPluginInfo pluginInfo = FindPluginByClassAndFilename(executableAction.PluginClass, executableAction.PluginFilename);
 
                 // Exit if there is no plugin available for action
                 if (pluginInfo == null)
-                    return;
+                    continue;
 
                 // Load action settings into plugin
                 pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
