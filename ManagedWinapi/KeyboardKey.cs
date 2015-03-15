@@ -56,6 +56,7 @@ namespace ManagedWinapi
         public void PressAndRelease()
         {
             Press();
+            System.Threading.Thread.Sleep(30);
             Release();
         }
 
