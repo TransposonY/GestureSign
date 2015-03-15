@@ -172,38 +172,38 @@ namespace ManagedWinapi.Windows
         CHILDWINDOW = CHILD,
     }
 
-	/// <summary>
-	/// Show Window Flags. .
-	/// </summary>
-	[Flags]
-	public enum ShowWindowFlags : int
-	{
-		SW_HIDE = 0,
-		SW_SHOWNORMAL = 1,
-		SW_NORMAL = 1,
-		SW_SHOWMINIMIZED = 2,
-		SW_SHOWMAXIMIZED = 3,
-		SW_MAXIMIZE = 3,
-		SW_SHOWNOACTIVATE = 4,
-		SW_SHOW = 5,
-		SW_MINIMIZE = 6,
-		SW_SHOWMINNOACTIVE = 7,
-		SW_SHOWNA = 8,
-		SW_RESTORE = 9,
-		SW_SHOWDEFAULT = 10,
-		SW_MAX = 10
-	}
+    /// <summary>
+    /// Show Window Flags. .
+    /// </summary>
+    [Flags]
+    public enum ShowWindowFlags : int
+    {
+        SW_HIDE = 0,
+        SW_SHOWNORMAL = 1,
+        SW_NORMAL = 1,
+        SW_SHOWMINIMIZED = 2,
+        SW_SHOWMAXIMIZED = 3,
+        SW_MAXIMIZE = 3,
+        SW_SHOWNOACTIVATE = 4,
+        SW_SHOW = 5,
+        SW_MINIMIZE = 6,
+        SW_SHOWMINNOACTIVE = 7,
+        SW_SHOWNA = 8,
+        SW_RESTORE = 9,
+        SW_SHOWDEFAULT = 10,
+        SW_MAX = 10
+    }
 
-	/// <summary>
-	/// System Parameter Info Flags. .
-	/// </summary>
-	[Flags]
-	public enum SystemParameterInfoFlags
-	{
-		SPI_GETFOREGROUNDLOCKTIMEOUT = 0x2000,
-		SPI_SETFOREGROUNDLOCKTIMEOUT = 0x2001,
-		SPIF_SENDCHANGE = 0x2
-	}
+    /// <summary>
+    /// System Parameter Info Flags. .
+    /// </summary>
+    [Flags]
+    public enum SystemParameterInfoFlags
+    {
+        SPI_GETFOREGROUNDLOCKTIMEOUT = 0x2000,
+        SPI_SETFOREGROUNDLOCKTIMEOUT = 0x2001,
+        SPIF_SENDCHANGE = 0x2
+    }
 
     /// <summary>
     /// Extended Window Style Flags. The original constants started with WS_EX_.
@@ -344,41 +344,37 @@ namespace ManagedWinapi.Windows
             }
             set
             {
-				if (value.WindowState == FormWindowState.Minimized)
-					ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_RESTORE);
-				//}
+                if (value.WindowState == FormWindowState.Minimized)
+                    ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_RESTORE);
+                SetForegroundWindow(value.HWnd);
+                SwitchToThisWindow(value.HWnd, true);
+                /*
+                IntPtr foregroundWindow = GetForegroundWindow();
+                IntPtr Dummy = IntPtr.Zero;
+                int dummy;
 
-				//ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_SHOW);
+                int foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, out dummy);
+                int thisThreadId = GetWindowThreadProcessId(value.HWnd, out dummy);
 
-				//BringWindowToTop(value.HWnd);
-				SetForegroundWindow(value.HWnd);
-				/*
-				IntPtr foregroundWindow = GetForegroundWindow();
-				IntPtr Dummy = IntPtr.Zero;
-				int dummy;
+                if (AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, true))
+                {
+                    BringWindowToTop(value.HWnd); // IE 5.5 related hack
+                    SetForegroundWindow(value.HWnd);
+                    AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, false);
+                }
 
-				int foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, out dummy);
-				int thisThreadId = GetWindowThreadProcessId(value.HWnd, out dummy);
-
-				if (AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, true))
-				{
-					BringWindowToTop(value.HWnd); // IE 5.5 related hack
-					SetForegroundWindow(value.HWnd);
-					AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, false);
-				}
-
-				if (GetForegroundWindow() != ForegroundWindow.HWnd)
-				{
-					// Code by Daniel P. Stasinski
-					// Converted to C# by Kevin Gale
-					IntPtr Timeout = IntPtr.Zero;
-					SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_GETFOREGROUNDLOCKTIMEOUT, 0, Timeout, 0);
-					SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Dummy, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
-					BringWindowToTop(value.HWnd); // IE 5.5 related hack
-					SetForegroundWindow(value.HWnd);
-					SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Timeout, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
-				}
-				 * */
+                if (GetForegroundWindow() != ForegroundWindow.HWnd)
+                {
+                    // Code by Daniel P. Stasinski
+                    // Converted to C# by Kevin Gale
+                    IntPtr Timeout = IntPtr.Zero;
+                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_GETFOREGROUNDLOCKTIMEOUT, 0, Timeout, 0);
+                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Dummy, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
+                    BringWindowToTop(value.HWnd); // IE 5.5 related hack
+                    SetForegroundWindow(value.HWnd);
+                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Timeout, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
+                }
+                 * */
             }
         }
 
@@ -416,10 +412,10 @@ namespace ManagedWinapi.Windows
             EnumWindows(new EnumWindowsProc(delegate(IntPtr hwnd, IntPtr lParam)
             {
                 SystemWindow tmp = new SystemWindow(hwnd);
-				if (predicate(tmp))
-				{
-					wnds.Add(tmp);
-				}
+                if (predicate(tmp))
+                {
+                    wnds.Add(tmp);
+                }
                 return 1;
             }), new IntPtr(0));
             return wnds.ToArray();
@@ -938,13 +934,13 @@ namespace ManagedWinapi.Windows
             }
         }
 
-		public Icon Icon
-		{
-			get
-			{
-				return GetAppIcon(this.HWnd);
-			}
-		}
+        public Icon Icon
+        {
+            get
+            {
+                return GetAppIcon(this.HWnd);
+            }
+        }
 
         /// <summary>
         /// The window's visible region.
@@ -1138,27 +1134,27 @@ namespace ManagedWinapi.Windows
             SendMessage(new HandleRef(this, HWnd), message, new IntPtr(value), new IntPtr(0));
         }
 
-		private Icon GetAppIcon(IntPtr hwnd)
-		{
-			IntPtr iconHandle = SendMessage(hwnd, WM_GETICON, ICON_BIG, 0);
-			if (iconHandle == IntPtr.Zero)
-				iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL, 0);
-			if (iconHandle == IntPtr.Zero)
-				iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL2, 0);
-			if (iconHandle == IntPtr.Zero)
-				iconHandle = GetClassLongPtr(hwnd, GCL_HICON);
-			if (iconHandle == IntPtr.Zero)
-				iconHandle = GetClassLongPtr(hwnd, GCL_HICONSM);
-			if (iconHandle == IntPtr.Zero)
-				iconHandle = Icon.ExtractAssociatedIcon(this.Process.MainModule.FileName).Handle;
+        private Icon GetAppIcon(IntPtr hwnd)
+        {
+            IntPtr iconHandle = SendMessage(hwnd, WM_GETICON, ICON_BIG, 0);
+            if (iconHandle == IntPtr.Zero)
+                iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL, 0);
+            if (iconHandle == IntPtr.Zero)
+                iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL2, 0);
+            if (iconHandle == IntPtr.Zero)
+                iconHandle = GetClassLongPtr(hwnd, GCL_HICON);
+            if (iconHandle == IntPtr.Zero)
+                iconHandle = GetClassLongPtr(hwnd, GCL_HICONSM);
+            if (iconHandle == IntPtr.Zero)
+                iconHandle = Icon.ExtractAssociatedIcon(this.Process.MainModule.FileName).Handle;
 
-			if (iconHandle == IntPtr.Zero)
-				return null;
+            if (iconHandle == IntPtr.Zero)
+                return null;
 
-			Icon icn = Icon.FromHandle(iconHandle);
+            Icon icn = Icon.FromHandle(iconHandle);
 
-			return icn;
-		}
+            return icn;
+        }
 
         #region Equals and HashCode
 
@@ -1218,57 +1214,64 @@ namespace ManagedWinapi.Windows
 
         #region PInvoke Declarations
 
-		internal const int GCL_HICONSM = -34;
-		internal const int GCL_HICON = -14;
+        internal const int GCL_HICONSM = -34;
+        internal const int GCL_HICON = -14;
 
-		internal const int ICON_SMALL = 0;
-		internal const int ICON_BIG = 1;
-		internal const int ICON_SMALL2 = 2;
+        internal const int ICON_SMALL = 0;
+        internal const int ICON_BIG = 1;
+        internal const int ICON_SMALL2 = 2;
 
-		internal const int WM_GETICON = 0x7F;
+        internal const int WM_GETICON = 0x7F;
 
-		private static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
-		{
-			try
-			{
-				if (IntPtr.Size > 4)
-					return GetClassLongPtr64(hWnd, nIndex);
-				else
-					return new IntPtr(GetClassLongPtr32(hWnd, nIndex));
-			}
-			catch
-			{
-				return IntPtr.Zero;
-			}
-		}
+        private static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
+        {
+            try
+            {
+                if (IntPtr.Size > 4)
+                    return GetClassLongPtr64(hWnd, nIndex);
+                else
+                    return new IntPtr(GetClassLongPtr32(hWnd, nIndex));
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
+        }
 
-		[DllImport("user32.dll")]
-		private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-		[DllImport("user32.dll")]
-		private static extern bool IsIconic(IntPtr hWnd);
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
-		//[DllImport("user32.dll", SetLastError = true)]
-		//private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
-		[DllImport("user32.dll")]
-		private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
-		[DllImport("user32.dll")]
-		static extern bool BringWindowToTop(IntPtr hWnd);
-		//[DllImport("user32.dll")]
-		//private static extern int GetWindowThreadProcessId(IntPtr hWnd, ref Int32 lpdwProcessId);
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        private static extern bool IsIconic(IntPtr hWnd);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+        //[DllImport("user32.dll", SetLastError = true)]
+        //private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
+        [DllImport("user32.dll")]
+        private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+        [DllImport("user32.dll")]
+        static extern bool BringWindowToTop(IntPtr hWnd);
+        //[DllImport("user32.dll")]
+        //private static extern int GetWindowThreadProcessId(IntPtr hWnd, ref Int32 lpdwProcessId);
 
-		[DllImport("user32.dll", EntryPoint = "GetClassLong")]
-		private static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetClassLong")]
+        private static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
 
-		[DllImport("user32.dll", EntryPoint = "GetClassLongPtr")]
-		private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", EntryPoint = "GetClassLongPtr")]
+        private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
 
-		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-		private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+        /// <summary>
+        /// 切换到窗口并把窗口设入前台,类似 SetForegroundWindow方法的功能
+        /// </summary>
+        /// <param name="hWnd">窗口句柄</param>
+        /// <param name="fAltTab">True代表窗口正在通过Alt/Ctrl +Tab被切换</param>
+        [DllImport("user32.dll ", SetLastError = true)]
+        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -1308,38 +1311,38 @@ namespace ManagedWinapi.Windows
                 return new IntPtr(GetWindowLong32(hWnd, nIndex));
         }
 
-		[Flags]
-		enum MessageBroadcastFlags : uint
-		{
-			BSF_QUERY = 0x00000001,
-			BSF_IGNORECURRENTTASK = 0x00000002,
-			BSF_FLUSHDISK = 0x00000004,
-			BSF_NOHANG = 0x00000008,
-			BSF_POSTMESSAGE = 0x00000010,
-			BSF_FORCEIFHUNG = 0x00000020,
-			BSF_NOTIMEOUTIFNOTHUNG = 0x00000040,
-			BSF_ALLOWSFW = 0x00000080,
-			BSF_SENDNOTIFYMESSAGE = 0x00000100,
-			BSF_RETURNHDESK = 0x00000200,
-			BSF_LUID = 0x00000400,
-		}
+        [Flags]
+        enum MessageBroadcastFlags : uint
+        {
+            BSF_QUERY = 0x00000001,
+            BSF_IGNORECURRENTTASK = 0x00000002,
+            BSF_FLUSHDISK = 0x00000004,
+            BSF_NOHANG = 0x00000008,
+            BSF_POSTMESSAGE = 0x00000010,
+            BSF_FORCEIFHUNG = 0x00000020,
+            BSF_NOTIMEOUTIFNOTHUNG = 0x00000040,
+            BSF_ALLOWSFW = 0x00000080,
+            BSF_SENDNOTIFYMESSAGE = 0x00000100,
+            BSF_RETURNHDESK = 0x00000200,
+            BSF_LUID = 0x00000400,
+        }
 
-		[Flags]
-		enum MessageBroadcastRecipients : uint
-		{
-			BSM_ALLCOMPONENTS = 0x00000000,
-			BSM_VXDS = 0x00000001,
-			BSM_NETDRIVER = 0x00000002,
-			BSM_INSTALLABLEDRIVERS = 0x00000004,
-			BSM_APPLICATIONS = 0x00000008,
-			BSM_ALLDESKTOPS = 0x00000010,
-		}
+        [Flags]
+        enum MessageBroadcastRecipients : uint
+        {
+            BSM_ALLCOMPONENTS = 0x00000000,
+            BSM_VXDS = 0x00000001,
+            BSM_NETDRIVER = 0x00000002,
+            BSM_INSTALLABLEDRIVERS = 0x00000004,
+            BSM_APPLICATIONS = 0x00000008,
+            BSM_ALLDESKTOPS = 0x00000010,
+        }
 
-		[DllImport("user32", SetLastError = true, EntryPoint = "BroadcastSystemMessage")]
-		private static extern int BroadcastSystemMessageRecipients(MessageBroadcastFlags dwFlags, ref MessageBroadcastRecipients lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32", SetLastError = true, EntryPoint = "BroadcastSystemMessage")]
+        private static extern int BroadcastSystemMessageRecipients(MessageBroadcastFlags dwFlags, ref MessageBroadcastRecipients lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam);
 
-		[DllImport("user32", SetLastError = true)]
-		private static extern int BroadcastSystemMessage(MessageBroadcastFlags dwFlags, IntPtr lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam); 
+        [DllImport("user32", SetLastError = true)]
+        private static extern int BroadcastSystemMessage(MessageBroadcastFlags dwFlags, IntPtr lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
         private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
@@ -1571,34 +1574,34 @@ namespace ManagedWinapi.Windows
         private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
     }
 
-	/// <summary>
-	/// Allows querying and manipulated the DesktopWindowManager
-	/// </summary>
-	public class DesktopWindowManager
-	{
-		#region Type Methods
+    /// <summary>
+    /// Allows querying and manipulated the DesktopWindowManager
+    /// </summary>
+    public class DesktopWindowManager
+    {
+        #region Type Methods
 
-		public static bool IsCompositionEnabled()
-		{
-			try
-			{
-				long enabled = 0;
-				DwmIsCompositionEnabled(ref enabled);
-				return enabled == 1;
-			}
-			catch
-			{
-				return false;
-			}
-		}
+        public static bool IsCompositionEnabled()
+        {
+            try
+            {
+                long enabled = 0;
+                DwmIsCompositionEnabled(ref enabled);
+                return enabled == 1;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region P/INVOKES
+        #region P/INVOKES
 
-		[DllImport("dwmapi.dll")]
-		private static extern long DwmIsCompositionEnabled(ref long pfEnabled);
+        [DllImport("dwmapi.dll")]
+        private static extern long DwmIsCompositionEnabled(ref long pfEnabled);
 
-		#endregion
-	}
+        #endregion
+    }
 }
