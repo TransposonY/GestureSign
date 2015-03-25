@@ -5,15 +5,14 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using GestureSign.Common;
-using GestureSign.Common.Gestures;
 using GestureSign.Common.Plugins;
 using System.Drawing;
 using GestureSign.PointPatterns;
 using GestureSign.Common.Input;
 
-namespace GestureSign.Gestures
+namespace GestureSign.Common.Gestures
 {
-    public class GestureManager : ILoadable, IGestureManager
+    public class GestureManager : IGestureManager
     {
         #region Private Variables
 
@@ -53,10 +52,6 @@ namespace GestureSign.Gestures
 
             // Instantiate gesture analyzer using gestures loaded from file
             gestureAnalyzer = new PointPatternAnalyzer();//Gestures
-
-            // Wireup event to Touch capture class to catch points captured
-            Input.TouchCapture.Instance.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
-            Input.TouchCapture.Instance.AfterPointsCaptured += new PointsCapturedEventHandler(TouchCapture_AfterPointsCaptured);
 
             // Reload gestures if options were saved
         }
@@ -125,9 +120,16 @@ namespace GestureSign.Gestures
 
         #region Public Methods
 
-        public void Load()
+        public void Load(ITouchCapture touchCapture)
         {
             // Shortcut method to control singleton instantiation
+
+            // Wireup event to Touch capture class to catch points captured       
+            if (touchCapture != null)
+            {
+                touchCapture.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
+                touchCapture.AfterPointsCaptured += new PointsCapturedEventHandler(TouchCapture_AfterPointsCaptured);
+            }
         }
 
         public void AddGesture(IGesture Gesture)
@@ -140,7 +142,7 @@ namespace GestureSign.Gestures
             try
             {
                 // Load gestures from file, create empty list if load failed
-                _Gestures = Configuration.IO.FileManager.LoadObject<List<IGesture>>(Path.Combine("Data", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
+                _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(Path.Combine("Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
 
                 if (Gestures == null)
                     return false;
@@ -158,7 +160,7 @@ namespace GestureSign.Gestures
             try
             {
                 // Save gestures to file
-                Configuration.IO.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine("Data", "Gestures.json"));
+                Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine("Data", "Gestures.json"));
 
                 return true;
             }

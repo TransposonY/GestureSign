@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign", "GestureSign\GestureSign.csproj", "{B9A2BC20-B457-4B39-AE1B-274FA961E346}"
+	ProjectSection(ProjectDependencies) = postProject
+		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C} = {60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedWinapi", "ManagedWinapi\ManagedWinapi.csproj", "{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}"
 EndProject
@@ -12,6 +15,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.CorePlugins", "GestureSign.CorePlugins\GestureSign.CorePlugins.csproj", "{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.Common", "GestureSign.Common\GestureSign.Common.csproj", "{038047A4-E3F8-4B49-9762-7F63971B8319}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSignDaemon", "GestureSignDaemon\GestureSignDaemon.csproj", "{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A} = {FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}
+		{038047A4-E3F8-4B49-9762-7F63971B8319} = {038047A4-E3F8-4B49-9762-7F63971B8319}
+		{69F91BD1-6986-4079-9537-ED1A1D8EBE06} = {69F91BD1-6986-4079-9537-ED1A1D8EBE06}
+		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C} = {60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +50,10 @@ Global
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Debug|Any CPU.Build.0 = Debug|x86
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

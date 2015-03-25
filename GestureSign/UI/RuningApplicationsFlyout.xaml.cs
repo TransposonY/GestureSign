@@ -121,10 +121,10 @@ namespace GestureSign.UI
 
         private void AddIgnoredApplication(String Name, String MatchString, MatchUsing MatchUsing, bool IsRegEx)
         {
-            if (GestureSign.Applications.ApplicationManager.Instance.ApplicationExists(Name))
+            if (ApplicationManager.Instance.ApplicationExists(Name))
                 return;
-            GestureSign.Applications.ApplicationManager.Instance.AddApplication(new IgnoredApplication(Name, MatchUsing, MatchString, IsRegEx, true));
-            GestureSign.Applications.ApplicationManager.Instance.SaveApplications();
+            ApplicationManager.Instance.AddApplication(new IgnoredApplication(Name, MatchUsing, MatchString, IsRegEx, true));
+            ApplicationManager.Instance.SaveApplications();
             BindIgnoredApplications(this, new EventArgs());
         }
 
@@ -164,7 +164,7 @@ namespace GestureSign.UI
             System.Threading.Thread.Sleep(550);
             foreach (SystemWindow sWind in Windows)
             {
-                this.lstRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
+                this.lstRunningApplications.Dispatcher.BeginInvoke(new System.Action(() =>
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
 

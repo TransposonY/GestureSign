@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using GestureSign.Common.Applications;
-using GestureSign.Applications;
 
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -26,7 +25,7 @@ namespace GestureSign.UI
     /// <summary>
     /// CustomApplicationsFlyout.xaml 的交互逻辑
     /// </summary>
-    public partial class CustomApplicationsFlyout : Flyout,IDisposable
+    public partial class CustomApplicationsFlyout : Flyout, IDisposable
     {
         public static event EventHandler OpenIgnoredRuningFlyout;
         public event EventHandler RemoveApplication;
@@ -68,11 +67,11 @@ namespace GestureSign.UI
             if (disposing)
             {
                 // Free any other managed objects here.
- 
+
                 this.crosshairMain.CrosshairDragged -= crosshairMain_CrosshairDragged;
                 this.crosshairMain.CrosshairDragging -= crosshairMain_CrosshairDragging;
                 this.crosshairMain.Dispose();
-           }
+            }
 
             // Free any unmanaged objects here.
             //
@@ -91,7 +90,7 @@ namespace GestureSign.UI
             CurrentIgnoredApplication = e.Application as IgnoredApplication;
             SetFields(e.Application.MatchString, e.Application.MatchUsing, e.Application.IsRegEx);
         }
-        
+
 
         private void SwitchToRunning_Click(object sender, RoutedEventArgs e)
         {
@@ -108,9 +107,9 @@ namespace GestureSign.UI
                 this.Opacity = 0.00;
             try
             {
-                txtFile.Text = System.IO.Path.GetFileName(GestureSign.Applications.ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Process.MainModule.FileName);
-                txtClass.Text = GestureSign.Applications.ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).ClassName;
-                txtTitle.Text = GestureSign.Applications.ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Title;
+                txtFile.Text = System.IO.Path.GetFileName(ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Process.MainModule.FileName);
+                txtClass.Text = ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).ClassName;
+                txtTitle.Text = ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Title;
             }
             catch (Exception ex)
             {
@@ -201,18 +200,18 @@ namespace GestureSign.UI
 
 
 
-    
+
 
         private void AddIgnoredApplication(String Name, String MatchString, MatchUsing MatchUsing, bool IsRegEx)
         {
             if (ApplicationManager.Instance.ApplicationExists(Name))
             {
-                    Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
-                    return;
-              
+                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                return;
+
             }
-           
-                if (EditMode) { ApplicationManager.Instance.RemoveApplication(CurrentIgnoredApplication); }
+
+            if (EditMode) { ApplicationManager.Instance.RemoveApplication(CurrentIgnoredApplication); }
             ApplicationManager.Instance.AddApplication(new IgnoredApplication(Name, MatchUsing, MatchString, IsRegEx, true));
             ApplicationManager.Instance.SaveApplications();
             BindIgnoredApplications(this, new EventArgs());

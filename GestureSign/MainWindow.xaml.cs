@@ -23,8 +23,6 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Drawing;
 using GestureSign.Common;
 using GestureSign.Common.Input;
-using GestureSign.Input;
-using GestureSign.Applications;
 
 namespace GestureSign
 {

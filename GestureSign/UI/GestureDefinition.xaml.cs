@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.Drawing;
 
@@ -36,6 +37,7 @@ namespace GestureSign.UI
             : this()
         {
             _CapturedPoints = capturedPoints;
+            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
         }
         /// <summary>
         /// Edit gesture
@@ -45,7 +47,7 @@ namespace GestureSign.UI
         public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints, string gestureName)
             : this(capturedPoints)
         {
-            ExistingGestureName = Gestures.GestureManager.Instance.GestureName = gestureName;
+            ExistingGestureName = GestureManager.Instance.GestureName = gestureName;
             this.ReName = true;
         }
 
@@ -118,9 +120,10 @@ namespace GestureSign.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+            var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+            var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
 
-            if (String.IsNullOrEmpty(Gestures.GestureManager.Instance.GestureName))
+            if (String.IsNullOrEmpty(GestureManager.Instance.GestureName))
             {
                 this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
                 this.txtGestureName.Focus();
@@ -129,20 +132,20 @@ namespace GestureSign.UI
             {
                 if (!reName)
                 {
-                    this.ExistingGestureImage.Source = GestureImage.CreateImage(Gestures.GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
+                    this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
                 }
-                this.txtGestureName.Text = GName = Gestures.GestureManager.Instance.GestureName;//this.txtGestureName.Text
+                this.txtGestureName.Text = GName = GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
             }
             // Disable drawing gestures
-            Input.TouchCapture.Instance.DisableTouchCapture();
+            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("DisableTouchCapture", "GestureSignDaemon");
             this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
         }
 
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Input.TouchCapture.Instance.EnableTouchCapture();
+            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EnableTouchCapture", "GestureSignDaemon");
         }
 
 
@@ -165,7 +168,7 @@ namespace GestureSign.UI
             if (SaveGesture())
             {
                 this.Close();
-                ApplicationDialog ad = new ApplicationDialog(Gestures.GestureManager.Instance.GestureName);
+                ApplicationDialog ad = new ApplicationDialog(GestureManager.Instance.GestureName);
                 ad.Show();
             }
             else txtGestureName.Focus();
@@ -186,31 +189,31 @@ namespace GestureSign.UI
 
             if (reName)
             {
-                Gestures.GestureManager.Instance.RenameGesture(ExistingGestureName, newGestureName);
-                Gestures.GestureManager.Instance.SaveGestures();
+                GestureManager.Instance.RenameGesture(ExistingGestureName, newGestureName);
+                GestureManager.Instance.SaveGestures();
             }
             else
             {
-                if (String.IsNullOrEmpty(Gestures.GestureManager.Instance.GestureName))
+                if (String.IsNullOrEmpty(GestureManager.Instance.GestureName))
                 {
-                    if (Gestures.GestureManager.Instance.GestureExists(newGestureName))
+                    if (GestureManager.Instance.GestureExists(newGestureName))
                     {
                         this.ShowMessageAsync("手势已存在", "输入的手势名称已存在，请重新输入一个手势名称", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                         return false;
                     }
                     // Add new gesture to gesture manager
-                    Gestures.GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
-                    Gestures.GestureManager.Instance.GestureName = newGestureName;
-                    Gestures.GestureManager.Instance.SaveGestures();
+                    GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                    GestureManager.Instance.GestureName = newGestureName;
+                    GestureManager.Instance.SaveGestures();
                 }
                 else
                 {
-                    if (newGestureName != Gestures.GestureManager.Instance.GestureName)
+                    if (newGestureName != GestureManager.Instance.GestureName)
                     {
                         // Add new gesture to gesture manager
-                        Gestures.GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
-                        Gestures.GestureManager.Instance.GestureName = newGestureName;
-                        Gestures.GestureManager.Instance.SaveGestures();
+                        GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.GestureName = newGestureName;
+                        GestureManager.Instance.SaveGestures();
                     }
                 }
             }

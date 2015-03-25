@@ -90,11 +90,13 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -111,9 +113,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Applications\Action.cs" />
     <Compile Include="Applications\ApplicationBase.cs" />
     <Compile Include="Applications\ApplicationChangedEventArgs.cs" />
     <Compile Include="Applications\ApplicationChangedEventHandler.cs" />
+    <Compile Include="Applications\ApplicationManager.cs" />
     <Compile Include="Applications\GlobalApplication.cs" />
     <Compile Include="Applications\IAction.cs" />
     <Compile Include="Applications\IApplication.cs" />
@@ -121,11 +125,15 @@
     <Compile Include="Applications\MatchUsing.cs" />
     <Compile Include="Applications\IApplicationManager.cs" />
     <Compile Include="Applications\UserApplication.cs" />
+    <Compile Include="Configuration\AppConfig.cs" />
+    <Compile Include="Configuration\FileManager.cs" />
     <Compile Include="Drawing\GestureImage.cs" />
     <Compile Include="Drawing\ImageHelper.cs" />
+    <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureEventArgs.cs" />
     <Compile Include="Gestures\GestureEventHandler.cs" />
     <Compile Include="Gestures\GestureItem.cs" />
+    <Compile Include="Gestures\GestureManager.cs" />
     <Compile Include="Gestures\IGesture.cs" />
     <Compile Include="Gestures\RecognitionEventArgs.cs" />
     <Compile Include="Gestures\RecognitionEventHandler.cs" />
@@ -137,7 +145,11 @@
     <Compile Include="Input\IMouseCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
+    <Compile Include="InterProcessCommunication\NamedPipe.cs" />
+    <Compile Include="Plugins\HostControl.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />
+    <Compile Include="Plugins\PluginInfo.cs" />
+    <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

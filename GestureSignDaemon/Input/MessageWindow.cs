@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 using Microsoft.Win32;
 
-namespace GestureSign.Input
+namespace GestureSignDaemon.Input
 {
     public class MessageWindow : Form
     {
@@ -289,6 +289,8 @@ namespace GestureSign.Input
 
         private int EnumerateDevices()
         {
+            GestureSignDaemon.Configuration.FileWatcher.Instance.EnableWatcher = false;
+
             int NumberOfDevices = 0;
             uint deviceCount = 0;
             int dwSize = (Marshal.SizeOf(typeof(RAWINPUTDEVICELIST)));
@@ -327,10 +329,11 @@ namespace GestureSign.Input
                             if (IsTouchDevice)
                             {
                                 NumberOfDevices++;
-                                if (!GestureSign.Configuration.AppConfig.DeviceName.Equals(deviceName))
+                                if (!GestureSign.Common.Configuration.AppConfig.DeviceName.Equals(deviceName))
                                 {
-                                    GestureSign.Configuration.AppConfig.DeviceName = deviceName;
-                                    GestureSign.Configuration.AppConfig.XRatio = GestureSign.Configuration.AppConfig.YRatio = 0;
+                                    GestureSign.Common.Configuration.AppConfig.DeviceName = deviceName;
+                                    GestureSign.Common.Configuration.AppConfig.XRatio = GestureSign.Common.Configuration.AppConfig.YRatio = 0;
+                                    GestureSign.Common.Configuration.AppConfig.Save();
                                 }
                             }
                         }
@@ -338,8 +341,12 @@ namespace GestureSign.Input
                     }
                 }
                 Marshal.FreeHGlobal(pRawInputDeviceList);
-                if (NumberOfDevices == 0) { GestureSign.Configuration.AppConfig.DeviceName = String.Empty; }
-                GestureSign.Configuration.AppConfig.Save();
+                if (NumberOfDevices == 0)
+                {
+                    GestureSign.Common.Configuration.AppConfig.DeviceName = String.Empty;
+                    GestureSign.Common.Configuration.AppConfig.Save();
+                }
+                GestureSignDaemon.Configuration.FileWatcher.Instance.EnableWatcher = true;
                 return NumberOfDevices;
             }
             else
@@ -485,18 +492,18 @@ namespace GestureSign.Input
                             {
                                 TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
-                                if (GestureSign.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
+                                if (GestureSign.Common.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Common.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                                 {
                                     int X = IsAxisCorresponds.Value ? touch.X : touch.Y;
                                     int Y = IsAxisCorresponds.Value ? touch.Y : touch.X;
 
                                     X = (int)Math.Round(XAxisDirection.Value ?
-                                        X / GestureSign.Configuration.AppConfig.XRatio :
-                                        System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X / GestureSign.Configuration.AppConfig.XRatio);
+                                        X / GestureSign.Common.Configuration.AppConfig.XRatio :
+                                        System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X / GestureSign.Common.Configuration.AppConfig.XRatio);
 
                                     Y = (int)Math.Round(YAxisDirection.Value ?
-                                       Y / GestureSign.Configuration.AppConfig.YRatio :
-                                       System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Configuration.AppConfig.YRatio);
+                                       Y / GestureSign.Common.Configuration.AppConfig.YRatio :
+                                       System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Common.Configuration.AppConfig.YRatio);
 
                                     outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
 

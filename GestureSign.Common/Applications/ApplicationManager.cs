@@ -8,14 +8,13 @@ using System.Runtime.Serialization.Json;
 using System.Drawing;
 using ManagedWinapi.Windows;
 using GestureSign.Common;
-using GestureSign.Common.Applications;
 using GestureSign.Common.Input;
 using GestureSign.Common.Gestures;
 using System.Text.RegularExpressions;
 
-namespace GestureSign.Applications
+namespace GestureSign.Common.Applications
 {
-    public class ApplicationManager : ILoadable, IApplicationManager
+    public class ApplicationManager :  IApplicationManager
     {
         #region Private Variables
 
@@ -52,9 +51,6 @@ namespace GestureSign.Applications
 
         protected ApplicationManager()
         {
-            // Consume Touch Capture events
-            Input.TouchCapture.Instance.CaptureStarted += new PointsCapturedEventHandler(TouchCapture_CaptureStarted);
-            Input.TouchCapture.Instance.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
 
             Gestures.GestureManager.Instance.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
@@ -86,7 +82,7 @@ namespace GestureSign.Applications
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
-              
+
         protected void GestureManager_GestureEdited(object sender, GestureEventArgs e)
         {
             GetGlobalApplication().Actions.FindAll(a => a.GestureName == e.GestureName).ForEach(a => a.GestureName = e.NewGestureName);
@@ -110,9 +106,15 @@ namespace GestureSign.Applications
 
         #region Public Methods
 
-        public void Load()
+        public void Load(ITouchCapture touchCapture)
         {
             // Shortcut method to control singleton instantiation
+            // Consume Touch Capture events
+            if (touchCapture != null)
+            {
+                touchCapture.CaptureStarted += new PointsCapturedEventHandler(TouchCapture_CaptureStarted);
+                touchCapture.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
+            }
         }
 
         public void AddApplication(IApplication Application)
@@ -137,13 +139,13 @@ namespace GestureSign.Applications
         public bool SaveApplications()
         {
             // Save application list
-            return Configuration.IO.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) });
+            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
         }
 
         public bool LoadApplications()
         {
             // Load application list from file
-            _Applications = Configuration.IO.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Action) }, true);
+            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications. Action) }, true);
 
             // Ensure we got an object back
             if (_Applications == null)

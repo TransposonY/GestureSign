@@ -23,7 +23,7 @@ namespace GestureSign.UI
     /// </summary>
     public partial class Options : UserControl
     {
-        Color _VisualFeedbackColor;
+       System.Drawing.Color _VisualFeedbackColor;
         public Options()
         {
             InitializeComponent();
@@ -31,29 +31,21 @@ namespace GestureSign.UI
         }
 
         #region Custom Events
-
-        // Create event to notify subscribers that options have been saved
-        static public event OptionsSavedEventHandler OptionsChanged;
-
-        protected virtual void OnOptionsChanged()
-        {
-            if (OptionsChanged != null) OptionsChanged(this, new EventArgs());
-        }
-
+   
         #endregion
         private bool LoadSettings()
         {
             try
             {
                 // Try to load saved settings
-                //  GestureSign.Configuration.AppConfig.Reload();
+                //  Common.Configuration.AppConfig.Reload();
 
-                _VisualFeedbackColor = GestureSign.Configuration.AppConfig.VisualFeedbackColor;
-                VisualFeedbackWidthSlider.Value = GestureSign.Configuration.AppConfig.VisualFeedbackWidth;
-                MinimumPointDistanceSlider.Value = GestureSign.Configuration.AppConfig.MinimumPointDistance;
+                _VisualFeedbackColor = Common.Configuration.AppConfig.VisualFeedbackColor;
+                VisualFeedbackWidthSlider.Value = Common.Configuration.AppConfig.VisualFeedbackWidth;
+                MinimumPointDistanceSlider.Value = Common.Configuration.AppConfig.MinimumPointDistance;
                 chkWindowsStartup.IsChecked = GetStartupStatus();
-                OpacitySlider.Value = GestureSign.Configuration.AppConfig.Opacity;
-                chkOrderByLocation.IsChecked = GestureSign.Configuration.AppConfig.IsOrderByLocation;
+                OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
+                chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
                 return true;
             }
             catch
@@ -77,57 +69,57 @@ namespace GestureSign.UI
             // Set color picker dialog color to current visual feedback color
             System.Windows.Forms.ColorDialog cdColorPicker = new System.Windows.Forms.ColorDialog();
             cdColorPicker.AllowFullOpen = true;
-            cdColorPicker.Color = System.Drawing.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B);
+            cdColorPicker.Color = _VisualFeedbackColor;// System.Drawing.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B);
 
             // Show color picker dialog
             if (cdColorPicker.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
             // Change color of visual feedback and refresh example
-            _VisualFeedbackColor.A = cdColorPicker.Color.A;
-            _VisualFeedbackColor.R = cdColorPicker.Color.R;
-            _VisualFeedbackColor.B = cdColorPicker.Color.B;
-            _VisualFeedbackColor.G = cdColorPicker.Color.G;
-            GestureSign.Configuration.AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
+            //_VisualFeedbackColor.A = cdColorPicker.Color.A;
+            //_VisualFeedbackColor.R = cdColorPicker.Color.R;
+            //_VisualFeedbackColor.B = cdColorPicker.Color.B;
+            //_VisualFeedbackColor.G = cdColorPicker.Color.G;
+            _VisualFeedbackColor = cdColorPicker.Color;
+            Common.Configuration.AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
             UpdateVisualFeedbackExample();
-            OnOptionsChanged();
+
+            Common.Configuration.AppConfig.Save();
         }
 
         private void VisualFeedbackWidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateVisualFeedbackExample();
 
-            GestureSign.Configuration.AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
-            OnOptionsChanged();
+            Common.Configuration.AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
+
+            Common.Configuration.AppConfig.Save();
         }
 
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Change opacity display text with new value
             OpacityText.Text = String.Format("不透明度: {0}%", GetAlphaPercentage(OpacitySlider.Value));
-            GestureSign.Configuration.AppConfig.Opacity = OpacitySlider.Value;
-            OnOptionsChanged();
+            Common.Configuration.AppConfig.Opacity = OpacitySlider.Value;
+
+            Common.Configuration.AppConfig.Save();
         }
 
         private void MinimumPointDistanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (e.OldValue == 0) return;
-            GestureSign.Configuration.AppConfig.MinimumPointDistance = (int)Math.Round(e.NewValue);
-            OnOptionsChanged();
-        }
-        private void UserControl_LostFocus(object sender, RoutedEventArgs e)
-        {
-            GestureSign.Configuration.AppConfig.Save();
-            OnOptionsChanged();
-        }
+            Common.Configuration.AppConfig.MinimumPointDistance = (int)Math.Round(e.NewValue);
 
-
+            Common.Configuration.AppConfig.Save();
+        }
+     
 
         private void UpdateVisualFeedbackExample()
         {
             // Show new example graphic if visual feedback is enabled
             if (VisualFeedbackWidthSlider.Value > 0)
             {
-                VisualFeedbackExample.Stroke = new SolidColorBrush(_VisualFeedbackColor);
+                VisualFeedbackExample.Stroke = new SolidColorBrush(
+                    Color.FromArgb( _VisualFeedbackColor.A,_VisualFeedbackColor.R,_VisualFeedbackColor.G,_VisualFeedbackColor.B));
 
                 VisualFeedbackWidthText.Text = String.Format("轨迹宽度 {0:0} px", VisualFeedbackWidthSlider.Value);
             }
@@ -204,12 +196,14 @@ namespace GestureSign.UI
 
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
         {
-            GestureSign.Configuration.AppConfig.IsOrderByLocation = true;
+            Common.Configuration.AppConfig.IsOrderByLocation = true;
+            Common.Configuration.AppConfig.Save();
         }
 
         private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
         {
-            GestureSign.Configuration.AppConfig.IsOrderByLocation = false;
+            Common.Configuration.AppConfig.IsOrderByLocation = false;
+            Common.Configuration.AppConfig.Save();
         }
 
     }

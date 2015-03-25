@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using GestureSign.Common.Input;
 
-namespace GestureSign.Input
+namespace GestureSignDaemon.Input
 {
     public class TouchEventTranslator
     {
@@ -46,7 +46,7 @@ namespace GestureSign.Input
 
         public void TranslateTouchEvent(object sender, PointsMessageEventArgs e)
         {
-            if (e.RawTouchsData.Length < 2 || GestureSign.Configuration.AppConfig.XRatio == 0) return;
+            if (e.RawTouchsData.Length < 2 || GestureSign.Common.Configuration.AppConfig.XRatio == 0) return;
 
             foreach (RawTouchData rtd in e.RawTouchsData)
             {

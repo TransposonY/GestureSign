@@ -19,6 +19,8 @@ using MahApps.Metro.Controls.Dialogs;
 using GestureSign.Common.Drawing;
 using GestureSign.Common.Gestures;
 
+using GestureSign.PointPatterns;
+
 namespace GestureSign.UI
 {
     /// <summary>
@@ -27,7 +29,6 @@ namespace GestureSign.UI
     public partial class AvailableGestures : UserControl, IDisposable
     {
 
-        public static event EventHandler StartCapture;
         public static event EventHandler GestureChanged;
 
 
@@ -89,12 +90,12 @@ namespace GestureSign.UI
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消", AnimateHide = false }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
-                    Gestures.GestureManager.Instance.DeleteGesture(listItem.Name);
+                    GestureManager.Instance.DeleteGesture(listItem.Name);
                 if (GestureChanged != null)
                     GestureChanged(this, new EventArgs());
 
                 BindGestures();
-                Gestures.GestureManager.Instance.SaveGestures();
+                GestureManager.Instance.SaveGestures();
             }
         }
         private async void btnEditGesture_Click(object sender, RoutedEventArgs e)
@@ -108,7 +109,7 @@ namespace GestureSign.UI
                 return;
             }
             UI.GestureDefinition gd = new UI.GestureDefinition(
-                Gestures.GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
+                GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
                 ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name);
             gd.ShowDialog();
             if (GestureChanged != null)
@@ -118,12 +119,11 @@ namespace GestureSign.UI
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)
         {
             if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync(
-                  "新建手势", "请点击“确定”后画出一个手势",
+                  "新建手势", "点击“确定”以打开学习模式。",
                   MessageDialogStyle.AffirmativeAndNegative,
                   new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
             {
-                if (StartCapture != null)
-                    StartCapture(this, new EventArgs());
+                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("StartTeaching", "GestureSignDaemon");
             }
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
@@ -132,31 +132,31 @@ namespace GestureSign.UI
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IGesture> newGestures = Configuration.IO.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(GestureSign.Gestures.Gesture) }, false);
+                List<IGesture> newGestures = GestureSign.Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)
                     {
-                        if (GestureSign.Gestures.GestureManager.Instance.GestureExists(newGesture.Name))
+                        if (GestureManager.Instance.GestureExists(newGesture.Name))
                         {
                             var result = MessageBox.Show(String.Format("已经存在手势 \"{0}\" ，是否覆盖？", newGesture.Name), "已存在同名手势", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                             if (result == MessageBoxResult.Yes)
                             {
-                                Gestures.GestureManager.Instance.DeleteGesture(newGesture.Name);
-                                Gestures.GestureManager.Instance.AddGesture(newGesture);
+                                GestureManager.Instance.DeleteGesture(newGesture.Name);
+                                GestureManager.Instance.AddGesture(newGesture);
                                 addcount++;
                             }
                             else if (result == MessageBoxResult.Cancel) goto End;
                         }
                         else
                         {
-                            Gestures.GestureManager.Instance.AddGesture(newGesture);
+                            GestureManager.Instance.AddGesture(newGesture);
                             addcount++;
                         }
                     }
             End:
                 if (addcount != 0)
                 {
-                    Gestures.GestureManager.Instance.SaveGestures();
+                    GestureManager.Instance.SaveGestures();
                     BindGestures();
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个手势", addcount), "导入完成");
@@ -168,7 +168,7 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdGestures = new Microsoft.Win32.SaveFileDialog() { Filter = "手势文件|*.json", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
             if (sfdGestures.ShowDialog().Value)
             {
-                Configuration.IO.FileManager.SaveObject<List<IGesture>>(Gestures.GestureManager.Instance.Gestures, sfdGestures.FileName);
+                GestureSign.Common.Configuration.FileManager.SaveObject<List<IGesture>>(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
         }
 
@@ -185,9 +185,10 @@ namespace GestureSign.UI
         private void AddAvailableGesturesItems()
         {
             // Get all available gestures from gesture manager
-            IEnumerable<IGesture> results = Gestures.GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
+            IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
             System.Threading.Thread.Sleep(300);
-            var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+            var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+            var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
 
             foreach (IGesture gesture in results)
             {

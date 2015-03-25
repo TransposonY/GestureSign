@@ -6,6 +6,7 @@ namespace GestureSign.Common.Input
 	{
 		event PointsCapturedEventHandler AfterPointsCaptured;
 		event PointsCapturedEventHandler BeforePointsCaptured;
+        event PointsCapturedEventHandler CaptureStarted;
 		event EventHandler CaptureEnded;
 		void DisableTouchCapture();
 		void EnableTouchCapture();

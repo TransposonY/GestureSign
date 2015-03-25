@@ -158,14 +158,14 @@ namespace GestureSign.UI
             // Store selected item group header for later use
             string strApplicationHeader = selectedItem.ApplicationName;
 
-            if (strApplicationHeader != Applications.ApplicationManager.Instance.GetGlobalApplication().Name)
-                selectedApplication = Applications.ApplicationManager.Instance.GetExistingUserApplication(strApplicationHeader);
+            if (strApplicationHeader != ApplicationManager.Instance.GetGlobalApplication().Name)
+                selectedApplication = ApplicationManager.Instance.GetExistingUserApplication(strApplicationHeader);
             else
-                selectedApplication = Applications.ApplicationManager.Instance.GetGlobalApplication();
+                selectedApplication = ApplicationManager.Instance.GetGlobalApplication();
 
             if (selectedApplication == null)
                 // Select action from global application list
-                selectedAction = Applications.ApplicationManager.Instance.GetGlobalApplication().Actions.FirstOrDefault(a => a.Name == selectedItem.ActionName);
+                selectedAction = ApplicationManager.Instance.GetGlobalApplication().Actions.FirstOrDefault(a => a.Name == selectedItem.ActionName);
             else
                 // Select action from selected application list
                 selectedAction = selectedApplication.Actions.FirstOrDefault(a => a.Name == selectedItem.ActionName);
@@ -174,8 +174,8 @@ namespace GestureSign.UI
             selectedGesture = selectedAction.GestureName;
 
             // Set current application, current action, and current gestures
-            Applications.ApplicationManager.Instance.CurrentApplication = selectedApplication;
-            Gestures.GestureManager.Instance.GestureName = selectedGesture;
+            ApplicationManager.Instance.CurrentApplication = selectedApplication;
+            GestureManager.Instance.GestureName = selectedGesture;
 
             ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction);
             applicationDialog.ShowDialog();
@@ -235,17 +235,17 @@ namespace GestureSign.UI
                 string strApplicationName = selectedAction.ApplicationName;
 
                 // Is this a global action or application specific
-                if (strApplicationName == Applications.ApplicationManager.Instance.GetGlobalApplication().Name)
+                if (strApplicationName == ApplicationManager.Instance.GetGlobalApplication().Name)
                     // Delete action from global list
-                    Applications.ApplicationManager.Instance.RemoveGlobalAction(strActionName);
+                    ApplicationManager.Instance.RemoveGlobalAction(strActionName);
                 else
                     // Delete action from application
-                    Applications.ApplicationManager.Instance.RemoveNonGlobalAction(strActionName);
+                    ApplicationManager.Instance.RemoveNonGlobalAction(strActionName);
 
             }
             BindActions();
             // Save entire list of applications
-            Applications.ApplicationManager.Instance.SaveApplications();
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void lstAvailableActions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -257,8 +257,8 @@ namespace GestureSign.UI
         {
             ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
             if (actionInfo == null) return;
-            Applications.ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName).IsEnabled = (sender as CheckBox).IsChecked.Value;
-            Applications.ApplicationManager.Instance.SaveApplications();
+            ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName).IsEnabled = (sender as CheckBox).IsChecked.Value;
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void AllCheckBoxs_Click(object sender, RoutedEventArgs e)
@@ -275,7 +275,7 @@ namespace GestureSign.UI
 
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
         {
-            if (Gestures.GestureManager.Instance.Gestures.Length == 0)
+            if (GestureManager.Instance.Gestures.Length == 0)
             {
                 Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("无可用手势", "添加动作前需要先添加至少一项手势 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
                 {
@@ -299,10 +299,10 @@ namespace GestureSign.UI
             //    this.Dispatcher.BeginInvoke(new Action(() =>
             //     {
             // Add global actions to global applications group
-            AddActionsToGroup(Applications.ApplicationManager.Instance.GetGlobalApplication().Name, Applications.ApplicationManager.Instance.GetGlobalApplication().Actions.OrderBy(a => a.Name));
+            AddActionsToGroup(ApplicationManager.Instance.GetGlobalApplication().Name, ApplicationManager.Instance.GetGlobalApplication().Actions.OrderBy(a => a.Name));
 
             // Get all applications
-            IApplication[] lstApplications = Applications.ApplicationManager.Instance.GetAvailableUserApplications();
+            IApplication[] lstApplications = ApplicationManager.Instance.GetAvailableUserApplications();
 
             foreach (UserApplication App in lstApplications)
             {
@@ -329,11 +329,11 @@ namespace GestureSign.UI
             foreach (Applications.Action currentAction in Actions)
             {
                 // Ensure this action has a plugin
-                if (Plugins.PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
+                if (PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
                 {
 
                     // Get plugin for this action
-                    IPluginInfo pluginInfo = Plugins.PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
+                    IPluginInfo pluginInfo = PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
 
                     // Feed settings to plugin
                     if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
@@ -348,7 +348,7 @@ namespace GestureSign.UI
                     description = "无关联动作";
                 }
                 // Get handle of action gesture
-                IGesture actionGesture = Gestures.GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
+                IGesture actionGesture = GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
 
 
                 if (actionGesture == null)
@@ -359,7 +359,8 @@ namespace GestureSign.UI
                 }
                 else
                 {
-                    var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+                    var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+                    var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
 
                     Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize, brush);
                     gestureName = actionGesture.Name;
@@ -448,10 +449,10 @@ namespace GestureSign.UI
             ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as ComboBox).Content as ActionInfo;
             if (((GestureItem)e.AddedItems[0]).Name != actionInfo.GestureName)
             {
-                IAction action = Applications.ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName);
+                IAction action = ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName);
                 actionInfo.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
                 ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Source = ((sender as ComboBox).SelectedItem as GestureItem).Image;
-                Applications.ApplicationManager.Instance.SaveApplications();
+                ApplicationManager.Instance.SaveApplications();
             }
         }
 
@@ -460,7 +461,7 @@ namespace GestureSign.UI
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
-            var targetApplication = Applications.ApplicationManager.Instance.Applications.Find(
+            var targetApplication = ApplicationManager.Instance.Applications.Find(
                    a => !(a is IgnoredApplication) && a.Name == menuItem.Header.ToString().Trim());
 
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
@@ -473,7 +474,7 @@ namespace GestureSign.UI
                     });
                 return;
             }
-            IAction selectedAction = Applications.ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
+            IAction selectedAction = ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
             Applications.Action newAction = new Applications.Action()
             {
                 ActionSettings = selectedAction.ActionSettings,
@@ -487,7 +488,7 @@ namespace GestureSign.UI
 
             BindActions();
             SelectAction(targetApplication.Name, newAction.Name, true);
-            Applications.ApplicationManager.Instance.SaveApplications();
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -496,14 +497,14 @@ namespace GestureSign.UI
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = Configuration.IO.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
                         if (newApp is IgnoredApplication) continue;
-                        if (Applications.ApplicationManager.Instance.ApplicationExists(newApp.Name))
+                        if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
                         {
-                            var existingApp = Applications.ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
+                            var existingApp = ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
                             foreach (IAction newAction in newApp.Actions)
                             {
                                 if (existingApp.Actions.Exists(action => action.Name.Equals(newAction.Name)))
@@ -526,13 +527,13 @@ namespace GestureSign.UI
                         }
                         else
                         {
-                            Applications.ApplicationManager.Instance.AddApplication(newApp);
+                            ApplicationManager.Instance.AddApplication(newApp);
                         }
                     }
             End:
                 if (addcount != 0)
                 {
-                    Applications.ApplicationManager.Instance.SaveApplications();
+                    ApplicationManager.Instance.SaveApplications();
                     BindActions();
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
@@ -544,7 +545,7 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Configuration.IO.FileManager.SaveObject<List<IApplication>>(Applications.ApplicationManager.Instance.Applications.Select(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
             }
         }
     }

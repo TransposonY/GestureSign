@@ -6,6 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro;
+using System.Threading;
+using System.Reflection;
+using System.Diagnostics;
+
 
 namespace GestureSign
 {
@@ -18,19 +22,13 @@ namespace GestureSign
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             bool createdNew;
-            mutex = new System.Threading.Mutex(true, Application.ResourceAssembly.GetName().FullName, out createdNew);
+            mutex = new System.Threading.Mutex(true, "GestureSignSetting", out createdNew);
 
             if (createdNew)
             {
-                Input.TouchCapture.Instance.Load();
-                Gestures.GestureManager.Instance.Load();
-                UI.FormManager.Instance.Load();
-                Applications.ApplicationManager.Instance.Load();
-                Plugins.PluginManager.Instance.Load();
-                UI.TrayManager.Instance.Load();
-
-                UI.Surface surface = new UI.Surface();
-                Input.TouchCapture.Instance.EnableTouchCapture();
+                GestureSign.Common.Gestures.GestureManager.Instance.Load(null);
+                GestureSign.Common.Applications.ApplicationManager.Instance.Load(null);
+                GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
 
                 var systemAccent = Common.UI.WindowsHelper.GetSystemAccent();
                 if (systemAccent != null)
@@ -39,16 +37,58 @@ namespace GestureSign
                     ThemeManager.ChangeAppStyle(Application.Current, accent, MahApps.Metro.ThemeManager.GetAppTheme("BaseLight"));
                 }
 
-                if (GestureSign.Input.MessageWindow.NumberOfTouchscreens == 0)
+                MessageProcessor messageProcessor = new MessageProcessor();
+                GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", messageProcessor.ProcessMessages);
+
+                bool createdNewDaemon;
+                using (Mutex daemonMutex = new Mutex(false, "GestureSignDaemon", out createdNewDaemon))//true
                 {
-                    MessageBox.Show("未检测到触摸屏设备，本软件无法正常使用！", "错误");
+                    if (createdNewDaemon)
+                    {
+                        string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSignDaemon.exe");
+                        if (System.IO.File.Exists(path))
+                            using (Process daemon = new Process())
+                            {
+                                daemon.StartInfo.FileName = path;
+
+                                // pipeClient.StartInfo.Arguments =            
+                                daemon.StartInfo.UseShellExecute = false;
+                                daemon.StartInfo.CreateNoWindow = false;
+                                daemon.Start();
+
+                            }
+                        else
+                        {
+                            MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            Application.Current.Shutdown();
+                        }
+                    }
                 }
-                else if (GestureSign.Configuration.AppConfig.XRatio == 0)
+                if (GestureSign.Common.Configuration.AppConfig.XRatio == 0)
                 {
                     UI.Guide guide = new UI.Guide();
                     guide.Show();
                     guide.Activate();
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignDaemon");
                 }
+                else if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                {
+                    Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+                }
+                else
+                {
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    mainWindow.Activate();
+                    mainWindow.availableAction.BindActions();
+                }
+#if DEBUG
+                MainWindow mw = new MainWindow();
+                mw.Show();
+                mw.Activate();
+                mw.availableAction.BindActions();
+#endif//DEBUG
+
             }
             else
             {
@@ -57,9 +97,5 @@ namespace GestureSign
             }
         }
 
-        private void Application_Exit(object sender, ExitEventArgs e)
-        {
-            GestureSign.Configuration.AppConfig.Save();
-        }
     }
 }

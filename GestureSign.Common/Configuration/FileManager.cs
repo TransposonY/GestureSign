@@ -7,12 +7,15 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Xml.Serialization;
 
-namespace GestureSign.Configuration.IO
+using System.Threading;
+
+namespace GestureSign.Common.Configuration
 {
     public static class FileManager
     {
         #region Constructors
 
+        static Mutex mutex = new Mutex(false, "GestureSignData");
         static FileManager()
         {
             try
@@ -36,6 +39,7 @@ namespace GestureSign.Configuration.IO
         {
             try
             {
+                mutex.WaitOne();
                 // Create json serializer to serialize json file
                 DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
 
@@ -46,6 +50,7 @@ namespace GestureSign.Configuration.IO
                 jSerial.WriteObject(sWrite.BaseStream, SerializableObject);
                 // Close file
                 sWrite.Close();
+                mutex.ReleaseMutex();
                 return true;
             }
             catch (Exception ex)
@@ -60,6 +65,7 @@ namespace GestureSign.Configuration.IO
         {
             try
             {
+                mutex.WaitOne();
                 if (!File.Exists(filePath)) return default(T);
                 StreamReader sRead = new StreamReader(filePath);
                 int BOM = sRead.BaseStream.ReadByte();
@@ -73,6 +79,7 @@ namespace GestureSign.Configuration.IO
                 T objBuffer = (T)jSerial.ReadObject(sRead.BaseStream);
 
                 sRead.Close();
+                mutex.ReleaseMutex();
                 // Return results of serialization
                 return objBuffer;
             }

@@ -9,7 +9,7 @@ using GestureSign.Common.Input;
 using GestureSign.PointPatterns;
 using System.Diagnostics;
 
-namespace GestureSign.Input
+namespace GestureSignDaemon.Input
 {
     public class TouchCapture : ILoadable, ITouchCapture
     {
@@ -20,7 +20,6 @@ namespace GestureSign.Input
         Input.MessageWindow messageWindow = new MessageWindow();
 
         Dictionary<int, List<Point>> _PointsCaptured = new Dictionary<int, List<Point>>(2);
-        bool TeachingOnce = false;
         // Create variable to hold the only allowed instance of this class
         static readonly TouchCapture _Instance = new TouchCapture();
 
@@ -49,7 +48,6 @@ namespace GestureSign.Input
 
         public CaptureState State { get; private set; }
 
-        CaptureState LastState = CaptureState.Ready;
         #endregion
 
         #region Custom Events
@@ -128,19 +126,8 @@ namespace GestureSign.Input
             TouchEventTranslator.TouchUp += new EventHandler<PointsMessageEventArgs>(TouchEventTranslator_TouchUp);
             TouchEventTranslator.TouchMove += new EventHandler<PointsMessageEventArgs>(TouchEventTranslator_TouchMove);
 
-            UI.AvailableGestures.StartCapture += AvailableAction_StartCapture;
         }
 
-        void AvailableAction_StartCapture(object sender, EventArgs e)
-        {
-            if (!GestureSign.Configuration.AppConfig.Teaching)
-            {
-                TeachingOnce = true;
-                LastState = State;
-                State = CaptureState.Ready;
-                GestureSign.UI.TrayManager.Instance.StartTeaching();
-            }
-        }
 
         #endregion
 
@@ -206,7 +193,7 @@ namespace GestureSign.Input
 
             // Clear old gesture from point list so we can start adding the new captures points to the list 
             _PointsCaptured = new Dictionary<int, List<Point>>(FirstTouch.Length);
-            if (GestureSign.Configuration.AppConfig.IsOrderByLocation)
+            if (GestureSign.Common.Configuration.AppConfig.IsOrderByLocation)
             {
                 foreach (RawTouchData rawTouchData in FirstTouch.OrderBy(rtd => rtd.RawPointsData.X))
                 {
@@ -241,19 +228,30 @@ namespace GestureSign.Input
 
             if (!pointsInformation.Cancel)
             {
-                if (GestureSign.Configuration.AppConfig.Teaching || TeachingOnce)
+                if (GestureSign.Common.Configuration.AppConfig.Teaching)
                 {
-                    UI.GestureDefinition gu = new UI.GestureDefinition(new List<List<Point>>(_PointsCaptured.Values));
-                    gu.Show();
-                    gu.Activate();
+                  
+                    bool createdSetting;
+                    using (System.Threading.Mutex setting = new System.Threading.Mutex(false, "GestureSignSetting", out createdSetting))//true
+                    {
+                        if (createdSetting)
+                        {
+                            if (System.IO.File.Exists("GestureSign.exe"))
+                                using (Process daemon = new Process())
+                                {
+                                    daemon.StartInfo.FileName = "GestureSign.exe";
+                                    daemon.StartInfo.Arguments = "/L";
+                                    // pipeClient.StartInfo.Arguments =            
+                                    daemon.StartInfo.UseShellExecute = false;
+                                    daemon.Start();
+                                    daemon.WaitForInputIdle();
+                                }
+                        }
+                    }
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(new List<List<Point>>(_PointsCaptured.Values), "GestureSignSetting");
+              
                 }
                 OnAfterPointsCaptured(pointsInformation);
-            }
-            if (TeachingOnce)
-            {
-                TeachingOnce = false;
-                GestureSign.UI.TrayManager.Instance.StopTeaching();
-                State = LastState;
             }
 
         }
@@ -272,7 +270,7 @@ namespace GestureSign.Input
                 if (_PointsCaptured.ContainsKey(rtd.Num))
                 {
                     if (_PointsCaptured[rtd.Num].Count() > 0 &&
-                    PointPatterns.PointPatternMath.GetDistance(_PointsCaptured[rtd.Num].Last(), rtd.RawPointsData) < GestureSign.Configuration.AppConfig.MinimumPointDistance)
+                   GestureSign.PointPatterns.PointPatternMath.GetDistance(_PointsCaptured[rtd.Num].Last(), rtd.RawPointsData) < GestureSign.Common.Configuration.AppConfig.MinimumPointDistance)
                         continue;
                     getNewPoint = true;
                     // Add point to captured points list

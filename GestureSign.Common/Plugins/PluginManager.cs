@@ -9,9 +9,9 @@ using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Applications;
 
-namespace GestureSign.Plugins
+namespace GestureSign.Common.Plugins
 {
-    public class PluginManager : ILoadable, IPluginManager
+    public class PluginManager : IPluginManager
     {
         #region Private Variables
 
@@ -49,7 +49,7 @@ namespace GestureSign.Plugins
         protected void GestureManager_GestureRecognized(object sender, RecognitionEventArgs e)
         {
             // Exit if we're teaching
-            if (GestureSign.Configuration.AppConfig.Teaching)
+            if (Configuration.AppConfig.Teaching)
                 return;
 
             // Get action to be executed
@@ -78,7 +78,7 @@ namespace GestureSign.Plugins
 
         #region Public Methods
 
-        public bool LoadPlugins()
+        public bool LoadPlugins(IHostControl host)
         {
             // Default return value to failure
             bool bFailed = true;
@@ -90,7 +90,7 @@ namespace GestureSign.Plugins
             {
                 try
                 {
-                    _Plugins.AddRange(LoadPluginsFromAssembly(Path.GetFullPath(sFilePath)));
+                    _Plugins.AddRange(LoadPluginsFromAssembly(Path.GetFullPath(sFilePath),host));
                     bFailed = false;
                 }
                 catch
@@ -116,20 +116,11 @@ namespace GestureSign.Plugins
 
         #region Private Methods
 
-        private List<IPluginInfo> LoadPluginsFromAssembly(string AssemblyLocation)
+        private List<IPluginInfo> LoadPluginsFromAssembly(string AssemblyLocation, IHostControl hostControl)
         {
             List<IPluginInfo> retPlugins = new List<IPluginInfo>();
 
-            // Create host control class and pass to plugins
-            HostControl hostControl = new HostControl()
-            {
-                _ApplicationManager = global::GestureSign.Applications.ApplicationManager.Instance,
-                _FormManager = global::GestureSign.UI.FormManager.Instance,
-                _GestureManager = global::GestureSign.Gestures.GestureManager.Instance,
-                _TouchCapture = global::GestureSign.Input.TouchCapture.Instance,
-                _PluginManager = global::GestureSign.Plugins.PluginManager.Instance,
-                _TrayManager = global::GestureSign.UI.TrayManager.Instance
-            };
+        
 
             // Catch an unexpected errors during load
             try
@@ -161,10 +152,10 @@ namespace GestureSign.Plugins
 
         #region ILoadable Methods
 
-        public void Load()
+        public void Load(IHostControl host)
         {
             // Create empty list of plugins, then load as many as possible from plugin directory
-            LoadPlugins();
+            LoadPlugins(host);
         }
 
         #endregion

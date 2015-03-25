@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using GestureSign.Common.Applications;
-using GestureSign.Applications;
 
 using MahApps.Metro.Controls;
 
@@ -69,7 +68,7 @@ namespace GestureSign.UI
         private void BindIgnoredApplications()
         {
             this.lstIgnoredApplications.ItemsSource = null;
-            IgnoredApplication[] lstApplications = Applications.ApplicationManager.Instance.GetIgnoredApplications();
+            IgnoredApplication[] lstApplications = ApplicationManager.Instance.GetIgnoredApplications();
 
 
             var sourceView = new ListCollectionView(lstApplications);//创建数据源的视图
@@ -87,7 +86,7 @@ namespace GestureSign.UI
             ApplicationManager.Instance.SaveApplications();
             BindIgnoredApplications();
         }
-        
+
         private void btnEditIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             IgnoredApplication ia = this.lstIgnoredApplications.SelectedItem as IgnoredApplication;
@@ -138,29 +137,29 @@ namespace GestureSign.UI
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = Configuration.IO.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
                         if (newApp is IgnoredApplication)
                         {
-                            if (Applications.ApplicationManager.Instance.ApplicationExists(newApp.Name))
+                            if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
                             {
-                                var existingApp = Applications.ApplicationManager.Instance.Applications.Find(a => a is IgnoredApplication && a.Name == newApp.Name);
+                                var existingApp = ApplicationManager.Instance.Applications.Find(a => a is IgnoredApplication && a.Name == newApp.Name);
                                 DataConverter dc = new DataConverter();
 
                                 var result = MessageBox.Show(String.Format("{0} 已经存在 \"{1}\" ，是否覆盖？", dc.Convert(existingApp.MatchUsing, null, null, null), existingApp.MatchString), "已存在同名程序", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                 if (result == MessageBoxResult.Yes)
                                 {
-                                    Applications.ApplicationManager.Instance.RemoveIgnoredApplications(newApp.Name);
-                                    Applications.ApplicationManager.Instance.AddApplication(newApp);
+                                    ApplicationManager.Instance.RemoveIgnoredApplications(newApp.Name);
+                                    ApplicationManager.Instance.AddApplication(newApp);
                                     addcount++;
                                 }
                                 else if (result == MessageBoxResult.Cancel) goto End;
                             }
                             else
                             {
-                                Applications.ApplicationManager.Instance.AddApplication(newApp);
+                                ApplicationManager.Instance.AddApplication(newApp);
                                 addcount++;
                             }
                         }
@@ -169,7 +168,7 @@ namespace GestureSign.UI
                 if (addcount != 0)
                 {
                     BindIgnoredApplications();
-                    Applications.ApplicationManager.Instance.SaveApplications();
+                    ApplicationManager.Instance.SaveApplications();
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个程序", addcount), "导入完成");
             }
@@ -180,7 +179,7 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.json", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Configuration.IO.FileManager.SaveObject<List<IApplication>>(Applications.ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(IgnoredApplication) });
+                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(IgnoredApplication) });
             }
         }
     }

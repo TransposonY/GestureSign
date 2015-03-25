@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GestureSign.UI"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
-             mc:Ignorable="d" Height="381" Width="380" Loaded="UserControl_Loaded" LostFocus="UserControl_LostFocus">
+             mc:Ignorable="d" Height="381" Width="380" Loaded="UserControl_Loaded">
     <ScrollViewer PanningMode="VerticalFirst">
         <StackPanel Margin="0,0,0.4,0" Grid.RowSpan="2">
             <StackPanel.Resources>

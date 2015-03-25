@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
@@ -10,7 +9,10 @@ using GestureSign.Common;
 using GestureSign.Common.UI;
 using GestureSign.Common.Input;
 
-namespace GestureSign.UI
+using System.Threading;
+using System.Diagnostics;
+
+namespace GestureSignDaemon
 {
     public class TrayManager : ILoadable, ITrayManager
     {
@@ -60,8 +62,8 @@ namespace GestureSign.UI
             TrayMenu.Name = "TrayMenu";
             TrayMenu.Size = new Size(194, 82);
             TrayMenu.Text = "GestureSign 托盘菜单";
-            TrayMenu.Opened += (o, e) => { Input.TouchCapture.Instance.DisableTouchCapture(); };
-            TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
+            //TrayMenu.Opened += (o, e) => { Input.TouchCapture.Instance.DisableTouchCapture(); };
+            //TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
 
             // Training Mode Menu Item
             miTrainingMode.Checked = true;
@@ -94,10 +96,30 @@ namespace GestureSign.UI
             miOptions.Text = "设置";
             miOptions.Click += (o, e) =>
             {
-                UI.FormManager.Instance.MainWindow.Show();
-                UI.FormManager.Instance.MainWindow.Activate();
-                UI.FormManager.Instance.MainWindow.availableAction.BindActions();
-                //  System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds.ToString());
+                bool createdSetting;
+                using (Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting))//true
+                {
+                    if (createdSetting)
+                    {
+                        if (System.IO.File.Exists("GestureSign.exe"))
+                            using (Process daemon = new Process())
+                            {
+                                try
+                                {
+                                    daemon.StartInfo.FileName = "GestureSign.exe";
+
+                                    daemon.StartInfo.UseShellExecute = false;
+                                    daemon.Start();
+                                    daemon.WaitForInputIdle(500);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }
+                    }
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("MainWindow", "GestureSignSetting");
+                }
             };
 
             // Second Seperator Menu Item
@@ -110,9 +132,9 @@ namespace GestureSign.UI
             miExitGestureSign.Text = "退出";
             miExitGestureSign.Click += (o, e) =>
             {
-                // Uninstall mouse hook and exit program
                 TrayIcon.Visible = false;
-                System.Windows.Application.Current.Shutdown();//.ExitThread();
+                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Exit", "GestureSignSetting");
+                Application.Exit();
             };
         }
 
@@ -171,7 +193,7 @@ namespace GestureSign.UI
             {
                 miTrainingMode.Enabled = false;
                 miDisableGestures.Checked = true;
-                TrayIcon.Icon = GestureSign.Properties.Resources.stop;
+                TrayIcon.Icon = Properties.Resources.stop;
             }
             else
             {
@@ -179,9 +201,9 @@ namespace GestureSign.UI
                 miDisableGestures.Checked = false;
                 // Consider state of Training Mode and load according icon
                 if (miTrainingMode.Checked)
-                    TrayIcon.Icon = GestureSign.Properties.Resources.add;
+                    TrayIcon.Icon = Properties.Resources.add;
                 else
-                    TrayIcon.Icon = GestureSign.Properties.Resources.normal;
+                    TrayIcon.Icon = Properties.Resources.normal;
             }
         }
 
@@ -194,7 +216,7 @@ namespace GestureSign.UI
         {
             // Toggle teaching mode, unless is UserDisable gestures mode
             if (Input.TouchCapture.Instance.State != CaptureState.UserDisabled)
-                if (GestureSign.Configuration.AppConfig.Teaching)
+                if (GestureSign.Common.Configuration.AppConfig.Teaching)
                     StopTeaching();
                 else
                     StartTeaching();
@@ -208,20 +230,18 @@ namespace GestureSign.UI
 
         public void StartTeaching()
         {
-            GestureSign.Configuration.AppConfig.Teaching = miTrainingMode.Checked = true;
-            GestureSign.Configuration.AppConfig.Save();
+            GestureSign.Common.Configuration.AppConfig.Teaching = miTrainingMode.Checked = true;
 
             // Assign resource icon as tray icon	
-            TrayIcon.Icon = GestureSign.Properties.Resources.add;
+            TrayIcon.Icon = Properties.Resources.add;
         }
 
         public void StopTeaching()
         {
-            GestureSign.Configuration.AppConfig.Teaching = miTrainingMode.Checked = false;
-            GestureSign.Configuration.AppConfig.Save();
+            GestureSign.Common.Configuration.AppConfig.Teaching = miTrainingMode.Checked = false;
 
             // Assign resource icon as tray icon
-            TrayIcon.Icon = GestureSign.Properties.Resources.normal;
+            TrayIcon.Icon = Properties.Resources.normal;
         }
 
         #endregion

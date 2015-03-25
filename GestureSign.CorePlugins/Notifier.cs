@@ -37,10 +37,10 @@ namespace GestureSign.CorePlugins
 
 		public void Initialize()
 		{
-			HostControl.GestureManager.GestureRecognized += (o, e) =>
-				{
-					//MessageBox.Show(String.Format("You drew a '{0}'", e.GestureName));
-				};
+            //HostControl.GestureManager.GestureRecognized += (o, e) =>
+            //    {
+            //        //MessageBox.Show(String.Format("You drew a '{0}'", e.GestureName));
+            //    };
 		}
 
 		public bool Gestured(PointInfo ActionPoint)

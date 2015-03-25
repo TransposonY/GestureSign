@@ -130,7 +130,7 @@ namespace GestureSign.UI
         #endregion
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool GetPointerFrameInfo(int pointerID, ref int pointerCount, [MarshalAs(UnmanagedType.LPArray), In, Out] POINTER_INFO[] pointerInfo);
-        System.Drawing.Point touchPoint;
+
 
         public Guide()
         {
@@ -142,49 +142,14 @@ namespace GestureSign.UI
         {
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(hwnd).AddHook(new HwndSourceHook(WndProc));
-            GestureSign.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
+            MessageProcessor.OnInitialized += MessageProcessor_OnInitialized;
         }
 
-        void MessageWindow_PointsIntercepted(object sender, Common.Input.PointsMessageEventArgs e)
+        void MessageProcessor_OnInitialized(object sender, EventArgs e)
         {
-            if (GestureSign.Configuration.AppConfig.XRatio == 0 && touchPoint.X != 0)
-            {
-                bool XAxisDirection = false, YAxisDirection = false;
-                switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
-                {
-                    case System.Windows.Forms.ScreenOrientation.Angle0:
-                        XAxisDirection = YAxisDirection = true;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle90:
-                        XAxisDirection = false;
-                        YAxisDirection = true;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle180:
-                        XAxisDirection = YAxisDirection = false;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle270:
-                        XAxisDirection = true;
-                        YAxisDirection = false;
-                        break;
-                    default: break;
-                }
-                double rateX;
-                double rateY;
-                rateX = XAxisDirection ?
-                    ((double)e.RawTouchsData[0].RawPointsData.X / (double)touchPoint.X) :
-                    (double)e.RawTouchsData[0].RawPointsData.X / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - touchPoint.X);
-
-                rateY = YAxisDirection ?
-                    ((double)e.RawTouchsData[0].RawPointsData.Y) / (double)touchPoint.Y :
-                    (double)e.RawTouchsData[0].RawPointsData.Y / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height - touchPoint.Y);
-
-                GestureSign.Configuration.AppConfig.XRatio = rateX;
-                GestureSign.Configuration.AppConfig.YRatio = rateY;
-                GestureSign.Configuration.AppConfig.Save();
-
-                this.GuideFlipView.SelectedIndex = 1;
-            }
+            this.Dispatcher.Invoke(() => { this.GuideFlipView.SelectedIndex = 1; });
         }
+
         internal static void CheckLastError()
         {
             int errCode = Marshal.GetLastWin32Error();
@@ -216,7 +181,8 @@ namespace GestureSign.UI
                             CheckLastError();
                         }
                         System.Diagnostics.Debug.WriteLine(":  " + pointerInfos[0].PtPixelLocation.X + "  " + pointerInfos[0].PtPixelLocationRaw.X);
-                        touchPoint = new System.Drawing.Point(pointerInfos[0].PtPixelLocation.X, pointerInfos[0].PtPixelLocation.Y);
+                        System.Drawing.Point touchPoint = new System.Drawing.Point(pointerInfos[0].PtPixelLocation.X, pointerInfos[0].PtPixelLocation.Y);
+                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(touchPoint, "GestureSignDaemon");
 
                         return IntPtr.Zero;
                     }
@@ -229,9 +195,10 @@ namespace GestureSign.UI
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-            UI.FormManager.Instance.MainWindow.Show();
-            UI.FormManager.Instance.MainWindow.Activate();
-            UI.FormManager.Instance.MainWindow.availableAction.BindActions();
+            MainWindow mw = new MainWindow();
+            mw.Show();
+            mw.Activate();
+            mw.availableAction.BindActions();
         }
     }
 }

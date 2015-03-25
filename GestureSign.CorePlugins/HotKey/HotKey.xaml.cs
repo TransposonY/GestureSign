@@ -41,16 +41,6 @@ namespace GestureSign.CorePlugins.HotKey
             txtKey.Text = String.Empty;
         }
 
-        private void txtKey_GotFocus(object sender, RoutedEventArgs e)
-        {
-            _HostControl.AllowEscapeKey = false;
-
-        }
-
-        private void txtKey_LostFocus(object sender, RoutedEventArgs e)
-        {
-            _HostControl.AllowEscapeKey = true;
-        }
 
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {

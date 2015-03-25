@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using GestureSign.PointPatterns;
-using GestureSign.Common.Gestures;
 using System.Runtime.Serialization;
+using GestureSign.Common.Gestures;
 
 namespace GestureSign.Gestures
 {

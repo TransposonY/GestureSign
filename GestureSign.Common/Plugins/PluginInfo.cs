@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GestureSign.Common.Plugins;
 
-namespace GestureSign.Plugins
+namespace GestureSign.Common.Plugins
 {
 	public class PluginInfo : IPluginInfo
 	{

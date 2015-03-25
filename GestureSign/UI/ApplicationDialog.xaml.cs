@@ -115,7 +115,7 @@ namespace GestureSign.UI
             RefreshApplications();
             if (_CurrentAction != null)
             {
-                cmbExistingApplication.SelectedItem = Applications.ApplicationManager.Instance.CurrentApplication;
+                cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
                 foreach (object comboItem in cmbPlugins.Items)
                 {
                     IPluginInfo pluginInfo = (IPluginInfo)comboItem;
@@ -127,6 +127,8 @@ namespace GestureSign.UI
                     }
                 }
             }
+
+            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("DisableTouchCapture", "GestureSignDaemon");
         }
 
         protected void chCrosshair_CrosshairDragging(object sender, MouseEventArgs e)
@@ -208,7 +210,8 @@ namespace GestureSign.UI
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
             // User canceled dialog, re-enable gestures and hide form
-            Input.TouchCapture.Instance.EnableTouchCapture();
+
+            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EnableTouchCapture", "GestureSignDaemon");
         }
 
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -236,16 +239,16 @@ namespace GestureSign.UI
 
             if (this.SelectedTab == TabType.Existing)
             {
-                if (_CurrentAction != null && cmbExistingApplication.SelectedItem as IApplication != Applications.ApplicationManager.Instance.CurrentApplication)
+                if (_CurrentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
                 {
                     if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(txtActionName.Text.Trim())))
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", txtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
-                    Applications.ApplicationManager.Instance.CurrentApplication.RemoveAction(_CurrentAction);
+                    ApplicationManager.Instance.CurrentApplication.RemoveAction(_CurrentAction);
                     ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_CurrentAction);
                 }
-                Applications.ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
+                ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
                 return true;
             }
             else
@@ -257,7 +260,7 @@ namespace GestureSign.UI
                 if (_SelectedApplication.Name == "")
                     return ShowErrorMessage("无程序名", "请定义程序名");
 
-                if (_CurrentAction == null && Applications.ApplicationManager.Instance.ApplicationExists(_SelectedApplication.Name))
+                if (_CurrentAction == null && ApplicationManager.Instance.ApplicationExists(_SelectedApplication.Name))
                     return ShowErrorMessage("程序名已经存在", "程序名称已经存在，请输入其他名字");
 
 
@@ -306,13 +309,13 @@ namespace GestureSign.UI
                 }
                 if (_CurrentAction != null)
                 {
-                    Applications.ApplicationManager.Instance.CurrentApplication.IsRegEx = _SelectedApplication.IsRegEx;
-                    Applications.ApplicationManager.Instance.CurrentApplication.MatchString = _SelectedApplication.MatchString;
-                    Applications.ApplicationManager.Instance.CurrentApplication.MatchUsing = _SelectedApplication.MatchUsing;
-                    Applications.ApplicationManager.Instance.CurrentApplication.Name = _SelectedApplication.Name;
+                    ApplicationManager.Instance.CurrentApplication.IsRegEx = _SelectedApplication.IsRegEx;
+                    ApplicationManager.Instance.CurrentApplication.MatchString = _SelectedApplication.MatchString;
+                    ApplicationManager.Instance.CurrentApplication.MatchUsing = _SelectedApplication.MatchUsing;
+                    ApplicationManager.Instance.CurrentApplication.Name = _SelectedApplication.Name;
                 }
                 else
-                    Applications.ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
+                    ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
             }
             return true;
         }
@@ -332,9 +335,9 @@ namespace GestureSign.UI
             cmbExistingApplication.Items.Clear();
 
             // Add generic application listview item
-            IApplication allApplicationsItem = Applications.ApplicationManager.Instance.GetGlobalApplication();
+            IApplication allApplicationsItem = ApplicationManager.Instance.GetGlobalApplication();
 
-            IApplication[] existingApplications = Applications.ApplicationManager.Instance.GetAvailableUserApplications();
+            IApplication[] existingApplications = ApplicationManager.Instance.GetAvailableUserApplications();
 
             // Add application items to the combobox
             cmbExistingApplication.Items.Add(allApplicationsItem);
@@ -351,9 +354,10 @@ namespace GestureSign.UI
             //no GestureItem source
             if (availableAction == null)
             {
-                IEnumerable<IGesture> results = Gestures.GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
+                IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
                 List<GestureItem> GestureItems = new List<GestureItem>(results.Count());
-                var brush = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current).Item2.Resources["HighlightBrush"] as Brush;
+                var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+                var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
                 foreach (IGesture gesture in results)
                 {
                     // Create new listviewitem to represent gestures, create a thumbnail of the latest version of each gesture
@@ -472,7 +476,7 @@ namespace GestureSign.UI
             System.Threading.Thread.Sleep(500);
             foreach (SystemWindow sWind in Windows)
             {
-                this.alvRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
+                this.alvRunningApplications.Dispatcher.BeginInvoke(new System.Action(() =>
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
 
@@ -516,15 +520,15 @@ namespace GestureSign.UI
             bool _IsNew = false;
             if (_CurrentAction == null)
             {
-                _CurrentAction = new Applications.Action();
+                _CurrentAction = new GestureSign.Applications.Action();
                 _IsNew = true;
             }
 
             if (_IsNew)
             {
-                if (Applications.ApplicationManager.Instance.CurrentApplication is GlobalApplication)
+                if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
-                    if (Applications.ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()))
+                    if (ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()))
                     {
                         _CurrentAction = null;
                         return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", txtActionName.Text.Trim()));
@@ -532,27 +536,27 @@ namespace GestureSign.UI
                 }
                 else
                 {
-                    if (Applications.ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()))
+                    if (ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()))
                     {
                         _CurrentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), Applications.ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
             }
             else
             {
-                if (Applications.ApplicationManager.Instance.CurrentApplication is GlobalApplication)
+                if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
-                    if (Applications.ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", txtActionName.Text.Trim()));
                     }
                 }
                 else
                 {
-                    if (Applications.ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), Applications.ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), ApplicationManager.Instance.CurrentApplication.Name));
 
                     }
                 }
@@ -569,12 +573,12 @@ namespace GestureSign.UI
             if (_IsNew)
             {
                 if (_SelectedApplication != null || _SelectedApplication is UserApplication)
-                    Applications.ApplicationManager.Instance.AddApplication(_SelectedApplication);
+                    ApplicationManager.Instance.AddApplication(_SelectedApplication);
                 // Save new action to specific application
-                Applications.ApplicationManager.Instance.CurrentApplication.AddAction(_CurrentAction);
+                ApplicationManager.Instance.CurrentApplication.AddAction(_CurrentAction);
             }
             // Save entire list of applications
-            Applications.ApplicationManager.Instance.SaveApplications();
+            ApplicationManager.Instance.SaveApplications();
 
             return true;
         }
@@ -583,7 +587,7 @@ namespace GestureSign.UI
         {
             // Compile list of PluginInfo objects to bind to drop down
             List<IPluginInfo> availablePlugins = new List<IPluginInfo>();
-            availablePlugins.AddRange(Plugins.PluginManager.Instance.Plugins.Where(pi => pi.Plugin.IsAction).OrderBy(pi => pi.ToString()));
+            availablePlugins.AddRange(PluginManager.Instance.Plugins.Where(pi => pi.Plugin.IsAction).OrderBy(pi => pi.ToString()));
 
             // Bind available plugin list to combo box
             // cmbPlugins.DisplayMemberPath = "DisplayText";
@@ -646,9 +650,9 @@ namespace GestureSign.UI
             if (await this.ShowMessageAsync("确认删除", "确定删除该程序吗，控制该程序的相关动作也将一并删除。",
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
             {
-                Applications.ApplicationManager.Instance.RemoveApplication((IApplication)cmbExistingApplication.SelectedItem);
+                ApplicationManager.Instance.RemoveApplication((IApplication)cmbExistingApplication.SelectedItem);
 
-                Applications.ApplicationManager.Instance.SaveApplications();
+                ApplicationManager.Instance.SaveApplications();
                 BindExistingApplications();
             }
         }

@@ -122,7 +122,6 @@
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -149,9 +148,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Configuration\AppConfig.cs" />
-    <Compile Include="Input\MessageWindow.cs">
-      <SubType>Form</SubType>
+    <Compile Include="MessageProcessor.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\ApplicationDialog.xaml.cs">
       <DependentUpon>ApplicationDialog.xaml</DependentUpon>
@@ -175,7 +176,6 @@
     <Compile Include="UI\Guide.xaml.cs">
       <DependentUpon>Guide.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\FormManager.cs" />
     <Compile Include="UI\GestureDefinition.xaml.cs">
       <DependentUpon>GestureDefinition.xaml</DependentUpon>
     </Compile>
@@ -186,10 +186,6 @@
       <DependentUpon>RuningApplicationsFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\SliderTools.cs" />
-    <Compile Include="UI\Surface.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\TrayManager.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -198,13 +194,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Applications\Action.cs" />
-    <Compile Include="Applications\ApplicationManager.cs" />
-    <Compile Include="Configuration\IO\FileManager.cs" />
-    <Compile Include="Gestures\Gesture.cs" />
-    <Compile Include="Gestures\GestureManager.cs" />
-    <Compile Include="Input\TouchCapture.cs" />
-    <Compile Include="Input\TouchEventTranslator.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -251,16 +240,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugins\HostControl.cs" />
-    <Compile Include="Plugins\PluginInfo.cs" />
-    <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -269,6 +250,7 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -300,7 +282,11 @@
       <Name>ManagedWinapi</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Gestures\" />
+    <Folder Include="Input\" />
+    <Folder Include="Plugins\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\crosshair.cur" />
   </ItemGroup>
@@ -317,12 +303,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\add.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\stop.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\normal.ico" />

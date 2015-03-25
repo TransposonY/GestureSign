@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GestureSignDaemon</RootNamespace>
+    <AssemblyName>GestureSignDaemon</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GestureSign\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\FileWatcher.cs" />
+    <Compile Include="Input\MessageWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageProcessor.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Input\TouchCapture.cs" />
+    <Compile Include="Input\TouchEventTranslator.cs" />
+    <Compile Include="Surface.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TrayManager.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stop.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GestureSign.Common\GestureSign.Common.csproj">
+      <Project>{038047a4-e3f8-4b49-9762-7f63971b8319}</Project>
+      <Name>GestureSign.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GestureSign.CorePlugins\GestureSign.CorePlugins.csproj">
+      <Project>{60070af1-c987-4c5b-afd1-b9dfaf47e35c}</Project>
+      <Name>GestureSign.CorePlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj">
+      <Project>{69f91bd1-6986-4079-9537-ed1a1d8ebe06}</Project>
+      <Name>GestureSign.PointPatterns</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GestureSign\GestureSign.csproj">
+      <Project>{b9a2bc20-b457-4b39-ae1b-274fa961e346}</Project>
+      <Name>GestureSign</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ManagedWinapi\ManagedWinapi.csproj">
+      <Project>{fbd3ec1e-47e2-4d2d-81c9-d6506125a09a}</Project>
+      <Name>ManagedWinapi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\normal.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

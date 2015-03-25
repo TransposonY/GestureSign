@@ -8,18 +8,17 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.UI;
 
-namespace GestureSign.Plugins
+namespace GestureSign.Common.Plugins
 {
 	public class HostControl : IHostControl
 	{
 		#region Internal Manager Setters
 
-		internal IApplicationManager _ApplicationManager;
-		internal IGestureManager _GestureManager;
-        internal ITouchCapture _TouchCapture;
-		internal IPluginManager _PluginManager;
-		internal IFormManager _FormManager;
-		internal ITrayManager _TrayManager;
+		public IApplicationManager _ApplicationManager;
+        public IGestureManager _GestureManager;
+        public ITouchCapture _TouchCapture;
+        public IPluginManager _PluginManager;
+        public ITrayManager _TrayManager;
 
 		#endregion
 
@@ -49,10 +48,6 @@ namespace GestureSign.Plugins
 			get { return _PluginManager; }
 		}
 
-		public IFormManager FormManager
-		{
-			get { return _FormManager; }
-		}
 
 		public ITrayManager TrayManager
 		{

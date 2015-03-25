@@ -10,7 +10,7 @@ using GestureSign.Common.UI;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
 
-namespace GestureSign.UI
+namespace GestureSignDaemon
 {
     public partial class Surface : Form
     {
@@ -58,13 +58,16 @@ namespace GestureSign.UI
             Input.TouchCapture.Instance.PointCaptured += new PointsCapturedEventHandler(MouseCapture_PointCaptured);
             Input.TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
             Input.TouchCapture.Instance.CaptureCanceled += new PointsCapturedEventHandler(MouseCapture_CaptureCanceled);
-            Options.OptionsChanged += (o, se) => { InitializeForm(); };
+            GestureSign.Common.Configuration.AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             // Respond to system event changes by reinitializing the form
             SystemEvents.DisplaySettingsChanged += (o, e) => { InitializeForm(); };
             SystemEvents.UserPreferenceChanged += (o, e) => { InitializeForm(); };
             //this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             //this.UpdateStyles();
+            //+= (o, se) => { InitializeForm(); };
         }
+
+     
 
         #endregion
 
@@ -72,23 +75,26 @@ namespace GestureSign.UI
 
         protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (GestureSign.Configuration.AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing)
+            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing)
                 this.DrawSegments(e.Points);
         }
 
         protected void MouseCapture_CaptureEnded(object sender, EventArgs e)
         {
-            if (GestureSign.Configuration.AppConfig.VisualFeedbackWidth > 0)
+            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0)
                 this.EndDraw();
         }
 
         protected void MouseCapture_CaptureCanceled(object sender, PointsCapturedEventArgs e)
         {
-            if (GestureSign.Configuration.AppConfig.VisualFeedbackWidth > 0)
+            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0)
                 this.EndDraw();
         }
 
-
+        void AppConfig_ConfigChanged(object sender, EventArgs e)
+        {
+            this.Invoke(new Action(() => { InitializeForm(); }));
+        }
 
         #endregion
 
@@ -176,7 +182,7 @@ namespace GestureSign.UI
                 this.BackColor = this.TransparencyKey = TransparentColor;
 
                 // Set opacity value
-                this.Opacity = GestureSign.Configuration.AppConfig.Opacity;
+                this.Opacity = GestureSign.Common.Configuration.AppConfig.Opacity;
 
                 // We have composition enabled, use standard mode
                 RenderMethod = RenderMode.Standard;
@@ -224,11 +230,7 @@ namespace GestureSign.UI
 
         private void InitializePen()
         {
-            Color c = Color.FromArgb(GestureSign.Configuration.AppConfig.VisualFeedbackColor.A,
-                         GestureSign.Configuration.AppConfig.VisualFeedbackColor.R,
-                         GestureSign.Configuration.AppConfig.VisualFeedbackColor.G,
-                         GestureSign.Configuration.AppConfig.VisualFeedbackColor.B);
-            DrawingPen = new Pen(c, GestureSign.Configuration.AppConfig.VisualFeedbackWidth);
+            DrawingPen = new Pen(GestureSign.Common.Configuration.AppConfig.VisualFeedbackColor, GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth);
             DrawingPen.StartCap = DrawingPen.EndCap = LineCap.Round;
             DrawingPen.LineJoin = LineJoin.Round;
         }
@@ -333,7 +335,7 @@ namespace GestureSign.UI
 
             [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
             public static extern int UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pptSrc, Int32 crKey, ref BLENDFUNCTION pblend, Int32 dwFlags);
-      
+
             [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
             public static extern IntPtr ExtCreateRegion(IntPtr lpXform, uint nCount, IntPtr rgnData);
         }
