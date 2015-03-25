@@ -26,6 +26,13 @@ namespace GestureSign
 
             if (createdNew)
             {
+                string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSignDaemon.exe");
+                if (!System.IO.File.Exists(path))
+                {
+                    MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    Application.Current.Shutdown();
+                    return;
+                }
                 GestureSign.Common.Gestures.GestureManager.Instance.Load(null);
                 GestureSign.Common.Applications.ApplicationManager.Instance.Load(null);
                 GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
@@ -45,23 +52,17 @@ namespace GestureSign
                 {
                     if (createdNewDaemon)
                     {
-                        string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSignDaemon.exe");
-                        if (System.IO.File.Exists(path))
-                            using (Process daemon = new Process())
-                            {
-                                daemon.StartInfo.FileName = path;
-
-                                // pipeClient.StartInfo.Arguments =            
-                                daemon.StartInfo.UseShellExecute = false;
-                                daemon.StartInfo.CreateNoWindow = false;
-                                daemon.Start();
-
-                            }
-                        else
+                        using (Process daemon = new Process())
                         {
-                            MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                            Application.Current.Shutdown();
+                            daemon.StartInfo.FileName = path;
+
+                            // pipeClient.StartInfo.Arguments =            
+                            daemon.StartInfo.UseShellExecute = false;
+                            daemon.StartInfo.CreateNoWindow = false;
+                            daemon.Start();
+
                         }
+
                     }
                 }
                 if (GestureSign.Common.Configuration.AppConfig.XRatio == 0)

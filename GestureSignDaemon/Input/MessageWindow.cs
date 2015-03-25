@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 
 using Microsoft.Win32;
 
+using GestureSign.Common.Configuration;
+
 namespace GestureSignDaemon.Input
 {
     public class MessageWindow : Form
@@ -492,18 +494,16 @@ namespace GestureSignDaemon.Input
                             {
                                 TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
-                                if (GestureSign.Common.Configuration.AppConfig.XRatio != 0.0 && GestureSign.Common.Configuration.AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
+                                if (AppConfig.XRatio != 0.0 && AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                                 {
-                                    int X = IsAxisCorresponds.Value ? touch.X : touch.Y;
-                                    int Y = IsAxisCorresponds.Value ? touch.Y : touch.X;
+                                    int rawX = (int)Math.Round(touch.X / AppConfig.XRatio);
+                                    int rawY = (int)Math.Round(touch.Y / AppConfig.YRatio);
 
-                                    X = (int)Math.Round(XAxisDirection.Value ?
-                                        X / GestureSign.Common.Configuration.AppConfig.XRatio :
-                                        System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X / GestureSign.Common.Configuration.AppConfig.XRatio);
+                                    int X = IsAxisCorresponds.Value ? rawX : rawY;
+                                    int Y = IsAxisCorresponds.Value ? rawY : rawX;
 
-                                    Y = (int)Math.Round(YAxisDirection.Value ?
-                                       Y / GestureSign.Common.Configuration.AppConfig.YRatio :
-                                       System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y / GestureSign.Common.Configuration.AppConfig.YRatio);
+                                    X = XAxisDirection.Value ? X : System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X;
+                                    Y = YAxisDirection.Value ? Y : System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y;
 
                                     outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
 
