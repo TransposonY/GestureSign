@@ -84,10 +84,10 @@
         <ListBox x:Name="lstAvailableActions" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False">
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." />
+                    <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
                     <Separator></Separator>
-                    <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" />
-                    <MenuItem x:Name="ExportActionMenuItem" Header="导出动作" Click="ExportActionMenuItem_Click" />
+                    <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
+                    <MenuItem x:Name="ExportActionMenuItem" Header="导出动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.GroupStyle>

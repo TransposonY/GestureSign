@@ -80,8 +80,8 @@
         <ListBox x:Name="lstAvailableGestures"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableGestures_SelectionChanged" Margin="0">
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="ImportGestureMenuItem" Header="导入手势" Click="ImportGestureMenuItem_Click" />
-                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出手势" Click="ExportGestureMenuItem_Click" />
+                    <MenuItem x:Name="ImportGestureMenuItem" Header="导入手势" Click="ImportGestureMenuItem_Click"  FontSize="16"/>
+                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出手势" Click="ExportGestureMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
