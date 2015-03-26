@@ -56,10 +56,10 @@ namespace GestureSign
                                    Application.Current.Shutdown();
                                }
                            }
-                           else if (data is List<List<System.Drawing.Point>>)
+                           else if (data is Tuple<string, List<List<System.Drawing.Point>>>)
                            {
-                               List<List<System.Drawing.Point>> newGesture = (List<List<System.Drawing.Point>>)data;
-                               UI.GestureDefinition gu = new UI.GestureDefinition(newGesture);
+                               Tuple<string, List<List<System.Drawing.Point>>> newGesture = (Tuple<string, List<List<System.Drawing.Point>>>)data;
+                               UI.GestureDefinition gu = new UI.GestureDefinition(newGesture.Item2, newGesture.Item1, false);
                                gu.Show();
                                gu.Activate();
                            }

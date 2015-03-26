@@ -110,7 +110,7 @@ namespace GestureSign.UI
             }
             UI.GestureDefinition gd = new UI.GestureDefinition(
                 GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
-                ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name);
+                ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name, true);
             gd.ShowDialog();
             if (GestureChanged != null)
                 GestureChanged(this, new EventArgs());

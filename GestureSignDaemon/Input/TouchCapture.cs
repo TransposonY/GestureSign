@@ -230,7 +230,7 @@ namespace GestureSignDaemon.Input
             {
                 if (GestureSign.Common.Configuration.AppConfig.Teaching)
                 {
-                  
+
                     bool createdSetting;
                     using (System.Threading.Mutex setting = new System.Threading.Mutex(false, "GestureSignSetting", out createdSetting))//true
                     {
@@ -248,8 +248,11 @@ namespace GestureSignDaemon.Input
                                 }
                         }
                     }
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(new List<List<Point>>(_PointsCaptured.Values), "GestureSignSetting");
-              
+                    Tuple<string, List<List<Point>>> message =
+                        new Tuple<string, List<List<Point>>>(GestureSign.Common.Gestures.GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(message, "GestureSignSetting");
+                    Input.TouchCapture.Instance.DisableTouchCapture();
+
                 }
                 OnAfterPointsCaptured(pointsInformation);
             }

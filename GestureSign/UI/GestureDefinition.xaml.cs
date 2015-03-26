@@ -33,22 +33,19 @@ namespace GestureSign.UI
             InitializeComponent();
         }
 
-        public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints)
+        /// <summary>
+        /// Edit gesture or add new one.
+        /// </summary>
+        /// <param name="capturedPoints"></param>
+        /// <param name="gestureName"></param>
+        public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints, string gestureName, bool reName)
             : this()
         {
             _CapturedPoints = capturedPoints;
             Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
-        }
-        /// <summary>
-        /// Edit gesture
-        /// </summary>
-        /// <param name="capturedPoints"></param>
-        /// <param name="gestureName"></param>
-        public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints, string gestureName)
-            : this(capturedPoints)
-        {
-            ExistingGestureName = GestureManager.Instance.GestureName = gestureName;
-            this.ReName = true;
+            GestureManager.Instance.GestureName = gestureName;
+            if (reName) ExistingGestureName = gestureName;
+            this.ReName = reName;
         }
 
         string ExistingGestureName;
@@ -137,8 +134,6 @@ namespace GestureSign.UI
                 this.txtGestureName.Text = GName = GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
             }
-            // Disable drawing gestures
-            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("DisableTouchCapture", "GestureSignDaemon");
             this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
         }
 
@@ -167,9 +162,10 @@ namespace GestureSign.UI
         {
             if (SaveGesture())
             {
-                this.Close();
+                this.Hide();
                 ApplicationDialog ad = new ApplicationDialog(GestureManager.Instance.GestureName);
                 ad.Show();
+                this.Close();
             }
             else txtGestureName.Focus();
         }
