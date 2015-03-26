@@ -46,7 +46,7 @@ namespace GestureSignDaemon.Input
         public event PointsMessageEventHandler PointsIntercepted;
 
         Type touchDataType;
-        List<RawTouchData> outputTouchs;
+        List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
         int requiringTouchDataCount = 0;
         int touchdataCount = 0;
         int touchlength = 0;
@@ -73,7 +73,7 @@ namespace GestureSignDaemon.Input
 
         #region  Windows.h structure declarations
 
-        [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+        [StructLayoutAttribute(LayoutKind.Sequential)]
         public struct RAWINPUT
         {
 
@@ -224,10 +224,32 @@ namespace GestureSignDaemon.Input
             public int ID { get { return num; } }
             public bool Status { get { return TouchDataStatus == (0x05); } }
         }
+
+        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
+        private struct ntrgTouchData : TouchData
+        {
+            private short dataID;
+            /// BYTE->unsigned char
+            private byte status;
+            /// BYTE->unsigned char
+            private short num;
+            /// short
+            private short x;
+            private short x_position;
+            /// short
+            private short y;
+            private short y_position;
+
+            public int X { get { return x_position; } }
+            public int Y { get { return y_position; } }
+            public int ID { get { return num; } }
+            public bool Status { get { return (status) == 0xE7; } }
+        }
         #endregion Windows.h structure declarations
 
         public MessageWindow()
         {
+            System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
             try
             {
@@ -419,23 +441,31 @@ namespace GestureSignDaemon.Input
 
                     if (raw.header.dwType == RIM_TYPEHID)
                     {
+                        int headLength = raw.header.dwSize - (int)raw.hid.dwSizHid;
                         byte[] rawdate = new byte[dwSize];
                         Marshal.Copy(buffer, rawdate, 0, (int)dwSize);
                         int activeTouchCount;
                         ushort timeStamp;
-                        int offset = 1;
+                        int offset;
                         //If no position data
-                        if (rawdate[27] == 0 && rawdate[28] == 0) return;
-
-                        if (rawdate[24] == 0x0C && rawdate[25] == 0x00)
+                        if (rawdate[headLength + 3] == 0 && rawdate[headLength + 4] == 0) return;
+                        if (AppConfig.DeviceName.Contains("NTRG"))
                         {
+                            offset = 1;
+                            activeTouchCount = rawdate[dwSize - 5];
+                            timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 4);
+                            touchDataType = typeof(ntrgTouchData);
+                        }
+                        else if (rawdate[24] == 0x0C && rawdate[25] == 0x00)
+                        {
+                            offset = 3;
                             activeTouchCount = rawdate[26];
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 2);
-                            offset = 3;
                             touchDataType = typeof(wcTouchData);
                         }
                         else
                         {
+                            offset = 1;
                             activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 3);
 
@@ -464,7 +494,7 @@ namespace GestureSignDaemon.Input
                             outputTouchs = new List<RawTouchData>(activeTouchCount);
                         }
                         touchlength = Marshal.SizeOf(touchDataType);
-                        touchdataCount = (int)(raw.hid.dwSizHid - 4) / touchlength;
+                        touchdataCount = (int)(raw.hid.dwSizHid - 3) / touchlength;
 
                         switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
                         {
@@ -492,7 +522,7 @@ namespace GestureSignDaemon.Input
                         {
                             for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                             {
-                                TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, raw.header.dwSize - (int)raw.hid.dwSizHid + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
+                                TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, headLength + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
                                 if (AppConfig.XRatio != 0.0 && AppConfig.YRatio != 0.0 && YAxisDirection.HasValue && XAxisDirection.HasValue)
                                 {
