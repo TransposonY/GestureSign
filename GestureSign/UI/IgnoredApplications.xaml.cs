@@ -22,7 +22,7 @@ namespace GestureSign.UI
     /// <summary>
     /// AvailableApplications.xaml 的交互逻辑
     /// </summary>
-    public partial class IgnoredApplications : UserControl, IDisposable
+    public partial class IgnoredApplications : UserControl
     {
         public static event ApplicationChangedEventHandler IgnoredCustomFlyout;
         public static event ApplicationChangedEventHandler IgnoredRuningFlyout;
@@ -35,31 +35,6 @@ namespace GestureSign.UI
             BindIgnoredApplications();
         }
 
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any other managed objects here.
-
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
-        }
         void ApplicationsFlyout_BindIgnoredApplications(object sender, EventArgs e)
         {
             BindIgnoredApplications();

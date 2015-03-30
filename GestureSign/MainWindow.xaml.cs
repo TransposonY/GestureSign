@@ -38,17 +38,6 @@ namespace GestureSign
             Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnLastWindowClose;
         }
 
-        private void MetroWindow_Closed(object sender, EventArgs e)
-        {
-            this.availableAction.Dispose();
-            this.availableGestures.Dispose();
-            runingAppFlyout.Dispose();
-            CustomAppFlyout.Dispose();
-            ignoredApplications.Dispose();
-            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-        }
-
-
         private void SetAboutInfo()
         {
             string version = "Version:   " + System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion;

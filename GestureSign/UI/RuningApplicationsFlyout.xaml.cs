@@ -27,7 +27,7 @@ namespace GestureSign.UI
     /// <summary>
     /// RuningApplicationsFlyout.xaml 的交互逻辑
     /// </summary>
-    public partial class RuningApplicationsFlyout : Flyout, IDisposable
+    public partial class RuningApplicationsFlyout : Flyout
     {
         public static event EventHandler OpenIgnoredCustomFlyout;
         public static event EventHandler BindIgnoredApplications;
@@ -59,31 +59,6 @@ namespace GestureSign.UI
             this.IsOpenChanged += RuningApplicationsFlyout_IsOpenChanged;
             IgnoredApplications.IgnoredRuningFlyout += IgnoredApplications_IgnoredRuningFlyout;
             CustomApplicationsFlyout.OpenIgnoredRuningFlyout += CustomApplicationsFlyout_OpenIgnoredRuningFlyout;
-        }
-
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any other managed objects here.
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
         }
 
         void CustomApplicationsFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)

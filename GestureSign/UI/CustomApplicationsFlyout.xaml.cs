@@ -25,7 +25,7 @@ namespace GestureSign.UI
     /// <summary>
     /// CustomApplicationsFlyout.xaml 的交互逻辑
     /// </summary>
-    public partial class CustomApplicationsFlyout : Flyout, IDisposable
+    public partial class CustomApplicationsFlyout : Flyout
     {
         public static event EventHandler OpenIgnoredRuningFlyout;
         public event EventHandler RemoveApplication;
@@ -47,35 +47,6 @@ namespace GestureSign.UI
             this.crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
             IgnoredApplications.IgnoredCustomFlyout += IgnoredApplications_IgnoredCustomFlyout;
             RuningApplicationsFlyout.OpenIgnoredCustomFlyout += RuningApplicationsFlyout_IgnoredCustomFlyout;
-        }
-
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any other managed objects here.
-
-                this.crosshairMain.CrosshairDragged -= crosshairMain_CrosshairDragged;
-                this.crosshairMain.CrosshairDragging -= crosshairMain_CrosshairDragging;
-                this.crosshairMain.Dispose();
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
         }
 
         void RuningApplicationsFlyout_IgnoredCustomFlyout(object sender, EventArgs e)

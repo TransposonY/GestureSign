@@ -30,7 +30,7 @@ namespace GestureSign.UI
     /// <summary>
     /// AvailableAction.xaml 的交互逻辑
     /// </summary>
-    public partial class AvailableAction : UserControl, IDisposable
+    public partial class AvailableAction : UserControl
     {
         // public static event EventHandler StartCapture;
         public AvailableAction()
@@ -53,31 +53,6 @@ namespace GestureSign.UI
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
         //  List<ActionInfo> ActionInfos = new List<ActionInfo>(5);
 
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any other managed objects here.
-
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
-        }
 
         public class ActionInfo : INotifyPropertyChanged
         {

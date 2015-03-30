@@ -26,7 +26,7 @@ namespace GestureSign.UI
     /// <summary>
     /// AvailableGestures.xaml 的交互逻辑
     /// </summary>
-    public partial class AvailableGestures : UserControl, IDisposable
+    public partial class AvailableGestures : UserControl
     {
 
         public static event EventHandler GestureChanged;
@@ -37,31 +37,6 @@ namespace GestureSign.UI
             InitializeComponent();
             BindGestures();
             GestureDefinition.GesturesChanged += GestureDefinition_GesturesChanged;
-        }
-
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any other managed objects here.
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
         }
 
 
