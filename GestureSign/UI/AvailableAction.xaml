@@ -86,6 +86,8 @@
                 <ContextMenu>
                     <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
                     <Separator></Separator>
+                    <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Loaded="InterceptTouchInputMenuItem_Loaded" Click="InterceptTouchInputMenuItem_Click" />
+                    <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
                     <MenuItem x:Name="ExportActionMenuItem" Header="导出动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
@@ -98,8 +100,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True" BorderBrush="#FFA4B97F" 
-                            BorderThickness="0,0,0,1">
+                                        <Expander IsExpanded="True" BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft"  BorderThickness="0,0,0,1">
                                             <Expander.Header>
                                                 <DockPanel>
                                                     <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" 
@@ -127,9 +128,9 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Canvas Height="95" Margin="0,5" >
+                    <Canvas Height="95" Margin="0,5" FlowDirection="LeftToRight">
                         <!--Orientation="Horizontal"-->
-                        <CheckBox Margin="0,0,10,0" IsChecked="{Binding Path=IsEnabled}" IsThreeState="False" Click="ActionCheckBox_Click" Canvas.Top="38"/>
+                        <CheckBox Margin="5,0,10,0" IsChecked="{Binding Path=IsEnabled}" IsThreeState="False" Click="ActionCheckBox_Click" Canvas.Top="38"/>
                         <Image x:Name="GestureImage" Source="{Binding GestureThumbnail}" Height="65" Stretch="Uniform" Margin="15,5,5,5" Width="200" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.Left="35" Canvas.Top="8" />
                         <ComboBox x:Name="availableGesturesComboBox"
                                               Visibility="Collapsed" 

@@ -11,6 +11,7 @@
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
             <local:MatchUsingConverter x:Key="matchUsingConverter"></local:MatchUsingConverter>
             <local:MatchUsingToStringConverter x:Key="matchUsingToStringConverter"></local:MatchUsingToStringConverter>
+            <local:InterceptTouchInputBoolConverter x:Key="interceptTouchInputBoolConverter"></local:InterceptTouchInputBoolConverter>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -19,7 +20,7 @@
     <Canvas>
         <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330">
             <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
-            <TabControl x:Name="tcApplications" Height="358" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto">
+            <TabControl x:Name="tcApplications" Height="336" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto">
                 <TabItem Header="已保存">
                     <Canvas>
                         <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="111" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
@@ -32,7 +33,7 @@
                     </Canvas>
                 </TabItem>
                 <TabItem Header="运行中" FontSize="14">
-                    <Grid Margin="0">
+                    <Grid Margin="0,0,0,-1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="48*"/>
                             <RowDefinition Height="272*"/>
@@ -270,5 +271,6 @@
             	controls:TextBoxHelper.Watermark="请输入动作名称"
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
+        <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter=StaticResource interceptTouchInputBoolConverter}" Content="屏蔽此程序触屏输入" Canvas.Left="20" Canvas.Top="385"/>
     </Canvas>
 </controls:MetroWindow>

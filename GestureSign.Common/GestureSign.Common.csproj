@@ -138,10 +138,13 @@
     <Compile Include="Gestures\RecognitionEventArgs.cs" />
     <Compile Include="Gestures\RecognitionEventHandler.cs" />
     <Compile Include="ILoadable.cs" />
+    <Compile Include="Input\PointerInfo.cs" />
+    <Compile Include="Input\PointEventArgs.cs" />
+    <Compile Include="Input\PointerMessageEventArgs.cs" />
     <Compile Include="Input\RawTouchData.cs" />
     <Compile Include="Input\CaptureState.cs" />
-    <Compile Include="Input\PointsMessageEventHandler.cs" />
-    <Compile Include="Input\PointsMessageEventArgs.cs" />
+    <Compile Include="Input\RawPointsDataMessageEventHandler.cs" />
+    <Compile Include="Input\RawPointsDataMessageEventArgs.cs" />
     <Compile Include="Input\IMouseCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />

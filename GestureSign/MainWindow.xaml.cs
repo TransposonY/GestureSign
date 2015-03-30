@@ -35,6 +35,7 @@ namespace GestureSign
         {
             InitializeComponent();
             SetAboutInfo();
+            Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnLastWindowClose;
         }
 
         private void MetroWindow_Closed(object sender, EventArgs e)

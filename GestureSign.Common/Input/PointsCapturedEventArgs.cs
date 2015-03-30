@@ -16,7 +16,7 @@ namespace GestureSign.Common.Input
             this.Points = new List<List<Point>>(capturePoint.Length);
             for (int i = 0; i < capturePoint.Length; i++)
             {
-                this.Points.Add( new List<Point>(1));
+                this.Points.Add(new List<Point>(1));
                 this.Points[i].Add(capturePoint[i]);
             }
         }
@@ -52,7 +52,7 @@ namespace GestureSign.Common.Input
         public Point[] CapturePoint { get; set; }
         public bool Cancel { get; set; }
         public CaptureState State { get; set; }
-
+        public bool InterceptTouchInput { get; set; }
         #endregion
     }
 }

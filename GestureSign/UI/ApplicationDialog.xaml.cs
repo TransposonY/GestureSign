@@ -253,7 +253,7 @@ namespace GestureSign.UI
             }
             else
             {
-                _SelectedApplication = new UserApplication();
+                _SelectedApplication = new CustomApplication() { InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value };
                 // Store application name
                 _SelectedApplication.Name = txtApplicationName.Text.Trim();
                 // Make sure we have a valid application name
@@ -756,6 +756,27 @@ namespace GestureSign.UI
                     return "窗口标题";
                 default: return DependencyProperty.UnsetValue;
             }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
+    [ValueConversion(typeof(object), typeof(bool))]
+    public class InterceptTouchInputBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                var app = value as CustomApplication;
+                if (value != null)
+                    return app.InterceptTouchInput;
+                else return DependencyProperty.UnsetValue;
+            }
+            else return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

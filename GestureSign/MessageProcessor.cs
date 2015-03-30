@@ -27,33 +27,44 @@ namespace GestureSign
                            if (data is string)
                            {
                                string message = (string)data;
-                               if (message.Equals("MainWindow"))
+                               switch (message)
                                {
-
-                                   foreach (Window win in Application.Current.Windows)
-                                   {
-                                       if (win.GetType().Equals(typeof(GestureSign.MainWindow)))
+                                   case "MainWindow":
                                        {
-                                           win.Activate();
-                                           return;
+
+                                           foreach (Window win in Application.Current.Windows)
+                                           {
+                                               if (win.GetType().Equals(typeof(GestureSign.MainWindow)))
+                                               {
+                                                   win.Activate();
+                                                   return;
+                                               }
+                                           }
+                                           if (GestureSign.Common.Configuration.AppConfig.XRatio != 0)
+                                           {
+                                               MainWindow mw = new MainWindow();
+                                               mw.Show();
+                                               mw.Activate();
+                                               mw.availableAction.BindActions();
+                                           }
+                                           break;
                                        }
-                                   }
-                                   if (GestureSign.Common.Configuration.AppConfig.XRatio != 0)
-                                   {
-                                       MainWindow mw = new MainWindow();
-                                       mw.Show();
-                                       mw.Activate();
-                                       mw.availableAction.BindActions();
-                                   }
-                               }
-                               else if (message.Equals("EndGuide"))
-                               {
-                                   if (OnInitialized != null)
-                                       OnInitialized(this, EventArgs.Empty);
-                               }
-                               else if (message.Equals("Exit"))
-                               {
-                                   Application.Current.Shutdown();
+                                   case "EndGuide":
+                                       {
+                                           if (OnInitialized != null)
+                                               OnInitialized(this, EventArgs.Empty);
+                                           break;
+                                       }
+                                   case "Exit":
+                                       {
+                                           Application.Current.Shutdown();
+                                           break;
+                                       }
+                                   case "Guide":
+                                       UI.Guide guide = new UI.Guide();
+                                       guide.Show();
+                                       guide.Activate();
+                                       break;
                                }
                            }
                            else if (data is Tuple<string, List<List<System.Drawing.Point>>>)

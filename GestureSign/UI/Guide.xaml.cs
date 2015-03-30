@@ -136,6 +136,7 @@ namespace GestureSign.UI
         {
             InitializeComponent();
             this.GuideFlipView.HideControlButtons();
+            Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnLastWindowClose;
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)

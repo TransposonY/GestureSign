@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
 using GestureSign.Common.Configuration;
+using System.Threading;
 
 namespace GestureSignDaemon.Input
 {
@@ -38,18 +39,62 @@ namespace GestureSignDaemon.Input
         private const int VK_OEM_CLEAR = 0xFE;
         private const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
 
+        const int
+
+           WM_PARENTNOTIFY = 0x0210,
+           WM_NCPOINTERUPDATE = 0x0241,
+           WM_NCPOINTERDOWN = 0x0242,
+           WM_NCPOINTERUP = 0x0243,
+           WM_POINTERUPDATE = 0x0245,
+           WM_POINTERDOWN = 0x0246,
+           WM_POINTERUP = 0x0247,
+           WM_POINTERENTER = 0x0249,
+           WM_POINTERLEAVE = 0x024A,
+           WM_POINTERACTIVATE = 0x024B,
+           WM_POINTERCAPTURECHANGED = 0x024C,
+           WM_POINTERWHEEL = 0x024E,
+           WM_POINTERHWHEEL = 0x024F,
+
+           // WM_POINTERACTIVATE return codes
+           PA_ACTIVATE = 1,
+           PA_NOACTIVATE = 3,
+
+           MAX_TOUCH_COUNT = 256;
         #endregion const definitions
 
         static bool? XAxisDirection = null;
         static bool? YAxisDirection = null;
         static bool? IsAxisCorresponds = null;
-        public event PointsMessageEventHandler PointsIntercepted;
+        public event RawPointsDataMessageEventHandler PointsIntercepted;
+        public event EventHandler<PointerMessageEventArgs> PointerIntercepted;
+        InitializationRatio initializationRatio;
 
+        System.Threading.Timer timer;
         Type touchDataType;
         List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
         int requiringTouchDataCount = 0;
         int touchdataCount = 0;
         int touchlength = 0;
+        bool isRegistered = false;
+
+        public bool IsRegistered
+        {
+            get { return isRegistered; }
+            set
+            {
+                if (value)
+                {
+                    if (!isRegistered)
+                        if (RegisterPointerInputTarget(this.Handle, POINTER_INPUT_TYPE.TOUCH))
+                            isRegistered = true;
+                }
+                else
+                {
+                    if (UnregisterPointerInputTarget(this.Handle, POINTER_INPUT_TYPE.TOUCH))
+                        isRegistered = false;
+                }
+            }
+        }
         static public int NumberOfTouchscreens { get; set; }
 
         #region DllImports
@@ -68,6 +113,21 @@ namespace GestureSignDaemon.Input
 
         [DllImport("User32.dll")]
         extern static uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
+
+
+
+        [DllImport("User32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool RegisterPointerInputTarget(IntPtr handle, POINTER_INPUT_TYPE pointerType);
+
+        [DllImport("User32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnregisterPointerInputTarget(IntPtr hwnd, POINTER_INPUT_TYPE pointerType);
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool GetPointerFrameInfo(int pointerID, ref int pointerCount, [MarshalAs(UnmanagedType.LPArray), In, Out] POINTER_INFO[] pointerInfo);
+
 
         #endregion DllImports
 
@@ -122,141 +182,40 @@ namespace GestureSignDaemon.Input
             public int wParam;
         }
 
-        public interface TouchData
-        {
-            bool Status { get; }
-            int ID { get; }
-            int X { get; }
-            int Y { get; }
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential)]
-        private struct sTouchData : TouchData
-        {
-            /// BYTE->unsigned char
-            private byte status;
-            /// BYTE->unsigned char
-            private byte num;
-            /// short
-            private short x_position;
-            /// short
-            private short y_position;
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return Convert.ToBoolean(status); } }
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct iTouchData : TouchData
-        {
-            /// BYTE->unsigned char
-            private byte status;
-            /// BYTE->unsigned char
-            private byte num;
-            /// short
-            private int x_position;
-            /// short
-            private int y_position;
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return Convert.ToBoolean(status); } }
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct gTouchData : TouchData
-        {
-            /// BYTE->unsigned char
-            private byte status;
-            /// BYTE->unsigned char
-            private byte num;
-            /// short
-            private short x_position;
-            /// short
-            private short y_position;
-
-            [MarshalAs(UnmanagedType.U4)]
-            private int gap;
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return Convert.ToBoolean(status); } }
-        }
-        // HID#FTSC0001&Col01#4&14bbeed5&0&0000#
-        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-        private struct dTouchData : TouchData
-        {
-            /// BYTE->unsigned char
-            private byte status;
-            /// BYTE->unsigned char
-            private byte num;
-            /// short
-            private short x;
-            private short x_position;
-            /// short
-            private short y;
-            private short y_position;
-
-            [MarshalAs(UnmanagedType.U4)]
-            private int gap;
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return Convert.ToBoolean(status); } }
-        }
-        //HID#WCOM5008&Col01#4&2b144297&0&0000
-        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-        private struct wcTouchData : TouchData
-        {
-            /// BYTE->unsigned char
-            private byte TouchDataStatus;
-            /// BYTE->unsigned char
-            private byte num;
-            /// short
-            private byte gap;
-
-            private short x_position;
-            /// short
-            private short y_position;
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return TouchDataStatus == (0x05); } }
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-        private struct ntrgTouchData : TouchData
-        {
-            private short dataID;
-            /// BYTE->unsigned char
-            private byte status;
-            /// BYTE->unsigned char
-            private short num;
-            /// short
-            private short x;
-            private short x_position;
-            /// short
-            private short y;
-            private short y_position;
-
-            public int X { get { return x_position; } }
-            public int Y { get { return y_position; } }
-            public int ID { get { return num; } }
-            public bool Status { get { return (status) == 0xE7; } }
-        }
         #endregion Windows.h structure declarations
 
         public MessageWindow()
         {
+
+            timer = new System.Threading.Timer(new TimerCallback(Unregister), null, Timeout.Infinite, Timeout.Infinite);
+
             System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
             try
             {
                 RegisterDevices(accessHandle);
                 NumberOfTouchscreens = EnumerateDevices();
+                if (AppConfig.XRatio == 0 && NumberOfTouchscreens > 0)
+                {
+                    IsRegistered = true;
+                    initializationRatio = new InitializationRatio(this);
+                    if (IsRegistered)
+                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Exit", "GestureSignSetting");
+                    else
+                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignSetting");
+                }
             }
             catch (Exception) { }
+        }
+        private void Unregister(object state)
+        {
+            if (IsRegistered)
+                this.Invoke(new Action(() => IsRegistered = false));
+        }
+
+        public void StartRegister(object sender, EventArgs e)
+        {
+            this.Invoke(new Action(() => IsRegistered = true));
         }
 
         private void RegisterDevices(IntPtr hwnd)
@@ -398,21 +357,61 @@ namespace GestureSignDaemon.Input
                 case WM_INPUT:
                     {
                         ProcessInputCommand(message.LParam);
+                        if (IsRegistered)
+                            timer.Change(100, Timeout.Infinite);
                     }
                     break;
+                //case WM_POINTERENTER:
+                //case WM_POINTERLEAVE:
+                //case WM_POINTERCAPTURECHANGED:
+                case WM_POINTERDOWN:
+                case WM_POINTERUP:
+                case WM_POINTERUPDATE:
+                    ProcessPointerMessage(message);
+                    break;
+
             }
             base.WndProc(ref message);
         }
 
-        #region ProcessInputCommand( Message message )
-
+        #region ProcessInput
+        private void CheckLastError()
+        {
+            int errCode = Marshal.GetLastWin32Error();
+            if (errCode != 0)
+            {
+                throw new System.ComponentModel.Win32Exception(errCode);
+            }
+        }
+        private void ProcessPointerMessage(Message message)
+        {
+            if (PointerIntercepted != null)
+            {
+                int pointerID = (int)(message.WParam.ToInt64() & 0xffff);
+                int pCount = 0;
+                try
+                {
+                    if (!GetPointerFrameInfo(pointerID, ref pCount, null))
+                    {
+                        CheckLastError();
+                    }
+                    POINTER_INFO[] pointerInfos = new POINTER_INFO[pCount];
+                    if (!GetPointerFrameInfo(pointerID, ref pCount, pointerInfos))
+                    {
+                        CheckLastError();
+                    }
+                    PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
+                }
+                catch (System.ComponentModel.Win32Exception) { }
+            }
+        }
 
         /// <summary>
         /// Processes WM_INPUT messages to retrieve information about any
         /// touch events that occur.
         /// </summary>
         /// <param name="LParam">The WM_INPUT message to process.</param>
-        public void ProcessInputCommand(IntPtr LParam)
+        private void ProcessInputCommand(IntPtr LParam)
         {
             uint dwSize = 0;
 
@@ -551,7 +550,7 @@ namespace GestureSignDaemon.Input
                         }
                         if (requiringTouchDataCount < 1)
                         {
-                            PointsIntercepted(this, new PointsMessageEventArgs(outputTouchs.OrderBy(rtd => rtd.Num).ToArray(), timeStamp));
+                            PointsIntercepted(this, new RawPointsDataMessageEventArgs(outputTouchs.OrderBy(rtd => rtd.Num).ToArray(), timeStamp));
                         }
 
                     }
@@ -564,7 +563,7 @@ namespace GestureSignDaemon.Input
             }
         }
 
-        #endregion ProcessInputCommand( Message message )
+        #endregion ProcessInput
     }
 }
 

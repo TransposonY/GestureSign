@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace GestureSign.Common.Applications
 {
-    public class ApplicationManager :  IApplicationManager
+    public class ApplicationManager : IApplicationManager
     {
         #region Private Variables
 
@@ -73,6 +73,8 @@ namespace GestureSign.Common.Applications
             {
                 if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
                     e.Cancel = true;
+                e.InterceptTouchInput = (app is CustomApplication && (app as CustomApplication).InterceptTouchInput);
+                 
             }
         }
 
@@ -139,14 +141,27 @@ namespace GestureSign.Common.Applications
         public bool SaveApplications()
         {
             // Save application list
-            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
         }
 
         public bool LoadApplications()
         {
             // Load application list from file
-            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications. Action) }, true);
-
+            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
+            _Applications = _Applications.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
+                  {
+                      if (app is UserApplication && !(app is CustomApplication))
+                          return new CustomApplication()
+                          {
+                              Actions = app.Actions,
+                              IsRegEx = app.IsRegEx,
+                              InterceptTouchInput = true,
+                              MatchString = app.MatchString,
+                              MatchUsing = app.MatchUsing,
+                              Name = app.Name
+                          };
+                      else return app;
+                  }));
             // Ensure we got an object back
             if (_Applications == null)
                 return false;	// No object, failed

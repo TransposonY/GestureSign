@@ -6,10 +6,10 @@ using System.Drawing;
 
 namespace GestureSign.Common.Input
 {
-    public class PointsMessageEventArgs : EventArgs
+    public class RawPointsDataMessageEventArgs : EventArgs
     {
         #region Constructors
-        public PointsMessageEventArgs(RawTouchData[] rawTouchsData, ushort timeStamp)
+        public RawPointsDataMessageEventArgs(RawTouchData[] rawTouchsData, ushort timeStamp)
         {
             this.RawTouchsData = rawTouchsData;
             this.TimeStamp = timeStamp;

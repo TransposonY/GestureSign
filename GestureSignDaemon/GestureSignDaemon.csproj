@@ -20,7 +20,7 @@
     <OutputPath>..\GestureSign\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,9 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\FileWatcher.cs" />
+    <Compile Include="Input\InitializationRatio.cs" />
     <Compile Include="Input\MessageWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Input\TouchDatas.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +68,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,10 +102,6 @@
     <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj">
       <Project>{69f91bd1-6986-4079-9537-ed1a1d8ebe06}</Project>
       <Name>GestureSign.PointPatterns</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GestureSign\GestureSign.csproj">
-      <Project>{b9a2bc20-b457-4b39-ae1b-274fa961e346}</Project>
-      <Name>GestureSign</Name>
     </ProjectReference>
     <ProjectReference Include="..\ManagedWinapi\ManagedWinapi.csproj">
       <Project>{fbd3ec1e-47e2-4d2d-81c9-d6506125a09a}</Project>

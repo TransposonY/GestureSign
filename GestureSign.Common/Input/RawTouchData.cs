@@ -7,12 +7,12 @@ namespace GestureSign.Common.Input
     {
         public RawTouchData(bool status, int num, Point rawPointsData)
         {
-            Status = status;
-            Num = num;
-            RawPointsData = rawPointsData;
+            this.Status = status;
+            this.Num = num;
+            this.RawPoints = rawPointsData;
         }
         public bool Status;
         public int Num;
-        public Point RawPointsData;
+        public Point RawPoints;
     }
 }

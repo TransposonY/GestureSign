@@ -28,7 +28,7 @@ namespace GestureSign.UI
 
         public IApplication ToUserApplication(MatchUsing MatchUsing)
         {
-            UserApplication userApplication = new UserApplication();
+            UserApplication userApplication = new CustomApplication();
 
             userApplication.Name = ApplicationName;
             userApplication.MatchUsing = MatchUsing;

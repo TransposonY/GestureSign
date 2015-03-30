@@ -11,8 +11,7 @@ namespace GestureSignDaemon
 {
     class MessageProcessor
     {
-        System.Drawing.Point touchPoint;
-
+        internal static event EventHandler<System.Drawing.Point> OnGotTouchPoint;
         public void ProcessMessages(System.IO.Pipes.NamedPipeServerStream server)
         {
             BinaryFormatter binForm = new BinaryFormatter();
@@ -24,10 +23,9 @@ namespace GestureSignDaemon
                 {
                     switch (message)
                     {
-                        case "Guide":
-                            GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
-                            break;
-
+                        //case "Guide":
+                        //    GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += InitializationRatio.MessageWindow_PointsIntercepted;
+                        //    break;
                         case "StartTeaching":
                             {
                                 if (Input.TouchCapture.Instance.State == GestureSign.Common.Input.CaptureState.UserDisabled)
@@ -47,58 +45,13 @@ namespace GestureSignDaemon
             }
             else if (data is System.Drawing.Point)
             {
-                touchPoint = (System.Drawing.Point)data;
-            }
-
-        }
-
-
-        void MessageWindow_PointsIntercepted(object sender, GestureSign.Common.Input.PointsMessageEventArgs e)
-        {
-            if (GestureSign.Common.Configuration.AppConfig.XRatio == 0 && touchPoint.X != 0)
-            {
-                bool XAxisDirection = false, YAxisDirection = false;
-                bool IsAxisCorresponds = true;
-                switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
+                if (OnGotTouchPoint != null)
                 {
-                    case System.Windows.Forms.ScreenOrientation.Angle0:
-                        XAxisDirection = YAxisDirection = true;
-                        IsAxisCorresponds = true;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle90:
-                        IsAxisCorresponds = false;
-                        XAxisDirection = false;
-                        YAxisDirection = true;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle180:
-                        XAxisDirection = YAxisDirection = false;
-                        IsAxisCorresponds = true;
-                        break;
-                    case System.Windows.Forms.ScreenOrientation.Angle270:
-                        IsAxisCorresponds = false;
-                        XAxisDirection = true;
-                        YAxisDirection = false;
-                        break;
-                    default: break;
+                    OnGotTouchPoint(this, (System.Drawing.Point)data);
                 }
-                double horizontalRatio;
-                double verticalRatio;
-                horizontalRatio = XAxisDirection ?
-                    ((double)e.RawTouchsData[0].RawPointsData.X / (double)touchPoint.X) :
-                    (double)e.RawTouchsData[0].RawPointsData.X / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - touchPoint.X);
-
-                verticalRatio = YAxisDirection ?
-                    ((double)e.RawTouchsData[0].RawPointsData.Y) / (double)touchPoint.Y :
-                    (double)e.RawTouchsData[0].RawPointsData.Y / (double)(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Height - touchPoint.Y);
-
-                GestureSign.Common.Configuration.AppConfig.XRatio = IsAxisCorresponds ? horizontalRatio : verticalRatio;
-                GestureSign.Common.Configuration.AppConfig.YRatio = IsAxisCorresponds ? verticalRatio : horizontalRatio;
-                GestureSign.Common.Configuration.AppConfig.Save();
-                // string message = e.RawTouchsData[0].RawPointsData.X + "," + e.RawTouchsData[0].RawPointsData.Y;
-                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EndGuide", "GestureSignSetting");
-                GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted -= MessageWindow_PointsIntercepted;
-
             }
+
         }
+
     }
 }

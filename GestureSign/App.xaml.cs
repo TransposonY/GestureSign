@@ -10,6 +10,7 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 
+using System.Security.Principal;
 
 namespace GestureSign
 {
@@ -46,33 +47,33 @@ namespace GestureSign
 
                 MessageProcessor messageProcessor = new MessageProcessor();
                 GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", messageProcessor.ProcessMessages);
-
-                bool createdNewDaemon;
-                using (Mutex daemonMutex = new Mutex(false, "GestureSignDaemon", out createdNewDaemon))//true
+                try
                 {
-                    if (createdNewDaemon)
+                    bool createdNewDaemon;
+                    using (Mutex daemonMutex = new Mutex(false, "GestureSignDaemon", out createdNewDaemon))//true
                     {
-                        using (Process daemon = new Process())
+                        if (createdNewDaemon)
                         {
-                            daemon.StartInfo.FileName = path;
+                            using (Process daemon = new Process())
+                            {
+                                daemon.StartInfo.FileName = path;
 
-                            // pipeClient.StartInfo.Arguments =            
-                            daemon.StartInfo.UseShellExecute = false;
-                            daemon.StartInfo.CreateNoWindow = false;
-                            daemon.Start();
+                                // pipeClient.StartInfo.Arguments =            
+                                //daemon.StartInfo.UseShellExecute = false;
+                                if (IsAdministrator())
+                                    daemon.StartInfo.Verb = "runas";
+                                daemon.StartInfo.CreateNoWindow = false;
+                                daemon.Start();
+                                daemon.WaitForInputIdle(1000);
+                            }
 
                         }
-
                     }
                 }
-                if (GestureSign.Common.Configuration.AppConfig.XRatio == 0)
-                {
-                    UI.Guide guide = new UI.Guide();
-                    guide.Show();
-                    guide.Activate();
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignDaemon");
-                }
-                else if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                catch { }
+              
+              
+                 if (GestureSign.Common.Configuration.AppConfig.XRatio == 0||e.Args.Length != 0 && e.Args[0].Equals("/L"))
                 {
                     Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
                 }
@@ -84,10 +85,10 @@ namespace GestureSign
                     mainWindow.availableAction.BindActions();
                 }
 #if DEBUG
-                MainWindow mw = new MainWindow();
-                mw.Show();
-                mw.Activate();
-                mw.availableAction.BindActions();
+                //MainWindow mw = new MainWindow();
+                //mw.Show();
+                //mw.Activate();
+                //mw.availableAction.BindActions();
 #endif//DEBUG
 
             }
@@ -98,5 +99,11 @@ namespace GestureSign
             }
         }
 
+        private bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
     }
 }
