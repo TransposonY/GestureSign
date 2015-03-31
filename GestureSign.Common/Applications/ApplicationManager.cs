@@ -74,7 +74,7 @@ namespace GestureSign.Common.Applications
                 if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
                     e.Cancel = true;
                 e.InterceptTouchInput = (app is CustomApplication && (app as CustomApplication).InterceptTouchInput);
-                 
+
             }
         }
 
@@ -148,20 +148,21 @@ namespace GestureSign.Common.Applications
         {
             // Load application list from file
             _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
-            _Applications = _Applications.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
-                  {
-                      if (app is UserApplication && !(app is CustomApplication))
-                          return new CustomApplication()
-                          {
-                              Actions = app.Actions,
-                              IsRegEx = app.IsRegEx,
-                              InterceptTouchInput = true,
-                              MatchString = app.MatchString,
-                              MatchUsing = app.MatchUsing,
-                              Name = app.Name
-                          };
-                      else return app;
-                  }));
+            if (_Applications != null)
+                _Applications = _Applications.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
+                      {
+                          if (app is UserApplication && !(app is CustomApplication))
+                              return new CustomApplication()
+                              {
+                                  Actions = app.Actions,
+                                  IsRegEx = app.IsRegEx,
+                                  InterceptTouchInput = true,
+                                  MatchString = app.MatchString,
+                                  MatchUsing = app.MatchUsing,
+                                  Name = app.Name
+                              };
+                          else return app;
+                      }));
             // Ensure we got an object back
             if (_Applications == null)
                 return false;	// No object, failed

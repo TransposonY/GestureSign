@@ -97,29 +97,26 @@ namespace GestureSignDaemon
             miOptions.Click += (o, e) =>
             {
                 bool createdSetting;
-                using (Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting))//true
+                Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting);
+                daemonMutex.Dispose();
+                if (createdSetting)
                 {
-                    if (createdSetting)
-                    {
-                        if (System.IO.File.Exists("GestureSign.exe"))
-                            using (Process daemon = new Process())
+                    if (System.IO.File.Exists("GestureSign.exe"))
+                        using (Process daemon = new Process())
+                        {
+                            try
                             {
-                                try
-                                {
-                                    daemon.StartInfo.FileName = "GestureSign.exe";
+                                daemon.StartInfo.FileName = "GestureSign.exe";
 
-                                    daemon.StartInfo.UseShellExecute = false;
-                                    daemon.Start();
-                                    daemon.WaitForInputIdle(500);
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message);
-                                }
+                                //daemon.StartInfo.UseShellExecute = false;
+                                daemon.Start();
+                                daemon.WaitForInputIdle(500);
                             }
-                    }
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("MainWindow", "GestureSignSetting");
+                            catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+
+                        }
                 }
+                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("MainWindow", "GestureSignSetting");
             };
 
             // Second Seperator Menu Item

@@ -95,7 +95,7 @@ namespace GestureSignDaemon.Input
                 }
             }
         }
-        static public int NumberOfTouchscreens { get; set; }
+        public int NumberOfTouchscreens { get; set; }
 
         #region DllImports
 
@@ -199,10 +199,6 @@ namespace GestureSignDaemon.Input
                 {
                     IsRegistered = true;
                     initializationRatio = new InitializationRatio(this);
-                    if (IsRegistered)
-                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Exit", "GestureSignSetting");
-                    else
-                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignSetting");
                 }
             }
             catch (Exception) { }

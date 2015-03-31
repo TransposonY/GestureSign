@@ -50,30 +50,28 @@ namespace GestureSign
                 try
                 {
                     bool createdNewDaemon;
-                    using (Mutex daemonMutex = new Mutex(false, "GestureSignDaemon", out createdNewDaemon))//true
+                    Mutex daemonMutex = new Mutex(false, "GestureSignDaemon", out createdNewDaemon);
+                    daemonMutex.Dispose();
+                    if (createdNewDaemon)
                     {
-                        if (createdNewDaemon)
+                        using (Process daemon = new Process())
                         {
-                            using (Process daemon = new Process())
-                            {
-                                daemon.StartInfo.FileName = path;
+                            daemon.StartInfo.FileName = path;
 
-                                // pipeClient.StartInfo.Arguments =            
-                                //daemon.StartInfo.UseShellExecute = false;
-                                if (IsAdministrator())
-                                    daemon.StartInfo.Verb = "runas";
-                                daemon.StartInfo.CreateNoWindow = false;
-                                daemon.Start();
-                                daemon.WaitForInputIdle(1000);
-                            }
-
+                            //daemon.StartInfo.UseShellExecute = false;
+                            if (IsAdministrator())
+                                daemon.StartInfo.Verb = "runas";
+                            daemon.StartInfo.CreateNoWindow = false;
+                            daemon.Start();
                         }
+
                     }
+
                 }
-                catch { }
-              
-              
-                 if (GestureSign.Common.Configuration.AppConfig.XRatio == 0||e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning); }
+
+
+                if (GestureSign.Common.Configuration.AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
                 {
                     Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
                 }
@@ -85,12 +83,13 @@ namespace GestureSign
                     mainWindow.availableAction.BindActions();
                 }
 #if DEBUG
-                //MainWindow mw = new MainWindow();
-                //mw.Show();
-                //mw.Activate();
-                //mw.availableAction.BindActions();
-#endif//DEBUG
 
+                MainWindow mw = new MainWindow();
+                mw.Show();
+                mw.Activate();
+                mw.availableAction.BindActions();
+
+#endif
             }
             else
             {

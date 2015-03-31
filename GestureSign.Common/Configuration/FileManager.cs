@@ -15,7 +15,6 @@ namespace GestureSign.Common.Configuration
     {
         #region Constructors
 
-        static Mutex mutex = new Mutex(false, "GestureSignData");
         static FileManager()
         {
             try
@@ -39,7 +38,6 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                mutex.WaitOne();
                 // Create json serializer to serialize json file
                 DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
 
@@ -52,7 +50,6 @@ namespace GestureSign.Common.Configuration
                     // Close file
                     sWrite.Close();
                 }
-                mutex.ReleaseMutex();
                 return true;
             }
             catch (Exception ex)
@@ -67,8 +64,14 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                mutex.WaitOne();
                 if (!File.Exists(filePath)) return default(T);
+                int count = 0;
+                while (IsFileLocked(filePath) && count != 10)
+                {
+                    count++;
+                    Thread.Sleep(20);
+                }
+
                 using (StreamReader sRead = new StreamReader(filePath))
                 {
                     int BOM = sRead.BaseStream.ReadByte();
@@ -83,7 +86,6 @@ namespace GestureSign.Common.Configuration
 
                     sRead.Close();
 
-                    mutex.ReleaseMutex();
                     // Return results of serialization
                     return objBuffer;
                 }
@@ -111,6 +113,25 @@ namespace GestureSign.Common.Configuration
                 File.Copy(filePath, backupFileName, true);
             }
             catch { }
+        }
+        private static bool IsFileLocked(string file)
+        {
+            try
+            {
+                using (File.Open(file, FileMode.Open, FileAccess.Write, FileShare.None))
+                {
+                    return false;
+                }
+            }
+            catch (IOException exception)
+            {
+                var errorCode = System.Runtime.InteropServices.Marshal.GetHRForException(exception) & 65535;
+                return errorCode == 32 || errorCode == 33;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         #endregion
     }

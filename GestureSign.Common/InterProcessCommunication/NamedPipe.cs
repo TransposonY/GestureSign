@@ -9,11 +9,15 @@ using System.IO;
 
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.InteropServices;
 
 namespace GestureSign.Common.InterProcessCommunication
 {
     public class NamedPipe
     {
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool WaitNamedPipe(string name, int timeout);
         static NamedPipeServerStream pipeServer;
         static readonly NamedPipe instance = new NamedPipe();
         public static NamedPipe Instance
@@ -100,12 +104,37 @@ namespace GestureSign.Common.InterProcessCommunication
             }
             catch (System.InvalidOperationException)
             {
-                System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                //System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return false;
             }
             catch (Exception)
             {
                 return false;
+            }
+        }
+        static private bool NamedPipeDoesNotExist(string pipeName)
+        {
+            try
+            {
+                int timeout = 0;
+                string normalizedPath = System.IO.Path.GetFullPath(
+                 string.Format(@"\\.\pipe\{0}", pipeName));
+                bool exists = WaitNamedPipe(normalizedPath, timeout);
+                if (!exists)
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    if (error == 0) // pipe does not exist
+                        return true;
+                    else if (error == 2) // win32 error code for file not found
+                        return true;
+                    // all other errors indicate other issues
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failure in WaitNamedPipe()", ex);
+                return true; // assume it exists
             }
         }
 

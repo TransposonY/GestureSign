@@ -236,8 +236,10 @@ namespace GestureSignDaemon.Input
                 {
 
                     bool createdSetting;
-                    using (System.Threading.Mutex setting = new System.Threading.Mutex(false, "GestureSignSetting", out createdSetting))//true
+                    try
                     {
+                        System.Threading.Mutex setting = new System.Threading.Mutex(false, "GestureSignSetting", out createdSetting);
+                        setting.Dispose();
                         if (createdSetting)
                         {
                             if (System.IO.File.Exists("GestureSign.exe"))
@@ -246,12 +248,14 @@ namespace GestureSignDaemon.Input
                                     daemon.StartInfo.FileName = "GestureSign.exe";
                                     daemon.StartInfo.Arguments = "/L";
                                     // pipeClient.StartInfo.Arguments =            
-                                    daemon.StartInfo.UseShellExecute = false;
+                                    //daemon.StartInfo.UseShellExecute = false;
                                     daemon.Start();
                                     daemon.WaitForInputIdle();
                                 }
                         }
                     }
+                    catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+
                     Tuple<string, List<List<Point>>> message =
                         new Tuple<string, List<List<Point>>>(GestureSign.Common.Gestures.GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
                     GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(message, "GestureSignSetting");

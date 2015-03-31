@@ -772,9 +772,27 @@ namespace GestureSign.UI
             if (value != null)
             {
                 var app = value as CustomApplication;
-                if (value != null)
+                if (app != null)
                     return app.InterceptTouchInput;
-                else return DependencyProperty.UnsetValue;
+                else return false;
+            }
+            else return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
+    [ValueConversion(typeof(object), typeof(bool))]
+    public class EnabledConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                return value is UserApplication;
             }
             else return DependencyProperty.UnsetValue;
         }

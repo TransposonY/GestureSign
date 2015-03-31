@@ -55,15 +55,17 @@ namespace GestureSignDaemon
                     MessageProcessor messageProcessor = new MessageProcessor();
                     GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", messageProcessor.ProcessMessages);
 
-                    if (Input.MessageWindow.NumberOfTouchscreens == 0)
+                    if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
                     }
-                    else if (GestureSign.Common.Configuration.AppConfig.XRatio == 0)
+                    else if (GestureSign.Common.Configuration.AppConfig.XRatio == 0 && !Input.TouchCapture.Instance.MessageWindow.IsRegistered)
                     {
-                        bool createdSetting;
-                        using (Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting))//true
+                        try
                         {
+                            bool createdSetting;
+                            Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting);
+                            daemonMutex.Dispose();
                             if (createdSetting)
                             {
                                 using (Process daemon = new Process())
@@ -72,11 +74,15 @@ namespace GestureSignDaemon
                                     daemon.StartInfo.FileName = path;
 
                                     // pipeClient.StartInfo.Arguments =            
-                                    daemon.StartInfo.UseShellExecute = false;
+                                    //daemon.StartInfo.UseShellExecute = false;
                                     daemon.Start();
+                                    daemon.WaitForInputIdle(1000);
                                 }
                             }
+                            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignSetting");
                         }
+                        catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+
                     }
                     Application.Run();
                 }

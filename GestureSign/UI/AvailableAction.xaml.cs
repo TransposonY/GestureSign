@@ -473,21 +473,23 @@ namespace GestureSign.UI
             {
                 int addcount = 0;
                 List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
-                newApps = newApps.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
-                   {
-                       if (app is UserApplication && !(app is CustomApplication))
-                           return new CustomApplication()
-                           {
-                               Actions = app.Actions,
-                               IsRegEx = app.IsRegEx,
-                               InterceptTouchInput = true,
-                               MatchString = app.MatchString,
-                               MatchUsing = app.MatchUsing,
-                               Name = app.Name
-                           };
-                       else return app;
-                   }));
+
                 if (newApps != null)
+                {
+                    newApps = newApps.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
+                        {
+                            if (app is UserApplication && !(app is CustomApplication))
+                                return new CustomApplication()
+                                {
+                                    Actions = app.Actions,
+                                    IsRegEx = app.IsRegEx,
+                                    InterceptTouchInput = true,
+                                    MatchString = app.MatchString,
+                                    MatchUsing = app.MatchUsing,
+                                    Name = app.Name
+                                };
+                            else return app;
+                        }));
                     foreach (IApplication newApp in newApps)
                     {
                         if (newApp is IgnoredApplication) continue;
@@ -519,6 +521,7 @@ namespace GestureSign.UI
                             ApplicationManager.Instance.AddApplication(newApp);
                         }
                     }
+                }
             End:
                 if (addcount != 0)
                 {
