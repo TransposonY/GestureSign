@@ -81,7 +81,11 @@ namespace GestureSign.Common.InterProcessCommunication
                 {
                     using (StreamWriter sw = new StreamWriter(pipeClient))
                     {
-                        pipeClient.Connect(100);
+                        for (int i = 0; i != 10; i++)
+                        {
+                            if (!NamedPipeDoesNotExist(pipeName)) break;
+                            Thread.Sleep(100);
+                        } pipeClient.Connect(10);
                         //sw.AutoFlush = true;
                         //if (message is string)
                         //{

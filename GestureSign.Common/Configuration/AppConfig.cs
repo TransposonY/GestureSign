@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 
 using System.Threading;
+using System.IO;
 
 namespace GestureSign.Common.Configuration
 {
@@ -14,6 +15,7 @@ namespace GestureSign.Common.Configuration
         static System.Configuration.Configuration config;
         static System.Threading.Timer timer;
         public static event EventHandler ConfigChanged;
+        static string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSign.exe");
         public static System.Drawing.Color VisualFeedbackColor
         {
             get
@@ -146,25 +148,26 @@ namespace GestureSign.Common.Configuration
 
         }
 
-        static Mutex mutex = new Mutex(false, "GestureSignConfig");
         public static void Reload()
         {
             try
             {
-                mutex.WaitOne();
-                string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSign.exe");
+
+                int Count = 0;
+                while (IsFileLocked(path + ".config") && Count != 10)
+                {
+                    Count++;
+                    Thread.Sleep(20);
+                }
+
                 config = ConfigurationManager.OpenExeConfiguration(path);
                 // ConfigurationManager.RefreshSection("appSettings");
                 if (ConfigChanged != null)
                     ConfigChanged(new object(), EventArgs.Empty);
-                mutex.ReleaseMutex();
-            }
-            catch (AbandonedMutexException)
-            {
-
             }
             catch (Exception) { }
         }
+
 
         public static void Save()
         {
@@ -175,25 +178,44 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                mutex.WaitOne();
+                int Count = 0;
+                while (IsFileLocked(path + ".config") && Count != 10)
+                {
+                    Count++;
+                    Thread.Sleep(20);
+                }
                 // Save the configuration file.    
                 config.AppSettings.SectionInformation.ForceSave = true;
                 config.Save(ConfigurationSaveMode.Minimal);
-                mutex.ReleaseMutex();
             }
             catch (ConfigurationErrorsException)
             {
                 Reload();
-            }
-            catch (AbandonedMutexException)
-            {
-
             }
             catch (Exception)
             {
             }
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
+        }
+        private static bool IsFileLocked(string file)
+        {
+            try
+            {
+                using (File.Open(file, FileMode.Open, FileAccess.Write, FileShare.None))
+                {
+                    return false;
+                }
+            }
+            catch (IOException exception)
+            {
+                var errorCode = System.Runtime.InteropServices.Marshal.GetHRForException(exception) & 65535;
+                return errorCode == 32 || errorCode == 33;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private static object GetValue(string key, object defaultValue)
