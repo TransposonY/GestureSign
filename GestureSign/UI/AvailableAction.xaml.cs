@@ -23,7 +23,7 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Drawing;
 
 using MahApps.Metro.Controls.Dialogs;
-//using MahApps.Metro.Controls;
+
 
 namespace GestureSign.UI
 {
@@ -236,14 +236,6 @@ namespace GestureSign.UI
             ApplicationManager.Instance.SaveApplications();
         }
 
-        private void AllCheckBoxs_Click(object sender, RoutedEventArgs e)
-        {
-            bool isChecked = ((CheckBox)sender).IsChecked.Value;
-            foreach (ActionInfo ai in ActionInfos)
-            {
-                ai.IsEnabled = isChecked;
-            }
-        }
 
 
 
@@ -566,6 +558,41 @@ namespace GestureSign.UI
 
             ApplicationManager.Instance.SaveApplications();
 
+        }
+
+        private void AllActionsCheckBoxs_Click(object sender, RoutedEventArgs e)
+        {
+            var checkbox = ((CheckBox)sender);
+            bool isChecked = checkbox.IsChecked.Value;
+            try
+            {
+                dynamic dc = checkbox.DataContext;
+                foreach (ActionInfo ai in ActionInfos.Where(a => a.ApplicationName.Equals(dc.Name)))
+                {
+                    ai.IsEnabled = isChecked;
+                }
+            }
+            catch { }
+            ApplicationManager.Instance.SaveApplications();
+        }
+    }
+    public class HeaderConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string name = values[0] as string;
+            int count = (int)values[1];
+            if (name != null)
+            {
+                return String.Format("{0}  共{1}个", name, count);
+
+            }
+            else return DependencyProperty.UnsetValue;
+        }
+        // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
 }
