@@ -9,7 +9,7 @@
         <TextBox x:Name="txtSendKeys" HorizontalAlignment="Left" Height="80" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Margin="10,30,0,0">
             <TextBox.ContextMenu>
                 <ContextMenu  >
-                    <MenuItem Header="退出" Click="MenuItem_Click"/>
+                    <MenuItem Header="转义已输入的文本" Click="MenuItem_Click"/>
                 </ContextMenu>
             </TextBox.ContextMenu>
         </TextBox>
