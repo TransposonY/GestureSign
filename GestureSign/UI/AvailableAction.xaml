@@ -94,7 +94,7 @@
                     <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Loaded="InterceptTouchInputMenuItem_Loaded" Click="InterceptTouchInputMenuItem_Click" />
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
-                    <MenuItem x:Name="ExportActionMenuItem" Header="导出动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
+                    <MenuItem x:Name="ExportActionMenuItem" Header="导出所有动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.GroupStyle>

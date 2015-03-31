@@ -81,7 +81,7 @@
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="ImportGestureMenuItem" Header="导入手势" Click="ImportGestureMenuItem_Click"  FontSize="16"/>
-                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出手势" Click="ExportGestureMenuItem_Click"  FontSize="16"/>
+                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出所有手势" Click="ExportGestureMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
