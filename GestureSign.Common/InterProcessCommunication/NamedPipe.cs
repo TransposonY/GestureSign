@@ -66,48 +66,47 @@ namespace GestureSign.Common.InterProcessCommunication
         //           }
         //BinaryWriter bw = new BinaryWriter(pipeClient);
         //bw.Write(true);
-        public static void SendMessage(object message, string pipeName)
+        public static bool SendMessage(object message, string pipeName)
         {
-            Task.Run(() =>
+            try
             {
-                try
+                using (NamedPipeClientStream pipeClient =
+                             new NamedPipeClientStream(".", pipeName,
+                                 PipeDirection.Out, PipeOptions.None,
+                                 System.Security.Principal.TokenImpersonationLevel.None))
                 {
-                    using (NamedPipeClientStream pipeClient =
-                                 new NamedPipeClientStream(".", pipeName,
-                                     PipeDirection.Out, PipeOptions.None,
-                                     System.Security.Principal.TokenImpersonationLevel.None))
+                    using (StreamWriter sw = new StreamWriter(pipeClient))
                     {
-                        using (StreamWriter sw = new StreamWriter(pipeClient))
+                        pipeClient.Connect(100);
+                        //sw.AutoFlush = true;
+                        //if (message is string)
+                        //{
+                        //    sw.WriteLine(message);
+
+                        //}
+                        // else
                         {
-                            pipeClient.Connect(2000);
-                            //sw.AutoFlush = true;
-                            //if (message is string)
-                            //{
-                            //    sw.WriteLine(message);
+                            BinaryFormatter bf = new BinaryFormatter();
 
-                            //}
-                            // else
-                            {
-                                BinaryFormatter bf = new BinaryFormatter();
-
-                                bf.Serialize(pipeClient, message);
-                                pipeClient.Flush();
-                            }
-                            //pipeClient.WaitForPipeDrain();
-                            //pipeClient.Close();
-
+                            bf.Serialize(pipeClient, message);
+                            pipeClient.Flush();
                         }
+                        pipeClient.WaitForPipeDrain();
+                        //pipeClient.Close();
+
                     }
                 }
-                catch (System.InvalidOperationException)
-                {
-                    System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-
-                }
-                catch (Exception)
-                {
-                }
-            });
+                return true;
+            }
+            catch (System.InvalidOperationException)
+            {
+                System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
     }
