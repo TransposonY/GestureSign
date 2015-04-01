@@ -15,7 +15,7 @@ namespace GestureSign.Common.Configuration
         static System.Configuration.Configuration config;
         static System.Threading.Timer timer;
         public static event EventHandler ConfigChanged;
-        static string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSign.exe");
+        static string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
         public static System.Drawing.Color VisualFeedbackColor
         {
             get
@@ -143,7 +143,7 @@ namespace GestureSign.Common.Configuration
 
         static AppConfig()
         {
-            config = ConfigurationManager.OpenExeConfiguration(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSign.exe"));
+            config = ConfigurationManager.OpenExeConfiguration(path);
             timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, Timeout.Infinite, Timeout.Infinite);
 
         }

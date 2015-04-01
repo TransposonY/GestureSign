@@ -70,7 +70,7 @@ namespace GestureSignDaemon
                             {
                                 using (Process daemon = new Process())
                                 {
-                                    string path = Path.Combine(Directory.GetCurrentDirectory(), "GestureSign.exe");
+                                    string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
                                     daemon.StartInfo.FileName = path;
 
                                     // pipeClient.StartInfo.Arguments =            

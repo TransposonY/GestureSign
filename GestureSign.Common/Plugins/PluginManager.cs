@@ -86,11 +86,11 @@ namespace GestureSign.Common.Plugins
             // Clear any existing plugins
             _Plugins = new List<IPluginInfo>();
             //_Plugins.Clear();
-            foreach (string sFilePath in Directory.GetFiles(Directory.GetCurrentDirectory(), "*Plugins.dll"))
+            foreach (string sFilePath in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*Plugins.dll"))
             {
                 try
                 {
-                    _Plugins.AddRange(LoadPluginsFromAssembly(Path.GetFullPath(sFilePath),host));
+                    _Plugins.AddRange(LoadPluginsFromAssembly(Path.GetFullPath(sFilePath), host));
                     bFailed = false;
                 }
                 catch
@@ -120,7 +120,7 @@ namespace GestureSign.Common.Plugins
         {
             List<IPluginInfo> retPlugins = new List<IPluginInfo>();
 
-        
+
 
             // Catch an unexpected errors during load
             try

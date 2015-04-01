@@ -27,7 +27,7 @@ namespace GestureSign
 
             if (createdNew)
             {
-                string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "GestureSignDaemon.exe");
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
                 if (!System.IO.File.Exists(path))
                 {
                     MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK, MessageBoxImage.Exclamation);

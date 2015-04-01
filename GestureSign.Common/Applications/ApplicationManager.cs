@@ -141,13 +141,15 @@ namespace GestureSign.Common.Applications
         public bool SaveApplications()
         {
             // Save application list
-            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(_Applications, Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(
+                _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
         }
 
         public bool LoadApplications()
         {
             // Load application list from file
-            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(Path.Combine("Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
+            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
             if (_Applications != null)
                 _Applications = _Applications.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
                       {

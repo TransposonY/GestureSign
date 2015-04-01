@@ -163,7 +163,7 @@ namespace GestureSign.UI
                 shortCut.Arguments = "";
                 shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();// Application.ProductName + Application.ProductVersion;
                 shortCut.IconLocation = Application.ResourceAssembly.Location;// Application.ExecutablePath;
-                shortCut.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();// Application.ResourceAssembly.;
+                shortCut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;// Application.ResourceAssembly.;
                 shortCut.Save();
             }
         }

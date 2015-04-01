@@ -16,7 +16,7 @@ namespace GestureSignDaemon.Configuration
 
         FileWatcher()
         {
-            fsw = new System.IO.FileSystemWatcher(Directory.GetCurrentDirectory());
+            fsw = new System.IO.FileSystemWatcher(AppDomain.CurrentDomain.BaseDirectory);
             fsw.Filter = "*.*";
             fsw.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime;
             fsw.IncludeSubdirectories = true;

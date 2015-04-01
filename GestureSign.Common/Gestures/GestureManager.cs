@@ -142,7 +142,8 @@ namespace GestureSign.Common.Gestures
             try
             {
                 // Load gestures from file, create empty list if load failed
-                _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(Path.Combine("Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
+                _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
 
                 if (Gestures == null)
                     return false;
@@ -160,7 +161,7 @@ namespace GestureSign.Common.Gestures
             try
             {
                 // Save gestures to file
-                Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine("Data", "Gestures.json"));
+                Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"));
 
                 return true;
             }
