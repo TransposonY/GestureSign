@@ -177,6 +177,7 @@ namespace GestureSignDaemon
             // StartTeaching();
             //EnterUserDefinedMode();
             StopTeaching();
+            this.TrayIcon.ShowBalloonTip(500, "提示", "GestureSign已启动", ToolTipIcon.Info);
         }
 
         #endregion
