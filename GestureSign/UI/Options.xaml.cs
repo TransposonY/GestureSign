@@ -16,6 +16,9 @@ using System.Windows.Shapes;
 using GestureSign.Common.UI;
 using Microsoft.Win32;
 
+using Microsoft.Win32.TaskScheduler;
+using System.Security.Principal;
+
 namespace GestureSign.UI
 {
     /// <summary>
@@ -23,7 +26,8 @@ namespace GestureSign.UI
     /// </summary>
     public partial class Options : UserControl
     {
-       System.Drawing.Color _VisualFeedbackColor;
+        System.Drawing.Color _VisualFeedbackColor;
+        string taskName = "GestureSignAutoRunTask";
         public Options()
         {
             InitializeComponent();
@@ -31,7 +35,7 @@ namespace GestureSign.UI
         }
 
         #region Custom Events
-   
+
         #endregion
         private bool LoadSettings()
         {
@@ -111,7 +115,7 @@ namespace GestureSign.UI
 
             Common.Configuration.AppConfig.Save();
         }
-     
+
 
         private void UpdateVisualFeedbackExample()
         {
@@ -119,7 +123,7 @@ namespace GestureSign.UI
             if (VisualFeedbackWidthSlider.Value > 0)
             {
                 VisualFeedbackExample.Stroke = new SolidColorBrush(
-                    Color.FromArgb( _VisualFeedbackColor.A,_VisualFeedbackColor.R,_VisualFeedbackColor.G,_VisualFeedbackColor.B));
+                    Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B));
 
                 VisualFeedbackWidthText.Text = String.Format("轨迹宽度 {0:0} px", VisualFeedbackWidthSlider.Value);
             }
@@ -136,9 +140,28 @@ namespace GestureSign.UI
         {
             string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-            if (System.IO.File.Exists(lnkPath))
-                return true;
-            else return false;
+            try
+            {
+                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+                {
+                    WindowsPrincipal principal = new WindowsPrincipal(identity);
+                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                    {
+                        // Get the service on the local machine
+                        using (TaskService ts = new TaskService())
+                        {
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+                            return tasks.Count != 0 || System.IO.File.Exists(lnkPath);
+                        }
+                    }
+                    else return System.IO.File.Exists(lnkPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
 
@@ -158,7 +181,8 @@ namespace GestureSign.UI
             {
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                 IWshRuntimeLibrary.IWshShortcut shortCut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(lnkPath);
-                shortCut.TargetPath = Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                shortCut.TargetPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                    //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
                 shortCut.WindowStyle = 7;
                 shortCut.Arguments = "";
                 shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();// Application.ProductName + Application.ProductVersion;
@@ -170,11 +194,47 @@ namespace GestureSign.UI
 
         private void chkWindowsStartup_Checked(object sender, RoutedEventArgs e)
         {
-            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
             try
             {
-                CreateLnk(lnkPath);
+                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+                {
+                    WindowsPrincipal principal = new WindowsPrincipal(identity);
+                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                    {
+                        // Get the service on the local machine
+                        using (TaskService ts = new TaskService())
+                        {
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+
+                            if (tasks.Count == 0)
+                            {
+                                // Create a new task definition and assign properties
+                                TaskDefinition td = ts.NewTask();
+                                td.Settings.DisallowStartIfOnBatteries = false;
+                                td.RegistrationInfo.Description = "Launch GestureSign when user login";
+
+                                td.Principal.RunLevel = TaskRunLevel.Highest;
+
+                                LogonTrigger lt = new LogonTrigger();
+                                lt.Enabled = true;
+                                td.Triggers.Add(lt);
+                                // Create an action that will launch Notepad whenever the trigger fires
+                                td.Actions.Add(new ExecAction(
+                                    System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe"), null, AppDomain.CurrentDomain.BaseDirectory));
+
+                                // Register the task in the root folder
+                                ts.RootFolder.RegisterTaskDefinition(taskName, td);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                            "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+
+                        CreateLnk(lnkPath);
+                    }
+                }
             }
             catch (Exception ex)
             { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -183,12 +243,31 @@ namespace GestureSign.UI
 
         private void chkWindowsStartup_Unchecked(object sender, RoutedEventArgs e)
         {
-            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-              "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
             try
             {
-                if (System.IO.File.Exists(lnkPath))
-                    System.IO.File.Delete(lnkPath);
+                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+                {
+                    WindowsPrincipal principal = new WindowsPrincipal(identity);
+                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                    {  // Get the service on the local machine
+                        using (TaskService ts = new TaskService())
+                        {
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+
+                            if (tasks.Count != 0)
+                            {
+                                ts.RootFolder.DeleteTask(taskName);
+                            }
+                        }
+                    }
+
+                    string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                      "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+
+                    if (System.IO.File.Exists(lnkPath))
+                        System.IO.File.Delete(lnkPath);
+
+                }
             }
             catch (Exception ex)
             { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
