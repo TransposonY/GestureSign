@@ -40,7 +40,12 @@ namespace GestureSign.Common.Configuration
             {
                 // Create json serializer to serialize json file
                 DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
-
+                int count = 0;
+                while (IsFileLocked(filePath) && count != 10)
+                {
+                    count++;
+                    Thread.Sleep(20);
+                }
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
