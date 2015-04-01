@@ -563,14 +563,17 @@ namespace GestureSign.UI
 
         private void AllActionsCheckBoxs_Click(object sender, RoutedEventArgs e)
         {
-            var checkbox = ((CheckBox)sender);
-            bool isChecked = checkbox.IsChecked.Value;
             try
             {
+                var checkbox = ((CheckBox)sender);
                 dynamic dc = checkbox.DataContext;
+
+                ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(dc.Name)).Actions.ForEach(a => a.IsEnabled = checkbox.IsChecked.Value);
+                ApplicationManager.Instance.SaveApplications();
+
                 foreach (ActionInfo ai in ActionInfos.Where(a => a.ApplicationName.Equals(dc.Name)))
                 {
-                    ai.IsEnabled = isChecked;
+                    ai.IsEnabled = checkbox.IsChecked.Value;
                 }
             }
             catch { }
