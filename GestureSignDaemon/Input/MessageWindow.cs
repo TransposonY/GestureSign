@@ -451,10 +451,10 @@ namespace GestureSignDaemon.Input
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 4);
                             touchDataType = typeof(ntrgTouchData);
                         }
-                        else if (rawdate[24] == 0x0C && rawdate[25] == 0x00)
+                        else if (rawdate[headLength] == 0x0C && rawdate[headLength + 1] == 0x00)
                         {
                             offset = 3;
-                            activeTouchCount = rawdate[26];
+                            activeTouchCount = rawdate[headLength + 2];
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 2);
                             touchDataType = typeof(wcTouchData);
                         }
@@ -464,17 +464,17 @@ namespace GestureSignDaemon.Input
                             activeTouchCount = Marshal.ReadByte(buffer, (int)dwSize - 1);
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 3);
 
-                            if (rawdate[27] == rawdate[29] && rawdate[28] == rawdate[30] &&
-                                rawdate[31] == rawdate[33] && rawdate[32] == rawdate[34])
+                            if (rawdate[headLength + 3] == rawdate[headLength + 5] && rawdate[headLength + 4] == rawdate[headLength + 6] &&
+                                rawdate[headLength + 7] == rawdate[headLength + 9] && rawdate[headLength + 8] == rawdate[headLength + 10])
                             {
                                 touchDataType = typeof(dTouchData);
                             }
-                            else if (activeTouchCount > 1 && rawdate[31] == 0 && rawdate[32] == 0)
+                            else if (activeTouchCount > 1 && rawdate[headLength + 7] == 0 && rawdate[headLength + 8] == 0)
                             {
                                 touchDataType = typeof(gTouchData);
                             }
-                            else if (rawdate[29] == 0 && rawdate[30] == 0x0 && rawdate[33] == 0 && rawdate[34] == 0 &&
-                                    (rawdate[27] != 0 || rawdate[28] != 0 || rawdate[31] != 0 || rawdate[32] != 0))
+                            else if (rawdate[headLength + 5] == 0 && rawdate[headLength + 6] == 0x0 && rawdate[headLength + 9] == 0 && rawdate[headLength + 10] == 0 &&
+                                    (rawdate[headLength + 3] != 0 || rawdate[headLength + 4] != 0 || rawdate[headLength + 7] != 0 || rawdate[headLength + 8] != 0))
                             {
                                 touchDataType = typeof(iTouchData);
                             }
