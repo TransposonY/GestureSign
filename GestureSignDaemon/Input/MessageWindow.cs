@@ -544,7 +544,7 @@ namespace GestureSignDaemon.Input
                                 if (--requiringTouchDataCount == 0) break;
                             }
                         }
-                        if (requiringTouchDataCount < 1)
+                        if (requiringTouchDataCount == 0 && PointsIntercepted != null)
                         {
                             PointsIntercepted(this, new RawPointsDataMessageEventArgs(outputTouchs.OrderBy(rtd => rtd.Num).ToArray(), timeStamp));
                         }
