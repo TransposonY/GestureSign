@@ -5,7 +5,7 @@
                       xmlns:c="clr-namespace:GestureSign.Common.UI;assembly=GestureSign.Common"
                       BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="1"
         Title="手势定义" Height="288.308" Width="353.077" Loaded="Window_Loaded" Closing="Window_Closing" ResizeMode="NoResize"  SizeToContent="Height"
-             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" Topmost="True" ShowIconOnTitleBar="False" Icon="/GestureSign;component/Resources/normal.ico">
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" Topmost="True" ShowIconOnTitleBar="False" Icon="/GestureSign;component/Resources/normal.ico" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
     </controls:MetroWindow.Resources>
     <StackPanel>

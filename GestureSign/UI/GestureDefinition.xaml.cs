@@ -185,6 +185,7 @@ namespace GestureSign.UI
 
             if (reName)
             {
+                if (ExistingGestureName.Equals(newGestureName)) return true;
                 GestureManager.Instance.RenameGesture(ExistingGestureName, newGestureName);
                 GestureManager.Instance.SaveGestures();
             }

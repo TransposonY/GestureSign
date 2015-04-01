@@ -105,7 +105,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="False" BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft"  BorderThickness="0,0,0,1">
+                                        <Expander BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft"  BorderThickness="0,0,0,1" IsExpanded="True">
                                             <Expander.Header>
                                                 <DockPanel>
                                                     <CheckBox Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" FlowDirection="LeftToRight" Content="启用" DockPanel.Dock="Right"/>
@@ -117,9 +117,6 @@
                                                             </MultiBinding>
                                                         </TextBlock.Text>
                                                     </TextBlock>
-                                                    <!--Text="{Binding Path=Name}"
-                                                    <TextBlock FontWeight="Bold" 
-                                                               Text="{Binding Path=ItemCount, StringFormat=(共{0}条)}"/>-->
                                                 </DockPanel>
                                             </Expander.Header>
                                             <Expander.Content>

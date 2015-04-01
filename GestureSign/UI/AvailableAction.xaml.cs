@@ -44,6 +44,7 @@ namespace GestureSign.UI
             ApplicationDialog.ActionsChanged += ActionDefinition_ActionsChanged;
 
             AvailableGestures.GestureChanged += ActionDefinition_ActionsChanged;
+            GestureDefinition.GesturesChanged += ActionDefinition_ActionsChanged;
         }
 
 
@@ -154,7 +155,7 @@ namespace GestureSign.UI
 
             ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction);
             applicationDialog.ShowDialog();
-            SelectAction(strApplicationHeader, selectedItem.ActionName, false);
+            SelectAction(strApplicationHeader, selectedItem.ActionName, true);
         }
 
         private void SelectAction(string applicationName, string actionName, bool scrollIntoView)
@@ -584,7 +585,7 @@ namespace GestureSign.UI
             int count = (int)values[1];
             if (name != null)
             {
-                return String.Format("{0}  共{1}个", name, count);
+                return String.Format("{0}  {1}个动作", name, count);
 
             }
             else return DependencyProperty.UnsetValue;

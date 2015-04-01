@@ -87,8 +87,6 @@ namespace GestureSign.UI
                 GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
                 ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name, true);
             gd.ShowDialog();
-            if (GestureChanged != null)
-                GestureChanged(this, new EventArgs());
         }
 
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)

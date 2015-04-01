@@ -238,7 +238,6 @@ namespace GestureSign.Common.Gestures
 
         public void RenameGesture(string gestureName, string newGestureName)
         {
-            if (gestureName.Equals(newGestureName)) return;
             _Gestures.Find(g => g.Name == gestureName).Name = newGestureName;
 
             OnGestureEdited(new GestureEventArgs(gestureName, newGestureName));
