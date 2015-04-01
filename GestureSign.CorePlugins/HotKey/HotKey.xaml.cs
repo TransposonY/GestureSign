@@ -55,15 +55,13 @@ namespace GestureSign.CorePlugins.HotKey
                 chkWin.IsChecked = true;
             var keyCode = (e.Key == Key.System) ? (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.SystemKey) :
                 (System.Windows.Forms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
-            if (_KeyCode.Contains(keyCode)) return;
-            else
-            {
-                _KeyCode.Add(keyCode);
-                string keyCodes = string.Empty;
-                foreach (var k in _KeyCode)
-                    keyCodes += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
-                txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
-            }
+
+            _KeyCode.Add(keyCode);
+            string keyCodes = string.Empty;
+            foreach (var k in _KeyCode)
+                keyCodes += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+            txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
+
         }
 
 
