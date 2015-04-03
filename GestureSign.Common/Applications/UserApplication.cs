@@ -9,9 +9,4 @@ namespace GestureSign.Common.Applications
 	public class UserApplication : ApplicationBase
 	{
 	}
-
-    public class CustomApplication : UserApplication
-    { 
-        public bool InterceptTouchInput { get; set; }
-    }
 }

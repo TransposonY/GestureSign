@@ -42,11 +42,11 @@ namespace GestureSignDaemon.Input
 
         #region Public Methods
 
-        int lastPointsCount = 1;
+        int lastPointsCount = 0;
 
         public void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
-            if (e.RawTouchsData.Length < 2 || GestureSign.Common.Configuration.AppConfig.XRatio == 0) return;
+            if (GestureSign.Common.Configuration.AppConfig.XRatio == 0) return;
             var pointEventArgs = new PointEventArgs(e.RawTouchsData.Select(r => (new KeyValuePair<int, Point>(r.Num, r.RawPoints))));
             foreach (RawTouchData rtd in e.RawTouchsData)
             {
@@ -55,7 +55,7 @@ namespace GestureSignDaemon.Input
                     if (e.RawTouchsData.Length <= lastPointsCount)
                     {
                         OnTouchUp(pointEventArgs);
-                        lastPointsCount = 1;
+                        lastPointsCount = 0;
                     }
                     return;
                 }

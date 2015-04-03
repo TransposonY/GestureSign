@@ -7,44 +7,45 @@ using System.Text.RegularExpressions;
 
 namespace GestureSign.Common.Applications
 {
-	public abstract class ApplicationBase : IApplication
-	{
-		#region Private Instance Fields
+    public abstract class ApplicationBase : IApplication
+    {
+        #region Private Instance Fields
 
-		List<IAction> _Actions = new List<IAction>();
+        List<IAction> _Actions = new List<IAction>();
 
-		#endregion
+        #endregion
 
-		#region IApplication Instance Properties
+        #region IApplication Instance Properties
+        public virtual bool AllowSingleStroke { get; set; }
+        public virtual string Name { get; set; }
+        public virtual MatchUsing MatchUsing { get; set; }
+        public virtual string MatchString { get; set; }
+        public bool InterceptTouchInput { get; set; }
+        public virtual bool IsRegEx { get; set; }
+        public virtual List<IAction> Actions
+        {
+            get { return _Actions; }
+            set { _Actions = value; }
+        }
 
-		public virtual string Name { get; set; }
-		public virtual MatchUsing MatchUsing { get; set; }
-		public virtual string MatchString { get; set; }
-		public virtual bool IsRegEx { get; set; }
-		public virtual List<IAction> Actions
-		{
-			get { return _Actions; }
-			set { _Actions = value; }
-		}
+        #endregion
 
-		#endregion
+        #region IApplication Instance Methods
 
-		#region IApplication Instance Methods
+        public virtual void AddAction(IAction Action)
+        {
+            _Actions.Add(Action);
+        }
 
-		public virtual void AddAction(IAction Action)
-		{
-			_Actions.Add(Action);
-		}
+        public virtual void RemoveAction(IAction Action)
+        {
+            _Actions.Remove(Action);
+        }
 
-		public virtual void RemoveAction(IAction Action)
-		{
-			_Actions.Remove(Action);
-		}
-
-		public virtual void RemoveAllActions(Predicate<IAction> Match)
-		{
-			_Actions.RemoveAll(Match);
-		}
+        public virtual void RemoveAllActions(Predicate<IAction> Match)
+        {
+            _Actions.RemoveAll(Match);
+        }
 
         public bool IsSystemWindowMatch(SystemWindow Window)
         {
@@ -78,6 +79,6 @@ namespace GestureSign.Common.Applications
             }
         }
 
-		#endregion
-	}
+        #endregion
+    }
 }

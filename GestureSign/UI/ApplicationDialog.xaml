@@ -18,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
-    <Canvas>
+    <Canvas Height="520">
         <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330">
             <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
             <TabControl x:Name="tcApplications" Height="336" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto">
@@ -87,7 +87,7 @@
                 </TabItem>
             </TabControl>
         </StackPanel>
-        <StackPanel Canvas.Left="354" Canvas.Top="10" Width="330">
+        <StackPanel Canvas.Left="356" Canvas.Top="10" Width="328">
             <TextBlock Text="选择手势" FontSize="24"/>
             <ComboBox x:Name="availableGesturesComboBox"
                           HorizontalContentAlignment="Left"
@@ -275,5 +275,7 @@
         <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource interceptTouchInputBoolConverter}}" 
                   IsEnabled="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource enabledConverter}}"
                   Content="屏蔽此程序触屏输入" Canvas.Left="20" Canvas.Top="385"/>
+        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="233" Canvas.Top="385"  IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.AllowSingleStroke,Mode=OneWay}"/>
+        <Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>
     </Canvas>
 </controls:MetroWindow>

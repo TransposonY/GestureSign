@@ -69,12 +69,13 @@ namespace GestureSign.Common.Applications
         {
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             IEnumerable<IApplication> ApplicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
             foreach (IApplication app in ApplicationFromWindow)
             {
-                if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
-                    e.Cancel = true;
-                e.InterceptTouchInput = (app is CustomApplication && (app as CustomApplication).InterceptTouchInput);
+                e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
+                    (!SystemWindow.FromPointEx(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) && !app.AllowSingleStroke && e.Points.Count == 1);
 
+                e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
             }
         }
 
@@ -142,29 +143,14 @@ namespace GestureSign.Common.Applications
         {
             // Save application list
             return Common.Configuration.FileManager.SaveObject<List<IApplication>>(
-                _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+                _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
         }
 
         public bool LoadApplications()
         {
             // Load application list from file
             _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
-            if (_Applications != null)
-                _Applications = _Applications.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
-                      {
-                          if (app is UserApplication && !(app is CustomApplication))
-                              return new CustomApplication()
-                              {
-                                  Actions = app.Actions,
-                                  IsRegEx = app.IsRegEx,
-                                  InterceptTouchInput = true,
-                                  MatchString = app.MatchString,
-                                  MatchUsing = app.MatchUsing,
-                                  Name = app.Name
-                              };
-                          else return app;
-                      }));
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
             // Ensure we got an object back
             if (_Applications == null)
                 return false;	// No object, failed
@@ -307,6 +293,11 @@ namespace GestureSign.Common.Applications
                     app.RemoveAllActions(a => a.Name.ToLower().Trim() == ActionName.ToLower().Trim());
         }
 
+        #endregion
+
+        #region P/Invoke
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "FindWindow")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         #endregion
     }
 }

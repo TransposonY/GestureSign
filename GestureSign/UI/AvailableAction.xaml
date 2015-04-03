@@ -88,10 +88,11 @@
         </Grid.RowDefinitions>
         <ListBox x:Name="lstAvailableActions" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False">
             <ListBox.ContextMenu>
-                <ContextMenu>
+                <ContextMenu Loaded="ContextMenu_Loaded">
                     <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
                     <Separator></Separator>
-                    <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Loaded="InterceptTouchInputMenuItem_Loaded" Click="InterceptTouchInputMenuItem_Click" />
+                    <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Click="InterceptTouchInputMenuItem_Click" />
+                    <MenuItem x:Name="AllowSingleMenuItem" Header="允许单指手势"  IsCheckable="True" FontSize="16" Click="AllowSingleMenuItem_Click"/>
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
                     <MenuItem x:Name="ExportActionMenuItem" Header="导出所有动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>

@@ -465,24 +465,10 @@ namespace GestureSign.UI
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
 
                 if (newApps != null)
                 {
-                    newApps = newApps.ConvertAll<IApplication>(new Converter<IApplication, IApplication>(app =>
-                        {
-                            if (app is UserApplication && !(app is CustomApplication))
-                                return new CustomApplication()
-                                {
-                                    Actions = app.Actions,
-                                    IsRegEx = app.IsRegEx,
-                                    InterceptTouchInput = true,
-                                    MatchString = app.MatchString,
-                                    MatchUsing = app.MatchUsing,
-                                    Name = app.Name
-                                };
-                            else return app;
-                        }));
                     foreach (IApplication newApp in newApps)
                     {
                         if (newApp is IgnoredApplication) continue;
@@ -530,24 +516,28 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(CustomApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
             }
         }
 
-        private void InterceptTouchInputMenuItem_Loaded(object sender, RoutedEventArgs e)
+        private void ContextMenu_Loaded(object sender, RoutedEventArgs e)
         {
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
             if (selectedItem.ApplicationName.Equals(ApplicationManager.Instance.GetGlobalApplication().Name))
             {
-                this.InterceptTouchInputMenuItem.IsEnabled = false;
+                this.InterceptTouchInputMenuItem.IsChecked = this.InterceptTouchInputMenuItem.IsEnabled = false;
+
             }
             else
             {
                 this.InterceptTouchInputMenuItem.IsEnabled = true;
                 this.InterceptTouchInputMenuItem.IsChecked =
-                    ((CustomApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput;
+                    ((UserApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput;
             }
+            this.AllowSingleMenuItem.IsChecked =
+             (ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).AllowSingleStroke;
+
         }
 
         private void InterceptTouchInputMenuItem_Click(object sender, RoutedEventArgs e)
@@ -555,10 +545,19 @@ namespace GestureSign.UI
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
-            ((CustomApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput = menuItem.IsChecked;
+            ((UserApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput = menuItem.IsChecked;
 
             ApplicationManager.Instance.SaveApplications();
 
+        }
+        private void AllowSingleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
+            if (selectedItem == null) return;
+            var menuItem = (MenuItem)sender;
+            ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName)).AllowSingleStroke = menuItem.IsChecked;
+
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void AllActionsCheckBoxs_Click(object sender, RoutedEventArgs e)
@@ -579,6 +578,7 @@ namespace GestureSign.UI
             catch { }
             ApplicationManager.Instance.SaveApplications();
         }
+
     }
     public class HeaderConverter : IMultiValueConverter
     {

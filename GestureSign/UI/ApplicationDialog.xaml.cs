@@ -253,7 +253,11 @@ namespace GestureSign.UI
             }
             else
             {
-                _SelectedApplication = new CustomApplication() { InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value };
+                _SelectedApplication = new UserApplication()
+                {
+                    InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value,
+                    AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value
+                };
                 // Store application name
                 _SelectedApplication.Name = txtApplicationName.Text.Trim();
                 // Make sure we have a valid application name
@@ -771,7 +775,7 @@ namespace GestureSign.UI
         {
             if (value != null)
             {
-                var app = value as CustomApplication;
+                var app = value as UserApplication;
                 if (app != null)
                     return app.InterceptTouchInput;
                 else return false;
