@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common;
+using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
+using GestureSign.Common.InterProcessCommunication;
 using GestureSign.PointPatterns;
-using System.Diagnostics;
+using ManagedWinapi.Windows;
 
 namespace GestureSignDaemon.Input
 {
@@ -17,7 +23,7 @@ namespace GestureSignDaemon.Input
 
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         TouchEventTranslator TouchEventTranslator = new TouchEventTranslator();
-        Input.MessageWindow messageWindow = new MessageWindow();
+        readonly MessageWindow messageWindow = new MessageWindow();
 
         Dictionary<int, List<Point>> _PointsCaptured = new Dictionary<int, List<Point>>(2);
         // Create variable to hold the only allowed instance of this class
@@ -57,7 +63,7 @@ namespace GestureSignDaemon.Input
 
         protected virtual void OnStateChanged(StateChangedEventArgs e)
         {
-            StateChanged(this, e);
+            if (StateChanged != null) StateChanged(this, e);
         }
 
         // Create event to notify subscribers that the capture process has started
@@ -106,7 +112,7 @@ namespace GestureSignDaemon.Input
             if (CaptureCanceled != null) CaptureCanceled(this, e);
         }
 
-        public event EventHandler StartInterceptTouchInput;
+        public event EventHandler<bool> OnInterceptTouchInputChange;
         #endregion
 
         #region Public Properties
@@ -128,14 +134,29 @@ namespace GestureSignDaemon.Input
             TouchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
 
             messageWindow.PointerIntercepted += TouchEventTranslator.TranslatePointerMessage;
-            this.StartInterceptTouchInput += messageWindow.StartRegister;
+            this.OnInterceptTouchInputChange += messageWindow.ToggleRegister;
+
+            messageWindow.OnForegroundChange += messageWindow_OnForegroundChange;
         }
+
 
 
         #endregion
 
         #region Touch Events
 
+        void messageWindow_OnForegroundChange(object sender, IntPtr e)
+        {
+            if (e.Equals(IntPtr.Zero) || Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
+                return;
+
+            bool flag =
+                ApplicationManager.Instance.GetApplicationFromWindow(new SystemWindow(e))
+                    .Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput);
+
+            if (OnInterceptTouchInputChange != null)
+                OnInterceptTouchInputChange(this, flag);
+        }
 
         protected void PointEventTranslator_TouchDown(object sender, PointEventArgs e)
         {
@@ -153,7 +174,6 @@ namespace GestureSignDaemon.Input
                 if (!TryBeginCapture(e.Points))
                 {
                     Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-                    return;
                 }
             }
         }
@@ -182,24 +202,24 @@ namespace GestureSignDaemon.Input
 
         #region Private Methods
 
-        private bool TryBeginCapture(IEnumerable<KeyValuePair<int, Point>> FirstTouch)
+        private bool TryBeginCapture(IEnumerable<KeyValuePair<int, Point>> firstTouch)
         {
 
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
-            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(FirstTouch.Select(p => p.Value).ToArray());
+            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray());
             OnCaptureStarted(captureStartedArgs);
             if (captureStartedArgs.Cancel)
                 return false;
-            if (captureStartedArgs.InterceptTouchInput && StartInterceptTouchInput != null)
-                StartInterceptTouchInput(this, EventArgs.Empty);
+            if (OnInterceptTouchInputChange != null)
+                OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
 
             State = CaptureState.Capturing;
 
             // Clear old gesture from point list so we can start adding the new captures points to the list 
-            _PointsCaptured = new Dictionary<int, List<Point>>(FirstTouch.Count());
-            if (GestureSign.Common.Configuration.AppConfig.IsOrderByLocation)
+            _PointsCaptured = new Dictionary<int, List<Point>>(firstTouch.Count());
+            if (AppConfig.IsOrderByLocation)
             {
-                foreach (KeyValuePair<int, Point> rawTouchData in FirstTouch.OrderBy(p => p.Value.X))
+                foreach (KeyValuePair<int, Point> rawTouchData in firstTouch.OrderBy(p => p.Value.X))
                 {
                     if (!_PointsCaptured.ContainsKey(rawTouchData.Key))
                         _PointsCaptured.Add(rawTouchData.Key, new List<Point>(30));
@@ -207,13 +227,13 @@ namespace GestureSignDaemon.Input
             }
             else
             {
-                foreach (KeyValuePair<int, Point> rawTouchData in FirstTouch)
+                foreach (KeyValuePair<int, Point> rawTouchData in firstTouch)
                 {
                     if (!_PointsCaptured.ContainsKey(rawTouchData.Key))
                         _PointsCaptured.Add(rawTouchData.Key, new List<Point>(30));
                 }
             }
-            AddPoint(FirstTouch);
+            AddPoint(firstTouch);
             return true;
         }
 
@@ -232,17 +252,16 @@ namespace GestureSignDaemon.Input
 
             if (!pointsInformation.Cancel)
             {
-                if (GestureSign.Common.Configuration.AppConfig.Teaching)
+                if (AppConfig.Teaching)
                 {
-
-                    bool createdSetting;
                     try
                     {
-                        System.Threading.Mutex setting = new System.Threading.Mutex(false, "GestureSignSetting", out createdSetting);
+                        bool createdSetting;
+                        Mutex setting = new Mutex(false, "GestureSignSetting", out createdSetting);
                         setting.Dispose();
                         if (createdSetting)
                         {
-                            if (System.IO.File.Exists("GestureSign.exe"))
+                            if (File.Exists("GestureSign.exe"))
                                 using (Process daemon = new Process())
                                 {
                                     daemon.StartInfo.FileName = "GestureSign.exe";
@@ -257,9 +276,9 @@ namespace GestureSignDaemon.Input
                     catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
 
                     Tuple<string, List<List<Point>>> message =
-                        new Tuple<string, List<List<Point>>>(GestureSign.Common.Gestures.GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(message, "GestureSignSetting");
-                    Input.TouchCapture.Instance.DisableTouchCapture();
+                        new Tuple<string, List<List<Point>>>(GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
+                    NamedPipe.SendMessage(message, "GestureSignSetting");
+                    Instance.DisableTouchCapture();
 
                 }
                 OnAfterPointsCaptured(pointsInformation);
@@ -280,8 +299,8 @@ namespace GestureSignDaemon.Input
             {                // Don't accept point if it's within specified distance of last point unless it's the first point
                 if (_PointsCaptured.ContainsKey(p.Key))
                 {
-                    if (_PointsCaptured[p.Key].Count() > 0 &&
-                   GestureSign.PointPatterns.PointPatternMath.GetDistance(_PointsCaptured[p.Key].Last(), p.Value) < GestureSign.Common.Configuration.AppConfig.MinimumPointDistance)
+                    if (_PointsCaptured[p.Key].Any() &&
+                   PointPatternMath.GetDistance(_PointsCaptured[p.Key].Last(), p.Value) < AppConfig.MinimumPointDistance)
                         continue;
                     getNewPoint = true;
                     // Add point to captured points list
@@ -330,7 +349,7 @@ namespace GestureSignDaemon.Input
             // fires before the menu item's code, so it was back to Ready before this block was executed.  Although, it probably 
             // makes more sense to set it to Ready in the event this is called from another location.
             State = State == CaptureState.UserDisabled ? CaptureState.Ready : CaptureState.UserDisabled;
-            StateChanged(this, new StateChangedEventArgs(State));
+            OnStateChanged(new StateChangedEventArgs(State));
 
         }
 

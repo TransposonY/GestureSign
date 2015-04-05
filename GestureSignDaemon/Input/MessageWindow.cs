@@ -60,6 +60,10 @@ namespace GestureSignDaemon.Input
            PA_NOACTIVATE = 3,
 
            MAX_TOUCH_COUNT = 256;
+
+        private const uint WINEVENT_OUTOFCONTEXT = 0;
+        private const uint EVENT_SYSTEM_FOREGROUND = 3;
+
         #endregion const definitions
 
         static bool? XAxisDirection = null;
@@ -67,9 +71,12 @@ namespace GestureSignDaemon.Input
         static bool? IsAxisCorresponds = null;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
         public event EventHandler<PointerMessageEventArgs> PointerIntercepted;
+        public event EventHandler<IntPtr> OnForegroundChange;
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+        WinEventDelegate dele;
         InitializationRatio initializationRatio;
 
-        System.Threading.Timer timer;
         Type touchDataType;
         List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
         int requiringTouchDataCount = 0;
@@ -84,13 +91,13 @@ namespace GestureSignDaemon.Input
             {
                 if (value)
                 {
-                    if (!isRegistered)
-                        if (RegisterPointerInputTarget(this.Handle, POINTER_INPUT_TYPE.TOUCH))
-                            isRegistered = true;
+                    if (isRegistered) return;
+                    if (RegisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
+                        isRegistered = true;
                 }
                 else
                 {
-                    if (UnregisterPointerInputTarget(this.Handle, POINTER_INPUT_TYPE.TOUCH))
+                    if (isRegistered && UnregisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
                         isRegistered = false;
                 }
             }
@@ -128,6 +135,9 @@ namespace GestureSignDaemon.Input
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool GetPointerFrameInfo(int pointerID, ref int pointerCount, [MarshalAs(UnmanagedType.LPArray), In, Out] POINTER_INFO[] pointerInfo);
 
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
         #endregion DllImports
 
@@ -187,10 +197,12 @@ namespace GestureSignDaemon.Input
         public MessageWindow()
         {
 
-            timer = new System.Threading.Timer(new TimerCallback(Unregister), null, Timeout.Infinite, Timeout.Infinite);
 
             System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
+            dele = WinEventProc;
+            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+
             try
             {
                 RegisterDevices(accessHandle);
@@ -203,15 +215,16 @@ namespace GestureSignDaemon.Input
             }
             catch (Exception) { }
         }
-        private void Unregister(object state)
+
+        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (IsRegistered)
-                this.Invoke(new Action(() => IsRegistered = false));
+            if (OnForegroundChange != null) OnForegroundChange(this, hwnd);
         }
 
-        public void StartRegister(object sender, EventArgs e)
+        public void ToggleRegister(object sender, bool e)
         {
-            this.Invoke(new Action(() => IsRegistered = true));
+            if (e && !AppConfig.InterceptTouchInput) return;
+            Invoke(new Action(() => IsRegistered = e));
         }
 
         private void RegisterDevices(IntPtr hwnd)
@@ -353,8 +366,6 @@ namespace GestureSignDaemon.Input
                 case WM_INPUT:
                     {
                         ProcessInputCommand(message.LParam);
-                        if (IsRegistered)
-                            timer.Change(100, Timeout.Infinite);
                     }
                     break;
                 //case WM_POINTERENTER:
@@ -381,7 +392,7 @@ namespace GestureSignDaemon.Input
         }
         private void ProcessPointerMessage(Message message)
         {
-            if (PointerIntercepted != null)
+            if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRatio == 0))
             {
                 int pointerID = (int)(message.WParam.ToInt64() & 0xffff);
                 int pCount = 0;

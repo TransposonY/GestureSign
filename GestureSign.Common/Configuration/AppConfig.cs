@@ -129,17 +129,29 @@ namespace GestureSign.Common.Configuration
                 SetValue("IsOrderByLocation", value);
             }
         }
-        //public static bool InterceptGlobalTouchInput
-        //{
-        //    get
-        //    {
-        //        return (bool)GetValue("InterceptGlobalTouchInput", true);
-        //    }
-        //    set
-        //    {
-        //        SetValue("InterceptGlobalTouchInput", value);
-        //    }
-        //}
+        public static bool InterceptTouchInput
+        {
+            get
+            {
+                return (bool)GetValue("InterceptTouchInput", true);
+            }
+            set
+            {
+                SetValue("InterceptTouchInput", value);
+            }
+        }
+
+        public static bool CompatibilityMode
+        {
+            get
+            {
+                return (bool)GetValue("CompatibilityMode", false);
+            }
+            set
+            {
+                SetValue("CompatibilityMode", value);
+            }
+        }
 
         static AppConfig()
         {

@@ -145,7 +145,7 @@
     <Compile Include="Input\CaptureState.cs" />
     <Compile Include="Input\RawPointsDataMessageEventHandler.cs" />
     <Compile Include="Input\RawPointsDataMessageEventArgs.cs" />
-    <Compile Include="Input\IMouseCapture.cs" />
+    <Compile Include="Input\ITouchCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
