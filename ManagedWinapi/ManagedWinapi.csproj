@@ -90,35 +90,19 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessibleObjectListener.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Contents\AccessibleWindowParser.cs" />
     <Compile Include="ExtendedFileInfo.cs" />
     <Compile Include="CodepointRange.cs" />
-    <Compile Include="Hook.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="InputBlocker.cs" />
-    <Compile Include="JournalHook.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="KeyboardKey.cs" />
-    <Compile Include="LowLevelHook.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MachineIdentifiers.cs" />
     <Compile Include="ProcessMemoryChunk.cs" />
     <Compile Include="ShortcutBox.cs">
@@ -128,19 +112,10 @@
       <DependentUpon>ShortcutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="PrivilegedActions.cs" />
-    <Compile Include="SystemAccessibleObject.cs" />
     <Compile Include="ApiHelper.cs" />
     <Compile Include="ClipboardNotifier.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Contents\ContentParserRegistry.cs" />
-    <Compile Include="Contents\ListParser.cs" />
-    <Compile Include="Contents\TextFieldParser.cs" />
-    <Compile Include="Contents\WindowContent.cs" />
-    <Compile Include="Contents\WindowContentParser.cs" />
-    <Compile Include="Mixer.cs" />
-    <Compile Include="MixerControl.cs" />
-    <Compile Include="MixerLine.cs" />
     <Compile Include="PInvokeTypes.cs" />
     <Compile Include="SendKeysEscaper.cs" />
     <Compile Include="EventDispatchingNativeWindow.cs" />

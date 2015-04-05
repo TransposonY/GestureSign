@@ -21,7 +21,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Drawing;
-
+using GestureSign.UI.Helper;
 using MahApps.Metro.Controls.Dialogs;
 
 
@@ -120,7 +120,7 @@ namespace GestureSign.UI
                     ColorScheme = MetroDialogColorScheme.Accented //: MetroDialogColorScheme.Theme
                 };
 
-                MessageDialogResult result = await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要先选择一项动作 ", MessageDialogStyle.Affirmative, mySettings);
+                MessageDialogResult result = await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要先选择一项动作 ", MessageDialogStyle.Affirmative, mySettings);
                 // MessageBox.Show("You must select an item before editing", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
@@ -180,7 +180,7 @@ namespace GestureSign.UI
             // Verify that we have an item selected
             if (lstAvailableActions.SelectedItems.Count == 0)
             {
-                await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("未选择项目", "删除前需要先选择一项 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                await UIHelper.GetParentWindow(this).ShowMessageAsync("未选择项目", "删除前需要先选择一项 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
                 {
                     AffirmativeButtonText = "确定",
                     ColorScheme = MetroDialogColorScheme.Accented
@@ -190,7 +190,7 @@ namespace GestureSign.UI
             }
 
             // Confirm user really wants to delete selected items
-            if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定要删除这个动作吗？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定要删除这个动作吗？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
             {
                 AffirmativeButtonText = "确定",
                 NegativeButtonText = "取消",
@@ -245,7 +245,7 @@ namespace GestureSign.UI
         {
             if (GestureManager.Instance.Gestures.Length == 0)
             {
-                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("无可用手势", "添加动作前需要先添加至少一项手势 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                UIHelper.GetParentWindow(this).ShowMessageAsync("无可用手势", "添加动作前需要先添加至少一项手势 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
                 {
                     AffirmativeButtonText = "确定",
                     ColorScheme = MetroDialogColorScheme.Accented
@@ -434,7 +434,7 @@ namespace GestureSign.UI
 
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
             {
-                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在", String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header, selectedItem.ActionName),
+                UIHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在", String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header, selectedItem.ActionName),
                     MessageDialogStyle.Affirmative, new MetroDialogSettings()
                     {
                         AffirmativeButtonText = "确定",

@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using GestureSign.Common.Applications;
-
+using GestureSign.UI.Helper;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -131,7 +131,7 @@ namespace GestureSign.UI
             }
             if (String.IsNullOrEmpty(matchString))
             {
-                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("字段为空", "匹配字段不能为空，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                UIHelper.GetParentWindow(this).ShowMessageAsync("字段为空", "匹配字段不能为空，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                 return;
             } AddIgnoredApplication(matchUsing.ToString() + matchString, matchString, matchUsing, this.chkPattern.IsChecked.Value);
             this.ClearManualFields();
@@ -177,7 +177,7 @@ namespace GestureSign.UI
         {
             if (ApplicationManager.Instance.ApplicationExists(Name))
             {
-                Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                 return;
 
             }

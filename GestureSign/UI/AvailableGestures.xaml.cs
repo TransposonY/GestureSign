@@ -20,6 +20,7 @@ using GestureSign.Common.Drawing;
 using GestureSign.Common.Gestures;
 
 using GestureSign.PointPatterns;
+using GestureSign.UI.Helper;
 
 namespace GestureSign.UI
 {
@@ -56,12 +57,12 @@ namespace GestureSign.UI
             // Make sure at least one item is selected
             if (lstAvailableGestures.SelectedItems.Count == 0)
             {
-                await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("请选择", "删除前需要选择至少一项手势", MessageDialogStyle.Affirmative,
+                await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "删除前需要选择至少一项手势", MessageDialogStyle.Affirmative,
                    new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                 //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除这手势吗？",
+            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除这手势吗？",
                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消", AnimateHide = false }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
@@ -78,7 +79,7 @@ namespace GestureSign.UI
             // Make sure at least one item is selected
             if (lstAvailableGestures.SelectedItems.Count == 0)
             {
-                await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要选择至少一项手势", MessageDialogStyle.Affirmative,
+                await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要选择至少一项手势", MessageDialogStyle.Affirmative,
                    new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                 //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -91,7 +92,7 @@ namespace GestureSign.UI
 
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)
         {
-            if (await Common.UI.WindowsHelper.GetParentWindow(this).ShowMessageAsync(
+            if (await UIHelper.GetParentWindow(this).ShowMessageAsync(
                   "新建手势", "点击“确定”以打开学习模式。",
                   MessageDialogStyle.AffirmativeAndNegative,
                   new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)

@@ -8,7 +8,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
-using ManagedWinapi.Audio.Mixer;
 using System.Windows.Controls;
 
 using System.Runtime.InteropServices;

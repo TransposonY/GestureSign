@@ -25,7 +25,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using ManagedWinapi.Windows.Contents;
 
 namespace ManagedWinapi.Windows
 {
@@ -1054,13 +1053,13 @@ namespace ManagedWinapi.Windows
         /// The content of this window. Is only supported for some
         /// kinds of controls (like text or list boxes).
         /// </summary>
-        public WindowContent Content
-        {
-            get
-            {
-                return WindowContentParser.Parse(this);
-            }
-        }
+        //public WindowContent Content
+        //{
+        //    get
+        //    {
+        //        return WindowContentParser.Parse(this);
+        //    }
+        //}
 
         /// <summary>
         /// Whether this control, which is a check box or radio button, is checked.

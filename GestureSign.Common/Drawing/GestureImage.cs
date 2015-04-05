@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using MahApps.Metro;
 
 using System.Management;
 

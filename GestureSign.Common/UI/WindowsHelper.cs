@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-using MahApps.Metro;
-using MahApps.Metro.Controls;
 using GestureSign;
 
 namespace GestureSign.Common.UI
@@ -65,11 +63,6 @@ namespace GestureSign.Common.UI
             rd.Add("CheckmarkFill", AccentColorBrush);
             rd.Add("RightArrowFill", AccentColorBrush);
             return rd;
-        }
-        public static MetroWindow GetParentWindow(DependencyObject dependencyObject)
-        {
-            return Window.GetWindow(dependencyObject) as MetroWindow;
-
         }
 
         public static T GetParentDependencyObject<T>(DependencyObject dependencyObject) where T : DependencyObject
