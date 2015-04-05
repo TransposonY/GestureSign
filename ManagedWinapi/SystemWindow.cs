@@ -816,6 +816,7 @@ namespace ManagedWinapi.Windows
             return IsChild(ancestor._hwnd, _hwnd);
         }
 
+        private Process _process;
         /// <summary>
         /// The process which created this window.
         /// </summary>
@@ -823,10 +824,19 @@ namespace ManagedWinapi.Windows
         {
             get
             {
+                if (_process != null) return _process;
                 int pid;
                 GetWindowThreadProcessId(HWnd, out pid);
-                return Process.GetProcessById(pid);
+                _process = Process.GetProcessById(pid);
+                return _process;
             }
+        }
+
+        private string _processName;
+
+        public string ProcessName
+        {
+            get { return _processName ?? (_processName = Process.ProcessName + ".exe"); }
         }
 
         /// <summary>

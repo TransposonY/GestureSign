@@ -64,14 +64,14 @@ namespace GestureSign.Common.Applications
 
                         break;
                     case MatchUsing.ExecutableFilename:
-                        windowMatchString = Window.Process.MainModule.ModuleName;//System.IO.Path.GetFileName(.FileName;
+                        windowMatchString = Window.ProcessName;//.MainModule.ModuleName;//System.IO.Path.GetFileName(.FileName;
 
                         break;
                     case MatchUsing.All:
                         return true;
                 }
 
-                return IsRegEx ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase) : windowMatchString.Trim().ToLower() == compareMatchString.Trim().ToLower();
+                return IsRegEx ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase) : String.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
             }
             catch
             {

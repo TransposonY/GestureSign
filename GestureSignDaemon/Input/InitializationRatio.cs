@@ -78,7 +78,7 @@ namespace GestureSignDaemon.Input
                 MessageProcessor.OnGotTouchPoint -= MessageProcessor_OnGotTouchPoint;
                 messageWindow.PointsIntercepted -= MessageWindow_PointsIntercepted;
                 messageWindow.PointerIntercepted -= MessageWindow_PointerIntercepted;
-
+                messageWindow.Unregister();
             }
         }
     }

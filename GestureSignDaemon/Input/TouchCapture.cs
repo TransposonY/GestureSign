@@ -147,7 +147,7 @@ namespace GestureSignDaemon.Input
 
         void messageWindow_OnForegroundChange(object sender, IntPtr e)
         {
-            if (e.Equals(IntPtr.Zero) || Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
+            if (State != CaptureState.Ready || e.Equals(IntPtr.Zero) || Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
                 return;
 
             bool flag =

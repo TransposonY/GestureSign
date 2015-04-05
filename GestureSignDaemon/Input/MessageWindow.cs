@@ -87,7 +87,7 @@ namespace GestureSignDaemon.Input
         public bool IsRegistered
         {
             get { return isRegistered; }
-            set
+            private set
             {
                 if (value)
                 {
@@ -220,7 +220,11 @@ namespace GestureSignDaemon.Input
         {
             if (OnForegroundChange != null) OnForegroundChange(this, hwnd);
         }
-
+        public void Unregister()
+        {
+            if (IsRegistered)
+                Invoke(new Action(() => IsRegistered = false));
+        }
         public void ToggleRegister(object sender, bool e)
         {
             if (e && !AppConfig.InterceptTouchInput) return;
