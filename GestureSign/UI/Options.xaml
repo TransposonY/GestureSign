@@ -31,6 +31,8 @@
 
             <controls:ToggleSwitch x:Name="chkWindowsStartup" OnLabel="开机启动" OffLabel="开机不启动" Margin="0,10,0,0" FontFamily="Microsoft YaHei UI" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="200"/>
             <controls:ToggleSwitch x:Name="chkOrderByLocation" OnLabel="按点位置顺序识别" OffLabel="按点时间顺序识别" Width="200" Margin="0,10,0,0" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" ></controls:ToggleSwitch>
+            <controls:ToggleSwitch x:Name="chkInterceptTouchInput" OnLabel="屏蔽触摸输入" OffLabel="不屏蔽触摸输入" Width="200" Margin="0,10,0,0" Checked="chkInterceptTouchInput_Checked" Unchecked="chkInterceptTouchInput_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" ></controls:ToggleSwitch>
+            <controls:ToggleSwitch x:Name="chkCompatibilityMode" OnLabel="兼容模式" OffLabel="普通模式" Width="200" Margin="0,10,0,0" Checked="chkCompatibilityMode_Checked" Unchecked="chkCompatibilityMode_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" ></controls:ToggleSwitch>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

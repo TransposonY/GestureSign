@@ -50,6 +50,8 @@ namespace GestureSign.UI
                 chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
+                chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
+                chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
                 return true;
             }
             catch
@@ -182,7 +184,7 @@ namespace GestureSign.UI
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                 IWshRuntimeLibrary.IWshShortcut shortCut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(lnkPath);
                 shortCut.TargetPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
-                    //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
                 shortCut.WindowStyle = 7;
                 shortCut.Arguments = "";
                 shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();// Application.ProductName + Application.ProductVersion;
@@ -282,6 +284,30 @@ namespace GestureSign.UI
         private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
         {
             Common.Configuration.AppConfig.IsOrderByLocation = false;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void chkInterceptTouchInput_Checked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.InterceptTouchInput = true;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void chkInterceptTouchInput_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.InterceptTouchInput = false;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void chkCompatibilityMode_Checked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.CompatibilityMode = true;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void chkCompatibilityMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.CompatibilityMode = false;
             Common.Configuration.AppConfig.Save();
         }
 
