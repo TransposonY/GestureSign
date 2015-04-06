@@ -260,10 +260,11 @@ namespace GestureSignDaemon.Input
                         using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
                         if (createdSetting)
                         {
-                            if (File.Exists("GestureSign.exe"))
+                            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                            if (File.Exists(path))
                                 using (Process daemon = new Process())
                                 {
-                                    daemon.StartInfo.FileName = "GestureSign.exe";
+                                    daemon.StartInfo.FileName = path;
                                     daemon.StartInfo.Arguments = "/L";
                                     // pipeClient.StartInfo.Arguments =            
                                     //daemon.StartInfo.UseShellExecute = false;
