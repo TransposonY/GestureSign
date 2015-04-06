@@ -11,6 +11,7 @@ using GestureSign.Common;
 using GestureSign.Common.Input;
 using GestureSign.Common.Gestures;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace GestureSign.Common.Applications
 {
@@ -23,6 +24,7 @@ namespace GestureSign.Common.Applications
         List<IApplication> _Applications = new List<IApplication>();
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
+        private System.Threading.Timer timer;
         #endregion
 
         #region Public Instance Properties
@@ -141,11 +143,21 @@ namespace GestureSign.Common.Applications
 
         public bool SaveApplications()
         {
+            if (timer == null)
+            {
+                timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, 200, Timeout.Infinite);
+            }
+            else timer.Change(200, Timeout.Infinite);
+            return true;
+        }
+
+        private void SaveFile(object state)
+        {
             // Save application list
             bool flag = Common.Configuration.FileManager.SaveObject<List<IApplication>>(
                  _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
             if (flag) { InterProcessCommunication.NamedPipe.SendMessage("LoadApplications", "GestureSignDaemon"); }
-            return flag;
+
         }
 
         public bool LoadApplications()

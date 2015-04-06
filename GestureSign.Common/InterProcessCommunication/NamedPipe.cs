@@ -79,7 +79,7 @@ namespace GestureSign.Common.InterProcessCommunication
                                  PipeDirection.Out, PipeOptions.None,
                                  System.Security.Principal.TokenImpersonationLevel.None))
                 {
-                    using (StreamWriter sw = new StreamWriter(pipeClient))
+                    using (MemoryStream ms = new MemoryStream())
                     {
                         for (int i = 0; i != 10; i++)
                         {
@@ -96,7 +96,9 @@ namespace GestureSign.Common.InterProcessCommunication
                         {
                             BinaryFormatter bf = new BinaryFormatter();
 
-                            bf.Serialize(pipeClient, message);
+                            bf.Serialize(ms, message);
+                            ms.Seek(0, SeekOrigin.Begin);
+                            ms.CopyTo(pipeClient);
                             pipeClient.Flush();
                         }
                         pipeClient.WaitForPipeDrain();

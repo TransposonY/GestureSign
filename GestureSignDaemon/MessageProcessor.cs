@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSignDaemon.Input;
 
@@ -14,48 +18,57 @@ namespace GestureSignDaemon
         public void ProcessMessages(NamedPipeServerStream server)
         {
             BinaryFormatter binForm = new BinaryFormatter();
-            object data = binForm.Deserialize(server);
-            if (data is string)
+            try
             {
-                var message = data.ToString();
-                TouchCapture.Instance.MessageWindow.Invoke(new Action(() =>
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    switch (message)
+                    server.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    object data = binForm.Deserialize(memoryStream);
+
+                    if (data is string)
                     {
-                        //case "Guide":
-                        //    GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += InitializationRatio.MessageWindow_PointsIntercepted;
-                        //    break;
-                        case "StartTeaching":
+                        var message = data.ToString();
+                        TouchCapture.Instance.MessageWindow.Invoke(new Action(() =>
+                        {
+                            switch (message)
                             {
-                                if (TouchCapture.Instance.State == CaptureState.UserDisabled)
-                                    TrayManager.Instance.ToggleDisableGestures();
-                                if (!AppConfig.Teaching)
-                                    TrayManager.Instance.StartTeaching();
-                                break;
+                                //case "Guide":
+                                //    GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += InitializationRatio.MessageWindow_PointsIntercepted;
+                                //    break;
+                                case "StartTeaching":
+                                    {
+                                        if (TouchCapture.Instance.State == CaptureState.UserDisabled)
+                                            TrayManager.Instance.ToggleDisableGestures();
+                                        if (!AppConfig.Teaching)
+                                            TrayManager.Instance.StartTeaching();
+                                        break;
+                                    }
+                                case "EnableTouchCapture":
+                                    TouchCapture.Instance.EnableTouchCapture();
+                                    break;
+                                case "DisableTouchCapture":
+                                    TouchCapture.Instance.DisableTouchCapture();
+                                    break;
+                                case "LoadApplications":
+                                    ApplicationManager.Instance.LoadApplications();
+                                    break;
+                                case "LoadGestures":
+                                    GestureManager.Instance.LoadGestures();
+                                    break;
                             }
-                        case "EnableTouchCapture":
-                            TouchCapture.Instance.EnableTouchCapture();
-                            break;
-                        case "DisableTouchCapture":
-                            TouchCapture.Instance.DisableTouchCapture();
-                            break;
-                        case "LoadApplications":
-                            GestureSign.Common.Applications.ApplicationManager.Instance.LoadApplications();
-                            break;
-                        case "LoadGestures":
-                            GestureSign.Common.Gestures.GestureManager.Instance.LoadGestures();
-                            break;
+                        }));
                     }
-                }));
-            }
-            else if (data is Point)
-            {
-                if (OnGotTouchPoint != null)
-                {
-                    OnGotTouchPoint(this, (Point)data);
+                    else if (data is Point)
+                    {
+                        if (OnGotTouchPoint != null)
+                        {
+                            OnGotTouchPoint(this, (Point)data);
+                        }
+                    }
                 }
             }
-
+            catch (Exception ex) { MessageBox.Show(ex.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); }
         }
 
     }
