@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Diagnostics;
 
 using System.Security.Principal;
+using GestureSign.Common.Configuration;
 
 namespace GestureSign
 {
@@ -46,6 +47,7 @@ namespace GestureSign
 
                 MessageProcessor messageProcessor = new MessageProcessor();
                 GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", messageProcessor.ProcessMessages);
+
                 try
                 {
                     bool createdNewDaemon;
@@ -70,7 +72,7 @@ namespace GestureSign
                 catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning); }
 
 
-                if (GestureSign.Common.Configuration.AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                if (AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
                 {
                     Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
                 }
@@ -89,6 +91,8 @@ namespace GestureSign
                 mw.availableAction.BindActions();
 
 #endif
+
+                AppConfig.ToggleWatcher();
             }
             else
             {

@@ -142,8 +142,10 @@ namespace GestureSign.Common.Applications
         public bool SaveApplications()
         {
             // Save application list
-            return Common.Configuration.FileManager.SaveObject<List<IApplication>>(
-                _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+            bool flag = Common.Configuration.FileManager.SaveObject<List<IApplication>>(
+                 _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+            if (flag) { InterProcessCommunication.NamedPipe.SendMessage("LoadApplications", "GestureSignDaemon"); }
+            return flag;
         }
 
         public bool LoadApplications()

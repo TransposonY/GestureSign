@@ -16,6 +16,8 @@ namespace GestureSign.Common.Configuration
         static System.Threading.Timer timer;
         public static event EventHandler ConfigChanged;
         static string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+        private static readonly FileSystemWatcher fsw;
+
         public static System.Drawing.Color VisualFeedbackColor
         {
             get
@@ -158,7 +160,22 @@ namespace GestureSign.Common.Configuration
             config = ConfigurationManager.OpenExeConfiguration(path);
             timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, Timeout.Infinite, Timeout.Infinite);
 
+            fsw = new FileSystemWatcher(AppDomain.CurrentDomain.BaseDirectory)
+            {
+                Filter = "*.config",
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime,
+                IncludeSubdirectories = true
+            };
+            fsw.Created += fsw_Changed;
+            fsw.Changed += fsw_Changed;
         }
+        static void fsw_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (e.Name.Equals("gesturesign.exe.config", StringComparison.CurrentCultureIgnoreCase))
+                Reload();
+        }
+        public static void ToggleWatcher()
+        { fsw.EnableRaisingEvents = !fsw.EnableRaisingEvents; }
 
         public static void Reload()
         {

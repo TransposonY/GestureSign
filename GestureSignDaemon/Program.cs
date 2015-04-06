@@ -8,6 +8,7 @@ using System.Threading;
 using System.Diagnostics;
 
 using System.IO;
+using GestureSign.Common.Configuration;
 
 namespace GestureSignDaemon
 {
@@ -50,16 +51,16 @@ namespace GestureSignDaemon
                     };
                     GestureSign.Common.Plugins.PluginManager.Instance.Load(hostControl);
                     TrayManager.Instance.Load();
-                    Configuration.FileWatcher.Instance.Load();
 
                     MessageProcessor messageProcessor = new MessageProcessor();
                     GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", messageProcessor.ProcessMessages);
 
+                    AppConfig.ToggleWatcher();
                     if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
                     }
-                    else if (GestureSign.Common.Configuration.AppConfig.XRatio == 0 && !Input.TouchCapture.Instance.MessageWindow.IsRegistered)
+                    else if (AppConfig.XRatio == 0 && !Input.TouchCapture.Instance.MessageWindow.IsRegistered)
                     {
                         try
                         {

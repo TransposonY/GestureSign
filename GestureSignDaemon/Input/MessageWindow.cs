@@ -285,7 +285,6 @@ namespace GestureSignDaemon.Input
 
         private int EnumerateDevices()
         {
-            GestureSignDaemon.Configuration.FileWatcher.Instance.EnableWatcher = false;
 
             int NumberOfDevices = 0;
             uint deviceCount = 0;
@@ -339,10 +338,12 @@ namespace GestureSignDaemon.Input
                 Marshal.FreeHGlobal(pRawInputDeviceList);
                 if (NumberOfDevices == 0)
                 {
-                    GestureSign.Common.Configuration.AppConfig.DeviceName = String.Empty;
-                    GestureSign.Common.Configuration.AppConfig.Save();
+                    if (AppConfig.DeviceName != String.Empty)
+                    {
+                        AppConfig.DeviceName = String.Empty;
+                        AppConfig.Save();
+                    }
                 }
-                GestureSignDaemon.Configuration.FileWatcher.Instance.EnableWatcher = true;
                 return NumberOfDevices;
             }
             else
