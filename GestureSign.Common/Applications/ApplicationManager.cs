@@ -167,11 +167,17 @@ namespace GestureSign.Common.Applications
 
         public IApplication[] GetApplicationFromWindow(SystemWindow Window)
         {
-            IApplication[] definedApplications = Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window)).ToArray();
+            if (Applications == null)
+            {
+                return new[] { GetGlobalApplication() };
+            }
+            IApplication[] definedApplications =
+                Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window)).ToArray();
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application
-            return definedApplications.Length != 0 ? definedApplications : new IApplication[] { GetGlobalApplication() };
-
+            return definedApplications.Length != 0
+                ? definedApplications
+                : new IApplication[] { GetGlobalApplication() };
         }
 
         public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
@@ -257,10 +263,11 @@ namespace GestureSign.Common.Applications
 
         public IApplication GetGlobalApplication()
         {
-            if (!_Applications.Exists(a => a is GlobalApplication))
+            if (_Applications != null && !_Applications.Exists(a => a is GlobalApplication))
                 _Applications.Add(new GlobalApplication());
 
-            return _Applications.First(a => a is GlobalApplication) as GlobalApplication;
+            if (_Applications != null) return _Applications.First(a => a is GlobalApplication) as GlobalApplication;
+            return new GlobalApplication();
         }
 
         public void RemoveGlobalAction(string ActionName)
