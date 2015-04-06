@@ -76,6 +76,7 @@ namespace GestureSignDaemon.Input
 
         WinEventDelegate dele;
         InitializationRatio initializationRatio;
+        private IntPtr hhook;
 
         Type touchDataType;
         List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
@@ -139,6 +140,9 @@ namespace GestureSignDaemon.Input
         [DllImport("user32.dll")]
         static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
+        [DllImport("user32.dll")]
+        static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
         #endregion DllImports
 
         #region  Windows.h structure declarations
@@ -201,7 +205,7 @@ namespace GestureSignDaemon.Input
             System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
             dele = WinEventProc;
-            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+            hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
 
             try
             {
@@ -213,7 +217,15 @@ namespace GestureSignDaemon.Input
                     initializationRatio = new InitializationRatio(this);
                 }
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        ~MessageWindow()
+        {
+            UnhookWinEvent(hhook);
         }
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
@@ -272,14 +284,7 @@ namespace GestureSignDaemon.Input
             //Retrieve the desired information and set isKeyboard
             string deviceDesc = (string)OurKey.GetValue("DeviceDesc");
 
-            if (deviceDesc.ToUpper().Contains("TOUCH"))
-            {
-                isTouchScreen = true;
-            }
-            else
-            {
-                isTouchScreen = false;
-            }
+            isTouchScreen = deviceDesc.ToUpper().Contains("TOUCH");
             return deviceDesc;
         }
 
