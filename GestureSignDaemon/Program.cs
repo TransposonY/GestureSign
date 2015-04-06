@@ -65,8 +65,7 @@ namespace GestureSignDaemon
                         try
                         {
                             bool createdSetting;
-                            Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting);
-                            daemonMutex.Dispose();
+                            using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
                             if (createdSetting)
                             {
                                 using (Process daemon = new Process())

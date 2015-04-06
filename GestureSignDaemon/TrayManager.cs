@@ -97,8 +97,7 @@ namespace GestureSignDaemon
             miOptions.Click += (o, e) =>
             {
                 bool createdSetting;
-                Mutex daemonMutex = new Mutex(false, "GestureSignSetting", out createdSetting);
-                daemonMutex.Dispose();
+                using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
                 if (createdSetting)
                 {
                     if (System.IO.File.Exists("GestureSign.exe"))

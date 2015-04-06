@@ -257,8 +257,7 @@ namespace GestureSignDaemon.Input
                     try
                     {
                         bool createdSetting;
-                        Mutex setting = new Mutex(false, "GestureSignSetting", out createdSetting);
-                        setting.Dispose();
+                        using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
                         if (createdSetting)
                         {
                             if (File.Exists("GestureSign.exe"))
