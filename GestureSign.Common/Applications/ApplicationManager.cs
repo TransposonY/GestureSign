@@ -68,7 +68,7 @@ namespace GestureSign.Common.Applications
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
-            IEnumerable<IApplication> ApplicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+            IApplication[] ApplicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
             foreach (IApplication app in ApplicationFromWindow)
             {
@@ -165,15 +165,13 @@ namespace GestureSign.Common.Applications
             return SystemWindow.FromPointEx((int)Math.Floor(Point.X), (int)Math.Floor(Point.Y), true, true);
         }
 
-        public IEnumerable<IApplication> GetApplicationFromWindow(SystemWindow Window)
+        public IApplication[] GetApplicationFromWindow(SystemWindow Window)
         {
-            IEnumerable<IApplication> definedApplications = Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window));
+            IApplication[] definedApplications = Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window)).ToArray();
             // Try to find any user or ignored applications that match the given system window
-            if (definedApplications.Count() != 0)
-                return definedApplications;
-
             // If not user or ignored application could be found, return the global application
-            return new IApplication[] { GetGlobalApplication() };
+            return definedApplications.Length != 0 ? definedApplications : new IApplication[] { GetGlobalApplication() };
+
         }
 
         public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
