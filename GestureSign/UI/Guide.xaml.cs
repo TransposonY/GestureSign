@@ -183,7 +183,7 @@ namespace GestureSign.UI
                         }
                         System.Diagnostics.Debug.WriteLine(":  " + pointerInfos[0].PtPixelLocation.X + "  " + pointerInfos[0].PtPixelLocationRaw.X);
                         System.Drawing.Point touchPoint = new System.Drawing.Point(pointerInfos[0].PtPixelLocation.X, pointerInfos[0].PtPixelLocation.Y);
-                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage(touchPoint, "GestureSignDaemon");
+                        GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync(touchPoint, "GestureSignDaemon");
 
                         return IntPtr.Zero;
                     }

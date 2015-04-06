@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace GestureSign.Common.InterProcessCommunication
 {
@@ -38,20 +39,9 @@ namespace GestureSign.Common.InterProcessCommunication
             {
                 NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
                 server.EndWaitForConnection(o);
-                // StreamReader sr = new StreamReader(server);
-                // string result = null;
-                // string clientName = server.GetImpersonationUserName();
 
-                //while (server.IsConnected)
-                //{
-                //    do
-                //    {
                 processMessages(server);
                 server.Disconnect();
-                //    }
-                //    while (server.IsConnected&&!server.IsMessageComplete);
-                //    //
-                //}
 
                 server.BeginWaitForConnection(ac, server);
 
@@ -62,67 +52,57 @@ namespace GestureSign.Common.InterProcessCommunication
         }
 
 
-
-        //using (MemoryStream ms = new MemoryStream())
-        //           {
-        //               bf.Serialize(ms, );
-        //               return ms.ToArray();
-        //           }
-        //BinaryWriter bw = new BinaryWriter(pipeClient);
-        //bw.Write(true);
-        public static bool SendMessage(object message, string pipeName)
+        public static Task<bool> SendMessageAsync(object message, string pipeName)
         {
-            try
-            {
-                using (NamedPipeClientStream pipeClient =
-                             new NamedPipeClientStream(".", pipeName,
-                                 PipeDirection.Out, PipeOptions.None,
-                                 System.Security.Principal.TokenImpersonationLevel.None))
-                {
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        for (int i = 0; i != 10; i++)
-                        {
-                            if (!NamedPipeDoesNotExist(pipeName)) break;
-                            Thread.Sleep(100);
-                        } pipeClient.Connect(10);
-                        //sw.AutoFlush = true;
-                        //if (message is string)
-                        //{
-                        //    sw.WriteLine(message);
+            return Task.Run<bool>(new Func<bool>(() =>
+               {
+                   try
+                   {
+                       using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out, PipeOptions.None, TokenImpersonationLevel.None))
+                       {
+                           using (MemoryStream ms = new MemoryStream())
+                           {
 
-                        //}
-                        // else
-                        {
-                            BinaryFormatter bf = new BinaryFormatter();
+                               int i = 0;
+                               for (; i != 10; i++)
+                               {
+                                   if (!NamedPipeDoesNotExist(pipeName)) break;
+                                   Thread.Sleep(100);
+                               }
+                               if (i == 10) return false;
 
-                            bf.Serialize(ms, message);
-                            ms.Seek(0, SeekOrigin.Begin);
-                            ms.CopyTo(pipeClient);
-                            pipeClient.Flush();
-                        }
-                        pipeClient.WaitForPipeDrain();
-                        //pipeClient.Close();
+                               pipeClient.Connect(10);
 
-                    }
-                }
-                return true;
-            }
-            catch (System.InvalidOperationException)
-            {
-                //System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                               {
+                                   BinaryFormatter bf = new BinaryFormatter();
+
+                                   bf.Serialize(ms, message);
+                                   ms.Seek(0, SeekOrigin.Begin);
+                                   ms.CopyTo(pipeClient);
+                                   pipeClient.Flush();
+                               }
+                               pipeClient.WaitForPipeDrain();
+
+                           }
+                       }
+                       return true;
+                   }
+                   catch (InvalidOperationException)
+                   {
+                       //System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                       return false;
+                   }
+                   catch (Exception)
+                   {
+                       return false;
+                   }
+               }));
         }
         static private bool NamedPipeDoesNotExist(string pipeName)
         {
             try
             {
-                int timeout = 0;
+                const int timeout = 0;
                 string normalizedPath = System.IO.Path.GetFullPath(
                  string.Format(@"\\.\pipe\{0}", pipeName));
                 bool exists = WaitNamedPipe(normalizedPath, timeout);

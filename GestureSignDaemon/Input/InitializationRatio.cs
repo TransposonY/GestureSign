@@ -74,7 +74,7 @@ namespace GestureSignDaemon.Input
                 GestureSign.Common.Configuration.AppConfig.Save();
 
                 if (isFromGuide)
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EndGuide", "GestureSignSetting");
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("EndGuide", "GestureSignSetting");
                 MessageProcessor.OnGotTouchPoint -= MessageProcessor_OnGotTouchPoint;
                 messageWindow.PointsIntercepted -= MessageWindow_PointsIntercepted;
                 messageWindow.PointerIntercepted -= MessageWindow_PointerIntercepted;

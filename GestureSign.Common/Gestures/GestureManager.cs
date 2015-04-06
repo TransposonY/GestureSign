@@ -162,7 +162,7 @@ namespace GestureSign.Common.Gestures
             {
                 // Save gestures to file
                 bool flag = Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"));
-                if (flag) { InterProcessCommunication.NamedPipe.SendMessage("LoadGestures", "GestureSignDaemon"); }
+                if (flag) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon"); }
                 return flag;
             }
             catch

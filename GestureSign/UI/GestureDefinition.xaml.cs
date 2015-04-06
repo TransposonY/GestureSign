@@ -138,9 +138,9 @@ namespace GestureSign.UI
         }
 
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EnableTouchCapture", "GestureSignDaemon");
+            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
         }
 
 

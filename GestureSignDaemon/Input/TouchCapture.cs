@@ -237,7 +237,7 @@ namespace GestureSignDaemon.Input
             return true;
         }
 
-        private void EndCapture()
+        private async void EndCapture()
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Touch event
@@ -277,8 +277,8 @@ namespace GestureSignDaemon.Input
 
                     Tuple<string, List<List<Point>>> message =
                         new Tuple<string, List<List<Point>>>(GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
-                    NamedPipe.SendMessage(message, "GestureSignSetting");
-                    Instance.DisableTouchCapture();
+                    if (await NamedPipe.SendMessageAsync(message, "GestureSignSetting"))
+                        Instance.DisableTouchCapture();
 
                 }
                 OnAfterPointsCaptured(pointsInformation);

@@ -128,7 +128,7 @@ namespace GestureSign.UI
                 }
             }
 
-            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("DisableTouchCapture", "GestureSignDaemon");
+            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("DisableTouchCapture", "GestureSignDaemon");
         }
 
         protected void chCrosshair_CrosshairDragging(object sender, MouseEventArgs e)
@@ -207,11 +207,11 @@ namespace GestureSign.UI
             }
         }
 
-        private void MetroWindow_Closed(object sender, EventArgs e)
+        private async void MetroWindow_Closed(object sender, EventArgs e)
         {
             // User canceled dialog, re-enable gestures and hide form
 
-            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("EnableTouchCapture", "GestureSignDaemon");
+            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
         }
 
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)

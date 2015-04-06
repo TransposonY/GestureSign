@@ -80,7 +80,7 @@ namespace GestureSignDaemon
                                     daemon.WaitForInputIdle(1000);
                                 }
                             }
-                            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Guide", "GestureSignSetting");
+                            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Guide", "GestureSignSetting");
                         }
                         catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
 

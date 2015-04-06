@@ -97,7 +97,7 @@ namespace GestureSign.UI
                   MessageDialogStyle.AffirmativeAndNegative,
                   new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
             {
-                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("StartTeaching", "GestureSignDaemon");
+                Common.InterProcessCommunication.NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)

@@ -116,7 +116,7 @@ namespace GestureSignDaemon
 
                         }
                 }
-                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("MainWindow", "GestureSignSetting");
+                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("MainWindow", "GestureSignSetting");
             };
 
             // Second Seperator Menu Item
@@ -127,10 +127,10 @@ namespace GestureSignDaemon
             miExitGestureSign.Name = "ExitGestureSign";
             miExitGestureSign.Size = new Size(193, 22);
             miExitGestureSign.Text = "退出";
-            miExitGestureSign.Click += (o, e) =>
+            miExitGestureSign.Click += async (o, e) =>
             {
                 TrayIcon.Visible = false;
-                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessage("Exit", "GestureSignSetting");
+                await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignSetting");
                 Application.Exit();
             };
         }
