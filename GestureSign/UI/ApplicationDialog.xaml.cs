@@ -308,7 +308,8 @@ namespace GestureSign.UI
                     }
 
                     _SelectedApplication.MatchString = txtMatchString.Text.Trim();
-                    _SelectedApplication.MatchUsing = (MatchUsing)cmbMatchUsingCustom.SelectedIndex;
+                    if (cmbMatchUsingCustom != null)
+                        _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
                     _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
                 }
                 if (_CurrentAction != null)

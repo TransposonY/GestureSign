@@ -53,7 +53,7 @@ namespace GestureSign.Common.Plugins
                 return;
 
             // Get action to be executed
-            IEnumerable<IAction> executableActions = Applications.ApplicationManager.Instance.GetRecognizedDefinedAction(e.GestureName);
+            IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(e.GestureName).OrderBy(a=>a.Name);
             foreach (IAction executableAction in executableActions)
             {
                 // Exit if there is no action configured
