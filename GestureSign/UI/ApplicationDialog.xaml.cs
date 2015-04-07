@@ -528,23 +528,23 @@ namespace GestureSign.UI
                 _CurrentAction = new GestureSign.Applications.Action();
                 _IsNew = true;
             }
-
+            string newActionName = txtActionName.Text.Trim();
             if (_IsNew)
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
-                    if (ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()))
+                    if (ApplicationManager.Instance.IsGlobalAction(newActionName))
                     {
                         _CurrentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", txtActionName.Text.Trim()));
+                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
                     }
                 }
                 else
                 {
-                    if (ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()))
+                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)))
                     {
                         _CurrentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
             }
@@ -552,16 +552,16 @@ namespace GestureSign.UI
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
-                    if (ApplicationManager.Instance.IsGlobalAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _CurrentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", txtActionName.Text.Trim()));
+                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
                     }
                 }
                 else
                 {
-                    if (ApplicationManager.Instance.IsUserAction(txtActionName.Text.Trim()) && txtActionName.Text.Trim() != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _CurrentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", txtActionName.Text.Trim(), ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
 
                     }
                 }
@@ -569,7 +569,7 @@ namespace GestureSign.UI
 
             // Store new values
             _CurrentAction.GestureName = (availableGesturesComboBox.SelectedItem as GestureItem).Name;
-            _CurrentAction.Name = txtActionName.Text.Trim();
+            _CurrentAction.Name = newActionName;
             _CurrentAction.PluginClass = _PluginInfo.Class;
             _CurrentAction.PluginFilename = _PluginInfo.Filename;
             _CurrentAction.ActionSettings = _PluginInfo.Plugin.Serialize();
