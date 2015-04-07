@@ -64,26 +64,6 @@ namespace GestureSign.UI
         static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
 
         IApplication _SelectedApplication;
-        private class ApplicationComboBoxItem
-        {
-            public string ApplicationName { get; set; }
-            public MatchUsing MatchUsing { get; set; }
-            public string MatchString { get; set; }
-            public bool IsRegEx { get; set; }
-        }
-
-
-        private enum TabType
-        {
-            Existing = 0,
-            Running = 1,
-            Custom = 2
-        }
-        private TabType SelectedTab
-        {
-            get { return (TabType)tcApplications.SelectedIndex; }
-        }
-
         AvailableAction availableAction;
         // Create variable to hold current selected plugin
         IPluginInfo _PluginInfo = null;
@@ -92,10 +72,6 @@ namespace GestureSign.UI
         #endregion
 
         #region Public Instance Properties
-        public MatchUsing MatchUsing { get; set; }
-        public SystemWindow[] Windows { get; set; }
-        public string MatchString { get; set; }
-
 
         public static event EventHandler ActionsChanged;
         #endregion
@@ -178,13 +154,7 @@ namespace GestureSign.UI
                 }
             }
         }
-
-
-        private void cmbMatchUsingRunning_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingRunning.SelectedItem).MatchUsing;
-        }
-
+        
         private void cmbMatchUsingCustom_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbMatchUsingCustom.SelectedItem != null)
@@ -237,13 +207,13 @@ namespace GestureSign.UI
         private bool SaveApplication()
         {
 
-            if (this.SelectedTab == TabType.Existing)
+            if (this.ExistingApplicationRadioButton.IsChecked.Value)
             {
                 if (_CurrentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
                 {
-                    if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(txtActionName.Text.Trim())))
+                    if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", txtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
                     ApplicationManager.Instance.CurrentApplication.RemoveAction(_CurrentAction);
                     ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_CurrentAction);
@@ -402,11 +372,10 @@ namespace GestureSign.UI
             MatchUsingComboBoxItem mciWindowTitle = new MatchUsingComboBoxItem() { DisplayText = "窗口标题", MatchUsing = MatchUsing.WindowTitle };
             MatchUsingComboBoxItem mciExecutableFilename = new MatchUsingComboBoxItem() { DisplayText = "文件名", MatchUsing = MatchUsing.ExecutableFilename };
 
-            cmbMatchUsingRunning.DisplayMemberPath = cmbMatchUsingCustom.DisplayMemberPath = "DisplayText";
-            cmbMatchUsingRunning.ItemsSource = (new MatchUsingComboBoxItem[] { mciExecutableFilename, mciWindowTitle, mciWindowClass });
+            cmbMatchUsingCustom.DisplayMemberPath = "DisplayText";
             cmbMatchUsingCustom.ItemsSource = (new MatchUsingComboBoxItem[] { mciExecutableFilename, mciWindowTitle, mciWindowClass });
 
-            cmbMatchUsingRunning.SelectedItem = cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
+            cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
         }
 
 
@@ -528,7 +497,7 @@ namespace GestureSign.UI
                 _CurrentAction = new GestureSign.Applications.Action();
                 _IsNew = true;
             }
-            string newActionName = txtActionName.Text.Trim();
+            string newActionName = TxtActionName.Text.Trim();
             if (_IsNew)
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
@@ -608,13 +577,13 @@ namespace GestureSign.UI
             // Set action name
             if (IsPluginMatch(_CurrentAction, selectedPlugin.Class, selectedPlugin.Filename))
             {
-                txtActionName.Text = _CurrentAction.Name;
+                TxtActionName.Text = _CurrentAction.Name;
                 // Load action settings or no settings
                 _PluginInfo.Plugin.Deserialize(_CurrentAction.ActionSettings);
             }
             else
             {
-                txtActionName.Text = _PluginInfo.Plugin.Name;
+                TxtActionName.Text = _PluginInfo.Plugin.Name;
                 _PluginInfo.Plugin.Deserialize("");
             }
             // Does the plugin have a graphical interface
@@ -665,6 +634,23 @@ namespace GestureSign.UI
         private void cmbExistingApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.DelAppButton.IsEnabled = !(cmbExistingApplication.SelectedItem is GlobalApplication);
+        }
+
+        private void btnExistingApplication_Click(object sender, RoutedEventArgs e)
+        {
+            RunningApplicationsPopup.IsOpen = true;
+        }
+
+        private void ExistingApplicationRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ExistingApplicationCanvas.Visibility = System.Windows.Visibility.Visible;
+            NewApplicationCanvas.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void ExistingApplicationRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ExistingApplicationCanvas.Visibility = System.Windows.Visibility.Collapsed;
+            NewApplicationCanvas.Visibility = System.Windows.Visibility.Visible;
         }
 
 
@@ -724,23 +710,31 @@ namespace GestureSign.UI
             return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
-
-    [ValueConversion(typeof(MatchUsing), typeof(int))]
-    public class MatchUsingConverter : IValueConverter
+    public class ListviewItem2TextBoxConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value != null)
-            {
-                MatchUsing v = (MatchUsing)value;
-                return (int)v;
-            }
-            else return DependencyProperty.UnsetValue;
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
+            if (values[0] == null || values[1] == null) return DependencyProperty.UnsetValue;
+            MatchUsingComboBoxItem matchUsingComboBoxItem = values[0] as MatchUsingComboBoxItem;
+            ApplicationListViewItem applicationListViewItem = values[1] as ApplicationListViewItem;
+            switch ((matchUsingComboBoxItem).MatchUsing)
+            {
+                case MatchUsing.WindowClass:
+                    return applicationListViewItem.WindowClass;
+
+                case MatchUsing.WindowTitle:
+                    return applicationListViewItem.WindowTitle;
+
+                case MatchUsing.ExecutableFilename:
+                    return applicationListViewItem.WindowFilename;
+            }
             return DependencyProperty.UnsetValue;
+        }
+        // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return new[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
     [ValueConversion(typeof(MatchUsing), typeof(string))]

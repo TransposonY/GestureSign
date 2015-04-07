@@ -4,88 +4,106 @@
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:MyControl="clr-namespace:GestureSign.UI"  
                       xmlns:local="clr-namespace:GestureSign.UI"
+                      xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
                       BorderBrush="{StaticResource AccentColorBrush}"
         Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
+            <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="appbar_chevron_right" Width="76" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                <Path Width="25.3333" Height="28.5" Canvas.Left="25.1849" Canvas.Top="23.3542" Stretch="Fill" Fill="#FF000000" Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z "/>
+            </Canvas>
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
-            <local:MatchUsingConverter x:Key="matchUsingConverter"></local:MatchUsingConverter>
             <local:MatchUsingToStringConverter x:Key="matchUsingToStringConverter"></local:MatchUsingToStringConverter>
             <local:InterceptTouchInputBoolConverter x:Key="interceptTouchInputBoolConverter"></local:InterceptTouchInputBoolConverter>
             <local:EnabledConverter x:Key="enabledConverter"></local:EnabledConverter>
+            <local:ListviewItem2TextBoxConverter x:Key="ListviewItem2TextBoxConverter"></local:ListviewItem2TextBoxConverter>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
     <Canvas Height="520">
-        <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330">
+        <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330" Height="370">
+
             <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
-            <TabControl x:Name="tcApplications" Height="336" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto">
-                <TabItem Header="已保存">
-                    <Canvas>
-                        <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="111" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="16" FontSize="14" FontWeight="Bold"/>
-                        <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="64" FontSize="14" FontWeight="Bold"/>
-                        <TextBlock Canvas.Left="20" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="122" FontSize="14" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.MatchUsing,Converter={StaticResource matchUsingToStringConverter}}" Canvas.Left="111" TextWrapping="Wrap" Canvas.Top="64" FontSize="14" Width="193"/>
-                        <TextBlock Text="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.MatchString}" Canvas.Left="111" TextWrapping="Wrap" Canvas.Top="123" FontSize="14" Width="193"/>
-                        <Button x:Name="DelAppButton" Content="删除该程序信息" Style="{DynamicResource SquareButtonStyle}" Canvas.Left="10" Canvas.Top="170" Click="DelAppButton_Click"/>
-                    </Canvas>
-                </TabItem>
-                <TabItem Header="运行中" FontSize="14">
-                    <Grid Margin="0,0,0,-1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="48*"/>
-                            <RowDefinition Height="272*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="42*"/>
-                            <ColumnDefinition Width="131*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock HorizontalAlignment="Left" Margin="11,16,0,0" TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Height="18" Width="70" FontWeight="Bold" Grid.ColumnSpan="2"/>
-                        <ComboBox x:Name="cmbMatchUsingRunning" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="218" SelectionChanged="cmbMatchUsingRunning_SelectionChanged" Grid.Column="1" Height="26" FontSize="14" FontFamily="Microsoft YaHei UI"/>
-                        <ListView x:Name="alvRunningApplications"  Margin="5,10" BorderThickness="1" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="{StaticResource AccentColorBrush}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="图标" Width="55">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Image Source="{Binding ApplicationIcon}" Height="35" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="程序文件名及标题" Width="300">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel>
-                                                    <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
-                                                    <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
 
-                        </ListView>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="自定义">
-                    <Canvas>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="10" Canvas.Top="16"/>
-                        <ComboBox x:Name="cmbMatchUsingCustom" SelectedIndex="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="87" Canvas.Top="13"/>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70"/>
-                        <TextBox x:Name="txtMatchString" Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication, Mode=OneWay}" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="6" MaxLength="100" Canvas.Left="87" Canvas.Top="56"/>
-                        <CheckBox x:Name="chkRegex" IsChecked="{Binding SelectedItem.IsRegEx, ElementName=cmbExistingApplication, Mode=OneWay}" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="214" FontSize="14"/>
-                        <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14" Grid.Row="1" RenderTransformOrigin="0.788,1.167" Canvas.Left="238" Canvas.Top="208"/>
-                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14" Grid.Row="2" Width="206" Height="37" Canvas.Left="98" Canvas.Top="267"><Run Text="将左侧图标拖至你想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="，然后释放"/><Run Text="以选择窗口"/></TextBlock>
+            <RadioButton Margin="0, 10, 0, 0" Content="已保存的程序" Name="ExistingApplicationRadioButton"
+                         GroupName="1" IsChecked="True" FontSize="18" Checked="ExistingApplicationRadioButton_Checked" Unchecked="ExistingApplicationRadioButton_Unchecked" ></RadioButton>
+            <Canvas Name="ExistingApplicationCanvas" Height="175" Visibility="Collapsed">
+                <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="83" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" Width="193"/>
+                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="83" FontSize="14" Width="193"/>
+                <Button x:Name="DelAppButton" Content="删除该程序信息" Style="{DynamicResource SquareButtonStyle}" Canvas.Left="10" Canvas.Top="106" Click="DelAppButton_Click"/>
+            </Canvas>
+            <RadioButton Margin="0, 10, 0, 0"
+                         Content="新建的程序"
+                         GroupName="1" FontSize="18"/>
+            <Canvas Name="NewApplicationCanvas" Height="253" Visibility="Visible">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
+                <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="55"/>
+                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="6" MaxLength="100" Canvas.Left="103" Canvas.Top="52">
+                    <TextBox.Text>
+                        <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" >
+                            <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
+                            <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
+                         </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="142" FontSize="14"/>
+                <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14" Grid.Row="1" RenderTransformOrigin="0.788,1.167" Canvas.Left="254" Canvas.Top="136"/>
+                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14" Grid.Row="2" Width="216" Canvas.Left="51" Canvas.Top="207"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮选择打开的程序"/></TextBlock>
 
-                        <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="2" Height="36" Width="36" Canvas.Left="30" Canvas.Top="267"/>
-
-                    </Canvas>
-                </TabItem>
-            </TabControl>
+                <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="2" Height="36" Width="36" Canvas.Left="10" Canvas.Top="207"/>
+                <Button x:Name="btnExistingApplication"
+                    Style="{DynamicResource MetroCircleButtonStyle}" Click="btnExistingApplication_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Canvas.Left="272" Canvas.Top="193" 
+                        >
+                    <Rectangle Width="20"
+                           Height="20">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_chevron_right}" />
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Button>
+            </Canvas>
+            <Popup x:Name="RunningApplicationsPopup" Width="320" Height="320"  
+                   StaysOpen="False"   
+                   IsOpen="False"   
+                   AllowsTransparency="True"  
+                   PopupAnimation="Slide"
+                   HorizontalOffset="12"
+                   VerticalOffset="-200"
+                   PlacementTarget="{Binding ElementName=btnExistingApplication}" Placement="Right"  >
+                <Border BorderThickness="5" CornerRadius="0" Background="Transparent">
+                    <ListView x:Name="alvRunningApplications" BorderThickness="1"
+                          BorderBrush="{StaticResource AccentColorBrush}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="图标" Width="55">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding ApplicationIcon}" Height="35" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="程序文件名及标题" Width="300">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
+                                                <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
+            </Popup>
         </StackPanel>
         <StackPanel Canvas.Left="356" Canvas.Top="10" Width="328">
             <TextBlock Text="选择手势" FontSize="24"/>
@@ -268,14 +286,14 @@
                 </MultiBinding>
             </TextBox>
             <TextBlock TextWrapping="Wrap" Text="动作名称" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
-            <TextBox x:Name="txtActionName"
+            <TextBox x:Name="TxtActionName"
             	controls:TextBoxHelper.Watermark="请输入动作名称"
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource interceptTouchInputBoolConverter}}" 
                   IsEnabled="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource enabledConverter}}"
-                  Content="屏蔽此程序触屏输入" Canvas.Left="20" Canvas.Top="385"/>
-        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="233" Canvas.Top="385"  IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.AllowSingleStroke,Mode=OneWay}"/>
+                  Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14"/>
+        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"  IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem.(applications:IApplication.AllowSingleStroke),Mode=OneWay}" FontSize="14"/>
         <Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>
     </Canvas>
 </controls:MetroWindow>
