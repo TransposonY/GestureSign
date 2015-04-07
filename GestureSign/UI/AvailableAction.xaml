@@ -21,7 +21,6 @@
             </Canvas>
 
 
-
             <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}" >
                 <EventSetter Event="Selected" Handler="ListBoxItem_Selected"></EventSetter>
                 <EventSetter Event="Unselected" Handler="ListBoxItem_Unselected"></EventSetter>
@@ -86,10 +85,10 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="lstAvailableActions" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False">
+        <ListBox x:Name="lstAvailableActions" ContextMenuOpening="ContextMenu_Opening"   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False">
             <ListBox.ContextMenu>
-                <ContextMenu Loaded="ContextMenu_Loaded">
-                    <MenuItem x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
+                <ContextMenu>
+                    <MenuItem  x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
                     <Separator></Separator>
                     <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Click="InterceptTouchInputMenuItem_Click" />
                     <MenuItem x:Name="AllowSingleMenuItem" Header="允许单指手势"  IsCheckable="True" FontSize="16" Click="AllowSingleMenuItem_Click"/>

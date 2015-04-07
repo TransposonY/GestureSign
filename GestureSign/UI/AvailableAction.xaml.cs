@@ -443,6 +443,7 @@ namespace GestureSign.UI
                 return;
             }
             IAction selectedAction = ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
+            if (selectedAction == null) return;
             Applications.Action newAction = new Applications.Action()
             {
                 ActionSettings = selectedAction.ActionSettings,
@@ -520,7 +521,7 @@ namespace GestureSign.UI
             }
         }
 
-        private void ContextMenu_Loaded(object sender, RoutedEventArgs e)
+        private void ContextMenu_Opening(object sender, RoutedEventArgs e)
         {
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
