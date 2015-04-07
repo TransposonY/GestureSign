@@ -12,6 +12,7 @@ using GestureSign.Common.Input;
 using GestureSign.Common.Gestures;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace GestureSign.Common.Applications
 {
@@ -69,23 +70,25 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
-            IApplication[] ApplicationFromWindow = GetApplicationFromWindow(CaptureWindow);
-            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-            foreach (IApplication app in ApplicationFromWindow)
+            using (CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault()))
             {
-                e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
-                    (!SystemWindow.FromPointEx(System.Windows.Forms.SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) && !app.AllowSingleStroke && e.Points.Count == 1);
+                IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+                IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
+                foreach (IApplication app in applicationFromWindow)
+                {
+                    e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
+                               (!SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) && !app.AllowSingleStroke && e.Points.Count == 1);
 
-                e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                    e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                }
             }
         }
 
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             // Derive capture window from capture point
-            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
-            RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
+            using (CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault()))
+            { RecognizedApplication = GetApplicationFromWindow(CaptureWindow); }
         }
 
         protected void GestureManager_GestureEdited(object sender, GestureEventArgs e)
@@ -194,7 +197,8 @@ namespace GestureSign.Common.Applications
 
         public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
         {
-            return GetApplicationFromWindow(GetWindowFromPoint(TestPoint));
+            using (var systemWindow = GetWindowFromPoint(TestPoint))
+            { return GetApplicationFromWindow(systemWindow); }
         }
 
         public IEnumerable<IAction> GetDefinedAction(string GestureName)

@@ -325,7 +325,7 @@ namespace ManagedWinapi.Windows
     /// <summary>
     /// Represents any window used by Windows, including those from other applications.
     /// </summary>
-    public class SystemWindow
+    public class SystemWindow : IDisposable
     {
 
         private static readonly Predicate<SystemWindow> ALL = delegate { return true; };
@@ -1194,7 +1194,30 @@ namespace ManagedWinapi.Windows
             // avoid exceptions
             return unchecked((int)_hwnd.ToInt64());
         }
+        private bool disposed = false;
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+            if (disposing)
+            {
+                _process.Dispose();
+            }
+
+            disposed = true;
+        }
+        ~SystemWindow()
+        {
+            Dispose(false);
+        }
         /// <summary>
         /// Compare two instances of this class for equality.
         /// </summary>
