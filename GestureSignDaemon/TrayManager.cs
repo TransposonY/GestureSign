@@ -56,6 +56,7 @@ namespace GestureSignDaemon
             TrayIcon.Visible = true;
             TrayIcon.DoubleClick += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             TrayIcon.Click += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
+            TrayIcon.Icon = Properties.Resources.normal;
 
             // Tray Menu
             TrayMenu.Items.AddRange(new ToolStripItem[] { miTrainingMode, miDisableGestures, miSeperator1, miOptions, miSeperator2, miExitGestureSign });
@@ -66,9 +67,7 @@ namespace GestureSignDaemon
             //TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
 
             // Training Mode Menu Item
-            miTrainingMode.Checked = true;
             miTrainingMode.CheckOnClick = true;
-            miTrainingMode.CheckState = CheckState.Checked;
             miTrainingMode.Name = "TrainingModeMenuItem";
             miTrainingMode.Size = new Size(193, 22);
             miTrainingMode.Text = "学习模式";
@@ -174,9 +173,7 @@ namespace GestureSignDaemon
         public void Load()
         {
             SetupTrayIconAndTrayMenu();
-            // StartTeaching();
-            //EnterUserDefinedMode();
-            StopTeaching();
+
             this.TrayIcon.ShowBalloonTip(500, "提示", "GestureSign已启动", ToolTipIcon.Info);
         }
 
