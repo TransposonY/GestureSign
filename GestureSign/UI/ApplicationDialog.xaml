@@ -55,7 +55,7 @@
             <RadioButton Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
-                         GroupName="1" FontSize="18" IsChecked="True"/>
+                         GroupName="1" FontSize="18"/>
             <Canvas Name="NewApplicationCanvas" Height="253" Visibility="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>

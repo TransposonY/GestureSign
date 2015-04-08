@@ -551,7 +551,7 @@ namespace GestureSign.UI
             }
             else
             {
-                TxtActionName.Text = _PluginInfo.Plugin.Name;
+                TxtActionName.Text = GetNextActionName(_PluginInfo.Plugin.Name);
                 _PluginInfo.Plugin.Deserialize("");
             }
             // Does the plugin have a graphical interface
@@ -561,6 +561,14 @@ namespace GestureSign.UI
             else
                 // There is no interface for this plugin, hide settings but leave action name input box
                 HideSettings();
+        }
+
+        private string GetNextActionName(string name, int i = 1)
+        {
+            var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
+            if (((IApplication)this.cmbExistingApplication.SelectedItem).Actions.Exists(a => a.Name.Equals(actionName)))
+                return GetNextActionName(name, ++i);
+            return actionName;
         }
 
         private void ShowSettings(IPluginInfo PluginInfo)
