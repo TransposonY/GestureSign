@@ -154,7 +154,7 @@ namespace GestureSign.UI
                 }
             }
         }
-        
+
         private void cmbMatchUsingCustom_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbMatchUsingCustom.SelectedItem != null)
@@ -207,7 +207,7 @@ namespace GestureSign.UI
         private bool SaveApplication()
         {
 
-            if (this.ExistingApplicationRadioButton.IsChecked.Value)
+            if (ExistingApplicationRadioButton.IsChecked.Value)
             {
                 if (_CurrentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
                 {
@@ -221,67 +221,40 @@ namespace GestureSign.UI
                 ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
                 return true;
             }
-            else
+            else if (NewApplicationRadioButton.IsChecked.Value)
             {
-                _SelectedApplication = new UserApplication()
+                _SelectedApplication = new UserApplication
                 {
                     InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value,
-                    AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value
+                    AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value,
+                    Name = txtApplicationName.Text.Trim()
                 };
                 // Store application name
-                _SelectedApplication.Name = txtApplicationName.Text.Trim();
                 // Make sure we have a valid application name
                 if (_SelectedApplication.Name == "")
                     return ShowErrorMessage("无程序名", "请定义程序名");
 
                 if (_CurrentAction == null && ApplicationManager.Instance.ApplicationExists(_SelectedApplication.Name))
-                    return ShowErrorMessage("程序名已经存在", "程序名称已经存在，请输入其他名字");
+                    return ShowErrorMessage("该程序名已经存在", "程序名称已经存在，请输入其他名字");
 
-
-                if (SelectedTab == TabType.Running)
+                string matchString = txtMatchString.Text.Trim();
+                // Make sure the user entered a match string
+                if (String.IsNullOrEmpty(matchString))
+                    return ShowErrorMessage("无匹配字段", "请先定义一个匹配字段");
+                try
                 {
-                    // Make sure the user selected a running application
-                    if (this.alvRunningApplications.SelectedIndex == -1)
-                        return ShowErrorMessage("未选择程序", "请先选择一个程序");
-
-                    ApplicationListViewItem alvi = this.alvRunningApplications.SelectedItem as ApplicationListViewItem;
-                    switch (((MatchUsingComboBoxItem)this.cmbMatchUsingRunning.SelectedItem).MatchUsing)
-                    {
-                        case MatchUsing.WindowClass:
-                            _SelectedApplication.MatchString = alvi.WindowClass;
-
-                            break;
-                        case MatchUsing.WindowTitle:
-                            _SelectedApplication.MatchString = alvi.WindowTitle;
-
-                            break;
-                        case MatchUsing.ExecutableFilename:
-                            _SelectedApplication.MatchString = alvi.WindowFilename;
-                            break;
-                    }
-                    _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)this.cmbMatchUsingRunning.SelectedItem).MatchUsing;
-                    _SelectedApplication.IsRegEx = false;
+                    if (this.chkRegex.IsChecked.Value)
+                        System.Text.RegularExpressions.Regex.IsMatch(matchString, "teststring");
                 }
-                else // (SelectedTab==TabType.Custom)
+                catch
                 {
-                    // Make sure the user entered a match string
-                    if (txtMatchString.Text.Trim() == "")
-                        return ShowErrorMessage("无匹配字段", "请先定义一个匹配字段");
-                    try
-                    {
-                        if (this.chkRegex.IsChecked.Value)
-                            System.Text.RegularExpressions.Regex.IsMatch(txtMatchString.Text, "teststring");
-                    }
-                    catch
-                    {
-                        return ShowErrorMessage("格式错误", "正则表达式格式错误，请重新检查");
-                    }
-
-                    _SelectedApplication.MatchString = txtMatchString.Text.Trim();
-                    if (cmbMatchUsingCustom != null)
-                        _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
-                    _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
+                    return ShowErrorMessage("格式错误", "正则表达式格式错误，请重新检查");
                 }
+
+                _SelectedApplication.MatchString = matchString;
+                _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
+                _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
+
                 if (_CurrentAction != null)
                 {
                     ApplicationManager.Instance.CurrentApplication.IsRegEx = _SelectedApplication.IsRegEx;
@@ -291,8 +264,9 @@ namespace GestureSign.UI
                 }
                 else
                     ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
+                return true;
             }
-            return true;
+            return false;
         }
 
 
@@ -636,23 +610,6 @@ namespace GestureSign.UI
             this.DelAppButton.IsEnabled = !(cmbExistingApplication.SelectedItem is GlobalApplication);
         }
 
-        private void btnExistingApplication_Click(object sender, RoutedEventArgs e)
-        {
-            RunningApplicationsPopup.IsOpen = true;
-        }
-
-        private void ExistingApplicationRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ExistingApplicationCanvas.Visibility = System.Windows.Visibility.Visible;
-            NewApplicationCanvas.Visibility = System.Windows.Visibility.Collapsed;
-        }
-
-        private void ExistingApplicationRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ExistingApplicationCanvas.Visibility = System.Windows.Visibility.Collapsed;
-            NewApplicationCanvas.Visibility = System.Windows.Visibility.Visible;
-        }
-
 
 
 
@@ -685,24 +642,14 @@ namespace GestureSign.UI
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            // 按对应值做决策
-            //cmbExistingApplication alvRunningApplications tabControlApplications
-            int index = (int)values[2];
-            if (index == 0)
-            {
-                if (values[0] != null) return ((IApplication)values[0]).Name;
-                else return DependencyProperty.UnsetValue;
-            }
-            else if (index == 1)
-            {
-                if (values[1] == null) return DependencyProperty.UnsetValue;
-                else
-                {
-                    ApplicationListViewItem alvi = (ApplicationListViewItem)values[1];
-                    return alvi.WindowTitle;
-                }
-            }
-            return DependencyProperty.UnsetValue;
+            bool isExisting = values != null && (bool)values[0];
+            IApplication existingApplication = values[1] as IApplication;
+            ApplicationListViewItem applicationListViewItem = values[2] as ApplicationListViewItem;
+            if (!isExisting)
+                return applicationListViewItem == null
+                    ? DependencyProperty.UnsetValue
+                    : applicationListViewItem.WindowTitle;
+            return existingApplication != null ? existingApplication.Name : DependencyProperty.UnsetValue;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
@@ -794,6 +741,23 @@ namespace GestureSign.UI
                 return value is UserApplication;
             }
             else return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class Bool2VisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
