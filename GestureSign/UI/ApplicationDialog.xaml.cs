@@ -254,15 +254,8 @@ namespace GestureSign.UI
                 _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
                 _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
 
-                if (_CurrentAction != null)
-                {
-                    ApplicationManager.Instance.CurrentApplication.IsRegEx = _SelectedApplication.IsRegEx;
-                    ApplicationManager.Instance.CurrentApplication.MatchString = _SelectedApplication.MatchString;
-                    ApplicationManager.Instance.CurrentApplication.MatchUsing = _SelectedApplication.MatchUsing;
-                    ApplicationManager.Instance.CurrentApplication.Name = _SelectedApplication.Name;
-                }
-                else
-                    ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
+
+                ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
                 return true;
             }
             return false;
