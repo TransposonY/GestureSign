@@ -71,13 +71,14 @@
                     </Rectangle>
                 </ToggleButton>
             </Canvas>
-            <Popup x:Name="RunningApplicationsPopup" Width="358" Height="350"  
+            <Popup x:Name="RunningApplicationsPopup" Width="358" Height="522"  
+                   Opened="RunningApplicationsPopup_Opened"
                    StaysOpen="False"   
                    IsOpen="{Binding ElementName=btnExistingApplication, Path=IsChecked,Mode=TwoWay}"   
                    AllowsTransparency="True"  
                    PopupAnimation="Fade"
                    HorizontalOffset="12"
-                   VerticalOffset="-308"
+                   VerticalOffset="-305"
                    PlacementTarget="{Binding ElementName=btnExistingApplication}" Placement="Right"  >
                 <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
                     <ListView.View>

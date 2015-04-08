@@ -88,7 +88,6 @@ namespace GestureSign.UI
 
             this.chCrosshair.CrosshairDragging += new EventHandler<MouseEventArgs>(chCrosshair_CrosshairDragging);
             BindPlugins();
-            RefreshApplications();
             if (_CurrentAction != null)
             {
                 cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
@@ -421,15 +420,12 @@ namespace GestureSign.UI
                         System.IO.Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
-            System.Threading.Thread.Sleep(500);
+            //System.Threading.Thread.Sleep(500);
             foreach (SystemWindow sWind in Windows)
             {
                 this.alvRunningApplications.Dispatcher.BeginInvoke(new System.Action(() =>
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
-
-                   // Todo: Add no icon found image
-
 
                    try
                    {
@@ -610,7 +606,10 @@ namespace GestureSign.UI
             this.DelAppButton.IsEnabled = !(cmbExistingApplication.SelectedItem is GlobalApplication);
         }
 
-
+        private void RunningApplicationsPopup_Opened(object sender, EventArgs e)
+        {
+            RefreshApplications();
+        }
 
 
 
