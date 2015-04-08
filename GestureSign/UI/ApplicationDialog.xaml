@@ -22,6 +22,20 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <controls:Flyout Name="MessageFlyout"
+                             Theme="Accent"
+                             Position="Bottom"
+                             CloseButtonVisibility="Collapsed"
+                             IsPinned="False"
+                             Height="75">
+                <TextBlock Name="MessageFlyoutText"
+                    VerticalAlignment="Center"
+                           HorizontalAlignment="Center" FontSize="16" />
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
     <Canvas Height="520">
         <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330" Height="370">
 
@@ -48,7 +62,7 @@
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="55"/>
                 <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="52">
                     <TextBox.Text>
-                        <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" >
+                        <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="OneWay">
                             <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
                             <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
                         </MultiBinding>
@@ -279,7 +293,7 @@
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
             <TextBox x:Name="txtApplicationName" TextWrapping="Wrap" 
             	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80" FontFamily="Microsoft YaHei UI">
-                <MultiBinding Converter="{StaticResource selectedItemConverter}" >
+                <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="OneWay">
                     <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="OneWay" />
                     <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="OneWay"/>
                     <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="OneWay"/>

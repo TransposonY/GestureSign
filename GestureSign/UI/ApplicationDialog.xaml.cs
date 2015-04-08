@@ -264,8 +264,9 @@ namespace GestureSign.UI
 
         private bool ShowErrorMessage(string title, string message)
         {
-            this.ShowMessageAsync(title, message,
-                MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+            MessageFlyoutText.Text = message;
+            MessageFlyout.Header = "错误： " + title;
+            MessageFlyout.IsOpen = true;
             return false;
         }
 
@@ -461,6 +462,10 @@ namespace GestureSign.UI
                 _IsNew = true;
             }
             string newActionName = TxtActionName.Text.Trim();
+
+            if (String.IsNullOrEmpty(newActionName))
+                return ShowErrorMessage("无动作名", "未填写动作名称，请先为该动作命名。");
+
             if (_IsNew)
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
