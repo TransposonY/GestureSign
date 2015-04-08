@@ -70,7 +70,7 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            using (CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault()))
+            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             {
                 IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
                 IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
@@ -87,8 +87,8 @@ namespace GestureSign.Common.Applications
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             // Derive capture window from capture point
-            using (CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault()))
-            { RecognizedApplication = GetApplicationFromWindow(CaptureWindow); }
+            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
+            RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
 
         protected void GestureManager_GestureEdited(object sender, GestureEventArgs e)
@@ -197,8 +197,8 @@ namespace GestureSign.Common.Applications
 
         public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
         {
-            using (var systemWindow = GetWindowFromPoint(TestPoint))
-            { return GetApplicationFromWindow(systemWindow); }
+            var systemWindow = GetWindowFromPoint(TestPoint);
+            return GetApplicationFromWindow(systemWindow);
         }
 
         public IEnumerable<IAction> GetDefinedAction(string GestureName)

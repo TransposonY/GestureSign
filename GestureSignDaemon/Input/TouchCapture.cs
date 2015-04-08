@@ -149,15 +149,15 @@ namespace GestureSignDaemon.Input
         {
             if (State != CaptureState.Ready || e.Equals(IntPtr.Zero) || Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
                 return;
-            using (var systemWindow = new SystemWindow(e))
-            {
-                bool flag =
-                 ApplicationManager.Instance.GetApplicationFromWindow(systemWindow)
-                     .Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput);
+            var systemWindow = new SystemWindow(e);
 
-                if (OnInterceptTouchInputChange != null)
-                    OnInterceptTouchInputChange(this, flag);
-            }
+            bool flag =
+             ApplicationManager.Instance.GetApplicationFromWindow(systemWindow)
+                 .Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput);
+
+            if (OnInterceptTouchInputChange != null)
+                OnInterceptTouchInputChange(this, flag);
+
         }
 
         protected void PointEventTranslator_TouchDown(object sender, PointEventArgs e)

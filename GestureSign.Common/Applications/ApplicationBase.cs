@@ -64,7 +64,7 @@ namespace GestureSign.Common.Applications
 
                         break;
                     case MatchUsing.ExecutableFilename:
-                        windowMatchString = Window.ProcessName;//.MainModule.ModuleName;//System.IO.Path.GetFileName(.FileName;
+                        windowMatchString = System.IO.Path.GetFileName(Window.MainModulePath);
 
                         break;
                     case MatchUsing.All:

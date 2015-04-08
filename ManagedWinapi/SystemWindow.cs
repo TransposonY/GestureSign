@@ -831,13 +831,36 @@ namespace ManagedWinapi.Windows
             }
         }
 
-        private string _processName;
+        private string _mainModulePath;
 
-        public string ProcessName
+        public string MainModulePath
         {
-            get { return _processName ?? (_processName = Process.ProcessName + ".exe"); }
+            get { return _mainModulePath ?? (_mainModulePath = GetProcessPathFromWindowHandle(HWnd)); }
         }
+        static string GetProcessPathFromWindowHandle(IntPtr hWnd)
+        {
 
+            string filename = string.Empty;
+            int pid = 0;
+            if (hWnd.Equals(IntPtr.Zero))
+            {
+                return filename;
+            }
+            GetWindowThreadProcessId(hWnd, out pid);
+
+            const int nChars = 1024;
+            StringBuilder filenameBuffer = new StringBuilder(nChars);
+            IntPtr hProcess = OpenProcess(ProcessAccessFlags.QueryInformation | ProcessAccessFlags.VirtualMemoryRead, false, (uint)pid);
+            if (hWnd.Equals(IntPtr.Zero))
+            {
+                return filename;
+            }
+            GetModuleFileNameEx(hProcess, IntPtr.Zero, filenameBuffer, nChars);
+            CloseHandle(hProcess);
+
+            filename = filenameBuffer.ToString();
+            return filename;
+        }
         /// <summary>
         ///  The Thread which created this window.
         /// </summary>
@@ -1209,7 +1232,8 @@ namespace ManagedWinapi.Windows
             }
             if (disposing)
             {
-                _process.Dispose();
+                if (_process != null)
+                    _process.Dispose();
             }
 
             disposed = true;
@@ -1269,7 +1293,45 @@ namespace ManagedWinapi.Windows
                 return IntPtr.Zero;
             }
         }
+        /// <summary>
+        /// Retrieves the fully-qualified path for the file containing the specified module.
+        /// http://msdn.microsoft.com/en-us/library/ms683198(VS.85).aspx
+        /// </summary>
+        /// <param name="hProcess"></param>
+        /// <param name="hModule"></param>
+        /// <param name="lpBaseName"></param>
+        /// <param name="nSize"></param>
+        /// <returns></returns>
+        [DllImport("psapi.dll")] //Supported under Windows Vista and Windows Server 2008. 
+        private static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName,
+         [In] [MarshalAs(UnmanagedType.U4)] int nSize);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool CloseHandle(IntPtr hObject);
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr OpenProcess(
+             ProcessAccessFlags processAccess,
+             bool bInheritHandle,
+             uint processId
+        );
+        [Flags]
+        private enum ProcessAccessFlags : uint
+        {
+            All = 0x001F0FFF,
+            Terminate = 0x00000001,
+            CreateThread = 0x00000002,
+            VirtualMemoryOperation = 0x00000008,
+            VirtualMemoryRead = 0x00000010,
+            VirtualMemoryWrite = 0x00000020,
+            DuplicateHandle = 0x00000040,
+            CreateProcess = 0x000000080,
+            SetQuota = 0x00000100,
+            SetInformation = 0x00000200,
+            QueryInformation = 0x00000400,
+            QueryLimitedInformation = 0x00001000,
+            Synchronize = 0x00100000
+        }
         [DllImport("user32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
         [DllImport("user32.dll")]
