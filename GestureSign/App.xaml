@@ -7,6 +7,9 @@
     <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
         <ResourceDictionary>
+            <FontFamily x:Key="DefaultFont">Microsoft YaHei UI</FontFamily>
+            <FontFamily x:Key="HeaderFontFamily">Microsoft YaHei UI</FontFamily>
+            <FontFamily x:Key="ContentFontFamily">Microsoft YaHei UI</FontFamily>
             <system:Double x:Key="HeaderFontSize">40</system:Double>
             <system:Double x:Key="SubHeaderFontSize">29.333</system:Double>
             <system:Double x:Key="WindowTitleFontSize">16</system:Double>
