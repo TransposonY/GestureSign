@@ -50,12 +50,12 @@
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="83" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="83" FontSize="14" Width="193"/>
-                <Button x:Name="DelAppButton" Content="删除该程序信息" Style="{DynamicResource SquareButtonStyle}" Canvas.Left="10" Canvas.Top="106" Click="DelAppButton_Click"/>
+                <Button x:Name="DelAppButton" Content="删除该程序信息" Canvas.Top="106" Click="DelAppButton_Click" FontSize="12"/>
             </Canvas>
             <RadioButton Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
-                         GroupName="1" FontSize="18"/>
+                         GroupName="1" FontSize="18" IsChecked="True"/>
             <Canvas Name="NewApplicationCanvas" Height="253" Visibility="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>
@@ -69,7 +69,8 @@
                     </TextBox.Text>
                 </TextBox>
                 <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="142" FontSize="14"/>
-                <Button x:Name="cmdBrowse" Content="浏览文件" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Normal" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14" Grid.Row="1" RenderTransformOrigin="0.788,1.167" Canvas.Left="254" Canvas.Top="136"/>
+                <Button x:Name="cmdBrowse" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
+                        Canvas.Left="244" Canvas.Top="137" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
                            Width="216" Canvas.Left="51" Canvas.Top="207"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮并选择程序"/></TextBlock>
 

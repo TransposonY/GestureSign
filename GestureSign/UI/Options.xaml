@@ -18,7 +18,7 @@
             </StackPanel.Resources>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="手势轨迹" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,0"/>
             <StackPanel Height="80">
-                <Button x:Name="btnPickColor"  Content="选择颜色.." HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPickColor_Click" Margin="0,5" FontSize="12" FontFamily="Microsoft YaHei UI" FontWeight="Normal" DockPanel.Dock="Right"/>
+                <Button x:Name="btnPickColor"  Content="选择颜色.." HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPickColor_Click" Margin="0,5" FontSize="12" FontFamily="Microsoft YaHei UI" FontWeight="Bold" DockPanel.Dock="Right"/>
                 <Line x:Name="VisualFeedbackExample"    X1="0" Y1="0"    X2="280" Y2="0" StrokeEndLineCap="Round" StrokeStartLineCap="Round" StrokeThickness="{Binding Value, ElementName=VisualFeedbackWidthSlider}" Opacity="{Binding Value, ElementName=OpacitySlider}" Margin="0,15,0,5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </StackPanel>
             <TextBlock x:Name="OpacityText" HorizontalAlignment="Center" TextWrapping="Wrap" Text="不透明度" VerticalAlignment="Top" Margin="15,5,0,5" FontSize="14"/>
