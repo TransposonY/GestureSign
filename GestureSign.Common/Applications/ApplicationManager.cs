@@ -180,13 +180,14 @@ namespace GestureSign.Common.Applications
             return SystemWindow.FromPointEx((int)Math.Floor(Point.X), (int)Math.Floor(Point.Y), true, true);
         }
 
-        public IApplication[] GetApplicationFromWindow(SystemWindow Window)
+        public IApplication[] GetApplicationFromWindow(SystemWindow Window, bool userApplicationOnly = false)
         {
             if (Applications == null)
             {
                 return new[] { GetGlobalApplication() };
             }
-            IApplication[] definedApplications =
+            IApplication[] definedApplications = userApplicationOnly ?
+                Applications.Where(a => (a is UserApplication) && a.IsSystemWindowMatch(Window)).ToArray() :
                 Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window)).ToArray();
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application

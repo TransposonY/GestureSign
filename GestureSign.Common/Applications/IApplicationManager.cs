@@ -13,7 +13,7 @@ namespace GestureSign.Common.Applications
         void AddApplication(IApplication Application);
         IEnumerable<IAction> GetRecognizedDefinedAction(string GestureName);
         IEnumerable<IApplication> GetApplicationFromPoint(System.Drawing.PointF TestPoint);
-        IApplication[] GetApplicationFromWindow(ManagedWinapi.Windows.SystemWindow Window);
+        IApplication[] GetApplicationFromWindow(ManagedWinapi.Windows.SystemWindow Window, bool userApplicationOnly);
         IApplication[] GetAvailableUserApplications();
         IEnumerable<IAction> GetDefinedAction(string GestureName, IEnumerable<IApplication> Application, bool UseGlobal);
         IEnumerable<IAction> GetDefinedAction(string GestureName);
