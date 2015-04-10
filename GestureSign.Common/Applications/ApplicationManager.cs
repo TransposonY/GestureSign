@@ -77,7 +77,9 @@ namespace GestureSign.Common.Applications
                 foreach (IApplication app in applicationFromWindow)
                 {
                     e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
-                               (!SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) && !app.AllowSingleStroke && e.Points.Count == 1);
+                               (app is GlobalApplication && e.Points.Count == 1) ||
+                               (!SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) &&
+                              !((UserApplication)app).AllowSingleStroke && e.Points.Count == 1);
 
                     e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
                 }

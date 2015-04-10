@@ -546,9 +546,8 @@ namespace GestureSign.UI
                 this.InterceptTouchInputMenuItem.IsChecked =
                     ((UserApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput;
             }
-            this.AllowSingleMenuItem.IsChecked =
-             (ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).AllowSingleStroke;
-
+            var userApplication = ApplicationManager.Instance.Applications.FirstOrDefault(app => app.Name.Equals(selectedItem.ApplicationName)) as UserApplication;
+            this.AllowSingleMenuItem.IsChecked = userApplication != null && userApplication.AllowSingleStroke;
         }
 
         private void InterceptTouchInputMenuItem_Click(object sender, RoutedEventArgs e)
@@ -566,9 +565,12 @@ namespace GestureSign.UI
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
             if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
-            ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName)).AllowSingleStroke = menuItem.IsChecked;
-
-            ApplicationManager.Instance.SaveApplications();
+            var userApplication = lstAvailableApplication.SelectedItem as UserApplication;
+            if (userApplication != null)
+            {
+                userApplication.AllowSingleStroke = menuItem.IsChecked;
+                ApplicationManager.Instance.SaveApplications();
+            }
         }
 
         private void AllActionsCheckBoxs_Click(object sender, RoutedEventArgs e)

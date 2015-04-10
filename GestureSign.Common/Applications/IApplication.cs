@@ -10,7 +10,6 @@ namespace GestureSign.Common.Applications
     {
         string Name { get; set; }
 
-        bool AllowSingleStroke { get; set; }
         List<IAction> Actions { get; set; }
         MatchUsing MatchUsing { get; set; }
         string MatchString { get; set; }

@@ -57,10 +57,12 @@ namespace GestureSign.UI
             {
                 ApplicationNameTextBox.Text = CurrentApplication.Name;
                 GroupNameTextBox.Text = CurrentApplication.Group;
+                chkAllowSingleStroke.IsChecked = ((UserApplication)CurrentApplication).AllowSingleStroke;
+                chkInterceptTouchInput.IsChecked = ((UserApplication)CurrentApplication).InterceptTouchInput;
             }
 
-            chkAllowSingleStroke.Visibility = ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
-                   GroupNameTextBlock.Visibility = GroupNameTextBox.Visibility =
+            chkAllowSingleStroke.Visibility = chkInterceptTouchInput.Visibility = ApplicationNameTextBlock.Visibility =
+                ApplicationNameTextBox.Visibility = GroupNameTextBlock.Visibility = GroupNameTextBox.Visibility =
                   isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
             Theme = isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
@@ -175,7 +177,8 @@ namespace GestureSign.UI
                 CurrentApplication.MatchUsing = matchUsing;
                 CurrentApplication.MatchString = matchString;
                 CurrentApplication.IsRegEx = chkPattern.IsChecked.Value;
-                CurrentApplication.AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
+                ((UserApplication)CurrentApplication).AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
+                ((UserApplication)CurrentApplication).InterceptTouchInput = chkInterceptTouchInput.IsChecked.Value;
                 if (RefreshApplications != null) RefreshApplications(this, EventArgs.Empty);
             }
             else

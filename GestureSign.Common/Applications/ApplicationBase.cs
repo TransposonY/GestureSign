@@ -16,11 +16,9 @@ namespace GestureSign.Common.Applications
         #endregion
 
         #region IApplication Instance Properties
-        public virtual bool AllowSingleStroke { get; set; }
         public virtual string Name { get; set; }
         public virtual MatchUsing MatchUsing { get; set; }
         public virtual string MatchString { get; set; }
-        public bool InterceptTouchInput { get; set; }
         public virtual bool IsRegEx { get; set; }
         public virtual string Group { get; set; }
         public virtual List<IAction> Actions
