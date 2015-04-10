@@ -281,11 +281,7 @@
       <Name>ManagedWinapi</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Gestures\" />
-    <Folder Include="Input\" />
-    <Folder Include="Plugins\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\crosshair.cur" />
   </ItemGroup>
