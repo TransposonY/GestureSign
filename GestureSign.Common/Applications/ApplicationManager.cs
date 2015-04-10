@@ -273,9 +273,9 @@ namespace GestureSign.Common.Applications
             return Applications.Where(a => a is UserApplication).OrderBy(a => a.Name).Cast<UserApplication>().ToArray();
         }
 
-        public IgnoredApplication[] GetIgnoredApplications()
+        public IEnumerable<IgnoredApplication> GetIgnoredApplications()
         {
-            return Applications.Where(a => a is IgnoredApplication).OrderBy(a => a.Name).Cast<IgnoredApplication>().ToArray();
+            return Applications.Where(a => a is IgnoredApplication).OrderBy(a => a.Name).Cast<IgnoredApplication>();
         }
 
         public IApplication GetGlobalApplication()
@@ -283,9 +283,15 @@ namespace GestureSign.Common.Applications
             if (!_Applications.Exists(a => a is GlobalApplication))
                 _Applications.Add(new GlobalApplication());
 
-            return _Applications.Find(a => a is GlobalApplication);
+            return _Applications.FirstOrDefault(a => a is GlobalApplication);
         }
 
+        public IEnumerable<IApplication> GetAllGlobalApplication()
+        {
+            if (!_Applications.Exists(a => a is GlobalApplication))
+                _Applications.Add(new GlobalApplication());
+            return _Applications.Where(a => a is GlobalApplication);
+        }
         public void RemoveGlobalAction(string ActionName)
         {
             RemoveAction(ActionName, true);

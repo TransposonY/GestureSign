@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using GestureSign.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -20,7 +20,6 @@ using GestureSign.Common.Drawing;
 using GestureSign.Common.Gestures;
 
 using GestureSign.PointPatterns;
-using GestureSign.UI.Helper;
 
 namespace GestureSign.UI
 {

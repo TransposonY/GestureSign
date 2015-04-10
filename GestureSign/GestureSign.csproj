@@ -155,21 +155,21 @@
     <Compile Include="UI\ApplicationDialog.xaml.cs">
       <DependentUpon>ApplicationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ApplicationListViewItem.cs" />
+    <Compile Include="UI\Common\ApplicationListViewItem.cs" />
     <Compile Include="UI\AvailableAction.xaml.cs">
       <DependentUpon>AvailableAction.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\CustomApplicationsFlyout.xaml.cs">
       <DependentUpon>CustomApplicationsFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Helper\UIHelper.cs" />
+    <Compile Include="UI\Common\UIHelper.cs" />
     <Compile Include="UI\IgnoredApplications.xaml.cs">
       <DependentUpon>IgnoredApplications.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\AvailableGestures.xaml.cs">
       <DependentUpon>AvailableGestures.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Crosshair.xaml.cs">
+    <Compile Include="UI\Common\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Guide.xaml.cs">
@@ -184,7 +184,7 @@
     <Compile Include="UI\RuningApplicationsFlyout.xaml.cs">
       <DependentUpon>RuningApplicationsFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\SliderTools.cs" />
+    <Compile Include="UI\Common\SliderTools.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -217,7 +217,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Crosshair.xaml">
+    <Page Include="UI\Common\Crosshair.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

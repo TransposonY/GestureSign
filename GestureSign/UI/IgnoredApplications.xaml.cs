@@ -24,13 +24,11 @@ namespace GestureSign.UI
     /// </summary>
     public partial class IgnoredApplications : UserControl
     {
-        public static event ApplicationChangedEventHandler IgnoredCustomFlyout;
-        public static event ApplicationChangedEventHandler IgnoredRuningFlyout;
+        public static event ApplicationChangedEventHandler ShowIgnoredCustomFlyout;
         public IgnoredApplications()
         {
             InitializeComponent();
-            CustomApplicationsFlyout.BindIgnoredApplications += ApplicationsFlyout_BindIgnoredApplications;
-            RuningApplicationsFlyout.BindIgnoredApplications += ApplicationsFlyout_BindIgnoredApplications;
+            CustomApplicationsFlyout.RefreshIgnoredApplications += ApplicationsFlyout_BindIgnoredApplications;
 
             BindIgnoredApplications();
         }
@@ -43,7 +41,7 @@ namespace GestureSign.UI
         private void BindIgnoredApplications()
         {
             this.lstIgnoredApplications.ItemsSource = null;
-            IgnoredApplication[] lstApplications = ApplicationManager.Instance.GetIgnoredApplications();
+            var lstApplications = ApplicationManager.Instance.GetIgnoredApplications().ToList();
 
 
             var sourceView = new ListCollectionView(lstApplications);//创建数据源的视图
@@ -66,15 +64,15 @@ namespace GestureSign.UI
         {
             IgnoredApplication ia = this.lstIgnoredApplications.SelectedItem as IgnoredApplication;
             if (ia == null) return;
-            if (IgnoredCustomFlyout != null)
-                IgnoredCustomFlyout(this, new ApplicationChangedEventArgs(ia));
+            if (ShowIgnoredCustomFlyout != null)
+                ShowIgnoredCustomFlyout(this, new ApplicationChangedEventArgs(ia));
         }
 
         private void btnAddIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             this.lstIgnoredApplications.SelectedIndex = -1;
-            if (IgnoredRuningFlyout != null)
-                IgnoredRuningFlyout(this, new ApplicationChangedEventArgs());
+            if (ShowIgnoredCustomFlyout != null)
+                ShowIgnoredCustomFlyout(this, new ApplicationChangedEventArgs());
         }
 
 

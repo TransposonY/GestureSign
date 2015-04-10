@@ -23,17 +23,10 @@ namespace GestureSign.UI
     public partial class Crosshair : UserControl, IDisposable
     {
         Cursor myCursor;
-        BitmapImage imgCrosshair = new BitmapImage(new Uri(@"../Resources/crosshair.ico", UriKind.Relative));
-        /// <summary>
-        /// Occurs when the user finished dragging the crosshair. Use 
-        /// <see cref="Cursor.Position"/> to detect the cursor position.
-        /// </summary>
-        public event EventHandler<MouseButtonEventArgs> CrosshairDragged;
+        BitmapImage imgCrosshair = new BitmapImage(new Uri(@"../../Resources/crosshair.ico", UriKind.Relative));
 
-        /// <summary>
-        /// Occurs while the user drags the crosshair. Use 
-        /// <see cref="Cursor.Position"/> to detect the cursor position.
-        /// </summary>
+        public event EventHandler<MouseButtonEventArgs> CrosshairDragged;
+        
         public event EventHandler<MouseEventArgs> CrosshairDragging;
 
         bool isMove = false;//是否需要移动

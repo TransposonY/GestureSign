@@ -595,23 +595,6 @@ namespace GestureSign.UI
             return (Action != null && Action.PluginClass == PluginClass && Action.PluginFilename == PluginFilename);
         }
 
-        private async void DelAppButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (await this.ShowMessageAsync("确认删除", "确定删除该程序吗，控制该程序的相关动作也将一并删除。",
-                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
-            {
-                ApplicationManager.Instance.RemoveApplication((IApplication)cmbExistingApplication.SelectedItem);
-
-                ApplicationManager.Instance.SaveApplications();
-                BindExistingApplications();
-            }
-        }
-
-        private void cmbExistingApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.DelAppButton.IsEnabled = !(cmbExistingApplication.SelectedItem is GlobalApplication);
-        }
-
         private void RunningApplicationsPopup_Opened(object sender, EventArgs e)
         {
             RefreshApplications();

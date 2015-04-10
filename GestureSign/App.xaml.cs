@@ -80,14 +80,12 @@ namespace GestureSign
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
                     mainWindow.Activate();
-                    mainWindow.availableAction.BindActions();
                 }
 #if DEBUG
 
                 MainWindow mw = new MainWindow();
                 mw.Show();
                 mw.Activate();
-                mw.availableAction.BindActions();
 
 #endif
 

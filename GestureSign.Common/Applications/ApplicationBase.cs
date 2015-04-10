@@ -22,6 +22,7 @@ namespace GestureSign.Common.Applications
         public virtual string MatchString { get; set; }
         public bool InterceptTouchInput { get; set; }
         public virtual bool IsRegEx { get; set; }
+        public virtual string Group { get; set; }
         public virtual List<IAction> Actions
         {
             get { return _Actions; }

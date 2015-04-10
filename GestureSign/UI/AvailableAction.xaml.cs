@@ -16,12 +16,11 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
-
+using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Drawing;
-using GestureSign.UI.Helper;
 using MahApps.Metro.Controls.Dialogs;
 
 
@@ -36,24 +35,29 @@ namespace GestureSign.UI
         public AvailableAction()
         {
             InitializeComponent();
-            var sourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
-            var groupDesctrption = new PropertyGroupDescription("ApplicationName");//设置分组列
-            sourceView.GroupDescriptions.Add(groupDesctrption);//在图中添加分组
-            lstAvailableActions.ItemsSource = sourceView;//绑定数据源
 
-            ApplicationDialog.ActionsChanged += ActionDefinition_ActionsChanged;
+            var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
+            var actionsGroupDesctrption = new PropertyGroupDescription("ApplicationName");//设置分组列
+            actionsSourceView.GroupDescriptions.Add(actionsGroupDesctrption);//在图中添加分组
+            lstAvailableActions.ItemsSource = actionsSourceView;//绑定数据源
 
-            AvailableGestures.GestureChanged += ActionDefinition_ActionsChanged;
-            GestureDefinition.GesturesChanged += ActionDefinition_ActionsChanged;
+            var applicationSourceView = new ListCollectionView(_applications);
+            var applicationGroupDesctrption = new PropertyGroupDescription("Group");//设置分组列
+            applicationSourceView.GroupDescriptions.Add(applicationGroupDesctrption);//在图中添加分组
+            lstAvailableApplication.ItemsSource = applicationSourceView;
+
+            ApplicationDialog.ActionsChanged += (o, e) => { BindApplications(); };
+            AvailableGestures.GestureChanged += (o, e) => { BindApplications(); };
+            GestureDefinition.GesturesChanged += (o, e) => { BindApplications(); };
+            CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(); };
+            BindApplications();
         }
 
 
-
-
-        Size sizThumbSize = new Size(65, 65);
+        readonly Size sizThumbSize = new Size(65, 65);
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
-        //  List<ActionInfo> ActionInfos = new List<ActionInfo>(5);
-
+        private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
+        public static event ApplicationChangedEventHandler ShowEditApplicationFlyout;
 
         public class ActionInfo : INotifyPropertyChanged
         {
@@ -101,11 +105,6 @@ namespace GestureSign.UI
                 storage = value;
                 this.OnPropertyChanged(propertyName);
             }
-        }
-
-        void ActionDefinition_ActionsChanged(object sender, EventArgs e)
-        {
-            BindActions();
         }
         private async void cmdEditAction_Click(object sender, RoutedEventArgs e)
         {
@@ -219,7 +218,7 @@ namespace GestureSign.UI
                     ApplicationManager.Instance.RemoveNonGlobalAction(strActionName);
 
             }
-            BindActions();
+            BindApplications();
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
         }
@@ -258,36 +257,40 @@ namespace GestureSign.UI
 
 
 
-        public void BindActions()
+        private void BindApplications()
         {
-            ActionInfos.Clear();
-            this.CopyActionMenuItem.Items.Clear();
-            //Task task = new Task(() =>
-            //{
-            //    this.Dispatcher.BeginInvoke(new Action(() =>
-            //     {
+            CopyActionMenuItem.Items.Clear();
+            _applications.Clear();
+
             // Add global actions to global applications group
-            AddActionsToGroup(ApplicationManager.Instance.GetGlobalApplication().Name, ApplicationManager.Instance.GetGlobalApplication().Actions.OrderBy(a => a.Name));
+            var userApplications =
+                ApplicationManager.Instance.Applications.Where(app => (app is UserApplication)).OrderBy(app => app.Name);
+            var globalApplication = ApplicationManager.Instance.GetAllGlobalApplication();
 
-            // Get all applications
-            IApplication[] lstApplications = ApplicationManager.Instance.GetAvailableUserApplications();
-
-            foreach (UserApplication App in lstApplications)
+            foreach (var app in globalApplication.Union(userApplications))
             {
-                // Add this applications actions to applications group
-                AddActionsToGroup(App.Name, App.Actions.OrderBy(a => a.Name));
+                _applications.Add(app);
+
+                MenuItem menuItem = new MenuItem() { Header = app.Name };
+                menuItem.Click += CopyActionMenuItem_Click;
+                CopyActionMenuItem.Items.Add(menuItem);
             }
 
+            if (lstAvailableApplication.Items.Count != 0)
+                lstAvailableApplication.SelectedIndex = 0;
+        }
+
+        private void RefreshActions()
+        {
+            ActionInfos.Clear();
+            var SelectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (SelectedApplication == null) return;
+            AddActionsToGroup(SelectedApplication.Name, SelectedApplication.Actions.OrderBy(a => a.Name));
             EnableRelevantButtons();
-            //     }));
-            //});
-            //task.Start();
         }
         private void AddActionsToGroup(string ApplicationName, IEnumerable<IAction> Actions)
         {
-            MenuItem menuItem = new MenuItem() { Header = ApplicationName };
-            menuItem.Click += CopyActionMenuItem_Click;
-            this.CopyActionMenuItem.Items.Add(menuItem);
+
 
             string description = String.Empty;
             DrawingImage Thumb = null;
@@ -455,7 +458,7 @@ namespace GestureSign.UI
             };
             targetApplication.AddAction(selectedAction);
 
-            BindActions();
+            BindApplications();
             SelectAction(targetApplication.Name, newAction.Name, true);
             ApplicationManager.Instance.SaveApplications();
         }
@@ -506,7 +509,7 @@ namespace GestureSign.UI
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();
-                    BindActions();
+                    BindApplications();
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
             }
@@ -523,8 +526,15 @@ namespace GestureSign.UI
 
         private void ContextMenu_Opening(object sender, RoutedEventArgs e)
         {
-            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
-            if (selectedItem == null) return;
+            ActionInfo selectedItem = lstAvailableActions.SelectedItem as ActionInfo;
+            if (selectedItem == null)
+            {
+                InterceptTouchInputMenuItem.IsChecked =
+                    InterceptTouchInputMenuItem.IsEnabled =
+                        CopyActionMenuItem.IsEnabled = false;
+                return;
+            }
+            CopyActionMenuItem.IsEnabled = true;
             if (selectedItem.ApplicationName.Equals(ApplicationManager.Instance.GetGlobalApplication().Name))
             {
                 this.InterceptTouchInputMenuItem.IsChecked = this.InterceptTouchInputMenuItem.IsEnabled = false;
@@ -580,6 +590,36 @@ namespace GestureSign.UI
             ApplicationManager.Instance.SaveApplications();
         }
 
+        private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RefreshActions();
+            EditAppButton.IsEnabled = lstAvailableApplication.SelectedItem is UserApplication;
+        }
+
+        private void EditAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ShowEditApplicationFlyout != null && lstAvailableApplication.SelectedItem != null)
+                ShowEditApplicationFlyout(this,
+                    new ApplicationChangedEventArgs(lstAvailableApplication.SelectedItem as IApplication));
+        }
+
+        private async void DeleteAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除该程序吗，控制该程序的相关动作也将一并删除 ",
+              MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+              {
+                  AffirmativeButtonText = "确定",
+                  NegativeButtonText = "取消",
+                  ColorScheme = MetroDialogColorScheme.Accented
+              }) == MessageDialogResult.Affirmative)
+            {
+                ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
+
+                ApplicationManager.Instance.SaveApplications();
+                BindApplications();
+            }
+        }
+
     }
     public class HeaderConverter : IMultiValueConverter
     {
@@ -593,6 +633,21 @@ namespace GestureSign.UI
 
             }
             else return DependencyProperty.UnsetValue;
+        }
+        // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+        }
+    }
+    public class ApplicationListHeaderConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string name = values[0] as string;
+            int count = (int)values[1];
+            return String.IsNullOrEmpty(name) ? String.Format("未分组 {0}程序", count) : String.Format("{0} {1}程序", name, count);
+            // return DependencyProperty.UnsetValue;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

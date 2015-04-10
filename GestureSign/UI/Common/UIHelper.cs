@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 
-namespace GestureSign.UI.Helper
+namespace GestureSign.Common
 {
     class UIHelper
     {

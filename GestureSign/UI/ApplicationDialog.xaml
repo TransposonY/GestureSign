@@ -44,14 +44,13 @@
             <RadioButton Margin="0, 10, 0, 0" Content="保存的程序" Name="ExistingApplicationRadioButton"
                          GroupName="1" FontSize="18" IsChecked="True" />
             <Canvas Name="ExistingApplicationCanvas" Height="165" Visibility="{Binding ElementName=ExistingApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
-                <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14" FontFamily="Microsoft YaHei UI" SelectionChanged="cmbExistingApplication_SelectionChanged"/>
+                <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="83" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="83" FontSize="14" Width="193"/>
-                <Button x:Name="DelAppButton" Content="删除该程序信息" Canvas.Top="106" Click="DelAppButton_Click" FontSize="12"/>
-            </Canvas>
+           </Canvas>
             <RadioButton Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"

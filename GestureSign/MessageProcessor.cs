@@ -46,7 +46,6 @@ namespace GestureSign
                                         MainWindow mw = new MainWindow();
                                         mw.Show();
                                         mw.Activate();
-                                        mw.availableAction.BindActions();
                                     }
                                     break;
                                 }

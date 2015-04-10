@@ -15,6 +15,7 @@ namespace GestureSign.Common.Applications
         MatchUsing MatchUsing { get; set; }
         string MatchString { get; set; }
         bool IsRegEx { get; set; }
+        string Group { get; set; }
 
         void AddAction(IAction Action);
         void RemoveAction(IAction Action);

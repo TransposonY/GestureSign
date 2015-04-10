@@ -1,24 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.Runtime.CompilerServices;
-using System.ComponentModel;
+using GestureSign.Common;
 using GestureSign.Common.Applications;
-using GestureSign.UI.Helper;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
+using System.Linq;
+using Point = System.Drawing.Point;
 
 namespace GestureSign.UI
 {
@@ -28,57 +19,80 @@ namespace GestureSign.UI
     public partial class CustomApplicationsFlyout : Flyout
     {
         public static event EventHandler OpenIgnoredRuningFlyout;
-        public event EventHandler RemoveApplication;
-        public static event EventHandler BindIgnoredApplications;
+        public static event EventHandler RefreshIgnoredApplications;
+        public static event EventHandler RefreshApplications;
 
 
-        private bool EditMode = false;
-        private IgnoredApplication CurrentIgnoredApplication;
+        private bool EditMode;
+        private IApplication CurrentApplication;
+        private bool isUserApp;
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetCursorPos(out Point lpPoint);
 
 
         public CustomApplicationsFlyout()
         {
             InitializeComponent();
-            this.crosshairMain.CrosshairDragged += crosshairMain_CrosshairDragged;
-            this.crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
-            IgnoredApplications.IgnoredCustomFlyout += IgnoredApplications_IgnoredCustomFlyout;
-            RuningApplicationsFlyout.OpenIgnoredCustomFlyout += RuningApplicationsFlyout_IgnoredCustomFlyout;
+            crosshairMain.CrosshairDragged += crosshairMain_CrosshairDragged;
+            crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
+            IgnoredApplications.ShowIgnoredCustomFlyout += ShowEditApplicationFlyout;
+            AvailableAction.ShowEditApplicationFlyout += ShowEditApplicationFlyout;
+            RuningApplicationsFlyout.RuningAppSelectionChanged += RuningApplicationsFlyout_RuningAppSelectionChanged;
         }
 
-        void RuningApplicationsFlyout_IgnoredCustomFlyout(object sender, EventArgs e)
+
+        private void Flyout_ClosingFinished(object sender, RoutedEventArgs e)
         {
-            this.IsOpen = true;
             ClearManualFields();
         }
-
-        void IgnoredApplications_IgnoredCustomFlyout(object sender, ApplicationChangedEventArgs e)
+        void ShowEditApplicationFlyout(object sender, ApplicationChangedEventArgs e)
         {
-            this.IsOpen = true;
-            CurrentIgnoredApplication = e.Application as IgnoredApplication;
-            SetFields(e.Application.MatchString, e.Application.MatchUsing, e.Application.IsRegEx);
+            CurrentApplication = e.Application;
+            //CurrentApplication may be null or IgnoredApplication
+            isUserApp = CurrentApplication is UserApplication;
+
+            if (isUserApp)
+            {
+                ApplicationNameTextBox.Text = CurrentApplication.Name;
+                GroupNameTextBox.Text = CurrentApplication.Group;
+            }
+
+            chkAllowSingleStroke.Visibility = ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
+                   GroupNameTextBlock.Visibility = GroupNameTextBox.Visibility =
+                  isUserApp ? Visibility.Visible : Visibility.Collapsed;
+
+            Theme = isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
+            if (CurrentApplication != null)
+                SetFields(CurrentApplication.MatchString, CurrentApplication.MatchUsing, CurrentApplication.IsRegEx);
+
+            IsOpen = true;
         }
-
-
-        private void SwitchToRunning_Click(object sender, RoutedEventArgs e)
+        void RuningApplicationsFlyout_RuningAppSelectionChanged(object sender, ApplicationListViewItem e)
         {
-            this.IsOpen = false;
-            OpenIgnoredRuningFlyout(this, new EventArgs());
+            if (e != null)
+            {
+                txtFile.Text = e.WindowFilename;
+                txtClass.Text = e.WindowClass;
+                txtTitle.Text = e.WindowTitle;
+            }
+        }
+        private void ShowRunningButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (OpenIgnoredRuningFlyout != null) OpenIgnoredRuningFlyout(this, new EventArgs());
         }
 
 
         void crosshairMain_CrosshairDragging(object sender, MouseEventArgs e)
         {
-            System.Drawing.Point cursorPosition; //(e.OriginalSource as Image).PointToScreen(e.GetPosition(null));
+            Point cursorPosition; //(e.OriginalSource as Image).PointToScreen(e.GetPosition(null));
             GetCursorPos(out cursorPosition);
-            if (this.Visibility == Visibility.Visible && chkCrosshairHide.IsChecked.Value)
-                this.Opacity = 0.00;
+            if (Visibility == Visibility.Visible && chkCrosshairHide.IsChecked.Value)
+                Opacity = 0.00;
             try
             {
-                txtFile.Text = System.IO.Path.GetFileName(ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Process.MainModule.FileName);
+                txtFile.Text = Path.GetFileName(ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Process.MainModule.FileName);
                 txtClass.Text = ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).ClassName;
                 txtTitle.Text = ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Title;
             }
@@ -91,15 +105,14 @@ namespace GestureSign.UI
         void crosshairMain_CrosshairDragged(object sender, MouseButtonEventArgs e)
         {
             if (chkCrosshairHide.IsChecked.Value)
-                this.Opacity = 1.00;
+                Opacity = 1.00;
         }
 
 
 
         private void btnBrowse_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
-            op.Filter = "可执行文件|*.exe";
+            OpenFileDialog op = new OpenFileDialog { Filter = "可执行文件|*.exe" };
             if (op.ShowDialog().Value)
             {
                 txtClass.Text = txtTitle.Text = "";
@@ -109,17 +122,15 @@ namespace GestureSign.UI
 
         private void btnAddCustom_Click(object sender, RoutedEventArgs e)
         {
-            if (RemoveApplication != null)
-                RemoveApplication(this, new EventArgs());
             MatchUsing matchUsing;
             string matchString;
 
-            if (this.RadioButton1.IsChecked.Value)
+            if (RadioButton1.IsChecked.Value)
             {
                 matchUsing = MatchUsing.ExecutableFilename;
                 matchString = txtFile.Text.Trim();
             }
-            else if (this.RadioButton2.IsChecked.Value)
+            else if (RadioButton2.IsChecked.Value)
             {
                 matchUsing = MatchUsing.WindowClass;
                 matchString = txtClass.Text.Trim();
@@ -131,61 +142,88 @@ namespace GestureSign.UI
             }
             if (String.IsNullOrEmpty(matchString))
             {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("字段为空", "匹配字段不能为空，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                UIHelper.GetParentWindow(this).ShowMessageAsync("字段为空", "匹配字段不能为空，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
                 return;
-            } AddIgnoredApplication(matchUsing.ToString() + matchString, matchString, matchUsing, this.chkPattern.IsChecked.Value);
-            this.ClearManualFields();
+            }
+            try
+            {
+                if (chkPattern.IsChecked.Value)
+                    System.Text.RegularExpressions.Regex.IsMatch(matchString, "teststring");
+            }
+            catch
+            {
+                UIHelper.GetParentWindow(this).ShowMessageAsync("格式错误", "正则表达式格式错误，请重新检查", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                return;
+            }
+            string name;
+            if (isUserApp)
+            {
+                name = ApplicationNameTextBox.Text.Trim();
+                string groupName = GroupNameTextBox.Text.Trim();
+                if (name.Length == 0)
+                {
+                    UIHelper.GetParentWindow(this).ShowMessageAsync("无程序名", "请定义程序名", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    return;
+                }
+                if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
+                {
+                    UIHelper.GetParentWindow(this).ShowMessageAsync("该程序名已经存在", "程序名称已经存在，请输入其他名字", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    return;
+                }
+                CurrentApplication.Name = name;
+                CurrentApplication.Group = groupName;
+                CurrentApplication.MatchUsing = matchUsing;
+                CurrentApplication.MatchString = matchString;
+                CurrentApplication.IsRegEx = chkPattern.IsChecked.Value;
+                CurrentApplication.AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
+                if (RefreshApplications != null) RefreshApplications(this, EventArgs.Empty);
+            }
+            else
+            {
+                name = matchUsing + "$" + matchString;
+                if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+                {
+                    UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    return;
+                }
+
+                if (EditMode) { ApplicationManager.Instance.RemoveApplication(CurrentApplication); }
+                ApplicationManager.Instance.AddApplication(new IgnoredApplication(name, matchUsing, matchString, chkPattern.IsChecked.Value, true));
+                if (RefreshIgnoredApplications != null) RefreshIgnoredApplications(this, EventArgs.Empty);
+            }
+            ApplicationManager.Instance.SaveApplications();
             EditMode = false;
-            this.IsOpen = false;
+            IsOpen = false;
         }
 
         public void ClearManualFields()
         {
-            txtFile.Text = "";
-            txtClass.Text = "";
-            txtTitle.Text = "";
-            CurrentIgnoredApplication = null;
-            this.chkPattern.IsChecked = false;
+            GroupNameTextBox.Text = ApplicationNameTextBox.Text = txtClass.Text = txtTitle.Text = txtFile.Text = "";
+            CurrentApplication = null;
+            chkPattern.IsChecked = false;
         }
 
         public void SetFields(string matchString, MatchUsing matchUsing, bool isRegEx)
         {
             EditMode = true;
-            this.chkPattern.IsChecked = isRegEx;
+            chkPattern.IsChecked = isRegEx;
             switch (matchUsing)
             {
-                case Common.Applications.MatchUsing.ExecutableFilename:
-                    this.RadioButton1.IsChecked = true;
-                    this.txtFile.Text = matchString;
+                case MatchUsing.ExecutableFilename:
+                    RadioButton1.IsChecked = true;
+                    txtFile.Text = matchString;
                     break;
-                case Common.Applications.MatchUsing.WindowClass:
-                    this.RadioButton2.IsChecked = true;
-                    this.txtClass.Text = matchString;
+                case MatchUsing.WindowClass:
+                    RadioButton2.IsChecked = true;
+                    txtClass.Text = matchString;
                     break;
-                case Common.Applications.MatchUsing.WindowTitle:
-                    this.RadioButton3.IsChecked = true;
-                    this.txtTitle.Text = matchString;
+                case MatchUsing.WindowTitle:
+                    RadioButton3.IsChecked = true;
+                    txtTitle.Text = matchString;
                     break;
             }
         }
 
 
-
-
-
-        private void AddIgnoredApplication(String Name, String MatchString, MatchUsing MatchUsing, bool IsRegEx)
-        {
-            if (ApplicationManager.Instance.ApplicationExists(Name))
-            {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings() { AffirmativeButtonText = "确定" });
-                return;
-
-            }
-
-            if (EditMode) { ApplicationManager.Instance.RemoveApplication(CurrentIgnoredApplication); }
-            ApplicationManager.Instance.AddApplication(new IgnoredApplication(Name, MatchUsing, MatchString, IsRegEx, true));
-            ApplicationManager.Instance.SaveApplications();
-            BindIgnoredApplications(this, new EventArgs());
-        }
     }
 }

@@ -29,46 +29,21 @@ namespace GestureSign.UI
     /// </summary>
     public partial class RuningApplicationsFlyout : Flyout
     {
-        public static event EventHandler OpenIgnoredCustomFlyout;
-        public static event EventHandler BindIgnoredApplications;
-        MatchUsing _MatchUsing = MatchUsing.WindowClass;
+        public static event EventHandler<ApplicationListViewItem> RuningAppSelectionChanged;
         #region Public Instance Properties
 
-        public string MatchString { get; set; }
-        public MatchUsing MatchUsing
-        {
-            get { return _MatchUsing; }
-            set
-            {
-                _MatchUsing = value;
-            }
-        }
-        public ApplicationListViewItem SelectedApplication
-        {
-            get { return this.lstRunningApplications.SelectedItem as ApplicationListViewItem; }
-        }
-
-        private List<ApplicationListViewItem> ApplicationListViewItems = new List<ApplicationListViewItem>(5);
 
         #endregion
         public RuningApplicationsFlyout()
         {
             InitializeComponent();
-            MatchString = null;
-            MatchUsing = GestureSign.Common.Applications.MatchUsing.WindowClass;
             this.IsOpenChanged += RuningApplicationsFlyout_IsOpenChanged;
-            IgnoredApplications.IgnoredRuningFlyout += IgnoredApplications_IgnoredRuningFlyout;
             CustomApplicationsFlyout.OpenIgnoredRuningFlyout += CustomApplicationsFlyout_OpenIgnoredRuningFlyout;
         }
 
         void CustomApplicationsFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)
         {
             this.IsOpen = true;
-        }
-
-        void IgnoredApplications_IgnoredRuningFlyout(object sender, ApplicationChangedEventArgs e)
-        {
-            this.IsOpen = !this.IsOpen;
         }
 
         void RuningApplicationsFlyout_IsOpenChanged(object sender, EventArgs e)
@@ -78,51 +53,21 @@ namespace GestureSign.UI
                 RefreshApplications();
             }
         }
-
-        private void SwitchToCustom_Click(object sender, RoutedEventArgs e)
+        private void lstRunningApplications_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.IsOpen = false;
-            OpenIgnoredCustomFlyout(this, new EventArgs());
+            if (RuningAppSelectionChanged != null)
+                RuningAppSelectionChanged(this, lstRunningApplications.SelectedItem as ApplicationListViewItem);
         }
-
-        private void btnAddRunning_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.lstRunningApplications.SelectedItems.Count == 0)
-                return;
-            AddIgnoredApplication(MatchUsing.ExecutableFilename.ToString() + this.SelectedApplication.WindowFilename,
-                this.SelectedApplication.WindowFilename, MatchUsing.ExecutableFilename, false);
-            this.IsOpen = false;
-        }
-
-        private void AddIgnoredApplication(String Name, String MatchString, MatchUsing MatchUsing, bool IsRegEx)
-        {
-            if (ApplicationManager.Instance.ApplicationExists(Name))
-                return;
-            ApplicationManager.Instance.AddApplication(new IgnoredApplication(Name, MatchUsing, MatchString, IsRegEx, true));
-            ApplicationManager.Instance.SaveApplications();
-            BindIgnoredApplications(this, new EventArgs());
-        }
+        #region Private Instance Methods
 
 
-
-
-        #region Public Instance Methods
-
-        public void RefreshApplications()
+        private void RefreshApplications()
         {
             this.lstRunningApplications.Items.Clear();
             //    this.lstRunningApplications.ItemsSource = await GetValidWindows();
             System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(GetValidWindows));
             //await GetValidWindows();
         }
-
-
-        #endregion
-
-
-        #region Private Instance Methods
-
-
 
         private void GetValidWindows(object s)
         {
@@ -166,5 +111,6 @@ namespace GestureSign.UI
         }
 
         #endregion
+
     }
 }
