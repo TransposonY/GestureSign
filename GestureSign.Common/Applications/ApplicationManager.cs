@@ -193,7 +193,7 @@ namespace GestureSign.Common.Applications
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
                 ? definedApplications
-                : new IApplication[] { GetGlobalApplication() };
+                : userApplicationOnly ? null : new IApplication[] { GetGlobalApplication() };
         }
 
         public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
