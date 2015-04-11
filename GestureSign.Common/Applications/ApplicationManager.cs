@@ -70,20 +70,23 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
+            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
+            if (SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar))
             {
-                IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
-                IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-                foreach (IApplication app in applicationFromWindow)
-                {
-                    e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
-                               (app is GlobalApplication && e.Points.Count == 1) ||
-                               (!SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar) &&
-                              !((UserApplication)app).AllowSingleStroke && e.Points.Count == 1);
-
-                    e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
-                }
+                e.Cancel = e.InterceptTouchInput = false;
+                return;
             }
+
+            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
+            IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+            foreach (IApplication app in applicationFromWindow)
+            {
+                e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
+                           (e.Points.Count == 1 && (app is GlobalApplication || !((UserApplication)app).AllowSingleStroke));
+
+                e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+            }
+
         }
 
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
