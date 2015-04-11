@@ -116,7 +116,7 @@ namespace GestureSignDaemon
                     this.Show();
                 }
                 if (LastStroke == null) { LastStroke = Points.Select(p => p.Count).ToArray(); return; }
-
+                if (LastStroke.Length != Points.Count) return;
                 for (int i = 0; i < LastStroke.Length; i++)
                 {
                     // Create list of points that are new this draw
@@ -124,7 +124,7 @@ namespace GestureSignDaemon
                     int iDelta = 0;
                     // Get number of points added since last draw including last point of last stroke and add new points to new points list
 
-                    iDelta = Points[i].Count() - LastStroke[i] + 1;
+                    iDelta = Points[i].Count - LastStroke[i] + 1;
 
 
                     NewPoints.AddRange(Points[i].Skip(Points[i].Count() - iDelta).Take(iDelta));
