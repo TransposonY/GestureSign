@@ -8,6 +8,19 @@
         Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
+            <Style x:Key="ShowCanvasStyle" TargetType="{x:Type Canvas}">
+                <Style.Triggers>
+                    <Trigger Property="Canvas.Visibility" Value="Visible">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard Storyboard.TargetProperty="Opacity">
+                                    <DoubleAnimation From="0" To="1" Duration="00:00:00.2" BeginTime="00:00:00"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
             <Canvas x:Key="appbar_chevron_right" Width="76" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
                 <Path Width="25.3333" Height="28.5" Canvas.Left="25.1849" Canvas.Top="23.3542" Stretch="Fill" Fill="#FF000000" Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z "/>
             </Canvas>
@@ -44,7 +57,7 @@
 
             <RadioButton Margin="0, 10, 0, 0" Content="保存的程序" Name="ExistingApplicationRadioButton"
                          GroupName="1" FontSize="18" IsChecked="True" />
-            <Canvas Name="ExistingApplicationCanvas" Height="165" Visibility="{Binding ElementName=ExistingApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
+            <Canvas Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding ElementName=ExistingApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
@@ -56,7 +69,7 @@
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
                          GroupName="1" FontSize="18"/>
-            <Canvas Name="NewApplicationCanvas" Height="253" Visibility="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
+            <Canvas Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="55"/>
