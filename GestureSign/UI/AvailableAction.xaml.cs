@@ -418,12 +418,17 @@ namespace GestureSign.UI
             if (e.AddedItems.Count != 1) return;
             ContentPresenter myContentPresenter = Common.UI.WindowsHelper.GetParentDependencyObject<ContentPresenter>(sender as ComboBox);
             ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as ComboBox).Content as ActionInfo;
-            if (((GestureItem)e.AddedItems[0]).Name != actionInfo.GestureName)
+            IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+            if (actionInfo != null && ((GestureItem)e.AddedItems[0]).Name != actionInfo.GestureName)
             {
-                IAction action = ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName);
-                actionInfo.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
-                ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Source = ((sender as ComboBox).SelectedItem as GestureItem).Image;
-                ApplicationManager.Instance.SaveApplications();
+                if (app != null)
+                {
+                    IAction action = app.Actions.FirstOrDefault(a => a.Name.Equals(actionInfo.ActionName));
+                    actionInfo.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
+
+                    ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Source = ((sender as ComboBox).SelectedItem as GestureItem).Image;
+                    ApplicationManager.Instance.SaveApplications();
+                }
             }
         }
 
