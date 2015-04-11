@@ -698,7 +698,7 @@ namespace GestureSign.UI
         }
     }
 
-    [ValueConversion(typeof(object), typeof(bool))]
+    [ValueConversion(typeof(IApplication), typeof(bool))]
     public class InterceptTouchInputBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -708,6 +708,26 @@ namespace GestureSign.UI
                 var app = value as UserApplication;
                 if (app != null)
                     return app.InterceptTouchInput;
+                else return false;
+            }
+            else return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+    [ValueConversion(typeof(IApplication), typeof(bool))]
+    public class AllowSingleBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                var app = value as UserApplication;
+                if (app != null)
+                    return app.AllowSingleStroke;
                 else return false;
             }
             else return DependencyProperty.UnsetValue;
