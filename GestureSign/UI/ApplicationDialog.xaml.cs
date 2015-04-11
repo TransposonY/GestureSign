@@ -565,7 +565,7 @@ namespace GestureSign.UI
         private string GetNextActionName(string name, int i = 1)
         {
             var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
-            if (((IApplication)this.cmbExistingApplication.SelectedItem).Actions.Exists(a => a.Name.Equals(actionName)))
+            if (ExistingApplicationRadioButton.IsChecked.Value && ((IApplication)this.cmbExistingApplication.SelectedItem).Actions.Exists(a => a.Name.Equals(actionName)))
                 return GetNextActionName(name, ++i);
             return actionName;
         }
@@ -728,24 +728,6 @@ namespace GestureSign.UI
                 if (app != null)
                     return app.AllowSingleStroke;
                 else return false;
-            }
-            else return DependencyProperty.UnsetValue;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return DependencyProperty.UnsetValue;
-        }
-    }
-
-    [ValueConversion(typeof(object), typeof(bool))]
-    public class EnabledConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value != null)
-            {
-                return value is UserApplication;
             }
             else return DependencyProperty.UnsetValue;
         }

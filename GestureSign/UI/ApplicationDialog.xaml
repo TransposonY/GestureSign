@@ -27,7 +27,6 @@
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
             <local:MatchUsingToStringConverter x:Key="matchUsingToStringConverter"></local:MatchUsingToStringConverter>
             <local:InterceptTouchInputBoolConverter x:Key="interceptTouchInputBoolConverter"></local:InterceptTouchInputBoolConverter>
-            <local:EnabledConverter x:Key="enabledConverter"></local:EnabledConverter>
             <local:ListviewItem2TextBoxConverter x:Key="ListviewItem2TextBoxConverter"></local:ListviewItem2TextBoxConverter>
             <local:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter"></local:Bool2VisibilityConverter>
             <local:AllowSingleBoolConverter x:Key="AllowSingleBoolConverter"></local:AllowSingleBoolConverter>
@@ -92,7 +91,7 @@
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="66" TextWrapping="Wrap" Text="分组" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
@@ -319,9 +318,9 @@
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding SelectedItem, Converter={StaticResource interceptTouchInputBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" 
-                  IsEnabled="{Binding SelectedItem, Converter={StaticResource enabledConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
+                  IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
                   Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14"/>
-        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"  IsChecked="{Binding SelectedItem, Converter={StaticResource AllowSingleBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" FontSize="14"/>
+        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}" IsChecked="{Binding SelectedItem, Converter={StaticResource AllowSingleBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" FontSize="14"/>
         <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
     </Canvas>
 </controls:MetroWindow>
