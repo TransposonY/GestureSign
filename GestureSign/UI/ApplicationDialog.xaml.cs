@@ -227,7 +227,8 @@ namespace GestureSign.UI
                 {
                     InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value,
                     AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value,
-                    Name = txtApplicationName.Text.Trim()
+                    Name = txtApplicationName.Text.Trim(),
+                    Group = GroupComboBox.Text.Trim()
                 };
                 // Store application name
                 // Make sure we have a valid application name
@@ -345,10 +346,10 @@ namespace GestureSign.UI
 
             cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
         }
-         private void BindGroupComboBox()
-         {
-             GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
-         }
+        private void BindGroupComboBox()
+        {
+            GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
+        }
         #endregion
 
         #region Type Methods
