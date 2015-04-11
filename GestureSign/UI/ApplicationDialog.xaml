@@ -51,35 +51,64 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Canvas Height="520">
+        <Popup x:Name="RunningApplicationsPopup" Width="358" Height="520"  
+        	Opened="RunningApplicationsPopup_Opened"
+        	StaysOpen="False"   
+        	IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"   
+        	AllowsTransparency="True"  
+        	PopupAnimation="Fade"
+        	Placement="RelativePoint" PlacementRectangle="342,0,0,0">
+            <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="图标" Width="55">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding ApplicationIcon}" Height="35" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="程序文件名及标题" Width="300">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
+                                        <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Popup>
         <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330" Height="370">
 
             <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
 
-            <RadioButton Margin="0, 10, 0, 0" Content="保存的程序" Name="ExistingApplicationRadioButton"
+            <RadioButton Margin="0, 10, 0, 0" Content="保存的程序" x:Name="ExistingApplicationRadioButton"
                          GroupName="1" FontSize="18" IsChecked="True" />
-            <Canvas Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding ElementName=ExistingApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
+            <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="83" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="83" FontSize="14" Width="193"/>
-           </Canvas>
-            <RadioButton Name="NewApplicationRadioButton"
+            </Canvas>
+            <RadioButton x:Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
                          GroupName="1" FontSize="18"/>
-            <Canvas Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked,Mode=OneWay,Converter={StaticResource Bool2VisibilityConverter}}">
+            <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="55"/>
                 <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="52">
-                    <TextBox.Text>
-                        <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="OneWay">
-                            <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
-                            <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBox.Text>
+                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="OneWay">
+                        <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
+                        <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
+                    </MultiBinding>
                 </TextBox>
                 <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="142" FontSize="14"/>
                 <Button x:Name="cmdBrowse" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
@@ -99,39 +128,6 @@
                     </Rectangle>
                 </ToggleButton>
             </Canvas>
-            <Popup x:Name="RunningApplicationsPopup" Width="358" Height="522"  
-                   Opened="RunningApplicationsPopup_Opened"
-                   StaysOpen="False"   
-                   IsOpen="{Binding ElementName=btnExistingApplication, Path=IsChecked,Mode=TwoWay}"   
-                   AllowsTransparency="True"  
-                   PopupAnimation="Fade"
-                   HorizontalOffset="12"
-                   VerticalOffset="-305"
-                   PlacementTarget="{Binding ElementName=btnExistingApplication}" Placement="Right"  >
-                <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="图标" Width="55">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Source="{Binding ApplicationIcon}" Height="35" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="程序文件名及标题" Width="300">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
-                                            <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Popup>
         </StackPanel>
         <StackPanel Canvas.Left="356" Canvas.Top="10" Width="328">
             <TextBlock Text="选择手势" FontSize="24"/>
@@ -141,14 +137,6 @@
                           VerticalContentAlignment="Center"
                            Margin="10,5,5,5"
                          VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True"  IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="300" Width="280">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Image}" Height="65" Stretch="Uniform"  StretchDirection="DownOnly" Width="200" HorizontalAlignment="Stretch" />
-                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
                 <!--<ComboBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
@@ -170,22 +158,22 @@
                         <Setter Property="MinHeight" Value="32"/>
                         <Setter Property="Template">
                             <Setter.Value>
-                                <ControlTemplate TargetType="ComboBox">
+                                <ControlTemplate TargetType="{x:Type ComboBox}">
                                     <Grid>
                                         <ToggleButton
-                                Name="ToggleButton"
+                                x:Name="ToggleButton"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 Background="{TemplateBinding Background}"
                             Foreground="{TemplateBinding Foreground}"
                                 Grid.Column="2"
                                 Focusable="false"
-                                IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 ClickMode="Press">
                                             <ToggleButton.Style>
-                                                <Style  TargetType="ToggleButton">
+                                                <Style  TargetType="{x:Type ToggleButton}">
                                                     <Setter Property="Template">
                                                         <Setter.Value>
-                                                            <ControlTemplate TargetType="ToggleButton">
+                                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                                 <Grid>
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition />
@@ -218,7 +206,7 @@
                                             </ToggleButton.Style>
                                         </ToggleButton>
                                         <ContentPresenter
-                                Name="ContentSite"
+                                x:Name="ContentSite"
                                 IsHitTestVisible="False"
                                 Content="{TemplateBinding SelectionBoxItem}"
                                 ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
@@ -235,20 +223,20 @@
                                 Visibility="Hidden"
                                 IsReadOnly="{TemplateBinding IsReadOnly}">
                                             <TextBox.Template>
-                                                <ControlTemplate TargetType="TextBox">
+                                                <ControlTemplate TargetType="{x:Type TextBox}">
                                                     <Border x:Name="PART_ContentHost" Focusable="True" />
                                                 </ControlTemplate>
                                             </TextBox.Template>
                                         </TextBox>
                                         <Popup
-                                Name="Popup"
+                                x:Name="Popup"
                                 Placement="Bottom"
                                 IsOpen="{TemplateBinding IsDropDownOpen}"
                                 AllowsTransparency="True"
                                 Focusable="False"
                                 PopupAnimation="Slide">
                                             <Grid
-                                  Name="DropDown"
+                                  x:Name="DropDown"
                                   SnapsToDevicePixels="True"               
                                   MinWidth="{TemplateBinding ActualWidth}"
                                   MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -271,7 +259,7 @@
                                         <Trigger Property="IsGrouping" Value="true">
                                             <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
                                         </Trigger>
-                                        <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                        <Trigger SourceName="Popup" Property="AllowsTransparency" Value="true">
                                             <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
                                             <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
                                         </Trigger>
@@ -288,6 +276,14 @@
 
 
                 </ComboBox.Resources>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Image}" Height="65" Stretch="Uniform"  StretchDirection="DownOnly" Width="200" HorizontalAlignment="Stretch" />
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Text="选择想执行的动作" FontSize="24"/>
             <StackPanel Margin="0,5" Orientation="Vertical">
@@ -318,10 +314,10 @@
             	controls:TextBoxHelper.Watermark="请输入动作名称"
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
-        <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource interceptTouchInputBoolConverter}}" 
-                  IsEnabled="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Mode=OneWay,Converter={StaticResource enabledConverter}}"
+        <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding SelectedItem, Converter={StaticResource interceptTouchInputBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" 
+                  IsEnabled="{Binding SelectedItem, Converter={StaticResource enabledConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
                   Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14"/>
-        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"  IsChecked="{Binding ElementName=cmbExistingApplication,Path=SelectedItem,Converter={StaticResource AllowSingleBoolConverter},Mode=OneWay}" FontSize="14"/>
+        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"  IsChecked="{Binding SelectedItem, Converter={StaticResource AllowSingleBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" FontSize="14"/>
         <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
     </Canvas>
 </controls:MetroWindow>
