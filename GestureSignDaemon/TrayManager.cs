@@ -140,7 +140,8 @@ namespace GestureSignDaemon
             {
                 case MouseButtons.Left:
                     if (e.Clicks == 2)
-                        ToggleDisableGestures();
+                        if (miTrainingMode.Checked) StopTeaching();
+                        else ToggleDisableGestures();
                     break;
                 case MouseButtons.Right:
                     break;
