@@ -98,7 +98,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander BorderThickness="0,0,0,1" IsExpanded="True">
+                                        <Expander IsExpanded="True">
                                             <Expander.Header>
                                                 <DockPanel>
                                                     <!--<CheckBox Margin="10,0,5,0" FontWeight="Bold" Content="启用" DockPanel.Dock="Right"/>-->
@@ -157,7 +157,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft"  BorderThickness="0,0,0,1" IsExpanded="True">
+                                        <Expander BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft" IsExpanded="True">
                                             <Expander.Header>
                                                 <DockPanel>
                                                     <CheckBox Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" FlowDirection="LeftToRight" Content="启用" DockPanel.Dock="Right"/>
