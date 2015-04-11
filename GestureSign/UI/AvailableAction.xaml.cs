@@ -524,46 +524,40 @@ namespace GestureSign.UI
             }
         }
 
-        private void ContextMenu_Opening(object sender, RoutedEventArgs e)
+        private void ActionContextMenu_Opening(object sender, RoutedEventArgs e)
         {
-            ActionInfo selectedItem = lstAvailableActions.SelectedItem as ActionInfo;
-            if (selectedItem == null)
+            CopyActionMenuItem.IsEnabled = lstAvailableActions.SelectedIndex != -1;
+        }
+        private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            UserApplication userApplication = lstAvailableApplication.SelectedItem as UserApplication;
+            if (userApplication == null)
             {
                 InterceptTouchInputMenuItem.IsChecked =
                     InterceptTouchInputMenuItem.IsEnabled =
-                        CopyActionMenuItem.IsEnabled = false;
-                return;
-            }
-            CopyActionMenuItem.IsEnabled = true;
-            if (selectedItem.ApplicationName.Equals(ApplicationManager.Instance.GetGlobalApplication().Name))
-            {
-                this.InterceptTouchInputMenuItem.IsChecked = this.InterceptTouchInputMenuItem.IsEnabled = false;
-
+                    AllowSingleMenuItem.IsChecked =
+                    AllowSingleMenuItem.IsEnabled = false;
             }
             else
             {
-                this.InterceptTouchInputMenuItem.IsEnabled = true;
-                this.InterceptTouchInputMenuItem.IsChecked =
-                    ((UserApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput;
+                AllowSingleMenuItem.IsEnabled = InterceptTouchInputMenuItem.IsEnabled = true;
+                InterceptTouchInputMenuItem.IsChecked = userApplication.InterceptTouchInput;
+                AllowSingleMenuItem.IsChecked = userApplication.AllowSingleStroke;
             }
-            var userApplication = ApplicationManager.Instance.Applications.FirstOrDefault(app => app.Name.Equals(selectedItem.ApplicationName)) as UserApplication;
-            this.AllowSingleMenuItem.IsChecked = userApplication != null && userApplication.AllowSingleStroke;
         }
 
         private void InterceptTouchInputMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
+            UserApplication selectedItem = lstAvailableApplication.SelectedItem as UserApplication;
             if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
-            ((UserApplication)ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(selectedItem.ApplicationName))).InterceptTouchInput = menuItem.IsChecked;
+            selectedItem.InterceptTouchInput = menuItem.IsChecked;
 
             ApplicationManager.Instance.SaveApplications();
 
         }
         private void AllowSingleMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
-            if (selectedItem == null) return;
             var menuItem = (MenuItem)sender;
             var userApplication = lstAvailableApplication.SelectedItem as UserApplication;
             if (userApplication != null)
@@ -621,6 +615,7 @@ namespace GestureSign.UI
                 BindApplications();
             }
         }
+
 
     }
     public class HeaderConverter : IMultiValueConverter

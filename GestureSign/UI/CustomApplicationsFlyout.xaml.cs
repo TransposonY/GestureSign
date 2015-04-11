@@ -35,7 +35,6 @@ namespace GestureSign.UI
         public CustomApplicationsFlyout()
         {
             InitializeComponent();
-            crosshairMain.CrosshairDragged += crosshairMain_CrosshairDragged;
             crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
             IgnoredApplications.ShowIgnoredCustomFlyout += ShowEditApplicationFlyout;
             AvailableAction.ShowEditApplicationFlyout += ShowEditApplicationFlyout;
@@ -68,7 +67,7 @@ namespace GestureSign.UI
             Theme = isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
             if (CurrentApplication != null)
                 SetFields(CurrentApplication.MatchString, CurrentApplication.MatchUsing, CurrentApplication.IsRegEx);
-
+            else Header = "添加忽略的程序";
             IsOpen = true;
         }
         void RuningApplicationsFlyout_RuningAppSelectionChanged(object sender, ApplicationListViewItem e)
@@ -90,8 +89,6 @@ namespace GestureSign.UI
         {
             Point cursorPosition; //(e.OriginalSource as Image).PointToScreen(e.GetPosition(null));
             GetCursorPos(out cursorPosition);
-            if (Visibility == Visibility.Visible && chkCrosshairHide.IsChecked.Value)
-                Opacity = 0.00;
             try
             {
                 txtFile.Text = Path.GetFileName(ApplicationManager.Instance.GetWindowFromPoint(cursorPosition).Process.MainModule.FileName);
@@ -103,13 +100,7 @@ namespace GestureSign.UI
                 txtFile.Text = txtClass.Text = txtTitle.Text = "错误：" + ex.Message;
             }
         }
-
-        void crosshairMain_CrosshairDragged(object sender, MouseButtonEventArgs e)
-        {
-            if (chkCrosshairHide.IsChecked.Value)
-                Opacity = 1.00;
-        }
-
+        
 
 
         private void btnBrowse_Click(object sender, RoutedEventArgs e)
@@ -203,12 +194,13 @@ namespace GestureSign.UI
         {
             GroupNameTextBox.Text = ApplicationNameTextBox.Text = txtClass.Text = txtTitle.Text = txtFile.Text = "";
             CurrentApplication = null;
-            chkPattern.IsChecked = false;
+            chkAllowSingleStroke.IsChecked = chkInterceptTouchInput.IsChecked = chkPattern.IsChecked = false;
         }
 
         public void SetFields(string matchString, MatchUsing matchUsing, bool isRegEx)
         {
             EditMode = true;
+            Header = "修改程序匹配方式";
             chkPattern.IsChecked = isRegEx;
             switch (matchUsing)
             {

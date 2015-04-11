@@ -12,10 +12,10 @@
     </controls:Flyout.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="210"/>
-            <RowDefinition Height="34"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Button x:Name="ShowRunningButton" Content="选择运行中的窗口.." HorizontalAlignment="Left" VerticalAlignment="Bottom"  Click="ShowRunningButton_Click" Margin="10,0,0,10" Grid.Row="3" FontSize="12" FontWeight="Bold" Height="25" Width="123"/>
         <Button x:Name="btnAddCustom" Content="确定" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80" Click="btnAddCustom_Click" Margin="0,0,10,7" Grid.Row="3" FontSize="12" FontFamily="Microsoft YaHei UI" Height="27"/>
@@ -29,22 +29,21 @@
             <RadioButton x:Name="RadioButton1"   GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,20,0,0" IsChecked="True" Height="21" Width="120" >
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="可执行文件名" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
             </RadioButton>
-            <TextBox x:Name="txtFile" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=RadioButton1}" HorizontalAlignment="Left" Height="26" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" IsEnabled="{Binding IsChecked, ElementName=RadioButton1}"/>
+            <TextBox x:Name="txtFile" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=RadioButton1}" HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" IsEnabled="{Binding IsChecked, ElementName=RadioButton1}" MaxLines="3" Height="30"/>
             <Button x:Name="btnBrowse" Content="浏览.." Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=RadioButton1}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>
             <RadioButton x:Name="RadioButton2"
                          GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Height="21" Width="72" >
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="窗口类" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
             </RadioButton>
-            <TextBox x:Name="txtClass" Visibility="{Binding ElementName=RadioButton2,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="26" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton2,Path=IsChecked}" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="txtClass" Visibility="{Binding ElementName=RadioButton2,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="30" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton2,Path=IsChecked}" Grid.ColumnSpan="2" MaxLines="3"/>
             <RadioButton x:Name="RadioButton3"
                          GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="88" Height="21" >
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="窗口标题" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
             </RadioButton>
-            <TextBox x:Name="txtTitle" Visibility="{Binding ElementName=RadioButton3,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="26" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton3,Path=IsChecked}" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="txtTitle" Visibility="{Binding ElementName=RadioButton3,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="30" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton3,Path=IsChecked}" Grid.ColumnSpan="2" MaxLines="3"/>
         </StackPanel>
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="定位窗口" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Height="20" Grid.Row="2" Width="64" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="将右侧图标拖至你想忽略的程序窗口上以选择窗口，然后释放鼠标按键" VerticalAlignment="Top" Margin="10,35,0,0" Width="147" Height="46" Grid.Row="2"/>
-        <CheckBox x:Name="chkCrosshairHide" Content="定位时隐藏窗口" HorizontalAlignment="Center" Margin="162,63,10,0" VerticalAlignment="Top" Grid.Row="2"/>
         <local:Crosshair x:Name="crosshairMain" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Height="50" Grid.Row="2" Width="50"/>
         <CheckBox x:Name="chkPattern" Content="正则表达式" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
         <CheckBox x:Name="chkAllowSingleStroke" Content="允许单指" HorizontalAlignment="Left" Margin="198,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>

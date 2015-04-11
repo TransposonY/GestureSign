@@ -90,7 +90,13 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="lstAvailableApplication" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableApplication_SelectionChanged">
+        <ListBox x:Name="lstAvailableApplication" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableApplication_SelectionChanged" ContextMenuOpening="lstAvailableApplication_ContextMenuOpening">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Click="InterceptTouchInputMenuItem_Click" />
+                    <MenuItem x:Name="AllowSingleMenuItem" Header="允许单指手势"  IsCheckable="True" FontSize="16" Click="AllowSingleMenuItem_Click"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
             <ListBox.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
@@ -137,13 +143,10 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="lstAvailableActions" ContextMenuOpening="ContextMenu_Opening"   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False" Grid.Column="1">
+        <ListBox x:Name="lstAvailableActions" ContextMenuOpening="ActionContextMenu_Opening"   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False" Grid.Column="1">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
-                    <Separator></Separator>
-                    <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Click="InterceptTouchInputMenuItem_Click" />
-                    <MenuItem x:Name="AllowSingleMenuItem" Header="允许单指手势"  IsCheckable="True" FontSize="16" Click="AllowSingleMenuItem_Click"/>
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
                     <MenuItem x:Name="ExportActionMenuItem" Header="导出所有动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
@@ -200,7 +203,7 @@
                            HorizontalAlignment="Center"
                           VerticalContentAlignment="Center"
                            Margin="10,5,5,5"
-                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280" MinWidth="210">
+                         VerticalAlignment="Center" Width="210" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280" MinWidth="210">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -351,7 +354,7 @@
                         </ComboBox>
                         <Canvas VerticalAlignment="Center" Height="55" DockPanel.Dock="Right" HorizontalAlignment="Right" Canvas.Left="270" Canvas.Top="15">
                             <TextBlock TextWrapping="NoWrap" Text="{Binding ActionName}" Margin="0,10,0,5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Canvas.Top="0" Width="Auto"/>
-                            <TextBlock TextWrapping="Wrap" Text="{Binding Description}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Canvas.Top="32" Width="150" Foreground="{StaticResource HighlightBrush}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Description}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Canvas.Top="32" Width="Auto" Foreground="{StaticResource HighlightBrush}"/>
                         </Canvas>
                     </Canvas>
                 </DataTemplate>

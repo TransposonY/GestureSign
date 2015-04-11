@@ -101,7 +101,7 @@
             <RadioButton x:Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
-                         GroupName="1" FontSize="18" IsChecked="True"/>
+                         GroupName="1" FontSize="18"/>
             <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True" />
