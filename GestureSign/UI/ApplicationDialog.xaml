@@ -91,28 +91,32 @@
             <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="83" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" Width="193"/>
-                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="83" FontSize="14" Width="193"/>
+                <TextBlock Canvas.Left="66" TextWrapping="Wrap" Text="分组" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
+                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="115" FontSize="14" Width="193"/>
             </Canvas>
             <RadioButton x:Name="NewApplicationRadioButton"
                 Margin="0, 10, 0, 0"
                          Content="新建程序"
-                         GroupName="1" FontSize="18"/>
+                         GroupName="1" FontSize="18" IsChecked="True"/>
             <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="17"/>
-                <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="10"/>
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="55"/>
-                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="52">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="17"/>
+                <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True" />
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="54"/>
+                <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="47"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="92"/>
+                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
                     <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="OneWay">
                         <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
                         <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
                     </MultiBinding>
                 </TextBox>
-                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="142" FontSize="14"/>
+                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="168" FontSize="14"/>
                 <Button x:Name="cmdBrowse" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
-                        Canvas.Left="244" Canvas.Top="137" />
+                        Canvas.Left="244" Canvas.Top="163" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
                            Width="216" Canvas.Left="51" Canvas.Top="207"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮并选择程序"/></TextBlock>
 

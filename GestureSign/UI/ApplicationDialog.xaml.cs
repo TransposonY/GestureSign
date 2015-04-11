@@ -82,7 +82,8 @@ namespace GestureSign.UI
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
 
-            BindMatchUsingComboBoxes();
+            BindMatchUsingComboBox();
+            BindGroupComboBox();
             BindExistingApplications();
             BindExistingGestures();
 
@@ -333,7 +334,7 @@ namespace GestureSign.UI
                 }
             }
         }
-        private void BindMatchUsingComboBoxes()
+        private void BindMatchUsingComboBox()
         {
             MatchUsingComboBoxItem mciWindowClass = new MatchUsingComboBoxItem() { DisplayText = "窗口类", MatchUsing = MatchUsing.WindowClass };
             MatchUsingComboBoxItem mciWindowTitle = new MatchUsingComboBoxItem() { DisplayText = "窗口标题", MatchUsing = MatchUsing.WindowTitle };
@@ -344,13 +345,10 @@ namespace GestureSign.UI
 
             cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
         }
-
-
-        private void SelectMatchUsing(ComboBox MatchUsingList, MatchUsing Value)
-        {
-            MatchUsingList.SelectedItem = MatchUsingList.Items.Cast<MatchUsingComboBoxItem>().FirstOrDefault(ci => ci.MatchUsing == Value);
-        }
-
+         private void BindGroupComboBox()
+         {
+             GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
+         }
         #endregion
 
         #region Type Methods
