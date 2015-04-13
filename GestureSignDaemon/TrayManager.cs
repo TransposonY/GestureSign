@@ -126,10 +126,8 @@ namespace GestureSignDaemon
             miExitGestureSign.Name = "ExitGestureSign";
             miExitGestureSign.Size = new Size(193, 22);
             miExitGestureSign.Text = "退出";
-            miExitGestureSign.Click += async (o, e) =>
+            miExitGestureSign.Click += (o, e) =>
             {
-                TrayIcon.Visible = false;
-                await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignSetting");
                 Application.Exit();
             };
         }
@@ -158,11 +156,10 @@ namespace GestureSignDaemon
         protected TrayManager()
         {
             Input.TouchCapture.Instance.StateChanged += new StateChangedEventHandler(CaptureState_Changed);
+            Application.ApplicationExit += Application_ApplicationExit;
         }
-
-
-
         #endregion
+
 
         #region Public Properties
 
@@ -181,6 +178,14 @@ namespace GestureSignDaemon
         #endregion
 
         #region Events
+
+        async void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            TrayIcon.Visible = false;
+            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignSetting");
+            Environment.Exit(Environment.ExitCode);
+        }
+
 
         protected void CaptureState_Changed(object sender, StateChangedEventArgs e)
         {

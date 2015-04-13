@@ -59,6 +59,7 @@ namespace GestureSignDaemon
                     if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
+                        //return;
                     }
                     else if (AppConfig.XRatio == 0 && !Input.TouchCapture.Instance.MessageWindow.IsRegistered)
                     {
