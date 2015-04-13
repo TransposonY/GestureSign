@@ -133,10 +133,7 @@ namespace GestureSign.UI
             // Store selected item group header for later use
             string strApplicationHeader = selectedItem.ApplicationName;
 
-            if (strApplicationHeader != ApplicationManager.Instance.GetGlobalApplication().Name)
-                selectedApplication = ApplicationManager.Instance.GetExistingUserApplication(strApplicationHeader);
-            else
-                selectedApplication = ApplicationManager.Instance.GetGlobalApplication();
+            selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
 
             if (selectedApplication == null)
                 // Select action from global application list
