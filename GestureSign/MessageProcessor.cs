@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,24 +19,24 @@ namespace GestureSign
             try
             {
                 BinaryFormatter binForm = new BinaryFormatter();
-
-                // string[] pointString= message.Split(',');
-                //  new System.Drawing.Point(int.Parse(pointString[0]), int.Parse(pointString[1])
-
-                object data = binForm.Deserialize(server);
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    string message = data as string;
-                    if (message != null)
+                    server.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    object data = binForm.Deserialize(memoryStream);
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
-                        switch (message)
+                        string message = data as string;
+                        if (message != null)
                         {
-                            case "MainWindow":
+                            switch (message)
+                            {
+                                case "MainWindow":
                                 {
 
                                     foreach (Window win in Application.Current.Windows)
                                     {
-                                        if (win.GetType().Equals(typeof(GestureSign.MainWindow)))
+                                        if (win.GetType() == typeof (MainWindow))
                                         {
                                             win.Activate();
                                             return;
@@ -49,35 +50,39 @@ namespace GestureSign
                                     }
                                     break;
                                 }
-                            case "EndGuide":
+                                case "EndGuide":
                                 {
                                     if (OnInitialized != null)
                                         OnInitialized(this, EventArgs.Empty);
                                     break;
                                 }
-                            case "Exit":
+                                case "Exit":
                                 {
                                     Application.Current.Shutdown();
                                     break;
                                 }
-                            case "Guide":
-                                UI.Guide guide = new UI.Guide();
-                                guide.Show();
-                                guide.Activate();
-                                break;
+                                case "Guide":
+                                    UI.Guide guide = new UI.Guide();
+                                    guide.Show();
+                                    guide.Activate();
+                                    break;
+                            }
                         }
-                    }
-                    else
-                    {
-                        var newGesture = data as Tuple<string, List<List<Point>>>;
-                        if (newGesture == null) return;
-                        UI.GestureDefinition gu = new UI.GestureDefinition(newGesture.Item2, newGesture.Item1, false);
-                        gu.Show();
-                        gu.Activate();
-                    }
-                }));
+                        else
+                        {
+                            var newGesture = data as Tuple<string, List<List<Point>>>;
+                            if (newGesture == null) return;
+                            UI.GestureDefinition gu = new UI.GestureDefinition(newGesture.Item2, newGesture.Item1, false);
+                            gu.Show();
+                            gu.Activate();
+                        }
+                    }));
+                }
             }
-            catch (Exception e) { System.Windows.MessageBox.Show(e.Message); }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message);
+            }
 
         }
     }

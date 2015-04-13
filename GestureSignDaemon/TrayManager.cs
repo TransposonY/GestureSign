@@ -126,8 +126,9 @@ namespace GestureSignDaemon
             miExitGestureSign.Name = "ExitGestureSign";
             miExitGestureSign.Size = new Size(193, 22);
             miExitGestureSign.Text = "退出";
-            miExitGestureSign.Click += (o, e) =>
+            miExitGestureSign.Click += async (o, e) =>
             {
+                await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignSetting");
                 Application.Exit();
             };
         }
@@ -179,10 +180,9 @@ namespace GestureSignDaemon
 
         #region Events
 
-        async void Application_ApplicationExit(object sender, EventArgs e)
+        void Application_ApplicationExit(object sender, EventArgs e)
         {
             TrayIcon.Visible = false;
-            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignSetting");
             Environment.Exit(Environment.ExitCode);
         }
 
