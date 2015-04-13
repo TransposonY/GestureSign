@@ -639,7 +639,7 @@ namespace GestureSign.UI
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
     public class ApplicationListHeaderConverter : IMultiValueConverter
@@ -654,7 +654,7 @@ namespace GestureSign.UI
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
 }

@@ -159,6 +159,9 @@
     <Compile Include="UI\AvailableAction.xaml.cs">
       <DependentUpon>AvailableAction.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Common\MatchUsingRadio.xaml.cs">
+      <DependentUpon>MatchUsingRadio.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\CustomApplicationsFlyout.xaml.cs">
       <DependentUpon>CustomApplicationsFlyout.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\AvailableAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Common\MatchUsingRadio.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

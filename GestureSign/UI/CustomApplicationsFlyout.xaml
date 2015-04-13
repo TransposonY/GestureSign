@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
         xmlns:local="clr-namespace:GestureSign.UI"
+                 x:Name="customApplicationsFlyout"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="280" Header="自定义规则" Position="Right" Width="280" ClosingFinished="Flyout_ClosingFinished">
     <controls:Flyout.Resources>
-        <local:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter"></local:Bool2VisibilityConverter>
+        <local:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter"></local:MatchUsing2VisibilityConverter>
+        <local:MatchStringConverter x:Key="MatchStringConverter"></local:MatchStringConverter>
     </controls:Flyout.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -25,22 +27,15 @@
             <TextBlock x:Name="GroupNameTextBlock" HorizontalAlignment="Right" TextWrapping="Wrap" Text="分组名" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,-20,70,0"/>
             <TextBox x:Name="ApplicationNameTextBox"  HorizontalAlignment="Left" Height="26" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="137"/>
             <TextBox x:Name="GroupNameTextBox" HorizontalAlignment="Right" Height="26" Margin="0,-26,5,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113" />
-
-            <RadioButton x:Name="RadioButton1"   GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,20,0,0" IsChecked="True" Height="21" Width="120" >
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="可执行文件名" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
-            </RadioButton>
-            <TextBox x:Name="txtFile" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=RadioButton1}" HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" IsEnabled="{Binding IsChecked, ElementName=RadioButton1}" MaxLines="3" Height="30"/>
-            <Button x:Name="btnBrowse" Content="浏览.." Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=RadioButton1}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>
-            <RadioButton x:Name="RadioButton2"
-                         GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Height="21" Width="72" >
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="窗口类" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
-            </RadioButton>
-            <TextBox x:Name="txtClass" Visibility="{Binding ElementName=RadioButton2,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="30" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton2,Path=IsChecked}" Grid.ColumnSpan="2" MaxLines="3"/>
-            <RadioButton x:Name="RadioButton3"
-                         GroupName="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="88" Height="21" >
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="窗口标题" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16"/>
-            </RadioButton>
-            <TextBox x:Name="txtTitle" Visibility="{Binding ElementName=RadioButton3,Path=IsChecked,Converter={StaticResource Bool2VisibilityConverter}}" Height="30" Margin="10,5,5,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="{Binding ElementName=RadioButton3,Path=IsChecked}" Grid.ColumnSpan="2" MaxLines="3"/>
+            <TextBlock TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" HorizontalAlignment="Left" Margin="10,15,0,0"/>
+            <local:MatchUsingRadio x:Name="matchUsingRadio" Margin="10,5,10,0"></local:MatchUsingRadio>
+            <TextBox x:Name="txtMatchString" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" MaxLines="3">
+                <MultiBinding Converter="{StaticResource MatchStringConverter}" Mode="TwoWay">
+                    <Binding ElementName="customApplicationsFlyout"  Path="ApplicationListViewItem" Mode="OneWay" />
+                    <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="OneWay"/>
+                </MultiBinding>
+            </TextBox>
+            <Button x:Name="btnBrowse" Content="浏览.." Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>
         </StackPanel>
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="定位窗口" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Height="20" Grid.Row="2" Width="64" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="将右侧图标拖至你想忽略的程序窗口上以选择窗口，然后释放鼠标按键" VerticalAlignment="Top" Margin="10,35,0,0" Width="147" Height="46" Grid.Row="2"/>

@@ -30,6 +30,7 @@
             <local:ListviewItem2TextBoxConverter x:Key="ListviewItem2TextBoxConverter"></local:ListviewItem2TextBoxConverter>
             <local:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter"></local:Bool2VisibilityConverter>
             <local:AllowSingleBoolConverter x:Key="AllowSingleBoolConverter"></local:AllowSingleBoolConverter>
+            <local:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter"></local:MatchUsing2VisibilityConverter>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -50,13 +51,13 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Canvas Height="520">
-        <Popup x:Name="RunningApplicationsPopup" Width="358" Height="520"  
+        <Popup x:Name="RunningApplicationsPopup" Width="349" Height="520"  
         	Opened="RunningApplicationsPopup_Opened"
         	StaysOpen="False"   
         	IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"   
         	AllowsTransparency="True"  
         	PopupAnimation="Fade"
-        	Placement="RelativePoint" PlacementRectangle="342,0,0,0">
+        	Placement="RelativePoint">
             <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
                 <ListView.View>
                     <GridView>
@@ -85,8 +86,12 @@
 
             <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
 
-            <RadioButton Margin="0, 10, 0, 0" Content="保存的程序" x:Name="ExistingApplicationRadioButton"
+            <RadioButton Margin="10,10,0,0" Content="保存的程序" x:Name="ExistingApplicationRadioButton"
                          GroupName="1" FontSize="18" IsChecked="True" />
+            <RadioButton x:Name="NewApplicationRadioButton"
+                Margin="0,-23,10,0"
+                         Content="新建程序"
+                         GroupName="1" FontSize="18" IsChecked="True" HorizontalAlignment="Right"/>
             <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
@@ -97,31 +102,27 @@
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="115" FontSize="14" Width="193"/>
             </Canvas>
-            <RadioButton x:Name="NewApplicationRadioButton"
-                Margin="0, 10, 0, 0"
-                         Content="新建程序"
-                         GroupName="1" FontSize="18"/>
-            <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="253" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
+            <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="17"/>
                 <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True" />
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="54"/>
-                <ComboBox x:Name="cmbMatchUsingCustom" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" SelectionChanged="cmbMatchUsingCustom_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" Height="26" Canvas.Left="103" Canvas.Top="47"/>
+                <local:MatchUsingRadio x:Name="matchUsingRadio" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Height="26" Canvas.Left="103" Canvas.Top="47"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="92"/>
-                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
-                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="OneWay">
-                        <Binding ElementName="cmbMatchUsingCustom" Path="SelectedItem" Mode="OneWay"/>
-                        <Binding Path="SelectedItem" ElementName="alvRunningApplications" Mode="OneWay"/>
+                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
+                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="TwoWay">
+                        <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay" />
+                        <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
                     </MultiBinding>
                 </TextBox>
-                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="168" FontSize="14"/>
-                <Button x:Name="cmdBrowse" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
-                        Canvas.Left="244" Canvas.Top="163" />
+                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="207" FontSize="14"/>
+                <Button x:Name="cmdBrowse" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
+                        Canvas.Left="246" Canvas.Top="202" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
-                           Width="216" Canvas.Left="51" Canvas.Top="207"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮并选择程序"/></TextBlock>
+                           Width="216" Canvas.Left="51" Canvas.Top="255"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮并选择程序"/></TextBlock>
 
-                <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="36" Width="36" Canvas.Left="10" Canvas.Top="203"/>
+                <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="36" Width="36" Canvas.Left="10" Canvas.Top="255"/>
                 <ToggleButton x:Name="btnExistingApplication"
-                    Style="{DynamicResource MetroCircleToggleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Canvas.Left="270" Canvas.Top="196" IsTabStop="False" 
+                    Style="{DynamicResource MetroCircleToggleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Canvas.Left="272" Canvas.Top="247" IsTabStop="False" 
                         >
                     <Rectangle Width="20"
                            Height="20">
@@ -306,10 +307,10 @@
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
             <TextBox x:Name="txtApplicationName" TextWrapping="Wrap" 
             	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80" FontFamily="Microsoft YaHei UI">
-                <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="OneWay">
-                    <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="OneWay" />
-                    <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="OneWay"/>
-                    <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="OneWay"/>
+                <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="TwoWay">
+                    <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="TwoWay" />
+                    <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="TwoWay"/>
+                    <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
                 </MultiBinding>
             </TextBox>
             <TextBlock TextWrapping="Wrap" Text="动作名称" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>

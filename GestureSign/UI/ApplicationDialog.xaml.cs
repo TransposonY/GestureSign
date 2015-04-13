@@ -82,7 +82,6 @@ namespace GestureSign.UI
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
 
-            BindMatchUsingComboBox();
             BindGroupComboBox();
             BindExistingApplications();
             BindExistingGestures();
@@ -114,7 +113,7 @@ namespace GestureSign.UI
             SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
 
             // Set MatchUsings
-            MatchUsing muCustom = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
+            MatchUsing muCustom = matchUsingRadio.MatchUsing;
             // Which screen are we changing
             try
             {
@@ -154,13 +153,6 @@ namespace GestureSign.UI
                 }
             }
         }
-
-        private void cmbMatchUsingCustom_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cmbMatchUsingCustom.SelectedItem != null)
-                cmdBrowse.Visibility = (((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing == MatchUsing.ExecutableFilename) ? Visibility.Visible : Visibility.Hidden;
-        }
-
 
         private void cmdBrowse_Click(object sender, RoutedEventArgs e)
         {
@@ -253,7 +245,7 @@ namespace GestureSign.UI
                 }
 
                 _SelectedApplication.MatchString = matchString;
-                _SelectedApplication.MatchUsing = ((MatchUsingComboBoxItem)cmbMatchUsingCustom.SelectedItem).MatchUsing;
+                _SelectedApplication.MatchUsing = matchUsingRadio.MatchUsing;
                 _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
 
 
@@ -334,17 +326,6 @@ namespace GestureSign.UI
                         availableGesturesComboBox.SelectedIndex = availableGesturesComboBox.Items.IndexOf(item);
                 }
             }
-        }
-        private void BindMatchUsingComboBox()
-        {
-            MatchUsingComboBoxItem mciWindowClass = new MatchUsingComboBoxItem() { DisplayText = "窗口类", MatchUsing = MatchUsing.WindowClass };
-            MatchUsingComboBoxItem mciWindowTitle = new MatchUsingComboBoxItem() { DisplayText = "窗口标题", MatchUsing = MatchUsing.WindowTitle };
-            MatchUsingComboBoxItem mciExecutableFilename = new MatchUsingComboBoxItem() { DisplayText = "文件名", MatchUsing = MatchUsing.ExecutableFilename };
-
-            cmbMatchUsingCustom.DisplayMemberPath = "DisplayText";
-            cmbMatchUsingCustom.ItemsSource = (new MatchUsingComboBoxItem[] { mciExecutableFilename, mciWindowTitle, mciWindowClass });
-
-            cmbMatchUsingCustom.SelectedItem = mciExecutableFilename;
         }
         private void BindGroupComboBox()
         {
@@ -596,6 +577,7 @@ namespace GestureSign.UI
 
         private void RunningApplicationsPopup_Opened(object sender, EventArgs e)
         {
+            RunningApplicationsPopup.PlacementRectangle = SystemParameters.MenuDropAlignment ? new Rect(Width, 0, 0, 0) : new Rect(Width / 2, 0, 0, 0);
             RefreshApplications();
         }
 
@@ -618,11 +600,6 @@ namespace GestureSign.UI
 
 
 
-    }
-    public class MatchUsingComboBoxItem
-    {
-        public string DisplayText { get; set; }
-        public MatchUsing MatchUsing { get; set; }
     }
     // Converter
     public class SelectedItemConverter : IMultiValueConverter
@@ -650,9 +627,9 @@ namespace GestureSign.UI
         {
 
             if (values[0] == null || values[1] == null) return DependencyProperty.UnsetValue;
-            MatchUsingComboBoxItem matchUsingComboBoxItem = values[0] as MatchUsingComboBoxItem;
+            var matchUsing = (MatchUsing)values[0];
             ApplicationListViewItem applicationListViewItem = values[1] as ApplicationListViewItem;
-            switch ((matchUsingComboBoxItem).MatchUsing)
+            switch (matchUsing)
             {
                 case MatchUsing.WindowClass:
                     return applicationListViewItem.WindowClass;
@@ -668,7 +645,7 @@ namespace GestureSign.UI
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return new[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
     [ValueConversion(typeof(MatchUsing), typeof(string))]
@@ -745,6 +722,23 @@ namespace GestureSign.UI
             if (value != null)
             {
                 return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+    [ValueConversion(typeof(MatchUsing), typeof(Visibility))]
+    public class MatchUsing2VisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                return (MatchUsing)value == MatchUsing.ExecutableFilename ? Visibility.Visible : Visibility.Collapsed;
             }
             return DependencyProperty.UnsetValue;
         }
