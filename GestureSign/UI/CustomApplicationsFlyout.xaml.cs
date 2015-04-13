@@ -67,14 +67,15 @@ namespace GestureSign.UI
 
             if (isUserApp)
             {
+                GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
                 ApplicationNameTextBox.Text = CurrentApplication.Name;
-                GroupNameTextBox.Text = CurrentApplication.Group;
+                GroupComboBox.Text = CurrentApplication.Group;
                 chkAllowSingleStroke.IsChecked = ((UserApplication)CurrentApplication).AllowSingleStroke;
                 chkInterceptTouchInput.IsChecked = ((UserApplication)CurrentApplication).InterceptTouchInput;
             }
 
             chkAllowSingleStroke.Visibility = chkInterceptTouchInput.Visibility = ApplicationNameTextBlock.Visibility =
-                ApplicationNameTextBox.Visibility = GroupNameTextBlock.Visibility = GroupNameTextBox.Visibility =
+                ApplicationNameTextBox.Visibility = GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
                   isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
             Theme = isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
@@ -163,7 +164,7 @@ namespace GestureSign.UI
             if (isUserApp)
             {
                 name = ApplicationNameTextBox.Text.Trim();
-                string groupName = GroupNameTextBox.Text.Trim();
+                string groupName = GroupComboBox.Text.Trim();
                 if (name.Length == 0)
                 {
                     UIHelper.GetParentWindow(this).ShowMessageAsync("无程序名", "请定义程序名", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
@@ -203,7 +204,7 @@ namespace GestureSign.UI
 
         public void ClearManualFields()
         {
-            GroupNameTextBox.Text = ApplicationNameTextBox.Text = txtMatchString.Text = "";
+            GroupComboBox.Text = ApplicationNameTextBox.Text = txtMatchString.Text = "";
             CurrentApplication = null;
             chkAllowSingleStroke.IsChecked = chkInterceptTouchInput.IsChecked = chkPattern.IsChecked = false;
         }

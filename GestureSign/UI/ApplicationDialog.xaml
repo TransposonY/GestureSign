@@ -91,7 +91,7 @@
             <RadioButton x:Name="NewApplicationRadioButton"
                 Margin="0,-23,10,0"
                          Content="新建程序"
-                         GroupName="1" FontSize="18" HorizontalAlignment="Right"/>
+                         GroupName="1" FontSize="18" HorizontalAlignment="Right" IsChecked="True"/>
             <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
