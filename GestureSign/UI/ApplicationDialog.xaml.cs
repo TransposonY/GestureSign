@@ -611,14 +611,14 @@ namespace GestureSign.UI
             ApplicationListViewItem applicationListViewItem = values[2] as ApplicationListViewItem;
             if (!isExisting)
                 return applicationListViewItem == null
-                    ? DependencyProperty.UnsetValue
+                    ? Binding.DoNothing
                     : applicationListViewItem.WindowTitle;
-            return existingApplication != null ? existingApplication.Name : DependencyProperty.UnsetValue;
+            return existingApplication != null ? existingApplication.Name : Binding.DoNothing;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new object[3] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return new object[3] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
         }
     }
     public class ListviewItem2TextBoxConverter : IMultiValueConverter
@@ -626,7 +626,7 @@ namespace GestureSign.UI
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
 
-            if (values[0] == null || values[1] == null) return DependencyProperty.UnsetValue;
+            if (values[0] == null || values[1] == null) return Binding.DoNothing;
             var matchUsing = (MatchUsing)values[0];
             ApplicationListViewItem applicationListViewItem = values[1] as ApplicationListViewItem;
             switch (matchUsing)
@@ -640,12 +640,12 @@ namespace GestureSign.UI
                 case MatchUsing.ExecutableFilename:
                     return applicationListViewItem.WindowFilename;
             }
-            return DependencyProperty.UnsetValue;
+            return Binding.DoNothing;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return new[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
     [ValueConversion(typeof(MatchUsing), typeof(string))]

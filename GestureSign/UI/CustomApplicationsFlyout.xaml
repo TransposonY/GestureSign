@@ -31,8 +31,8 @@
             <local:MatchUsingRadio x:Name="matchUsingRadio" Margin="10,5,10,0"></local:MatchUsingRadio>
             <TextBox x:Name="txtMatchString" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" MaxLines="3">
                 <MultiBinding Converter="{StaticResource MatchStringConverter}" Mode="TwoWay">
-                    <Binding ElementName="customApplicationsFlyout"  Path="ApplicationListViewItem" Mode="OneWay" />
-                    <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="OneWay"/>
+                    <Binding ElementName="customApplicationsFlyout"  Path="ApplicationListViewItem" Mode="TwoWay" />
+                    <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay"/>
                 </MultiBinding>
             </TextBox>
             <Button x:Name="btnBrowse" Content="浏览.." Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>

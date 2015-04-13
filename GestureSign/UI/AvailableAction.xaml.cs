@@ -649,9 +649,7 @@ namespace GestureSign.UI
             string name = values[0] as string;
             int count = (int)values[1];
             return String.IsNullOrEmpty(name) ? String.Format("未分组 {0}程序", count) : String.Format("{0} {1}程序", name, count);
-            // return DependencyProperty.UnsetValue;
         }
-        // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
