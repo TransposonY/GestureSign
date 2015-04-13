@@ -210,8 +210,13 @@ namespace GestureSign.UI
                         // Add new gesture to gesture manager
                         GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
                         GestureManager.Instance.GestureName = newGestureName;
-                        GestureManager.Instance.SaveGestures();
                     }
+                    else
+                    {
+                        GestureManager.Instance.DeleteGesture(newGestureName);
+                        GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                    }
+                    GestureManager.Instance.SaveGestures();
                 }
             }
 
