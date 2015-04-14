@@ -74,40 +74,35 @@ namespace GestureSign.Common.Configuration
                 SetValue("Opacity", value);
             }
         }
+        private static double? xRatio;
         public static double XRatio
         {
             get
             {
-                return (double)GetValue("XRatio", 0.0);
+                return xRatio ?? (xRatio = (double)GetValue("XRatio", 0.0)).Value;
             }
             set
             {
+                xRatio = value;
                 SetValue("XRatio", value);
             }
         }
+        private static double? yRatio;
         public static double YRatio
         {
             get
             {
-                return (double)GetValue("YRatio", 0.0);
+                return yRatio ?? (yRatio = (double)GetValue("YRatio", 0.0)).Value;
             }
             set
             {
+                yRatio = value;
                 SetValue("YRatio", value);
             }
         }
-        private static bool teaching = false;
-        public static bool Teaching
-        {
-            get
-            {
-                return teaching;
-            }
-            set
-            {
-                teaching = value;
-            }
-        }
+
+        public static bool Teaching { get; set; }
+
         public static string DeviceName
         {
             get
@@ -157,6 +152,7 @@ namespace GestureSign.Common.Configuration
 
         static AppConfig()
         {
+            Teaching = false;
             config = ConfigurationManager.OpenExeConfiguration(path);
             timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, Timeout.Infinite, Timeout.Infinite);
 
@@ -255,9 +251,9 @@ namespace GestureSign.Common.Configuration
                 {
                     string strReturn = config.AppSettings.Settings[key].Value;
                     if (defaultValue.GetType() == typeof(System.Drawing.Color)) return System.Drawing.ColorTranslator.FromHtml(strReturn);
-                    else if (defaultValue.GetType() == typeof(int)) return int.Parse(strReturn);
-                    else if (defaultValue.GetType() == typeof(double)) return double.Parse(strReturn);
-                    else if (defaultValue.GetType() == typeof(bool)) return bool.Parse(strReturn);
+                    else if (defaultValue is int) return int.Parse(strReturn);
+                    else if (defaultValue is double) return double.Parse(strReturn);
+                    else if (defaultValue is bool) return bool.Parse(strReturn);
                     //return string
                     else return strReturn;
                 }
