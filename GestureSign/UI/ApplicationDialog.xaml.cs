@@ -292,8 +292,7 @@ namespace GestureSign.UI
             {
                 IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
                 List<GestureItem> GestureItems = new List<GestureItem>(results.Count());
-                var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
-                var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
+                var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
                 foreach (IGesture gesture in results)
                 {
                     // Create new listviewitem to represent gestures, create a thumbnail of the latest version of each gesture

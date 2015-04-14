@@ -280,28 +280,32 @@ namespace GestureSign.UI
         private void RefreshActions()
         {
             ActionInfos.Clear();
-            var SelectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-            if (SelectedApplication == null) return;
-            AddActionsToGroup(SelectedApplication.Name, SelectedApplication.Actions.OrderBy(a => a.Name));
+            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApplication == null) return;
+            AddActionsToGroup(selectedApplication.Name, selectedApplication.Actions.OrderBy(a => a.Name));
             EnableRelevantButtons();
         }
-        private void AddActionsToGroup(string ApplicationName, IEnumerable<IAction> Actions)
+        private void AddActionsToGroup(string applicationName, IEnumerable<IAction> actions)
         {
 
 
-            string description = String.Empty;
+            string description;
             DrawingImage Thumb = null;
-            string gestureName = String.Empty;
-            string pluginName = String.Empty;
+            string gestureName;
+            string pluginName;
+
+            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
             // Loop through each global action
-            foreach (Applications.Action currentAction in Actions)
+            foreach (Applications.Action currentAction in actions)
             {
                 // Ensure this action has a plugin
                 if (PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
                 {
 
                     // Get plugin for this action
-                    IPluginInfo pluginInfo = PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass, currentAction.PluginFilename);
+                    IPluginInfo pluginInfo =
+                        PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass,
+                            currentAction.PluginFilename);
 
                     // Feed settings to plugin
                     if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
@@ -318,24 +322,19 @@ namespace GestureSign.UI
                 // Get handle of action gesture
                 IGesture actionGesture = GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
 
-
                 if (actionGesture == null)
                 {
                     Thumb = null;
                     gestureName = String.Empty;
-
                 }
                 else
                 {
-                    var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
-                    var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
-
                     Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize, brush);
                     gestureName = actionGesture.Name;
                 }
                 ActionInfo ai = new ActionInfo(
-                   !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
-                    ApplicationName,
+                    !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
+                    applicationName,
                     description,
                     Thumb,
                     gestureName,

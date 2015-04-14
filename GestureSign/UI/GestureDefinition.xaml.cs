@@ -117,8 +117,7 @@ namespace GestureSign.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var accent = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
-            var brush = accent != null ? accent.Item2.Resources["HighlightBrush"] as Brush : SystemParameters.WindowGlassBrush;
+            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
 
             if (String.IsNullOrEmpty(GestureManager.Instance.GestureName))
             {
