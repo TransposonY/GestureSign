@@ -81,10 +81,22 @@ namespace GestureSign.Common.Applications
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
             {
-                e.Cancel = ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled) ||
-                           (e.Points.Count == 1 && (app is GlobalApplication || !((UserApplication)app).AllowSingleStroke));
-
                 e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                else if (e.Points.Count == 1)
+                {
+                    e.Cancel = true;
+                    UserApplication userApplication = app as UserApplication;
+                    if (userApplication != null && userApplication.AllowSingleStroke)
+                    {
+                        e.Cancel = false;
+                        return;
+                    }
+                }
             }
 
         }
