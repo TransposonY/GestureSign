@@ -24,8 +24,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSignDaemon", "Gestur
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C} = {60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager", "CertificateManager\CertificateManager.csproj", "{2BDCD22F-D982-44BB-9C69-BA2E0D2445CC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,10 +54,6 @@ Global
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BDCD22F-D982-44BB-9C69-BA2E0D2445CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BDCD22F-D982-44BB-9C69-BA2E0D2445CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BDCD22F-D982-44BB-9C69-BA2E0D2445CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BDCD22F-D982-44BB-9C69-BA2E0D2445CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
