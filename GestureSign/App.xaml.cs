@@ -89,9 +89,9 @@ namespace GestureSign
                 }
 #if DEBUG
 
-                //MainWindow mw = new MainWindow();
-                //mw.Show();
-                //mw.Activate();
+                MainWindow mw = new MainWindow();
+                mw.Show();
+                mw.Activate();
 
 #endif
 

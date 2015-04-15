@@ -109,6 +109,7 @@ namespace GestureSign.Common.Drawing
             GeometryDrawing drawing = new GeometryDrawing(null, _DrawingPen, pathGeometry);
             drawing.Freeze();
             DrawingImage drawingImage = new DrawingImage(drawing);
+            drawingImage.Freeze();
             // System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds.ToString());
             return drawingImage;
 
