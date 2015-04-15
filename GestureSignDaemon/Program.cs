@@ -52,8 +52,7 @@ namespace GestureSignDaemon
                     GestureSign.Common.Plugins.PluginManager.Instance.Load(hostControl);
                     TrayManager.Instance.Load();
 
-                    MessageProcessor messageProcessor = new MessageProcessor();
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", messageProcessor.ProcessMessages);
+                    GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor());
 
                     AppConfig.ToggleWatcher();
                     if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)

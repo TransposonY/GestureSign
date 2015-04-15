@@ -45,8 +45,7 @@ namespace GestureSign
                     ThemeManager.ChangeAppStyle(Application.Current, accent, MahApps.Metro.ThemeManager.GetAppTheme("BaseLight"));
                 }
 
-                MessageProcessor messageProcessor = new MessageProcessor();
-                GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", messageProcessor.ProcessMessages);
+                GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", new MessageProcessor());
 
                 try
                 {

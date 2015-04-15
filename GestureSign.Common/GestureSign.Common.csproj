@@ -133,6 +133,7 @@
     <Compile Include="Input\ITouchCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
+    <Compile Include="InterProcessCommunication\IMessageProcessor.cs" />
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
     <Compile Include="Plugins\HostControl.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />

@@ -9,10 +9,11 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSignDaemon.Input;
+using GestureSign.Common.InterProcessCommunication;
 
 namespace GestureSignDaemon
 {
-    class MessageProcessor
+    class MessageProcessor : IMessageProcessor
     {
         internal static event EventHandler<Point> OnGotTouchPoint;
         public void ProcessMessages(NamedPipeServerStream server)

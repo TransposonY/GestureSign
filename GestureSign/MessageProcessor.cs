@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using GestureSign.Common.InterProcessCommunication;
 using System.Windows;
 using System.Runtime.Serialization.Formatters.Binary;
 using Point = System.Drawing.Point;
 
 namespace GestureSign
 {
-    class MessageProcessor
+    class MessageProcessor : IMessageProcessor
     {
         public static event EventHandler OnInitialized;
         public void ProcessMessages(System.IO.Pipes.NamedPipeServerStream server)

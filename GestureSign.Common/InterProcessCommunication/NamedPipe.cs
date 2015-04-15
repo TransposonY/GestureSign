@@ -28,7 +28,7 @@ namespace GestureSign.Common.InterProcessCommunication
                 return instance;
             }
         }
-        public void RunNamedPipeServer(string pipeName, Action<NamedPipeServerStream> processMessages)
+        public void RunNamedPipeServer(string pipeName, IMessageProcessor messageProcessor)
         {
             pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
 
@@ -40,7 +40,7 @@ namespace GestureSign.Common.InterProcessCommunication
                 NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
                 server.EndWaitForConnection(o);
 
-                processMessages(server);
+                messageProcessor.ProcessMessages(server);
                 server.Disconnect();
 
                 server.BeginWaitForConnection(ac, server);
