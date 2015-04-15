@@ -42,7 +42,6 @@ namespace GestureSign.UI
             : this()
         {
             _CapturedPoints = capturedPoints;
-            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
             GestureManager.Instance.GestureName = gestureName;
             if (reName) ExistingGestureName = gestureName;
             this.ReName = reName;

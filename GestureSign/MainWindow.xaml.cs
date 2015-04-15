@@ -35,7 +35,6 @@ namespace GestureSign
         {
             InitializeComponent();
             SetAboutInfo();
-            Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnLastWindowClose;
         }
 
         private void SetAboutInfo()

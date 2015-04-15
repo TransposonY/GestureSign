@@ -20,6 +20,12 @@ namespace GestureSign
     public partial class App : Application
     {
         System.Threading.Mutex mutex;
+
+        private static Timer timer = new Timer((o) =>
+        {
+            Current.Dispatcher.Invoke(
+                () => { if (Current.Windows.Count == 0) Current.Shutdown(); else  timer.Change(300000, Timeout.Infinite); });
+        }, timer, Timeout.Infinite, Timeout.Infinite);
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             bool createdNew;
@@ -73,6 +79,7 @@ namespace GestureSign
                 if (AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
                 {
                     Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+                    timer.Change(300000, Timeout.Infinite);
                 }
                 else
                 {
@@ -82,9 +89,9 @@ namespace GestureSign
                 }
 #if DEBUG
 
-                MainWindow mw = new MainWindow();
-                mw.Show();
-                mw.Activate();
+                //MainWindow mw = new MainWindow();
+                //mw.Show();
+                //mw.Activate();
 
 #endif
 

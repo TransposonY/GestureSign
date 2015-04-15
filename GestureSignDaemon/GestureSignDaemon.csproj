@@ -113,7 +113,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /tr http://timestamp.wosign.com/rfc3161 $(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /t "http://timestamp.verisign.com/scripts/timstamp.dll" $(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
