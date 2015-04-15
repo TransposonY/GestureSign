@@ -10,6 +10,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         #region IPlugin Instance Fields
 
         private SendKeystrokesControl _GUI = null;
+        private string _setting;
 
         #endregion
 
@@ -81,15 +82,18 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         public bool Deserialize(string SerializedData)
         {
-            TypedGUI.txtSendKeys.Text = SerializedData;
+            _setting = SerializedData;
             return true;
         }
 
         public string Serialize()
         {
-            if (TypedGUI.txtSendKeys != null)
-                return TypedGUI.txtSendKeys.Text;
-            else return "";
+            if (_GUI != null)
+            {
+                _setting = _GUI.txtSendKeys.Text;
+                return _setting;
+            }
+            else return _setting ?? "";
         }
 
         #endregion
@@ -98,7 +102,12 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         private SendKeystrokesControl CreateGUI()
         {
-            return new SendKeystrokesControl();
+            SendKeystrokesControl sendKeystrokesControl = new SendKeystrokesControl();
+            sendKeystrokesControl.Loaded += (s, o) =>
+            {
+                TypedGUI.txtSendKeys.Text = _setting;
+            };
+            return sendKeystrokesControl;
         }
 
         #endregion

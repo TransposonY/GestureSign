@@ -85,7 +85,13 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         private TouchKeyboardUI CreateGUI()
         {
-            return new TouchKeyboardUI();
+            TouchKeyboardUI touchKeyboardUI = new TouchKeyboardUI();
+            touchKeyboardUI.Loaded += (s, o) =>
+            {
+                TypedGUI.ShowTouchKeyboardRB.IsChecked = isShow;
+                TypedGUI.HideTouchKeyboardRB.IsChecked = !isShow;
+            };
+            return touchKeyboardUI;
         }
 
         #endregion
@@ -131,9 +137,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             }
             else
             {
-                IntPtr keyboardHwnd;
-
-                keyboardHwnd = FindWindow("IPTip_Main_Window", null);
+                var keyboardHwnd = FindWindow("IPTip_Main_Window", null);
 
                 if (keyboardHwnd != IntPtr.Zero)
                     PostMessage(keyboardHwnd, WM_SYSCOMMAND, SC_CLOSE, 0);
@@ -143,19 +147,16 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         public bool Deserialize(string SerializedData)
         {
-            bool parseSuccess = Boolean.TryParse(SerializedData, out isShow);
-            TypedGUI.ShowTouchKeyboardRB.IsChecked = isShow;
-            TypedGUI.HideTouchKeyboardRB.IsChecked = !isShow;
-            return parseSuccess;
+            return Boolean.TryParse(SerializedData, out isShow);
         }
 
         public string Serialize()
         {
-            if (TypedGUI.ShowTouchKeyboardRB.IsChecked.HasValue)
+            if (_GUI != null && _GUI.ShowTouchKeyboardRB.IsChecked.HasValue)
             {
-                return TypedGUI.ShowTouchKeyboardRB.IsChecked.Value ? Boolean.TrueString : Boolean.FalseString;
+                return _GUI.ShowTouchKeyboardRB.IsChecked.Value ? Boolean.TrueString : Boolean.FalseString;
             }
-            else return "";
+            else return isShow ? Boolean.TrueString : Boolean.FalseString;
         }
 
         #endregion

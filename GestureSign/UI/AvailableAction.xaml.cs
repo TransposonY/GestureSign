@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
+using System.Threading;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Plugins;
@@ -58,6 +59,8 @@ namespace GestureSign.UI
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
         private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
         public static event ApplicationChangedEventHandler ShowEditApplicationFlyout;
+        private Task _task;
+        CancellationTokenSource _cancelTokenSource;
 
         public class ActionInfo : INotifyPropertyChanged
         {
@@ -279,6 +282,11 @@ namespace GestureSign.UI
 
         private void RefreshActions()
         {
+            if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
+            {
+                _cancelTokenSource.Cancel();
+                _task.Wait(1000);
+            }
             ActionInfos.Clear();
             var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApplication == null) return;
@@ -288,7 +296,6 @@ namespace GestureSign.UI
         private void AddActionsToGroup(string applicationName, IEnumerable<IAction> actions)
         {
 
-
             string description;
             DrawingImage Thumb = null;
             string gestureName;
@@ -296,8 +303,10 @@ namespace GestureSign.UI
 
             var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
             // Loop through each global action  
-            Task.Run(() =>
+            _cancelTokenSource = new CancellationTokenSource();
+            _task = Task.Run(() =>
             {
+                Thread.Sleep(100);
                 foreach (Applications.Action currentAction in actions)
                 {
                     // Ensure this action has a plugin
@@ -324,7 +333,6 @@ namespace GestureSign.UI
                     // Get handle of action gesture
                     IGesture actionGesture = GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
 
-                    System.Threading.Thread.Sleep(80);
                     if (actionGesture == null)
                     {
                         Thumb = null;
@@ -335,7 +343,8 @@ namespace GestureSign.UI
                         Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize, brush);
                         gestureName = actionGesture.Name;
                     }
-                    this.lstAvailableApplication.Dispatcher.Invoke(() =>
+                    if (_cancelTokenSource.IsCancellationRequested) break;
+                    lstAvailableApplication.Dispatcher.Invoke(() =>
                     {
                         ActionInfo
                             ai = new ActionInfo(
@@ -347,9 +356,8 @@ namespace GestureSign.UI
                                 currentAction.IsEnabled);
                         ActionInfos.Add(ai);
                     });
-
                 }
-            });
+            }, _cancelTokenSource.Token);
         }
 
 
