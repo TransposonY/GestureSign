@@ -187,13 +187,22 @@ namespace GestureSign.UI
             else
             {
                 name = matchUsingRadio.MatchUsing + "$" + matchString;
-                if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+
+                if (EditMode)
+                {
+                    if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+                    {
+                        UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                        return;
+                    }
+                    ApplicationManager.Instance.RemoveApplication(CurrentApplication);
+                }
+                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                 {
                     UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
                     return;
                 }
 
-                if (EditMode) { ApplicationManager.Instance.RemoveApplication(CurrentApplication); }
                 ApplicationManager.Instance.AddApplication(new IgnoredApplication(name, matchUsingRadio.MatchUsing, matchString, chkPattern.IsChecked.Value, true));
                 if (RefreshIgnoredApplications != null) RefreshIgnoredApplications(this, EventArgs.Empty);
             }
