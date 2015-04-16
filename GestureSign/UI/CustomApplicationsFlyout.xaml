@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:GestureSign.UI"
                  x:Name="customApplicationsFlyout"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="280" Header="自定义规则" Position="Right" Width="280" ClosingFinished="Flyout_ClosingFinished">
+             d:DesignHeight="450" d:DesignWidth="280" Header="自定义规则" Position="Right" Width="280" IsModal="True" ClosingFinished="Flyout_ClosingFinished">
     <controls:Flyout.Resources>
         <local:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter"></local:MatchUsing2VisibilityConverter>
         <local:MatchStringConverter x:Key="MatchStringConverter"></local:MatchStringConverter>
