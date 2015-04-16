@@ -30,7 +30,8 @@ namespace GestureSign.UI
             InitializeComponent();
             CustomApplicationsFlyout.RefreshIgnoredApplications += ApplicationsFlyout_BindIgnoredApplications;
 
-            BindIgnoredApplications();
+            if (ApplicationManager.Instance.FinishedLoading) BindIgnoredApplications();
+            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindIgnoredApplications); };
         }
 
         void ApplicationsFlyout_BindIgnoredApplications(object sender, EventArgs e)

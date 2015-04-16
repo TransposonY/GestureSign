@@ -35,8 +35,10 @@ namespace GestureSign.UI
         public AvailableGestures()
         {
             InitializeComponent();
-            BindGestures();
             GestureDefinition.GesturesChanged += GestureDefinition_GesturesChanged;
+
+            if (GestureManager.Instance.FinishedLoading) BindGestures();
+            GestureManager.Instance.OnLoadGesturesCompleted += (o, e) => { this.Dispatcher.Invoke(BindGestures); };
         }
 
 

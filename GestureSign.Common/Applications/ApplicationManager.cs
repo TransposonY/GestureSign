@@ -12,6 +12,7 @@ using GestureSign.Common.Input;
 using GestureSign.Common.Gestures;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GestureSign.Common.Applications
@@ -26,6 +27,7 @@ namespace GestureSign.Common.Applications
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
         private System.Threading.Timer timer;
+        public event EventHandler OnLoadApplicationsCompleted;
         #endregion
 
         #region Public Instance Properties
@@ -41,6 +43,8 @@ namespace GestureSign.Common.Applications
             }
         }
 
+        public bool FinishedLoading { get; set; }
+
         public List<IApplication> Applications { get { return _Applications; } }
 
         public static ApplicationManager Instance
@@ -54,12 +58,17 @@ namespace GestureSign.Common.Applications
 
         protected ApplicationManager()
         {
-
-            Gestures.GestureManager.Instance.GestureEdited += GestureManager_GestureEdited;
+            Action<bool> loadCompleted =
+                result =>
+                {
+                    if (!result)
+                        _Applications = new List<IApplication>();
+                    if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
+                    FinishedLoading = true;
+                };
+            GestureManager.Instance.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
-            if (!LoadApplications())
-                _Applications = new List<IApplication>();
-
+            LoadApplications().ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
 
 
@@ -180,16 +189,24 @@ namespace GestureSign.Common.Applications
 
         }
 
-        public bool LoadApplications()
+        public Task<bool> LoadApplications()
         {
-            // Load application list from file
-            _Applications = Common.Configuration.FileManager.LoadObject<List<IApplication>>(
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) }, true);
-            // Ensure we got an object back
-            if (_Applications == null)
-                return false;	// No object, failed
+            return Task.Run(() =>
+            {
+                // Load application list from file
+                _Applications = Configuration.FileManager.LoadObject<List<IApplication>>(
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"),
+                    new[]
+                    {
+                        typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
+                        typeof (GestureSign.Applications.Action)
+                    }, true);
+                // Ensure we got an object back
+                if (_Applications == null)
+                    return false; // No object, failed
 
-            return true;	// Success
+                return true; // Success
+            });
         }
 
         public SystemWindow GetWindowFromPoint(PointF Point)

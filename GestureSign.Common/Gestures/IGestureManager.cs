@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GestureSign.Common.Gestures
 {
@@ -16,7 +17,7 @@ namespace GestureSign.Common.Gestures
 		string GetGestureSetNameMatch(List<List<System.Drawing.Point>> Points);
 		IGesture GetNewestGestureSample(string GestureName);
 		void AddGesture(IGesture Gesture);
-		bool LoadGestures();
+        Task<bool> LoadGestures();
 		bool SaveGestures();
 	}
 }

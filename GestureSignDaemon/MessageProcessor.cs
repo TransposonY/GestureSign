@@ -52,10 +52,10 @@ namespace GestureSignDaemon
                                     TouchCapture.Instance.DisableTouchCapture();
                                     break;
                                 case "LoadApplications":
-                                    ApplicationManager.Instance.LoadApplications();
+                                    ApplicationManager.Instance.LoadApplications().Wait();
                                     break;
                                 case "LoadGestures":
-                                    GestureManager.Instance.LoadGestures();
+                                    GestureManager.Instance.LoadGestures().Wait();
                                     break;
                             }
                         }));

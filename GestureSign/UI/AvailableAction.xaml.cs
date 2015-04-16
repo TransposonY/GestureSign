@@ -51,7 +51,9 @@ namespace GestureSign.UI
             AvailableGestures.GestureChanged += (o, e) => { BindApplications(); };
             GestureDefinition.GesturesChanged += (o, e) => { BindApplications(); };
             CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(); };
-            BindApplications();
+
+            if (ApplicationManager.Instance.FinishedLoading) BindApplications();
+            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => {this.Dispatcher.Invoke(BindApplications); };
         }
 
 

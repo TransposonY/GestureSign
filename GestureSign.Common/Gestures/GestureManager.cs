@@ -7,6 +7,7 @@ using System.IO;
 using GestureSign.Common;
 using GestureSign.Common.Plugins;
 using System.Drawing;
+using System.Threading.Tasks;
 using GestureSign.PointPatterns;
 using GestureSign.Common.Input;
 
@@ -27,8 +28,13 @@ namespace GestureSign.Common.Gestures
 
         #endregion
 
+        #region Public Variables
+        public event EventHandler OnLoadGesturesCompleted;
+        #endregion
+
         #region Public Instance Properties
 
+        public bool FinishedLoading { get; set; }
         public string GestureName { get; set; }
         public IGesture[] Gestures
         {
@@ -47,13 +53,17 @@ namespace GestureSign.Common.Gestures
 
         protected GestureManager()
         {
-            if (!LoadGestures())
-                _Gestures = new List<IGesture>();
-
+            Action<bool> loadCompleted =
+                   result =>
+                   {
+                       if (!result)
+                           _Gestures = new List<IGesture>();
+                       if (OnLoadGesturesCompleted != null) OnLoadGesturesCompleted(this, EventArgs.Empty);
+                       FinishedLoading = true;
+                   };
+            LoadGestures().ContinueWith(antecendent => loadCompleted(antecendent.Result));
             // Instantiate gesture analyzer using gestures loaded from file
             gestureAnalyzer = new PointPatternAnalyzer();//Gestures
-
-            // Reload gestures if options were saved
         }
 
         #endregion
@@ -137,23 +147,26 @@ namespace GestureSign.Common.Gestures
             _Gestures.Add(Gesture);
         }
 
-        public bool LoadGestures()
+        public Task<bool> LoadGestures()
         {
-            try
+            return Task.Run(() =>
             {
-                // Load gestures from file, create empty list if load failed
-                _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
+                try
+                {
+                    // Load gestures from file, create empty list if load failed
+                    _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(
+                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
 
-                if (Gestures == null)
+                    if (Gestures == null)
+                        return false;
+                    else
+                        return true;
+                }
+                catch
+                {
                     return false;
-                else
-                    return true;
-            }
-            catch
-            {
-                return false;
-            }
+                }
+            });
         }
 
         public bool SaveGestures()
