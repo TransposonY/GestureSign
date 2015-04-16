@@ -164,7 +164,8 @@ namespace GestureSign.UI
             if (isUserApp)
             {
                 name = ApplicationNameTextBox.Text.Trim();
-                string groupName = GroupComboBox.Text.Trim();
+                string groupName = GroupComboBox.Text ?? String.Empty;
+                groupName = groupName.Trim();
                 if (name.Length == 0)
                 {
                     UIHelper.GetParentWindow(this).ShowMessageAsync("无程序名", "请定义程序名", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });

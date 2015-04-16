@@ -26,7 +26,7 @@
             <TextBlock x:Name="ApplicationNameTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,0,0,0"/>
             <TextBlock x:Name="GroupNameTextBlock" HorizontalAlignment="Right" TextWrapping="Wrap" Text="分组名" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,-20,70,0"/>
             <TextBox x:Name="ApplicationNameTextBox"  HorizontalAlignment="Left" Height="26" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="137"/>
-            <ComboBox x:Name="GroupComboBox" HorizontalAlignment="Right" Height="26" Margin="0,-26,5,0" VerticalAlignment="Top" Width="113" />
+            <ComboBox x:Name="GroupComboBox" HorizontalAlignment="Right" Height="26" Margin="0,-26,5,0" VerticalAlignment="Top" Width="113" IsEditable="True" />
             <TextBlock TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" HorizontalAlignment="Left" Margin="10,15,0,0"/>
             <local:MatchUsingRadio x:Name="matchUsingRadio" Margin="10,5,10,0"></local:MatchUsingRadio>
             <TextBox x:Name="txtMatchString" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" MaxLines="3">
