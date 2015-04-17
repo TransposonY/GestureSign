@@ -245,11 +245,12 @@ namespace GestureSign.Common.Configuration
 
         private static object GetValue(string key, object defaultValue)
         {
-            if (config.AppSettings.Settings[key] != null)
+            var setting = config.AppSettings.Settings[key];
+            if (setting != null)
             {
                 try
                 {
-                    string strReturn = config.AppSettings.Settings[key].Value;
+                    string strReturn = setting.Value;
                     if (defaultValue.GetType() == typeof(System.Drawing.Color)) return System.Drawing.ColorTranslator.FromHtml(strReturn);
                     else if (defaultValue is int) return int.Parse(strReturn);
                     else if (defaultValue is double) return double.Parse(strReturn);
