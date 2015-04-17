@@ -47,7 +47,7 @@ namespace GestureSign.UI
             applicationSourceView.GroupDescriptions.Add(applicationGroupDesctrption);//在图中添加分组
             lstAvailableApplication.ItemsSource = applicationSourceView;
 
-            ApplicationDialog.ActionsChanged += (o, e) => { BindApplications(); };
+            ApplicationDialog.ActionsChanged += (o, e) => { RefreshActions(); };
             AvailableGestures.GestureChanged += (o, e) => { BindApplications(); };
             GestureDefinition.GesturesChanged += (o, e) => { BindApplications(); };
             CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(); };
