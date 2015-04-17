@@ -10,7 +10,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         #region IPlugin Instance Fields
 
         private SendKeystrokesControl _GUI = null;
-        private string _setting;
+        private string _keystrokes;
 
         #endregion
 
@@ -70,7 +70,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
                 if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
                     ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
 
-                System.Windows.Forms.SendKeys.SendWait(TypedGUI.txtSendKeys.Text);
+                System.Windows.Forms.SendKeys.SendWait(_keystrokes);
 
                 return true;
             }
@@ -82,7 +82,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         public bool Deserialize(string SerializedData)
         {
-            _setting = SerializedData;
+            _keystrokes = SerializedData;
             return true;
         }
 
@@ -90,10 +90,10 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         {
             if (_GUI != null)
             {
-                _setting = _GUI.txtSendKeys.Text;
-                return _setting;
+                _keystrokes = _GUI.txtSendKeys.Text;
+                return _keystrokes;
             }
-            else return _setting ?? "";
+            else return _keystrokes ?? String.Empty;
         }
 
         #endregion
@@ -105,7 +105,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             SendKeystrokesControl sendKeystrokesControl = new SendKeystrokesControl();
             sendKeystrokesControl.Loaded += (s, o) =>
             {
-                TypedGUI.txtSendKeys.Text = _setting;
+                TypedGUI.txtSendKeys.Text = _keystrokes;
             };
             return sendKeystrokesControl;
         }
