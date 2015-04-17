@@ -32,26 +32,27 @@ namespace GestureSign.UI
     /// </summary>
     public partial class ApplicationDialog : MetroWindow
     {
-        //Add action by new gesture
         public ApplicationDialog()
         {
             InitializeComponent();
         }
 
+        //Add action by new gesture
         public ApplicationDialog(string newGestureName)
             : this()
         {
             gestureName = newGestureName;
         }
         //Add action by existing gesture
-        public ApplicationDialog(AvailableAction source)
+        public ApplicationDialog(AvailableAction source, IApplication selectedApplication)
             : this()
         {
-            availableAction = source;
+            _selectedApplication = selectedApplication;
+            _availableAction = source;
         }
         //Edit action
-        public ApplicationDialog(AvailableAction source, IAction selectedAction)
-            : this(source)
+        public ApplicationDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
+            : this(source, selectedApplication)
         {
             this.Title = "编辑动作";
             _CurrentAction = selectedAction;
@@ -63,8 +64,9 @@ namespace GestureSign.UI
         [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
         static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
 
-        IApplication _SelectedApplication;
-        AvailableAction availableAction;
+        private readonly IApplication _selectedApplication;
+        IApplication _newApplication;
+        readonly AvailableAction _availableAction;
         // Create variable to hold current selected plugin
         IPluginInfo _PluginInfo = null;
         IAction _CurrentAction = null;
@@ -90,7 +92,7 @@ namespace GestureSign.UI
             BindPlugins();
             if (_CurrentAction != null)
             {
-                cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
+                //cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
                 foreach (object comboItem in cmbPlugins.Items)
                 {
                     IPluginInfo pluginInfo = (IPluginInfo)comboItem;
@@ -215,7 +217,7 @@ namespace GestureSign.UI
             }
             else if (NewApplicationRadioButton.IsChecked.Value)
             {
-                _SelectedApplication = new UserApplication
+                _newApplication = new UserApplication
                 {
                     InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value,
                     AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value,
@@ -224,10 +226,10 @@ namespace GestureSign.UI
                 };
                 // Store application name
                 // Make sure we have a valid application name
-                if (_SelectedApplication.Name == "")
+                if (_newApplication.Name == "")
                     return ShowErrorMessage("无程序名", "请定义程序名");
 
-                if (_CurrentAction == null && ApplicationManager.Instance.ApplicationExists(_SelectedApplication.Name))
+                if (_CurrentAction == null && ApplicationManager.Instance.ApplicationExists(_newApplication.Name))
                     return ShowErrorMessage("该程序名已经存在", "程序名称已经存在，请输入其他名字");
 
                 string matchString = txtMatchString.Text.Trim();
@@ -244,12 +246,12 @@ namespace GestureSign.UI
                     return ShowErrorMessage("格式错误", "正则表达式格式错误，请重新检查");
                 }
 
-                _SelectedApplication.MatchString = matchString;
-                _SelectedApplication.MatchUsing = matchUsingRadio.MatchUsing;
-                _SelectedApplication.IsRegEx = chkRegex.IsChecked.Value;
+                _newApplication.MatchString = matchString;
+                _newApplication.MatchUsing = matchUsingRadio.MatchUsing;
+                _newApplication.IsRegEx = chkRegex.IsChecked.Value;
 
 
-                ApplicationManager.Instance.CurrentApplication = _SelectedApplication;
+                ApplicationManager.Instance.CurrentApplication = _newApplication;
                 return true;
             }
             return false;
@@ -281,14 +283,14 @@ namespace GestureSign.UI
                 cmbExistingApplication.Items.Add(app);
 
             // Select new applications
-            cmbExistingApplication.SelectedItem = allApplicationsItem;
+            cmbExistingApplication.SelectedItem = _selectedApplication ?? allApplicationsItem;
         }
         private void BindExistingGestures()
         {
 
             Binding bind = new Binding();
             //no GestureItem source
-            if (availableAction == null)
+            if (_availableAction == null)
             {
                 IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
                 List<GestureItem> GestureItems = new List<GestureItem>(results.Count());
@@ -308,7 +310,7 @@ namespace GestureSign.UI
             }
             else
             {
-                bind.Source = ((GestureSign.Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
+                bind.Source = ((GestureSign.Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
                 bind.Path = new PropertyPath("Items");
             }
             bind.Mode = BindingMode.OneWay;
@@ -493,8 +495,8 @@ namespace GestureSign.UI
             // Check if we already have this action somewhere
             if (_IsNew)
             {
-                if (_SelectedApplication != null || _SelectedApplication is UserApplication)
-                    ApplicationManager.Instance.AddApplication(_SelectedApplication);
+                if (_newApplication != null || _newApplication is UserApplication)
+                    ApplicationManager.Instance.AddApplication(_newApplication);
                 // Save new action to specific application
                 ApplicationManager.Instance.CurrentApplication.AddAction(_CurrentAction);
             }
@@ -545,7 +547,8 @@ namespace GestureSign.UI
         private string GetNextActionName(string name, int i = 1)
         {
             var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
-            if (ExistingApplicationRadioButton.IsChecked.Value && ((IApplication)this.cmbExistingApplication.SelectedItem).Actions.Exists(a => a.Name.Equals(actionName)))
+            var selectedItem = this.cmbExistingApplication.SelectedItem;
+            if (selectedItem != null && (ExistingApplicationRadioButton.IsChecked.Value && ((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
                 return GetNextActionName(name, ++i);
             return actionName;
         }

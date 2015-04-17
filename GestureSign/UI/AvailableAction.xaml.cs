@@ -53,7 +53,7 @@ namespace GestureSign.UI
             CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(); };
 
             if (ApplicationManager.Instance.FinishedLoading) BindApplications();
-            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => {this.Dispatcher.Invoke(BindApplications); };
+            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
         }
 
 
@@ -154,7 +154,7 @@ namespace GestureSign.UI
             ApplicationManager.Instance.CurrentApplication = selectedApplication;
             GestureManager.Instance.GestureName = selectedGesture;
 
-            ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction);
+            ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction, selectedApplication);
             applicationDialog.ShowDialog();
             SelectAction(strApplicationHeader, selectedItem.ActionName, true);
         }
@@ -253,7 +253,7 @@ namespace GestureSign.UI
                 });
                 return;
             }
-            ApplicationDialog applicationDialog = new ApplicationDialog(this);
+            ApplicationDialog applicationDialog = new ApplicationDialog(this, lstAvailableApplication.SelectedItem as IApplication);
             applicationDialog.Show();
         }
 
