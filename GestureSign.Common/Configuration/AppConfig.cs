@@ -177,13 +177,7 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-
-                int Count = 0;
-                while (IsFileLocked(path + ".config") && Count != 10)
-                {
-                    Count++;
-                    Thread.Sleep(20);
-                }
+                FileManager.WaitFile(path + ".config");
 
                 config = ConfigurationManager.OpenExeConfiguration(path);
                 // ConfigurationManager.RefreshSection("appSettings");
@@ -203,12 +197,7 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                int Count = 0;
-                while (IsFileLocked(path + ".config") && Count != 10)
-                {
-                    Count++;
-                    Thread.Sleep(20);
-                }
+                FileManager.WaitFile(path + ".config");
                 // Save the configuration file.    
                 config.AppSettings.SectionInformation.ForceSave = true;
                 config.Save(ConfigurationSaveMode.Minimal);
@@ -222,25 +211,6 @@ namespace GestureSign.Common.Configuration
             }
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
-        }
-        private static bool IsFileLocked(string file)
-        {
-            try
-            {
-                using (File.Open(file, FileMode.Open, FileAccess.Write, FileShare.None))
-                {
-                    return false;
-                }
-            }
-            catch (IOException exception)
-            {
-                var errorCode = System.Runtime.InteropServices.Marshal.GetHRForException(exception) & 65535;
-                return errorCode == 32 || errorCode == 33;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         private static object GetValue(string key, object defaultValue)

@@ -39,12 +39,8 @@ namespace GestureSign.Common.Configuration
             {
                 // Create json serializer to serialize json file
                 DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
-                int count = 0;
-                while (IsFileLocked(filePath) && count != 10)
-                {
-                    count++;
-                    Thread.Sleep(20);
-                }
+
+                WaitFile(filePath);
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
@@ -69,12 +65,8 @@ namespace GestureSign.Common.Configuration
             try
             {
                 if (!File.Exists(filePath)) return default(T);
-                int count = 0;
-                while (IsFileLocked(filePath) && count != 10)
-                {
-                    count++;
-                    Thread.Sleep(20);
-                }
+
+                WaitFile(filePath);
 
                 using (StreamReader sRead = new StreamReader(filePath))
                 {
@@ -106,6 +98,16 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static void WaitFile(string filePath)
+        {
+            int count = 0;
+            while (IsFileLocked(filePath) && count != 10)
+            {
+                count++;
+                Thread.Sleep(50);
+            }
+        }
+
         private static void BackupFile(string filePath)
         {
             try
@@ -118,6 +120,7 @@ namespace GestureSign.Common.Configuration
             }
             catch { }
         }
+
         private static bool IsFileLocked(string file)
         {
             try
