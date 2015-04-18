@@ -40,6 +40,7 @@ namespace GestureSign.UI
             var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
             var actionsGroupDesctrption = new PropertyGroupDescription("ApplicationName");//设置分组列
             actionsSourceView.GroupDescriptions.Add(actionsGroupDesctrption);//在图中添加分组
+            actionsSourceView.SortDescriptions.Add(new SortDescription("ActionName", ListSortDirection.Ascending));
             lstAvailableActions.ItemsSource = actionsSourceView;//绑定数据源
 
             var applicationSourceView = new ListCollectionView(_applications);
@@ -47,13 +48,16 @@ namespace GestureSign.UI
             applicationSourceView.GroupDescriptions.Add(applicationGroupDesctrption);//在图中添加分组
             lstAvailableApplication.ItemsSource = applicationSourceView;
 
-            ApplicationDialog.ActionsChanged += (o, e) => { RefreshActions(); };
-            AvailableGestures.GestureChanged += (o, e) => { BindApplications(); };
-            GestureDefinition.GesturesChanged += (o, e) => { BindApplications(); };
-            CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(); };
+            ApplicationDialog.ActionsChanged += (o, e) =>
+            {
+                BindApplications(e.Application);
+            };
+            AvailableGestures.GestureChanged += (o, e) => { BindApplications(null); };
+            GestureDefinition.GesturesChanged += (o, e) => { BindApplications(null); };
+            CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(e.Application); };
 
-            if (ApplicationManager.Instance.FinishedLoading) BindApplications();
-            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
+            if (ApplicationManager.Instance.FinishedLoading) BindApplications(null);
+            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(null); };
         }
 
 
@@ -61,8 +65,9 @@ namespace GestureSign.UI
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
         private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
         public static event ApplicationChangedEventHandler ShowEditApplicationFlyout;
-        private Task _task;
+        private Task<ActionInfo> _task;
         CancellationTokenSource _cancelTokenSource;
+        private bool _selecteNewdItem;
 
         public class ActionInfo : INotifyPropertyChanged
         {
@@ -156,24 +161,6 @@ namespace GestureSign.UI
 
             ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction, selectedApplication);
             applicationDialog.ShowDialog();
-            SelectAction(strApplicationHeader, selectedItem.ActionName, true);
-        }
-
-        private void SelectAction(string applicationName, string actionName, bool scrollIntoView)
-        {
-            foreach (ActionInfo ai in lstAvailableActions.Items)
-            {
-                if (ai.ApplicationName.Equals(applicationName) && ai.ActionName.Equals(actionName))
-                {
-                    lstAvailableActions.SelectedItem = ai;
-                    if (scrollIntoView)
-                    {
-                        lstAvailableActions.UpdateLayout();
-                        lstAvailableActions.ScrollIntoView(ai);
-                    }
-                    return;
-                }
-            }
         }
 
         private async void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
@@ -208,19 +195,12 @@ namespace GestureSign.UI
                 // Get the name of the action
                 string strActionName = selectedAction.ActionName;
 
-                // Get name of application
-                string strApplicationName = selectedAction.ApplicationName;
+                IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
 
-                // Is this a global action or application specific
-                if (strApplicationName == ApplicationManager.Instance.GetGlobalApplication().Name)
-                    // Delete action from global list
-                    ApplicationManager.Instance.RemoveGlobalAction(strActionName);
-                else
-                    // Delete action from application
-                    ApplicationManager.Instance.RemoveNonGlobalAction(strActionName);
+                selectedApp.RemoveAction(selectedApp.Actions.FirstOrDefault(a => a.Name.Equals(strActionName, StringComparison.Ordinal)));
 
             }
-            BindApplications();
+            RefreshActions(false);
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
         }
@@ -259,8 +239,13 @@ namespace GestureSign.UI
 
 
 
-        private void BindApplications()
+        private void BindApplications(IApplication selectedApp)
         {
+            if (selectedApp != null && lstAvailableApplication.SelectedItem == selectedApp)
+            {
+                RefreshActions(false);
+                return;
+            }
             CopyActionMenuItem.Items.Clear();
             _applications.Clear();
 
@@ -277,38 +262,63 @@ namespace GestureSign.UI
                 menuItem.Click += CopyActionMenuItem_Click;
                 CopyActionMenuItem.Items.Add(menuItem);
             }
-
-            if (lstAvailableApplication.Items.Count != 0)
+            if (selectedApp == null && lstAvailableApplication.Items.Count != 0)
+            {
                 lstAvailableApplication.SelectedIndex = 0;
+            }
+            else
+            {
+                _selecteNewdItem = true;
+                lstAvailableApplication.SelectedItem = selectedApp;
+            }
         }
 
-        private void RefreshActions()
+        private void RefreshActions(bool refreshAll)
         {
-            if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
-            {
-                _cancelTokenSource.Cancel();
-                _task.Wait(1000);
-            }
-            ActionInfos.Clear();
             var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApplication == null) return;
-            AddActionsToGroup(selectedApplication.Name, selectedApplication.Actions.OrderBy(a => a.Name));
-            EnableRelevantButtons();
+            if (refreshAll)
+            {
+                if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
+                {
+                    _cancelTokenSource.Cancel();
+                    _task.Wait(1000);
+                }
+                ActionInfos.Clear();
+                AddActionsToGroup(selectedApplication.Name, selectedApplication.Actions);
+            }
+            else
+            {
+                _selecteNewdItem = true;
+                var newApp =
+                    selectedApplication.Actions.Where(
+                        a => !ActionInfos.Any(ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal))).ToList();
+                var deletedApp =
+                    ActionInfos.Where(
+                        ai =>
+                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)))
+                        .ToList();
+
+                foreach (ActionInfo ai in deletedApp)
+                    ActionInfos.Remove(ai);
+                AddActionsToGroup(selectedApplication.Name, newApp);
+            }
         }
-        private void AddActionsToGroup(string applicationName, IEnumerable<IAction> actions)
+        private void AddActionsToGroup(string applicationName, List<IAction> actions)
         {
 
             string description;
             DrawingImage Thumb = null;
             string gestureName;
             string pluginName;
-
             var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
             // Loop through each global action  
             _cancelTokenSource = new CancellationTokenSource();
-            _task = Task.Run(() =>
+
+            _task = new Task<ActionInfo>(() =>
             {
                 Thread.Sleep(100);
+                ActionInfo actionInfo = null;
                 foreach (Applications.Action currentAction in actions)
                 {
                     // Ensure this action has a plugin
@@ -348,18 +358,34 @@ namespace GestureSign.UI
                     if (_cancelTokenSource.IsCancellationRequested) break;
                     lstAvailableApplication.Dispatcher.Invoke(() =>
                     {
-                        ActionInfo
-                            ai = new ActionInfo(
-                                !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
-                                applicationName,
-                                description,
-                                Thumb,
-                                gestureName,
-                                currentAction.IsEnabled);
-                        ActionInfos.Add(ai);
+
+                        actionInfo = new ActionInfo(
+                            !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
+                            applicationName,
+                            description,
+                            Thumb,
+                            gestureName,
+                            currentAction.IsEnabled);
+                        ActionInfos.Add(actionInfo);
                     });
                 }
+                return actionInfo;
             }, _cancelTokenSource.Token);
+            _task.ContinueWith((t) =>
+            {
+                ActionInfo ai = t.Result;
+                if (ai != null && _selecteNewdItem)
+                    lstAvailableActions.Dispatcher.Invoke(() =>
+                    {
+                        _selecteNewdItem = false;
+                        lstAvailableActions.SelectedItem = ai;
+                        lstAvailableActions.UpdateLayout();
+                        lstAvailableActions.ScrollIntoView(ai);
+                        EnableRelevantButtons();
+                    });
+
+            });
+            _task.Start();
         }
 
 
@@ -376,7 +402,7 @@ namespace GestureSign.UI
             {
                 // Getting the ContentPresenter of myListBoxItem
                 ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(sender as ListBoxItem);
-                // if (myContentPresenter.ContentTemplate == null) return;
+                if (myContentPresenter == null) return;
                 // Finding textBlock from the DataTemplate that is set on that ContentPresenter
                 // DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
                 ComboBox comboBox = (myContentPresenter.ContentTemplate.FindName("availableGesturesComboBox", myContentPresenter)) as ComboBox;
@@ -477,8 +503,7 @@ namespace GestureSign.UI
             };
             targetApplication.AddAction(selectedAction);
 
-            BindApplications();
-            SelectAction(targetApplication.Name, newAction.Name, true);
+            BindApplications(targetApplication);
             ApplicationManager.Instance.SaveApplications();
         }
 
@@ -528,7 +553,7 @@ namespace GestureSign.UI
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();
-                    BindApplications();
+                    BindApplications(null);
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
             }
@@ -607,7 +632,8 @@ namespace GestureSign.UI
 
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RefreshActions();
+            if (e.AddedItems.Count == 0) return;
+            RefreshActions(true);
             EditAppButton.IsEnabled = lstAvailableApplication.SelectedItem is UserApplication;
         }
 
@@ -631,7 +657,7 @@ namespace GestureSign.UI
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
 
                 ApplicationManager.Instance.SaveApplications();
-                BindApplications();
+                BindApplications(null);
             }
         }
 

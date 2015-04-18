@@ -75,7 +75,7 @@ namespace GestureSign.UI
 
         #region Public Instance Properties
 
-        public static event EventHandler ActionsChanged;
+        public static event ApplicationChangedEventHandler ActionsChanged;
         #endregion
 
 
@@ -149,8 +149,6 @@ namespace GestureSign.UI
             {
                 if (SaveAction())
                 {
-                    if (ActionsChanged != null)
-                        ActionsChanged(this, new EventArgs());
                     this.Close();
                 }
             }
@@ -496,12 +494,17 @@ namespace GestureSign.UI
             if (_IsNew)
             {
                 if (_newApplication != null || _newApplication is UserApplication)
+                {
                     ApplicationManager.Instance.AddApplication(_newApplication);
+                }
                 // Save new action to specific application
                 ApplicationManager.Instance.CurrentApplication.AddAction(_CurrentAction);
+
             }
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
+            if (ActionsChanged != null)
+                ActionsChanged(this, new ApplicationChangedEventArgs(ApplicationManager.Instance.CurrentApplication));
 
             return true;
         }
