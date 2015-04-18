@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
 using GestureSign.Common.Applications;
-using GestureSign.Common.Plugins;
-using ManagedWinapi.Windows;
-using System.Windows.Interop;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-
-using GestureSign.Common.Gestures;
 using GestureSign.Common.Drawing;
+using GestureSign.Common.Gestures;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Plugins;
+using GestureSign.Common.UI;
+using MahApps.Metro.Controls;
+using ManagedWinapi.Windows;
+using Microsoft.Win32;
+using Point = System.Drawing.Point;
 
 namespace GestureSign.UI
 {
@@ -41,7 +41,7 @@ namespace GestureSign.UI
         public ApplicationDialog(string newGestureName)
             : this()
         {
-            gestureName = newGestureName;
+            _gestureName = newGestureName;
         }
         //Add action by existing gesture
         public ApplicationDialog(AvailableAction source, IApplication selectedApplication)
@@ -54,23 +54,23 @@ namespace GestureSign.UI
         public ApplicationDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
             : this(source, selectedApplication)
         {
-            this.Title = "编辑动作";
-            _CurrentAction = selectedAction;
+            Title = "编辑动作";
+            _currentAction = selectedAction;
         }
 
         #region Private Instance Fields
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetCursorPos(out Point lpPoint);
 
         private readonly IApplication _selectedApplication;
         IApplication _newApplication;
         readonly AvailableAction _availableAction;
         // Create variable to hold current selected plugin
-        IPluginInfo _PluginInfo = null;
-        IAction _CurrentAction = null;
-        string gestureName;
+        IPluginInfo _pluginInfo;
+        IAction _currentAction;
+        string _gestureName;
         #endregion
 
         #region Public Instance Properties
@@ -88,16 +88,16 @@ namespace GestureSign.UI
             BindExistingApplications();
             BindExistingGestures();
 
-            this.chCrosshair.CrosshairDragging += new EventHandler<MouseEventArgs>(chCrosshair_CrosshairDragging);
+            chCrosshair.CrosshairDragging += chCrosshair_CrosshairDragging;
             BindPlugins();
-            if (_CurrentAction != null)
+            if (_currentAction != null)
             {
                 //cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
                 foreach (object comboItem in cmbPlugins.Items)
                 {
                     IPluginInfo pluginInfo = (IPluginInfo)comboItem;
 
-                    if (pluginInfo.Class == _CurrentAction.PluginClass && pluginInfo.Filename == _CurrentAction.PluginFilename)
+                    if (pluginInfo.Class == _currentAction.PluginClass && pluginInfo.Filename == _currentAction.PluginFilename)
                     {
                         cmbPlugins.SelectedIndex = cmbPlugins.Items.IndexOf(comboItem);
                         return;
@@ -105,12 +105,12 @@ namespace GestureSign.UI
                 }
             }
 
-            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("DisableTouchCapture", "GestureSignDaemon");
+            NamedPipe.SendMessageAsync("DisableTouchCapture", "GestureSignDaemon");
         }
 
         protected void chCrosshair_CrosshairDragging(object sender, MouseEventArgs e)
         {
-            System.Drawing.Point cursorPosition;
+            Point cursorPosition;
             GetCursorPos(out cursorPosition);
             SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
 
@@ -149,22 +149,22 @@ namespace GestureSign.UI
             {
                 if (SaveAction())
                 {
-                    this.Close();
+                    Close();
                 }
             }
         }
 
         private void cmdBrowse_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdExecutable = new Microsoft.Win32.OpenFileDialog() { Filter = "可执行文件|*.exe" };
+            OpenFileDialog ofdExecutable = new OpenFileDialog { Filter = "可执行文件|*.exe" };
             if (ValidateFilepath(txtMatchString.Text.Trim()))
             {
-                ofdExecutable.InitialDirectory = System.IO.Path.GetDirectoryName(txtMatchString.Text);
-                ofdExecutable.FileName = System.IO.Path.GetFileName(txtMatchString.Text);
+                ofdExecutable.InitialDirectory = Path.GetDirectoryName(txtMatchString.Text);
+                ofdExecutable.FileName = Path.GetFileName(txtMatchString.Text);
             }
             if (ofdExecutable.ShowDialog().Value)
             {
-                this.txtApplicationName.Text = txtMatchString.Text = System.IO.Path.GetFileName(ofdExecutable.FileName);
+                txtApplicationName.Text = txtMatchString.Text = Path.GetFileName(ofdExecutable.FileName);
 
             }
         }
@@ -173,7 +173,7 @@ namespace GestureSign.UI
         {
             // User canceled dialog, re-enable gestures and hide form
 
-            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
+            await NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
         }
 
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -185,7 +185,7 @@ namespace GestureSign.UI
 
         private void cmdCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
 
@@ -201,24 +201,24 @@ namespace GestureSign.UI
 
             if (ExistingApplicationRadioButton.IsChecked.Value)
             {
-                if (_CurrentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
+                if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
                 {
                     if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
-                    ApplicationManager.Instance.CurrentApplication.RemoveAction(_CurrentAction);
-                    ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_CurrentAction);
+                    ApplicationManager.Instance.CurrentApplication.RemoveAction(_currentAction);
+                    ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
                 }
                 ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
                 return true;
             }
-            else if (NewApplicationRadioButton.IsChecked.Value)
+            if (NewApplicationRadioButton.IsChecked.Value)
             {
                 _newApplication = new UserApplication
                 {
-                    InterceptTouchInput = this.InterceptTouchInputCheckBox.IsChecked.Value,
-                    AllowSingleStroke = this.AllowSingleCheckBox.IsChecked.Value,
+                    InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,
+                    AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value,
                     Name = txtApplicationName.Text.Trim(),
                     Group = GroupComboBox.Text.Trim()
                 };
@@ -227,7 +227,7 @@ namespace GestureSign.UI
                 if (_newApplication.Name == "")
                     return ShowErrorMessage("无程序名", "请定义程序名");
 
-                if (_CurrentAction == null && ApplicationManager.Instance.ApplicationExists(_newApplication.Name))
+                if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(_newApplication.Name))
                     return ShowErrorMessage("该程序名已经存在", "程序名称已经存在，请输入其他名字");
 
                 string matchString = txtMatchString.Text.Trim();
@@ -236,8 +236,8 @@ namespace GestureSign.UI
                     return ShowErrorMessage("无匹配字段", "请先定义一个匹配字段");
                 try
                 {
-                    if (this.chkRegex.IsChecked.Value)
-                        System.Text.RegularExpressions.Regex.IsMatch(matchString, "teststring");
+                    if (chkRegex.IsChecked.Value)
+                        Regex.IsMatch(matchString, "teststring");
                 }
                 catch
                 {
@@ -291,37 +291,30 @@ namespace GestureSign.UI
             if (_availableAction == null)
             {
                 IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
-                List<GestureItem> GestureItems = new List<GestureItem>(results.Count());
+                List<GestureItem> gestureItems = new List<GestureItem>(results.Count());
                 var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
-                foreach (IGesture gesture in results)
+                gestureItems.AddRange(results.Select(gesture => new GestureItem
                 {
-                    // Create new listviewitem to represent gestures, create a thumbnail of the latest version of each gesture
-                    // and add it to image list, then to the output list      gestureName
-                    GestureItem newItem = new GestureItem()
-                    {
-                        Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
-                        Name = gesture.Name
-                    };
-                    GestureItems.Add(newItem);
-                }
-                bind.Source = GestureItems;
+                    Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush), Name = gesture.Name
+                }));
+                bind.Source = gestureItems;
             }
             else
             {
-                bind.Source = ((GestureSign.Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
+                bind.Source = ((WindowsHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
                 bind.Path = new PropertyPath("Items");
             }
             bind.Mode = BindingMode.OneWay;
-            this.availableGesturesComboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
-            if (_CurrentAction != null)
+            availableGesturesComboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
+            if (_currentAction != null)
             {
-                gestureName = _CurrentAction.GestureName;
+                _gestureName = _currentAction.GestureName;
             }
-            if (gestureName != null)
+            if (_gestureName != null)
             {
                 foreach (GestureItem item in availableGesturesComboBox.Items)
                 {
-                    if (item.Name == gestureName)
+                    if (item.Name == _gestureName)
                         availableGesturesComboBox.SelectedIndex = availableGesturesComboBox.Items.IndexOf(item);
                 }
             }
@@ -344,8 +337,8 @@ namespace GestureSign.UI
 
             try
             {
-                pathname = System.IO.Path.GetPathRoot(path);
-                filename = System.IO.Path.GetFileName(path);
+                pathname = Path.GetPathRoot(path);
+                filename = Path.GetFileName(path);
             }
             catch (ArgumentException)
             {
@@ -360,10 +353,10 @@ namespace GestureSign.UI
                 return false;
 
             // Not sure if additional checking below is needed, but no harm done
-            if (pathname.IndexOfAny(System.IO.Path.GetInvalidPathChars()) >= 0)
+            if (pathname.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
                 return false;
 
-            if (filename.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0)
+            if (filename.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 return false;
 
             return true;
@@ -378,25 +371,25 @@ namespace GestureSign.UI
 
         public void RefreshApplications()
         {
-            this.alvRunningApplications.Items.Clear();
-            System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(GetValidWindows));
+            alvRunningApplications.Items.Clear();
+            ThreadPool.QueueUserWorkItem(GetValidWindows);
             //  this.lstRunningApplications.Items.Clear();
         }
         private void GetValidWindows(object s)
         {
             // Get valid running windows
-            var Windows = SystemWindow.AllToplevelWindows.Where
+            var windows = SystemWindow.AllToplevelWindows.Where
                      (
                          w => w.Visible &&	// Must be a visible windows
                          w.Title != "" &&	// Must have a window title
                          IsProcessAccessible(w.Process) &&
-                        System.IO.Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
+                        Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
             //System.Threading.Thread.Sleep(500);
-            foreach (SystemWindow sWind in Windows)
+            foreach (SystemWindow sWind in windows)
             {
-                this.alvRunningApplications.Dispatcher.BeginInvoke(new System.Action(() =>
+                alvRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
 
@@ -405,12 +398,13 @@ namespace GestureSign.UI
                        // Store identifying information
                        lItem.WindowClass = sWind.ClassName;
                        lItem.WindowTitle = sWind.Title;
-                       lItem.WindowFilename = System.IO.Path.GetFileName(sWind.Process.MainModule.FileName);
+                       lItem.WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName);
                        lItem.ApplicationIcon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                       this.alvRunningApplications.Items.Add(lItem);
+                       alvRunningApplications.Items.Add(lItem);
                    }
-                   catch { return; }
+                   catch {
+                   }
                }));
             }
         }
@@ -434,24 +428,24 @@ namespace GestureSign.UI
             if (availableGesturesComboBox.SelectedItem == null)
                 return ShowErrorMessage("手势未定义", "未选择手势，请先选择一个手势。");
             // Check if we're creating a new action
-            bool _IsNew = false;
-            if (_CurrentAction == null)
+            bool isNew = false;
+            if (_currentAction == null)
             {
-                _CurrentAction = new GestureSign.Applications.Action();
-                _IsNew = true;
+                _currentAction = new Applications.Action();
+                isNew = true;
             }
             string newActionName = TxtActionName.Text.Trim();
 
             if (String.IsNullOrEmpty(newActionName))
                 return ShowErrorMessage("无动作名", "未填写动作名称，请先为该动作命名。");
 
-            if (_IsNew)
+            if (isNew)
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
                     if (ApplicationManager.Instance.IsGlobalAction(newActionName))
                     {
-                        _CurrentAction = null;
+                        _currentAction = null;
                         return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
                     }
                 }
@@ -459,7 +453,7 @@ namespace GestureSign.UI
                 {
                     if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)))
                     {
-                        _CurrentAction = null;
+                        _currentAction = null;
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
@@ -468,14 +462,14 @@ namespace GestureSign.UI
             {
                 if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
                 {
-                    if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _currentAction.Name)
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
                     }
                 }
                 else
                 {
-                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _CurrentAction.Name)
+                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
 
@@ -484,21 +478,21 @@ namespace GestureSign.UI
             }
 
             // Store new values
-            _CurrentAction.GestureName = (availableGesturesComboBox.SelectedItem as GestureItem).Name;
-            _CurrentAction.Name = newActionName;
-            _CurrentAction.PluginClass = _PluginInfo.Class;
-            _CurrentAction.PluginFilename = _PluginInfo.Filename;
-            _CurrentAction.ActionSettings = _PluginInfo.Plugin.Serialize();
-            _CurrentAction.IsEnabled = true;
+            _currentAction.GestureName = (availableGesturesComboBox.SelectedItem as GestureItem).Name;
+            _currentAction.Name = newActionName;
+            _currentAction.PluginClass = _pluginInfo.Class;
+            _currentAction.PluginFilename = _pluginInfo.Filename;
+            _currentAction.ActionSettings = _pluginInfo.Plugin.Serialize();
+            _currentAction.IsEnabled = true;
             // Check if we already have this action somewhere
-            if (_IsNew)
+            if (isNew)
             {
                 if (_newApplication != null || _newApplication is UserApplication)
                 {
                     ApplicationManager.Instance.AddApplication(_newApplication);
                 }
                 // Save new action to specific application
-                ApplicationManager.Instance.CurrentApplication.AddAction(_CurrentAction);
+                ApplicationManager.Instance.CurrentApplication.AddAction(_currentAction);
 
             }
             // Save entire list of applications
@@ -524,24 +518,24 @@ namespace GestureSign.UI
         private void LoadPlugin(IPluginInfo selectedPlugin)
         {
             // Try to load plugin, and set current plugin to newly selected plugin
-            _PluginInfo = selectedPlugin;
+            _pluginInfo = selectedPlugin;
 
             // Set action name
-            if (IsPluginMatch(_CurrentAction, selectedPlugin.Class, selectedPlugin.Filename))
+            if (IsPluginMatch(_currentAction, selectedPlugin.Class, selectedPlugin.Filename))
             {
-                TxtActionName.Text = _CurrentAction.Name;
+                TxtActionName.Text = _currentAction.Name;
                 // Load action settings or no settings
-                _PluginInfo.Plugin.Deserialize(_CurrentAction.ActionSettings);
+                _pluginInfo.Plugin.Deserialize(_currentAction.ActionSettings);
             }
             else
             {
-                TxtActionName.Text = GetNextActionName(_PluginInfo.Plugin.Name);
-                _PluginInfo.Plugin.Deserialize("");
+                TxtActionName.Text = GetNextActionName(_pluginInfo.Plugin.Name);
+                _pluginInfo.Plugin.Deserialize("");
             }
             // Does the plugin have a graphical interface
-            if (_PluginInfo.Plugin.GUI != null)
+            if (_pluginInfo.Plugin.GUI != null)
                 // Show plugins graphical interface
-                ShowSettings(_PluginInfo);
+                ShowSettings(_pluginInfo);
             else
                 // There is no interface for this plugin, hide settings but leave action name input box
                 HideSettings();
@@ -550,34 +544,34 @@ namespace GestureSign.UI
         private string GetNextActionName(string name, int i = 1)
         {
             var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
-            var selectedItem = this.cmbExistingApplication.SelectedItem;
+            var selectedItem = cmbExistingApplication.SelectedItem;
             if (selectedItem != null && (ExistingApplicationRadioButton.IsChecked.Value && ((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
                 return GetNextActionName(name, ++i);
             return actionName;
         }
 
-        private void ShowSettings(IPluginInfo PluginInfo)
+        private void ShowSettings(IPluginInfo pluginInfo)
         {
-            var PluginGUI = PluginInfo.Plugin.GUI;
+            var PluginGUI = pluginInfo.Plugin.GUI;
             if (PluginGUI.Parent != null)
             {
-                this.SettingsContent.Content = null;
+                SettingsContent.Content = null;
             }
             // Add settings to settings panel
-            this.SettingsContent.Content = PluginGUI;
+            SettingsContent.Content = PluginGUI;
 
-            this.SettingsContent.Height = PluginGUI.Height;
-            this.SettingsContent.Visibility = Visibility.Visible;
+            SettingsContent.Height = PluginGUI.Height;
+            SettingsContent.Visibility = Visibility.Visible;
         }
         private void HideSettings()
         {
-            this.SettingsContent.Height = 0;
-            this.SettingsContent.Visibility = Visibility.Collapsed;
+            SettingsContent.Height = 0;
+            SettingsContent.Visibility = Visibility.Collapsed;
         }
 
-        private bool IsPluginMatch(IAction Action, string PluginClass, string PluginFilename)
+        private bool IsPluginMatch(IAction action, string PluginClass, string PluginFilename)
         {
-            return (Action != null && Action.PluginClass == PluginClass && Action.PluginFilename == PluginFilename);
+            return (action != null && action.PluginClass == PluginClass && action.PluginFilename == PluginFilename);
         }
 
         private void RunningApplicationsPopup_Opened(object sender, EventArgs e)
@@ -609,7 +603,7 @@ namespace GestureSign.UI
     // Converter
     public class SelectedItemConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             bool isExisting = values != null && (bool)values[0];
             IApplication existingApplication = values[1] as IApplication;
@@ -621,14 +615,14 @@ namespace GestureSign.UI
             return existingApplication != null ? existingApplication.Name : Binding.DoNothing;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return new object[3] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
+            return new object[] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
         }
     }
     public class ListviewItem2TextBoxConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
 
             if (values[0] == null || values[1] == null) return Binding.DoNothing;
@@ -648,7 +642,7 @@ namespace GestureSign.UI
             return Binding.DoNothing;
         }
         // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             return new[] { Binding.DoNothing, Binding.DoNothing };
         }
@@ -656,7 +650,7 @@ namespace GestureSign.UI
     [ValueConversion(typeof(MatchUsing), typeof(string))]
     public class MatchUsingToStringConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             MatchUsing mu = (MatchUsing)value;
             switch (mu)
@@ -673,7 +667,7 @@ namespace GestureSign.UI
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
         }
@@ -682,19 +676,19 @@ namespace GestureSign.UI
     [ValueConversion(typeof(IApplication), typeof(bool))]
     public class InterceptTouchInputBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
                 var app = value as UserApplication;
                 if (app != null)
                     return app.InterceptTouchInput;
-                else return false;
+                return false;
             }
-            else return DependencyProperty.UnsetValue;
+            return DependencyProperty.UnsetValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
         }
@@ -702,19 +696,19 @@ namespace GestureSign.UI
     [ValueConversion(typeof(IApplication), typeof(bool))]
     public class AllowSingleBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
                 var app = value as UserApplication;
                 if (app != null)
                     return app.AllowSingleStroke;
-                else return false;
+                return false;
             }
-            else return DependencyProperty.UnsetValue;
+            return DependencyProperty.UnsetValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
         }
@@ -722,7 +716,7 @@ namespace GestureSign.UI
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class Bool2VisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
@@ -731,7 +725,7 @@ namespace GestureSign.UI
             return DependencyProperty.UnsetValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
         }
@@ -739,7 +733,7 @@ namespace GestureSign.UI
     [ValueConversion(typeof(MatchUsing), typeof(Visibility))]
     public class MatchUsing2VisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
@@ -748,7 +742,7 @@ namespace GestureSign.UI
             return DependencyProperty.UnsetValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return DependencyProperty.UnsetValue;
         }
