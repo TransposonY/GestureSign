@@ -320,7 +320,7 @@ namespace GestureSign.Common.Applications
         public IApplication GetGlobalApplication()
         {
             if (!_Applications.Exists(a => a is GlobalApplication))
-                _Applications.Add(new GlobalApplication());
+                _Applications.Add(new GlobalApplication() { Group = String.Empty });
 
             return _Applications.FirstOrDefault(a => a is GlobalApplication);
         }
@@ -328,7 +328,7 @@ namespace GestureSign.Common.Applications
         public IEnumerable<IApplication> GetAllGlobalApplication()
         {
             if (!_Applications.Exists(a => a is GlobalApplication))
-                _Applications.Add(new GlobalApplication());
+                _Applications.Add(new GlobalApplication() { Group = String.Empty });
             return _Applications.Where(a => a is GlobalApplication);
         }
         public void RemoveGlobalAction(string ActionName)
