@@ -71,7 +71,7 @@ namespace GestureSign.Common.InterProcessCommunication
                                for (; i != 10; i++)
                                {
                                    if (!NamedPipeDoesNotExist(pipeName)) break;
-                                   Thread.Sleep(100);
+                                   Thread.Sleep(50);
                                }
                                if (i == 10) return false;
 
