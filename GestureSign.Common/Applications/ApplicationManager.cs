@@ -201,6 +201,11 @@ namespace GestureSign.Common.Applications
                         typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
                         typeof (GestureSign.Applications.Action)
                     }, true);
+                _Applications.ForEach(a =>
+                {
+                    if (a.Group == null)
+                        a.Group = String.Empty;
+                });
                 // Ensure we got an object back
                 if (_Applications == null)
                     return false; // No object, failed
