@@ -201,39 +201,33 @@ namespace GestureSign.UI
 
             if (ExistingApplicationRadioButton.IsChecked.Value)
             {
-                if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != ApplicationManager.Instance.CurrentApplication)
+                if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
                 {
                     if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
                     {
                         return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
-                    ApplicationManager.Instance.CurrentApplication.RemoveAction(_currentAction);
-                    ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
                 }
                 ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
                 return true;
             }
             if (NewApplicationRadioButton.IsChecked.Value)
             {
-                _newApplication = new UserApplication
-                {
-                    InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,
-                    AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value,
-                    Name = txtApplicationName.Text.Trim(),
-                    Group = GroupComboBox.Text.Trim()
-                };
-                // Store application name
+                string appName = txtApplicationName.Text.Trim();
+
                 // Make sure we have a valid application name
-                if (_newApplication.Name == "")
+                if (String.IsNullOrWhiteSpace(appName))
                     return ShowErrorMessage("无程序名", "请定义程序名");
 
-                if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(_newApplication.Name))
+                if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(appName))
                     return ShowErrorMessage("该程序名已经存在", "程序名称已经存在，请输入其他名字");
+
 
                 string matchString = txtMatchString.Text.Trim();
                 // Make sure the user entered a match string
                 if (String.IsNullOrEmpty(matchString))
                     return ShowErrorMessage("无匹配字段", "请先定义一个匹配字段");
+
                 try
                 {
                     if (chkRegex.IsChecked.Value)
@@ -244,9 +238,16 @@ namespace GestureSign.UI
                     return ShowErrorMessage("格式错误", "正则表达式格式错误，请重新检查");
                 }
 
-                _newApplication.MatchString = matchString;
-                _newApplication.MatchUsing = matchUsingRadio.MatchUsing;
-                _newApplication.IsRegEx = chkRegex.IsChecked.Value;
+                _newApplication = new UserApplication
+                {
+                    InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,
+                    AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value,
+                    Name = appName,
+                    Group = GroupComboBox.Text.Trim(),
+                    MatchString = matchString,
+                    MatchUsing = matchUsingRadio.MatchUsing,
+                    IsRegEx = chkRegex.IsChecked.Value
+                };
 
 
                 ApplicationManager.Instance.CurrentApplication = _newApplication;
@@ -295,7 +296,8 @@ namespace GestureSign.UI
                 var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
                 gestureItems.AddRange(results.Select(gesture => new GestureItem
                 {
-                    Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush), Name = gesture.Name
+                    Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
+                    Name = gesture.Name
                 }));
                 bind.Source = gestureItems;
             }
@@ -403,7 +405,8 @@ namespace GestureSign.UI
 
                        alvRunningApplications.Items.Add(lItem);
                    }
-                   catch {
+                   catch
+                   {
                    }
                }));
             }
@@ -484,15 +487,33 @@ namespace GestureSign.UI
             _currentAction.PluginFilename = _pluginInfo.Filename;
             _currentAction.ActionSettings = _pluginInfo.Plugin.Serialize();
             _currentAction.IsEnabled = true;
-            // Check if we already have this action somewhere
+
             if (isNew)
             {
-                if (_newApplication != null || _newApplication is UserApplication)
+                if (_newApplication is UserApplication)
                 {
                     ApplicationManager.Instance.AddApplication(_newApplication);
                 }
                 // Save new action to specific application
                 ApplicationManager.Instance.CurrentApplication.AddAction(_currentAction);
+
+            }
+            else
+            {
+                if (ExistingApplicationRadioButton.IsChecked.Value)
+                {
+                    if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
+                    {
+                        _selectedApplication.RemoveAction(_currentAction);
+                        ((IApplication) cmbExistingApplication.SelectedItem).AddAction(_currentAction);
+                    }
+                }
+                if (NewApplicationRadioButton.IsChecked.Value)
+                {
+                    _selectedApplication.RemoveAction(_currentAction);
+                    _newApplication.AddAction(_currentAction);
+                    ApplicationManager.Instance.AddApplication(_newApplication);
+                }
 
             }
             // Save entire list of applications
