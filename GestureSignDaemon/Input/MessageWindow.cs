@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GestureSign.Common.Input;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 
 using Microsoft.Win32;
@@ -74,9 +75,9 @@ namespace GestureSignDaemon.Input
         public event EventHandler<IntPtr> OnForegroundChange;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        WinEventDelegate dele;
+        readonly WinEventDelegate _dele;
         InitializationRatio initializationRatio;
-        private IntPtr hhook;
+        private readonly IntPtr _hhook;
 
         Type touchDataType;
         List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
@@ -204,9 +205,12 @@ namespace GestureSignDaemon.Input
 
             System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
-            dele = WinEventProc;
-            hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
-
+            if (Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                .IndexOf(AppDomain.CurrentDomain.BaseDirectory, StringComparison.InvariantCultureIgnoreCase) != -1)
+            {
+                _dele = WinEventProc;
+                _hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+            }
             try
             {
                 RegisterDevices(accessHandle);
@@ -225,7 +229,8 @@ namespace GestureSignDaemon.Input
 
         ~MessageWindow()
         {
-            UnhookWinEvent(hhook);
+            if (_hhook != IntPtr.Zero)
+                UnhookWinEvent(_hhook);
         }
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
