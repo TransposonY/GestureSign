@@ -205,8 +205,8 @@ namespace GestureSignDaemon.Input
 
             System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
-            if (Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
-                .IndexOf(AppDomain.CurrentDomain.BaseDirectory, StringComparison.InvariantCultureIgnoreCase) != -1)
+            if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                StringComparison.InvariantCultureIgnoreCase) != -1)
             {
                 _dele = WinEventProc;
                 _hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _dele, 0, 0, WINEVENT_OUTOFCONTEXT);
