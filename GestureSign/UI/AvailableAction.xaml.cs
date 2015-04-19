@@ -243,6 +243,7 @@ namespace GestureSign.UI
         {
             if (selectedApp != null && lstAvailableApplication.SelectedItem == selectedApp)
             {
+                lstAvailableApplication.Items.Refresh();
                 RefreshActions(false);
                 return;
             }
@@ -292,11 +293,12 @@ namespace GestureSign.UI
                 _selecteNewdItem = true;
                 var newApp =
                     selectedApplication.Actions.Where(
-                        a => !ActionInfos.Any(ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal))).ToList();
+                        a => !ActionInfos.Any
+                            (ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal) && ai.ApplicationName.Equals(selectedApplication.Name))).ToList();
                 var deletedApp =
                     ActionInfos.Where(
                         ai =>
-                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)))
+                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)) || !ai.ApplicationName.Equals(selectedApplication.Name, StringComparison.Ordinal))
                         .ToList();
 
                 foreach (ActionInfo ai in deletedApp)
