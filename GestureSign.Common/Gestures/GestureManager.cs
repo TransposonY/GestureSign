@@ -155,7 +155,7 @@ namespace GestureSign.Common.Gestures
                 {
                     // Load gestures from file, create empty list if load failed
                     _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(
-                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
 
                     if (Gestures == null)
                         return false;
@@ -174,7 +174,7 @@ namespace GestureSign.Common.Gestures
             try
             {
                 // Save gestures to file
-                bool flag = Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Gestures.json"));
+                bool flag = Configuration.FileManager.SaveObject<List<IGesture>>(Gestures, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"));
                 if (flag) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon"); }
                 return flag;
             }

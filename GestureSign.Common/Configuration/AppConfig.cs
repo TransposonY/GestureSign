@@ -12,11 +12,15 @@ namespace GestureSign.Common.Configuration
 {
     public class AppConfig
     {
-        static System.Configuration.Configuration config;
-        static System.Threading.Timer timer;
+        static System.Configuration.Configuration _config;
+        static readonly System.Threading.Timer Timer;
         public static event EventHandler ConfigChanged;
-        static string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-        private static readonly FileSystemWatcher fsw;
+
+        private static readonly string Path;
+
+        private static readonly FileSystemWatcher Fsw;
+
+        private static readonly ExeConfigurationFileMap ExeMap;
 
         public static System.Drawing.Color VisualFeedbackColor
         {
@@ -152,18 +156,30 @@ namespace GestureSign.Common.Configuration
 
         static AppConfig()
         {
-            Teaching = false;
-            config = ConfigurationManager.OpenExeConfiguration(path);
-            timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, Timeout.Infinite, Timeout.Infinite);
+            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
+            var configFolder = System.IO.Path.GetDirectoryName(Path);
 
-            fsw = new FileSystemWatcher(AppDomain.CurrentDomain.BaseDirectory)
+            if (!Directory.Exists(configFolder))
+                Directory.CreateDirectory(configFolder);
+
+            ExeMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = Path,
+                RoamingUserConfigFilename = Path,
+                LocalUserConfigFilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GestureSign\GestureSign.config")
+            };
+            Teaching = false;
+            _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
+            Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
+
+            Fsw = new FileSystemWatcher(configFolder)
             {
                 Filter = "*.config",
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime,
                 IncludeSubdirectories = true
             };
-            fsw.Created += fsw_Changed;
-            fsw.Changed += fsw_Changed;
+            Fsw.Created += fsw_Changed;
+            Fsw.Changed += fsw_Changed;
         }
         static void fsw_Changed(object sender, FileSystemEventArgs e)
         {
@@ -171,15 +187,15 @@ namespace GestureSign.Common.Configuration
                 Reload();
         }
         public static void ToggleWatcher()
-        { fsw.EnableRaisingEvents = !fsw.EnableRaisingEvents; }
+        { Fsw.EnableRaisingEvents = !Fsw.EnableRaisingEvents; }
 
         public static void Reload()
         {
             try
             {
-                FileManager.WaitFile(path + ".config");
+                FileManager.WaitFile(Path);
 
-                config = ConfigurationManager.OpenExeConfiguration(path);
+                _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
                 // ConfigurationManager.RefreshSection("appSettings");
                 if (ConfigChanged != null)
                     ConfigChanged(new object(), EventArgs.Empty);
@@ -190,17 +206,17 @@ namespace GestureSign.Common.Configuration
 
         public static void Save()
         {
-            timer.Change(400, Timeout.Infinite);
+            Timer.Change(400, Timeout.Infinite);
         }
 
         private static void SaveFile(object state)
         {
             try
             {
-                FileManager.WaitFile(path + ".config");
+                FileManager.WaitFile(Path);
                 // Save the configuration file.    
-                config.AppSettings.SectionInformation.ForceSave = true;
-                config.Save(ConfigurationSaveMode.Minimal);
+                _config.AppSettings.SectionInformation.ForceSave = true;
+                _config.Save(ConfigurationSaveMode.Modified);
             }
             catch (ConfigurationErrorsException)
             {
@@ -215,7 +231,7 @@ namespace GestureSign.Common.Configuration
 
         private static object GetValue(string key, object defaultValue)
         {
-            var setting = config.AppSettings.Settings[key];
+            var setting = _config.AppSettings.Settings[key];
             if (setting != null)
             {
                 try
@@ -238,24 +254,24 @@ namespace GestureSign.Common.Configuration
         }
         private static void SetValue(string key, object value)
         {
-            if (config.AppSettings.Settings[key] != null)
+            if (_config.AppSettings.Settings[key] != null)
             {
-                config.AppSettings.Settings[key].Value = value.ToString();
+                _config.AppSettings.Settings[key].Value = value.ToString();
             }
             else
             {
-                config.AppSettings.Settings.Add(key, value.ToString());
+                _config.AppSettings.Settings.Add(key, value.ToString());
             }
         }
         private static void SetValue(string key, System.Drawing.Color value)
         {
-            if (config.AppSettings.Settings[key] != null)
+            if (_config.AppSettings.Settings[key] != null)
             {
-                config.AppSettings.Settings[key].Value = System.Drawing.ColorTranslator.ToHtml(value);
+                _config.AppSettings.Settings[key].Value = System.Drawing.ColorTranslator.ToHtml(value);
             }
             else
             {
-                config.AppSettings.Settings.Add(key, System.Drawing.ColorTranslator.ToHtml(value));
+                _config.AppSettings.Settings.Add(key, System.Drawing.ColorTranslator.ToHtml(value));
             }
         }
     }

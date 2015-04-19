@@ -184,7 +184,7 @@ namespace GestureSign.Common.Applications
         {
             // Save application list
             bool flag = Common.Configuration.FileManager.SaveObject<List<IApplication>>(
-                 _Applications, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
+                 _Applications, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
             if (flag) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
 
         }
@@ -195,20 +195,20 @@ namespace GestureSign.Common.Applications
             {
                 // Load application list from file
                 _Applications = Configuration.FileManager.LoadObject<List<IApplication>>(
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Applications.json"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"),
                     new[]
                     {
                         typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
                         typeof (GestureSign.Applications.Action)
                     }, true);
+                // Ensure we got an object back
+                if (_Applications == null)
+                    return false; // No object, failed
                 _Applications.ForEach(a =>
                 {
                     if (a.Group == null)
                         a.Group = String.Empty;
                 });
-                // Ensure we got an object back
-                if (_Applications == null)
-                    return false; // No object, failed
 
                 return true; // Success
             });

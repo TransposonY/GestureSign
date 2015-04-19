@@ -16,12 +16,6 @@ namespace GestureSign.Common.Configuration
 
         static FileManager()
         {
-            try
-            {
-                if (!Directory.Exists("Data"))
-                    Directory.CreateDirectory("Data");
-            }
-            catch { }
         }
 
         #endregion
