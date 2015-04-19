@@ -50,14 +50,23 @@ namespace GestureSign.UI
 
             ApplicationDialog.ActionsChanged += (o, e) =>
             {
-                BindApplications(e.Application);
+                if (lstAvailableApplication.SelectedItem == e.Application)
+                {
+                    RefreshActions(false);
+                }
+                else
+                {
+                    BindApplications();
+                    _selecteNewdItem = true;
+                    lstAvailableApplication.SelectedItem = e.Application;
+                }
             };
-            AvailableGestures.GestureChanged += (o, e) => { BindApplications(null); };
-            GestureDefinition.GesturesChanged += (o, e) => { BindApplications(null); };
-            CustomApplicationsFlyout.RefreshApplications += (o, e) => { BindApplications(e.Application); };
+            AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
+            GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
+            CustomApplicationsFlyout.ApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
 
-            if (ApplicationManager.Instance.FinishedLoading) BindApplications(null);
-            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(null); };
+            if (ApplicationManager.Instance.FinishedLoading) { BindApplications(); }
+            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
         }
 
 
@@ -239,14 +248,8 @@ namespace GestureSign.UI
 
 
 
-        private void BindApplications(IApplication selectedApp)
+        private void BindApplications()
         {
-            if (selectedApp != null && lstAvailableApplication.SelectedItem == selectedApp)
-            {
-                lstAvailableApplication.Items.Refresh();
-                RefreshActions(false);
-                return;
-            }
             CopyActionMenuItem.Items.Clear();
             _applications.Clear();
 
@@ -262,15 +265,6 @@ namespace GestureSign.UI
                 MenuItem menuItem = new MenuItem() { Header = app.Name };
                 menuItem.Click += CopyActionMenuItem_Click;
                 CopyActionMenuItem.Items.Add(menuItem);
-            }
-            if (selectedApp == null && lstAvailableApplication.Items.Count != 0)
-            {
-                lstAvailableApplication.SelectedIndex = 0;
-            }
-            else
-            {
-                _selecteNewdItem = true;
-                lstAvailableApplication.SelectedItem = selectedApp;
             }
         }
 
@@ -505,7 +499,11 @@ namespace GestureSign.UI
             };
             targetApplication.AddAction(selectedAction);
 
-            BindApplications(targetApplication);
+            if (targetApplication != lstAvailableApplication.SelectedItem)
+            {
+                _selecteNewdItem = true;
+                lstAvailableApplication.SelectedItem = targetApplication;
+            }
             ApplicationManager.Instance.SaveApplications();
         }
 
@@ -555,7 +553,8 @@ namespace GestureSign.UI
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();
-                    BindApplications(null);
+                    BindApplications();
+                    lstAvailableApplication.SelectedIndex = 0;
                 }
                 MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
             }
@@ -658,8 +657,9 @@ namespace GestureSign.UI
             {
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
 
+                BindApplications();
+                lstAvailableApplication.SelectedIndex = 0;
                 ApplicationManager.Instance.SaveApplications();
-                BindApplications(null);
             }
         }
 

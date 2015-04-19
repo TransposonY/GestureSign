@@ -23,7 +23,7 @@ namespace GestureSign.UI
     {
         public static event EventHandler OpenIgnoredRuningFlyout;
         public static event EventHandler RefreshIgnoredApplications;
-        public static event ApplicationChangedEventHandler RefreshApplications;
+        public static event ApplicationChangedEventHandler ApplicationChanged;
 
         private bool EditMode;
         private IApplication CurrentApplication;
@@ -183,7 +183,7 @@ namespace GestureSign.UI
                 CurrentApplication.IsRegEx = chkPattern.IsChecked.Value;
                 ((UserApplication)CurrentApplication).AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
                 ((UserApplication)CurrentApplication).InterceptTouchInput = chkInterceptTouchInput.IsChecked.Value;
-                if (RefreshApplications != null) RefreshApplications(this, new ApplicationChangedEventArgs(CurrentApplication));
+                if (ApplicationChanged != null) ApplicationChanged(this, new ApplicationChangedEventArgs(CurrentApplication));
             }
             else
             {
