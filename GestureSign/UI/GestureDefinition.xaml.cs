@@ -184,6 +184,11 @@ namespace GestureSign.UI
             if (reName)
             {
                 if (ExistingGestureName.Equals(newGestureName)) return true;
+                if (GestureManager.Instance.GestureExists(newGestureName))
+                {
+                    this.ShowMessageAsync("手势已存在", "输入的手势名称已存在，请重新输入一个手势名称", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                    return false;
+                }
                 GestureManager.Instance.RenameGesture(ExistingGestureName, newGestureName);
                 GestureManager.Instance.SaveGestures();
             }
