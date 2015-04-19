@@ -44,5 +44,10 @@ namespace GestureSign
                 new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build).AddSeconds(Application.ResourceAssembly.GetName().Version.Revision * 2).ToString();
             this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + releaseDate + "\r\n");
         }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://git.oschina.net/TransY/GestureSign/wikis/home");
+        }
     }
 }
