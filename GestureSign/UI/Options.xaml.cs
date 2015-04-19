@@ -311,5 +311,10 @@ namespace GestureSign.UI
             Common.Configuration.AppConfig.Save();
         }
 
+        private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign"));
+        }
+
     }
 }

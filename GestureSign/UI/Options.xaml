@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GestureSign.UI"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
-             mc:Ignorable="d" Height="381" Width="380" Loaded="UserControl_Loaded">
+             mc:Ignorable="d" Height="681" Width="380" Loaded="UserControl_Loaded">
     <ScrollViewer PanningMode="VerticalFirst">
         <StackPanel Margin="0,0,0.4,0" Grid.RowSpan="2">
             <StackPanel.Resources>
@@ -25,9 +25,11 @@
             <Slider x:Name="OpacitySlider" local:SliderTools.MoveToPointOnDrag="True" VerticalAlignment="Bottom" Style="{DynamicResource FlatSlider}" ValueChanged="OpacitySlider_ValueChanged" Maximum="1" IsMoveToPointEnabled="True" Width="300" Height="24" Margin="0,5" HorizontalAlignment="Center"/>
             <TextBlock x:Name="VisualFeedbackWidthText" HorizontalAlignment="Center" TextWrapping="Wrap" Text="关闭" VerticalAlignment="Top" Margin="15,5,5,5" FontSize="14"/>
             <Slider x:Name="VisualFeedbackWidthSlider" local:SliderTools.MoveToPointOnDrag="True" HorizontalAlignment="Center" Height="24" VerticalAlignment="Bottom" Width="300" Style="{DynamicResource FlatSlider}" Maximum="30" ValueChanged="VisualFeedbackWidthSlider_ValueChanged" IsMoveToPointEnabled="True" Margin="0,5" SmallChange="1"/>
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="其他" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,5"/>
             <TextBlock x:Name="MinimumPointDistanceText" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=MinimumPointDistanceSlider, Path=Value, StringFormat=最小点距 {0:F0} px}" VerticalAlignment="Top" Margin="15,5,5,5" FontSize="14"/>
             <Slider x:Name="MinimumPointDistanceSlider" local:SliderTools.MoveToPointOnDrag="True" HorizontalAlignment="Center" Height="24" Width="300" Style="{DynamicResource FlatSlider}" Maximum="100" Minimum="3" ValueChanged="MinimumPointDistanceSlider_ValueChanged" IsMoveToPointEnabled="True" Margin="0,5" />
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="高级选项" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,5"/>
+            <Button x:Name="btnOpenApplicationData"  Content="打开设置文件文件夹" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5" FontSize="12" FontWeight="Bold" Click="btnOpenApplicationData_Click"/>
 
             <controls:ToggleSwitch x:Name="chkWindowsStartup" OnLabel="开机启动" OffLabel="开机不启动" Margin="0,10,0,0" FontFamily="Microsoft YaHei UI" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="200"/>
             <controls:ToggleSwitch x:Name="chkOrderByLocation" OnLabel="按点位置顺序识别" OffLabel="按点时间顺序识别" Width="200" Margin="0,10,0,0" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" ></controls:ToggleSwitch>
