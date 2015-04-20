@@ -457,7 +457,7 @@ namespace GestureSign.UI
                     if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)))
                     {
                         _currentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("程序“{0}”已存在动作 “{1}”", ApplicationManager.Instance.CurrentApplication.Name, newActionName));
                     }
                 }
             }
@@ -474,7 +474,7 @@ namespace GestureSign.UI
                 {
                     if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}” 已经定义给 {1}", newActionName, ApplicationManager.Instance.CurrentApplication.Name));
+                        return ShowErrorMessage("此动作已存在", String.Format("程序“{0}”已存在动作 “{1}”", ApplicationManager.Instance.CurrentApplication.Name, newActionName));
 
                     }
                 }
