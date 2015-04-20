@@ -52,6 +52,7 @@ namespace GestureSign.UI
             {
                 if (lstAvailableApplication.SelectedItem == e.Application)
                 {
+                    ActionInfos.Remove(ActionInfos.FirstOrDefault(ai => ai.ActionName.Equals(e.Action.Name, StringComparison.Ordinal)));
                     RefreshActions(false);
                 }
                 else

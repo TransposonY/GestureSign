@@ -75,7 +75,7 @@ namespace GestureSign.UI
 
         #region Public Instance Properties
 
-        public static event ApplicationChangedEventHandler ActionsChanged;
+        public static event EventHandler<ActionChangedEventArgs> ActionsChanged;
         #endregion
 
 
@@ -505,7 +505,7 @@ namespace GestureSign.UI
                     if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
                     {
                         _selectedApplication.RemoveAction(_currentAction);
-                        ((IApplication) cmbExistingApplication.SelectedItem).AddAction(_currentAction);
+                        ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
                     }
                 }
                 if (NewApplicationRadioButton.IsChecked.Value)
@@ -519,7 +519,7 @@ namespace GestureSign.UI
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
             if (ActionsChanged != null)
-                ActionsChanged(this, new ApplicationChangedEventArgs(ApplicationManager.Instance.CurrentApplication));
+                ActionsChanged(this, new ActionChangedEventArgs(ApplicationManager.Instance.CurrentApplication, _currentAction));
 
             return true;
         }

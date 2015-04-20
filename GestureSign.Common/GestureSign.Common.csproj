@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Applications\Action.cs" />
+    <Compile Include="Applications\ActionChangedEventArgs.cs" />
     <Compile Include="Applications\ApplicationBase.cs" />
     <Compile Include="Applications\ApplicationChangedEventArgs.cs" />
     <Compile Include="Applications\ApplicationChangedEventHandler.cs" />
