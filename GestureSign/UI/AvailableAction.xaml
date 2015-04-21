@@ -87,10 +87,11 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="lstAvailableApplication" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableApplication_SelectionChanged" ContextMenuOpening="lstAvailableApplication_ContextMenuOpening">
+        <ListBox x:Name="lstAvailableApplication" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableApplication_SelectionChanged" ContextMenuOpening="lstAvailableApplication_ContextMenuOpening" Grid.RowSpan="2">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="InterceptTouchInputMenuItem" Header="屏蔽此程序触屏输入"  IsCheckable="True" FontSize="16" Click="InterceptTouchInputMenuItem_Click" />
@@ -137,13 +138,21 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Canvas Height="50">
-                        <TextBlock Text="{Binding Name}" Canvas.Top="17"></TextBlock>
-                    </Canvas>
+                    <StackPanel Height="50" Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"></TextBlock>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="lstAvailableActions" ContextMenuOpening="ActionContextMenu_Opening"   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Margin="0"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False" Grid.Column="1">
+        <DockPanel Grid.Row="0" Grid.Column="1" Background="{StaticResource AccentColorBrush}" Margin="0,5,0,0">
+            <CheckBox Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" Content="启用"/>
+            <TextBlock FontWeight="Bold"  Margin="5,0,0,0" HorizontalAlignment="Center" DockPanel.Dock="Top" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <Binding Converter="{StaticResource headerConverter}" ElementName="lstAvailableApplication" Path="SelectedItem" Mode="OneWay"/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DockPanel>
+        <ListBox x:Name="lstAvailableActions" ContextMenuOpening="ActionContextMenu_Opening"   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="1,0,1,1" Margin="0,0,0,5"  SelectionChanged="lstAvailableActions_SelectionChanged" ScrollViewer.CanContentScroll="False" Grid.Column="1" Grid.Row="1" BorderBrush="{StaticResource AccentColorBrush}">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
@@ -152,39 +161,6 @@
                     <MenuItem x:Name="ExportActionMenuItem" Header="导出所有动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
-            <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <!--<Setter Property="Margin" Value="0,0,0,5"/>-->
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander BorderBrush="#FFA4B97F"  FlowDirection="RightToLeft" IsExpanded="True">
-                                            <Expander.Header>
-                                                <DockPanel>
-                                                    <CheckBox Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" FlowDirection="LeftToRight" Content="启用" DockPanel.Dock="Right"/>
-                                                    <TextBlock FontWeight="Bold"  Margin="5,0,0,0" HorizontalAlignment="Center" DockPanel.Dock="Top">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding Converter="{StaticResource headerConverter}" >
-                                                                <Binding  Path="Name" Mode="OneWay"/>
-                                                                <Binding  Path="ItemCount" Mode="OneWay"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                </DockPanel>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListBox.GroupStyle>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel IsItemsHost="True">
@@ -193,17 +169,22 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Canvas Height="95" Margin="0" FlowDirection="LeftToRight">
+                    <Grid Height="95" Margin="0" FlowDirection="LeftToRight">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
                         <!--Orientation="Horizontal"-->
                         <CheckBox Margin="5,0,10,0" IsChecked="{Binding Path=IsEnabled}" IsThreeState="False" Click="ActionCheckBox_Click" Canvas.Top="38"/>
-                        <Image x:Name="GestureImage" Source="{Binding GestureThumbnail}" Height="65" Stretch="Uniform" Margin="15,5,5,5" Width="200" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.Left="35" Canvas.Top="8" />
+                        <Image x:Name="GestureImage" Source="{Binding GestureThumbnail}" Height="65" Stretch="Uniform" Margin="15,5,5,5" Width="200" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.Left="35" Canvas.Top="8" Grid.Column="1" />
                         <ComboBox x:Name="availableGesturesComboBox"
                                               Visibility="Collapsed" 
                           HorizontalContentAlignment="Left"
                            HorizontalAlignment="Center"
                           VerticalContentAlignment="Center"
                            Margin="10,5,5,5"
-                         VerticalAlignment="Center" Width="210" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280" MinWidth="210">
+                         VerticalAlignment="Center" Width="210" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True" Background="{x:Null}" SelectionChanged="availableGesturesComboBox_SelectionChanged" IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="280" MinWidth="210" Grid.Column="1">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -352,58 +333,16 @@
 
                             </ComboBox.Resources>
                         </ComboBox>
-                        <Canvas VerticalAlignment="Center" Height="55" DockPanel.Dock="Right" HorizontalAlignment="Right" Canvas.Left="270" Canvas.Top="15">
-                            <TextBlock TextWrapping="NoWrap" Text="{Binding ActionName}" Margin="0,10,0,5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Canvas.Top="0" Width="Auto"/>
-                            <TextBlock TextWrapping="Wrap" Text="{Binding Description}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Canvas.Top="32" Width="Auto" Foreground="{StaticResource HighlightBrush}"/>
-                        </Canvas>
-                    </Canvas>
+                        <TextBlock TextWrapping="NoWrap" Text="{Binding ActionName}" Margin="0,28,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Width="Auto" Panel.ZIndex="1" Grid.Column="2"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding Description}" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                   Width="Auto" Foreground="{StaticResource HighlightBrush}" Panel.ZIndex="1" Grid.Column="2" Margin="0,0,0,28"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <!--<ListView.View>
-                <GridView>
-                    <GridViewColumn Header="启用">
-                        <GridViewColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <DockPanel>
-                                    <CheckBox Click="AllCheckBoxs_Click" Margin="10,0,0,0"/>
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">
-                                        <TextBlock.Text>
-                                            <Binding/>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </DockPanel>
-                            </DataTemplate>
-                        </GridViewColumn.HeaderTemplate>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding Path=IsEnabled}" IsThreeState="False" Checked="ActionCheckBox_Checked" Unchecked="ActionCheckBox_Unchecked" Tag="{Binding ActionName}"  />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="手势">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <DataTemplate.Triggers>
-                                </DataTemplate.Triggers>
-                                <Image Source="{Binding GestureThumbnail}" Height="65" Stretch="None" Margin="5" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="名称及动作">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock TextWrapping="Wrap" Text="{Binding ActionName}" Margin="0,0,0,5"/>
-                                    <TextBlock TextWrapping="Wrap" Text="{Binding Description}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>-->
         </ListBox>
         <Button x:Name="btnAddAction"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,120,10" Click="btnAddAction_Click" Grid.Row="1" Grid.Column="1" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,120,10" Click="btnAddAction_Click" Grid.Row="2" Grid.Column="1" 
                         >
             <Rectangle Width="20"
                            Height="20">
@@ -413,7 +352,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="cmdEdit"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Click="cmdEditAction_Click" Margin="0,0,65,10" Grid.Row="1" Grid.Column="1" IsEnabled="False" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Click="cmdEditAction_Click" Margin="0,0,65,10" Grid.Row="2" Grid.Column="1" IsEnabled="False" 
                         >
             <Rectangle Width="20"
                            Height="20"
@@ -425,7 +364,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="cmdDelete"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,10,10" Click="cmdDeleteAction_Click" Grid.Row="1" Grid.Column="1" IsEnabled="False" >
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,10,10" Click="cmdDeleteAction_Click" Grid.Row="2" Grid.Column="1" IsEnabled="False" >
             <Rectangle Width="18"
                            Height="20"
                                     Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -435,7 +374,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="EditAppButton" 
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="50" Width="50" Margin="10,0,0,10" Grid.Row="1" Click="EditAppButton_Click" 
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="50" Width="50" Margin="10,0,0,10" Grid.Row="2" Click="EditAppButton_Click" 
                         >
             <Rectangle Width="20"
                            Height="20"
@@ -447,7 +386,7 @@
             </Rectangle>
         </Button>
         <Button x:Name="DeleteAppButton"
-                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="50" Width="50" Margin="65,0,0,10" Grid.Row="1" Click="DeleteAppButton_Click" >
+                    Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="50" Width="50" Margin="65,0,0,10" Grid.Row="2" Click="DeleteAppButton_Click" >
             <Rectangle Width="18"
                            Height="20"
                                     Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">

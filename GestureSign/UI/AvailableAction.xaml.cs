@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Threading;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
@@ -666,23 +667,23 @@ namespace GestureSign.UI
 
 
     }
-    public class HeaderConverter : IMultiValueConverter
+    [ValueConversion(typeof(IApplication), typeof(string))]
+    public class HeaderConverter : IValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string name = values[0] as string;
-            int count = (int)values[1];
-            if (name != null)
-            {
-                return String.Format("{0}  {1}个动作", name, count);
 
+            var app = value as IApplication;
+            if (app != null)
+            {
+                return String.Format("{0}  ( {1}个动作 )", app.Name, app.Actions.Count);
             }
-            else return DependencyProperty.UnsetValue;
+            return Binding.DoNothing;
         }
-        // 因为是只从数据源到目标的意向Binding，所以，这个函数永远也不会被调到
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+            return DependencyProperty.UnsetValue;
         }
     }
     public class ApplicationListHeaderConverter : IMultiValueConverter
