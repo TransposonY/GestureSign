@@ -94,10 +94,6 @@
       <Project>{038047a4-e3f8-4b49-9762-7f63971b8319}</Project>
       <Name>GestureSign.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GestureSign.CorePlugins\GestureSign.CorePlugins.csproj">
-      <Project>{60070af1-c987-4c5b-afd1-b9dfaf47e35c}</Project>
-      <Name>GestureSign.CorePlugins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj">
       <Project>{69f91bd1-6986-4079-9537-ed1a1d8ebe06}</Project>
       <Name>GestureSign.PointPatterns</Name>
