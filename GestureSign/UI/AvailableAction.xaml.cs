@@ -619,18 +619,19 @@ namespace GestureSign.UI
             try
             {
                 var checkbox = ((CheckBox)sender);
-                dynamic dc = checkbox.DataContext;
 
-                ApplicationManager.Instance.Applications.Find(app => app.Name.Equals(dc.Name)).Actions.ForEach(a => a.IsEnabled = checkbox.IsChecked.Value);
+                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+                if (app == null) return;
+
+                app.Actions.ForEach(a => a.IsEnabled = checkbox.IsChecked.Value);
                 ApplicationManager.Instance.SaveApplications();
 
-                foreach (ActionInfo ai in ActionInfos.Where(a => a.ApplicationName.Equals(dc.Name)))
+                foreach (ActionInfo ai in ActionInfos)
                 {
                     ai.IsEnabled = checkbox.IsChecked.Value;
                 }
             }
             catch { }
-            ApplicationManager.Instance.SaveApplications();
         }
 
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
