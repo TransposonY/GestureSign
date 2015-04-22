@@ -67,7 +67,6 @@ namespace GestureSign.CorePlugins
                 if (className.Equals("Windows.UI.Core.CoreWindow") ||
                    className.Equals("ImmersiveBackgroundWindow") ||
                    className.Equals("ImmersiveLauncher") ||
-                   (ActionPoint.Window.Style & WindowStyleFlags.POPUP) == WindowStyleFlags.POPUP ||
                    (ActionPoint.Window.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) == WindowExStyleFlags.TOOLWINDOW)
                     return false;
 
