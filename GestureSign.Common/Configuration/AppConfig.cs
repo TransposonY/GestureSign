@@ -49,7 +49,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (int)GetValue("MinimumPointDistance", 12);
+                return (int)GetValue("MinimumPointDistance", 20);
             }
             set
             {
