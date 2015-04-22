@@ -94,8 +94,6 @@ namespace GestureSign
                 mw.Activate();
 
 #endif
-
-                AppConfig.ToggleWatcher();
             }
             else
             {

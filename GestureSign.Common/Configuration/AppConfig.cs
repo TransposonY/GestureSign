@@ -176,14 +176,14 @@ namespace GestureSign.Common.Configuration
             {
                 Filter = "*.config",
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime,
-                IncludeSubdirectories = true
+                IncludeSubdirectories = false
             };
             Fsw.Created += fsw_Changed;
             Fsw.Changed += fsw_Changed;
         }
         static void fsw_Changed(object sender, FileSystemEventArgs e)
         {
-            if (e.Name.Equals("gesturesign.exe.config", StringComparison.CurrentCultureIgnoreCase))
+            if (e.Name.Equals("gesturesign.config", StringComparison.CurrentCultureIgnoreCase))
                 Reload();
         }
         public static void ToggleWatcher()
