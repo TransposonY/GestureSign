@@ -510,6 +510,7 @@ namespace GestureSignDaemon.Input
                             requiringTouchDataCount = activeTouchCount;
                             outputTouchs = new List<RawTouchData>(activeTouchCount);
                         }
+                        if (requiringTouchDataCount == 0) return;
                         touchlength = Marshal.SizeOf(touchDataType);
                         touchdataCount = (int)(raw.hid.dwSizHid - 3) / touchlength;
 
