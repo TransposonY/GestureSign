@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GestureSign.Common.Input;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-
-using Microsoft.Win32;
-
+using System.Windows.Forms;
 using GestureSign.Common.Configuration;
-using System.Threading;
+using GestureSign.Common.Input;
+using Microsoft.Win32;
 
 namespace GestureSignDaemon.Input
 {
@@ -108,7 +104,7 @@ namespace GestureSignDaemon.Input
 
         #region DllImports
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [DllImport("user32.dll")]
         static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
         [DllImport("User32.dll")]
@@ -148,7 +144,7 @@ namespace GestureSignDaemon.Input
 
         #region  Windows.h structure declarations
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         public struct RAWINPUT
         {
 
@@ -203,7 +199,7 @@ namespace GestureSignDaemon.Input
         {
 
 
-            System.Diagnostics.Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
+            Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
             if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 StringComparison.InvariantCultureIgnoreCase) != -1)
@@ -334,11 +330,11 @@ namespace GestureSignDaemon.Input
                             if (IsTouchDevice)
                             {
                                 NumberOfDevices++;
-                                if (!GestureSign.Common.Configuration.AppConfig.DeviceName.Equals(deviceName))
+                                if (!AppConfig.DeviceName.Equals(deviceName))
                                 {
-                                    GestureSign.Common.Configuration.AppConfig.DeviceName = deviceName;
-                                    GestureSign.Common.Configuration.AppConfig.XRatio = GestureSign.Common.Configuration.AppConfig.YRatio = 0;
-                                    GestureSign.Common.Configuration.AppConfig.Save();
+                                    AppConfig.DeviceName = deviceName;
+                                    AppConfig.XRatio = AppConfig.YRatio = 0;
+                                    AppConfig.Save();
                                 }
                             }
                         }
@@ -402,7 +398,7 @@ namespace GestureSignDaemon.Input
             int errCode = Marshal.GetLastWin32Error();
             if (errCode != 0)
             {
-                throw new System.ComponentModel.Win32Exception(errCode);
+                throw new Win32Exception(errCode);
             }
         }
         private void ProcessPointerMessage(Message message)
@@ -424,7 +420,7 @@ namespace GestureSignDaemon.Input
                     }
                     PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
                 }
-                catch (System.ComponentModel.Win32Exception) { }
+                catch (Win32Exception) { }
             }
         }
 
@@ -517,22 +513,22 @@ namespace GestureSignDaemon.Input
                         touchlength = Marshal.SizeOf(touchDataType);
                         touchdataCount = (int)(raw.hid.dwSizHid - 3) / touchlength;
 
-                        switch (System.Windows.Forms.SystemInformation.ScreenOrientation)
+                        switch (SystemInformation.ScreenOrientation)
                         {
-                            case System.Windows.Forms.ScreenOrientation.Angle0:
+                            case ScreenOrientation.Angle0:
                                 XAxisDirection = YAxisDirection = true;
                                 IsAxisCorresponds = true;
                                 break;
-                            case System.Windows.Forms.ScreenOrientation.Angle90:
+                            case ScreenOrientation.Angle90:
                                 IsAxisCorresponds = false;
                                 XAxisDirection = false;
                                 YAxisDirection = true;
                                 break;
-                            case System.Windows.Forms.ScreenOrientation.Angle180:
+                            case ScreenOrientation.Angle180:
                                 XAxisDirection = YAxisDirection = false;
                                 IsAxisCorresponds = true;
                                 break;
-                            case System.Windows.Forms.ScreenOrientation.Angle270:
+                            case ScreenOrientation.Angle270:
                                 IsAxisCorresponds = false;
                                 XAxisDirection = true;
                                 YAxisDirection = false;
@@ -553,8 +549,8 @@ namespace GestureSignDaemon.Input
                                     int X = IsAxisCorresponds.Value ? rawX : rawY;
                                     int Y = IsAxisCorresponds.Value ? rawY : rawX;
 
-                                    X = XAxisDirection.Value ? X : System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - X;
-                                    Y = YAxisDirection.Value ? Y : System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - Y;
+                                    X = XAxisDirection.Value ? X : Screen.PrimaryScreen.Bounds.Width - X;
+                                    Y = YAxisDirection.Value ? Y : Screen.PrimaryScreen.Bounds.Height - Y;
 
                                     outputTouchs.Add(new RawTouchData(touch.Status, touch.ID, new Point(X, Y)));
 
