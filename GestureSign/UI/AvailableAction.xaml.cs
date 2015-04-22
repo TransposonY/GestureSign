@@ -638,7 +638,10 @@ namespace GestureSign.UI
         {
             if (e.AddedItems.Count == 0) return;
             RefreshActions(true);
-            EditAppButton.IsEnabled = lstAvailableApplication.SelectedItem is UserApplication;
+            IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApp == null) return;
+            EditAppButton.IsEnabled = selectedApp is UserApplication;
+            HeaderCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
         }
 
         private void EditAppButton_Click(object sender, RoutedEventArgs e)

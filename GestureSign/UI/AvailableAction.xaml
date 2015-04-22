@@ -145,7 +145,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <DockPanel Grid.Row="0" Grid.Column="1" Background="{StaticResource AccentColorBrush}" Margin="0,5,0,0">
-            <CheckBox Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" Content="启用"/>
+            <CheckBox x:Name="HeaderCheckBox" Click="AllActionsCheckBoxs_Click" Margin="10,0,5,0" FontWeight="Bold" Content="启用"/>
             <TextBlock FontWeight="Bold"  Margin="5,0,0,0" HorizontalAlignment="Center" DockPanel.Dock="Top" VerticalAlignment="Center">
                 <TextBlock.Text>
                     <Binding Converter="{StaticResource headerConverter}" ElementName="lstAvailableApplication" Path="SelectedItem" Mode="OneWay"/>
