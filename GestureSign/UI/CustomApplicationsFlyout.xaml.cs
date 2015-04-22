@@ -93,7 +93,7 @@ namespace GestureSign.UI
         }
         private void ShowRunningButton_Click(object sender, RoutedEventArgs e)
         {
-            if (OpenIgnoredRuningFlyout != null) OpenIgnoredRuningFlyout(this, new EventArgs());
+            if (OpenIgnoredRuningFlyout != null) OpenIgnoredRuningFlyout(this, EventArgs.Empty);
         }
 
 
@@ -216,16 +216,17 @@ namespace GestureSign.UI
         {
             GroupComboBox.Text = ApplicationNameTextBox.Text = txtMatchString.Text = "";
             CurrentApplication = null;
+            ApplicationListViewItem = null;
             chkAllowSingleStroke.IsChecked = chkInterceptTouchInput.IsChecked = chkPattern.IsChecked = false;
         }
 
         public void SetFields(string matchString, MatchUsing matchUsing, bool isRegEx)
         {
+            matchUsingRadio.MatchUsing = matchUsing;
             EditMode = true;
             Header = "修改程序匹配方式";
             chkPattern.IsChecked = isRegEx;
             txtMatchString.Text = matchString;
-            matchUsingRadio.MatchUsing = matchUsing;
         }
 
 

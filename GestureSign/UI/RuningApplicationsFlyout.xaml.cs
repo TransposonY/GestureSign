@@ -43,7 +43,7 @@ namespace GestureSign.UI
 
         void CustomApplicationsFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)
         {
-            this.IsOpen = true;
+            this.IsOpen = !IsOpen;
         }
 
         void RuningApplicationsFlyout_IsOpenChanged(object sender, EventArgs e)

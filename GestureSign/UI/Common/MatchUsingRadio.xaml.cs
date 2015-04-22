@@ -30,7 +30,13 @@ namespace GestureSign.UI
         public MatchUsing MatchUsing
         {
             get { return (MatchUsing)GetValue(MatchUsingProperty); }
-            set { SetValue(MatchUsingProperty, value); }
+            set
+            {
+                SetValue(MatchUsingProperty, value);
+                if (value == MatchUsing.ExecutableFilename) FileNameRadio.IsChecked = true;
+                else if (value == MatchUsing.WindowTitle) TitleRadio.IsChecked = true;
+                else ClassRadio.IsChecked = true;
+            }
         }
         public static readonly DependencyProperty MatchUsingProperty =
             DependencyProperty.Register("MatchUsing", typeof(MatchUsing), typeof(MatchUsingRadio), new FrameworkPropertyMetadata(MatchUsing.ExecutableFilename));
@@ -46,13 +52,7 @@ namespace GestureSign.UI
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
-                if ((MatchUsing)value == MatchUsing.ExecutableFilename)
-                {
-                    return new object[3] { true, false, false };
-                }
-                if ((MatchUsing)value == MatchUsing.WindowTitle)
-                    return new object[3] { false, true, false };
-                return new object[3] { false, false, true };
+                return new object[3] { Binding.DoNothing, Binding.DoNothing, Binding.DoNothing };
             }
         }
     }
