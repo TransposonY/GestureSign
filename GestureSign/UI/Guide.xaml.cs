@@ -195,10 +195,11 @@ namespace GestureSign.UI
 
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Hide();
             MainWindow mw = new MainWindow();
             mw.Show();
             mw.Activate();
+            Close();
         }
     }
 }
