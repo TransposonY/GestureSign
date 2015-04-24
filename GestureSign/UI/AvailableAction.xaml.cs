@@ -547,6 +547,7 @@ namespace GestureSign.UI
                         }
                         else
                         {
+                            addcount += newApp.Actions.Count;
                             ApplicationManager.Instance.AddApplication(newApp);
                         }
                     }
