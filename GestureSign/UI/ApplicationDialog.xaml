@@ -98,16 +98,16 @@
                 <TextBlock Canvas.Left="66" TextWrapping="Wrap" Text="分组" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14"/>
                 <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配字段" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配文本" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="115" FontSize="14" Width="193"/>
             </Canvas>
             <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="17"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="15"/>
                 <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True" />
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="54"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="52"/>
                 <local:MatchUsingRadio x:Name="matchUsingRadio" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Height="26" Canvas.Left="103" Canvas.Top="47"/>
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配字符串" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="70" Canvas.Left="10" Canvas.Top="92"/>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配文本" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="94"/>
                 <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
                     <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="TwoWay">
                         <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay" />
@@ -118,7 +118,7 @@
                 <Button x:Name="cmdBrowse" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
                         Canvas.Left="246" Canvas.Top="202" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
-                           Width="216" Canvas.Left="51" Canvas.Top="255"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口上"/><Run Text="或点击右侧按钮并选择程序"/></TextBlock>
+                           Width="216" Canvas.Left="51" Canvas.Top="255"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口"/><Run Text="或点击右侧按钮选择运行中的程序"/></TextBlock>
 
                 <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="36" Width="36" Canvas.Left="10" Canvas.Top="255"/>
                 <ToggleButton x:Name="btnExistingApplication"
