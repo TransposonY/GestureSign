@@ -20,7 +20,7 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Button x:Name="ShowRunningButton" Content="选择运行中的窗口.." HorizontalAlignment="Left" VerticalAlignment="Bottom"  Click="ShowRunningButton_Click" Margin="10,0,0,10" Grid.Row="3" FontSize="12" FontWeight="Bold" Height="25" Width="123"/>
-        <Button x:Name="btnAddCustom" Content="保存" Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80" Click="btnAddCustom_Click" Margin="0,0,10,7" Grid.Row="3" FontSize="12" FontFamily="Microsoft YaHei UI" Height="27"/>
+        <Button x:Name="btnAddCustom" Content="保存" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80" Click="btnAddCustom_Click" Margin="0,0,10,10" Grid.Row="3" FontSize="12" FontFamily="Microsoft YaHei UI" FontWeight="Bold"/>
         <!--<Button Content="取消" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" />-->
         <StackPanel Margin="0">
             <TextBlock x:Name="ApplicationNameTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,0,0,0"/>

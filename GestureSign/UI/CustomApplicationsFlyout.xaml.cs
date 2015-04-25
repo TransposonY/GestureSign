@@ -25,9 +25,9 @@ namespace GestureSign.UI
         public static event EventHandler RefreshIgnoredApplications;
         public static event ApplicationChangedEventHandler ApplicationChanged;
 
-        private bool EditMode;
-        private IApplication CurrentApplication;
-        private bool isUserApp;
+        private bool _editMode;
+        private IApplication _currentApplication;
+        private bool _isUserApp;
 
         public ApplicationListViewItem ApplicationListViewItem
         {
@@ -61,26 +61,32 @@ namespace GestureSign.UI
         }
         void ShowEditApplicationFlyout(object sender, ApplicationChangedEventArgs e)
         {
-            CurrentApplication = e.Application;
+            _currentApplication = e.Application;
             //CurrentApplication may be null or IgnoredApplication
-            isUserApp = CurrentApplication is UserApplication;
+            _isUserApp = _currentApplication is UserApplication;
 
-            if (isUserApp)
+            if (_isUserApp)
             {
                 GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
-                ApplicationNameTextBox.Text = CurrentApplication.Name;
-                GroupComboBox.Text = CurrentApplication.Group;
-                chkAllowSingleStroke.IsChecked = ((UserApplication)CurrentApplication).AllowSingleStroke;
-                chkInterceptTouchInput.IsChecked = ((UserApplication)CurrentApplication).InterceptTouchInput;
+                ApplicationNameTextBox.Text = _currentApplication.Name;
+                GroupComboBox.Text = _currentApplication.Group;
+                chkAllowSingleStroke.IsChecked = ((UserApplication)_currentApplication).AllowSingleStroke;
+                chkInterceptTouchInput.IsChecked = ((UserApplication)_currentApplication).InterceptTouchInput;
             }
 
             chkAllowSingleStroke.Visibility = chkInterceptTouchInput.Visibility = ApplicationNameTextBlock.Visibility =
                 ApplicationNameTextBox.Visibility = GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
-                  isUserApp ? Visibility.Visible : Visibility.Collapsed;
+                  _isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
-            Theme = isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
-            if (CurrentApplication != null)
-                SetFields(CurrentApplication.MatchString, CurrentApplication.MatchUsing, CurrentApplication.IsRegEx);
+            Theme = _isUserApp ? FlyoutTheme.Adapt : FlyoutTheme.Inverse;
+            if (_currentApplication != null)
+            {
+                matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
+                _editMode = true;
+                Header = "修改程序匹配方式";
+                chkPattern.IsChecked = _currentApplication.IsRegEx;
+                txtMatchString.Text = _currentApplication.MatchString;
+            }
             else Header = "添加忽略的程序";
             IsOpen = true;
         }
@@ -161,7 +167,7 @@ namespace GestureSign.UI
                 return;
             }
             string name;
-            if (isUserApp)
+            if (_isUserApp)
             {
                 name = ApplicationNameTextBox.Text.Trim();
                 string groupName = GroupComboBox.Text ?? String.Empty;
@@ -171,32 +177,32 @@ namespace GestureSign.UI
                     UIHelper.GetParentWindow(this).ShowMessageAsync("无程序名", "请定义程序名", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
                     return;
                 }
-                if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
+                if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
                 {
                     UIHelper.GetParentWindow(this).ShowMessageAsync("该程序名已经存在", "程序名称已经存在，请输入其他名字", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
                     return;
                 }
-                CurrentApplication.Name = name;
-                CurrentApplication.Group = groupName;
-                CurrentApplication.MatchUsing = matchUsingRadio.MatchUsing;
-                CurrentApplication.MatchString = matchString;
-                CurrentApplication.IsRegEx = chkPattern.IsChecked.Value;
-                ((UserApplication)CurrentApplication).AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
-                ((UserApplication)CurrentApplication).InterceptTouchInput = chkInterceptTouchInput.IsChecked.Value;
-                if (ApplicationChanged != null) ApplicationChanged(this, new ApplicationChangedEventArgs(CurrentApplication));
+                _currentApplication.Name = name;
+                _currentApplication.Group = groupName;
+                _currentApplication.MatchUsing = matchUsingRadio.MatchUsing;
+                _currentApplication.MatchString = matchString;
+                _currentApplication.IsRegEx = chkPattern.IsChecked.Value;
+                ((UserApplication)_currentApplication).AllowSingleStroke = chkAllowSingleStroke.IsChecked.Value;
+                ((UserApplication)_currentApplication).InterceptTouchInput = chkInterceptTouchInput.IsChecked.Value;
+                if (ApplicationChanged != null) ApplicationChanged(this, new ApplicationChangedEventArgs(_currentApplication));
             }
             else
             {
                 name = matchUsingRadio.MatchUsing + "$" + matchString;
 
-                if (EditMode)
+                if (_editMode)
                 {
-                    if (!name.Equals(CurrentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+                    if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                     {
                         UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
                         return;
                     }
-                    ApplicationManager.Instance.RemoveApplication(CurrentApplication);
+                    ApplicationManager.Instance.RemoveApplication(_currentApplication);
                 }
                 else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                 {
@@ -208,25 +214,17 @@ namespace GestureSign.UI
                 if (RefreshIgnoredApplications != null) RefreshIgnoredApplications(this, EventArgs.Empty);
             }
             ApplicationManager.Instance.SaveApplications();
-            EditMode = false;
+            _editMode = false;
             IsOpen = false;
         }
 
         public void ClearManualFields()
         {
+            _editMode = false;
             GroupComboBox.Text = ApplicationNameTextBox.Text = txtMatchString.Text = "";
-            CurrentApplication = null;
+            _currentApplication = null;
             ApplicationListViewItem = null;
             chkAllowSingleStroke.IsChecked = chkInterceptTouchInput.IsChecked = chkPattern.IsChecked = false;
-        }
-
-        public void SetFields(string matchString, MatchUsing matchUsing, bool isRegEx)
-        {
-            matchUsingRadio.MatchUsing = matchUsing;
-            EditMode = true;
-            Header = "修改程序匹配方式";
-            chkPattern.IsChecked = isRegEx;
-            txtMatchString.Text = matchString;
         }
 
 
