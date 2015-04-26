@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-using GestureSign.Common.Gestures;
-using GestureSign.Common.Input;
 using GestureSign.Common.Drawing;
-
+using GestureSign.Common.Gestures;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Gestures;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-
-using System.ComponentModel;
+using Point = System.Drawing.Point;
 
 namespace GestureSign.UI
 {
@@ -38,7 +28,7 @@ namespace GestureSign.UI
         /// </summary>
         /// <param name="capturedPoints"></param>
         /// <param name="gestureName"></param>
-        public GestureDefinition(List<List<System.Drawing.Point>> capturedPoints, string gestureName, bool reName)
+        public GestureDefinition(List<List<Point>> capturedPoints, string gestureName, bool reName)
             : this()
         {
             _CapturedPoints = capturedPoints;
@@ -48,7 +38,7 @@ namespace GestureSign.UI
         }
 
         readonly string _existingGestureName;
-        List<List<System.Drawing.Point>> _CapturedPoints = null;
+        List<List<Point>> _CapturedPoints = null;
         bool reName = false;
         public static event EventHandler GesturesChanged;
         string name;
@@ -91,9 +81,9 @@ namespace GestureSign.UI
         }
 
 
-        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
+            await NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
         }
 
 
@@ -157,7 +147,7 @@ namespace GestureSign.UI
                         return false;
                     }
                     // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                    GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
                     GestureManager.Instance.GestureName = newGestureName;
                     GestureManager.Instance.SaveGestures();
                 }
@@ -166,13 +156,13 @@ namespace GestureSign.UI
                     if (newGestureName != GestureManager.Instance.GestureName)
                     {
                         // Add new gesture to gesture manager
-                        GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
                         GestureManager.Instance.GestureName = newGestureName;
                     }
                     else
                     {
                         GestureManager.Instance.DeleteGesture(newGestureName);
-                        GestureManager.Instance.AddGesture(new Gestures.Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
                     }
                     GestureManager.Instance.SaveGestures();
                 }
