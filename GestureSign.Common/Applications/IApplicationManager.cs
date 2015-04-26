@@ -16,13 +16,10 @@ namespace GestureSign.Common.Applications
         IEnumerable<IApplication> GetApplicationFromPoint(System.Drawing.PointF TestPoint);
         IApplication[] GetApplicationFromWindow(ManagedWinapi.Windows.SystemWindow Window, bool userApplicationOnly);
         IApplication[] GetAvailableUserApplications();
-        IEnumerable<IAction> GetDefinedAction(string GestureName, IEnumerable<IApplication> Application, bool UseGlobal);
-        IEnumerable<IAction> GetDefinedAction(string GestureName);
+        IEnumerable<IAction> GetEnabledDefinedAction(string GestureName, IEnumerable<IApplication> Application, bool UseGlobal);
         IApplication GetExistingUserApplication(string ApplicationName);
         IApplication GetGlobalApplication();
         ManagedWinapi.Windows.SystemWindow GetWindowFromPoint(System.Drawing.PointF Point);
-        bool IsGlobalGesture(string GestureName);
-        bool IsUserGesture(string GestureName);
         Task<bool> LoadApplications();
         void RemoveGlobalAction(string ActionName);
         void RemoveNonGlobalAction(string ActionName);

@@ -161,10 +161,6 @@ namespace GestureSign.Common.Applications
             _Applications.Remove(Application);
         }
 
-        public void RemoveApplications(string applicationName)
-        {
-            _Applications.RemoveAll(app => app.Name.Equals(applicationName));
-        }
         public void RemoveIgnoredApplications(string applicationName)
         {
             _Applications.RemoveAll(app => app is IgnoredApplication && app.Name.Equals(applicationName));
@@ -241,14 +237,9 @@ namespace GestureSign.Common.Applications
             return GetApplicationFromWindow(systemWindow);
         }
 
-        public IEnumerable<IAction> GetDefinedAction(string GestureName)
-        {
-            return GetDefinedAction(GestureName, new IApplication[] { this.CurrentApplication }, false);
-        }
-
         public IEnumerable<IAction> GetRecognizedDefinedAction(string GestureName)
         {
-            return GetDefinedAction(GestureName, RecognizedApplication, true);
+            return GetEnabledDefinedAction(GestureName, RecognizedApplication, true);
         }
 
         public IAction GetAnyDefinedAction(string actionName, string applicationName)
@@ -260,7 +251,7 @@ namespace GestureSign.Common.Applications
             return null;
         }
 
-        public IEnumerable<IAction> GetDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
+        public IEnumerable<IAction> GetEnabledDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
         {
             if (application == null)
             {
@@ -268,7 +259,7 @@ namespace GestureSign.Common.Applications
             }
             // Attempt to retrieve an action on the application passed in
             IEnumerable<IAction> finalAction =
-                application.Where(app => !(app is IgnoredApplication)).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName));
+                application.Where(app => !(app is IgnoredApplication)).SelectMany(app => app.Actions.Where(a => a.IsEnabled && a.GestureName.Equals(gestureName, StringComparison.Ordinal)));
             // If there is was no action found on given application, try to get an action for global application
             if (!finalAction.Any() && useGlobal)
                 finalAction = GetGlobalApplication().Actions.Where(a => a.GestureName == gestureName);
@@ -281,25 +272,10 @@ namespace GestureSign.Common.Applications
         {
             return Applications.FirstOrDefault(a => a is UserApplication && a.Name.ToLower() == ApplicationName.Trim().ToLower()) as UserApplication;
         }
-
-        public bool IsGlobalGesture(string GestureName)
-        {
-            return _Applications.Exists(a => a is GlobalApplication && a.Actions.FirstOrDefault(ac => ac.GestureName.ToLower() == GestureName.Trim().ToLower()) != null);
-        }
-
-        public bool IsUserGesture(string GestureName)
-        {
-            return _Applications.Exists(a => a is UserApplication && a.Actions.FirstOrDefault(ac => ac.GestureName.ToLower() == GestureName.Trim().ToLower()) != null);
-        }
-
+        
         public bool IsGlobalAction(string ActionName)
         {
             return _Applications.Exists(a => a is GlobalApplication && a.Actions.Any(ac => ac.Name.ToLower() == ActionName.Trim().ToLower()));
-        }
-
-        public bool IsUserAction(string ActionName)
-        {
-            return _Applications.Exists(a => a is UserApplication && a.Actions.Any(ac => ac.Name.ToLower() == ActionName.Trim().ToLower()));
         }
 
         public bool ApplicationExists(string ApplicationName)
@@ -340,12 +316,7 @@ namespace GestureSign.Common.Applications
         {
             RemoveAction(ActionName, false);
         }
-
-        public bool IsGlobalApplication(IApplication Application)
-        {
-            return (Application == GetGlobalApplication());
-        }
-
+        
         #endregion
 
         #region Private Methods
