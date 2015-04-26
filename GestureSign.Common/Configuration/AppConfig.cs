@@ -211,6 +211,8 @@ namespace GestureSign.Common.Configuration
 
         private static void SaveFile(object state)
         {
+            bool flag = Fsw.EnableRaisingEvents;
+            if (flag) Fsw.EnableRaisingEvents = false;
             try
             {
                 FileManager.WaitFile(Path);
@@ -225,6 +227,7 @@ namespace GestureSign.Common.Configuration
             catch (Exception)
             {
             }
+            Fsw.EnableRaisingEvents = flag;
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
         }

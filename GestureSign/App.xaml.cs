@@ -87,6 +87,7 @@ namespace GestureSign
                     mainWindow.Show();
                     mainWindow.Activate();
                 }
+                AppConfig.ToggleWatcher();
 #if DEBUG
 
                 MainWindow mw = new MainWindow();
