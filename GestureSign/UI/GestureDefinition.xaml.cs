@@ -26,7 +26,7 @@ namespace GestureSign.UI
     /// <summary>
     /// GestureDefinition.xaml 的交互逻辑
     /// </summary>
-    public partial class GestureDefinition : MetroWindow, INotifyPropertyChanged, IDataErrorInfo
+    public partial class GestureDefinition : MetroWindow
     {
         public GestureDefinition()
         {
@@ -43,11 +43,11 @@ namespace GestureSign.UI
         {
             _CapturedPoints = capturedPoints;
             GestureManager.Instance.GestureName = gestureName;
-            if (reName) ExistingGestureName = gestureName;
+            if (reName) _existingGestureName = gestureName;
             this.ReName = reName;
         }
 
-        string ExistingGestureName;
+        readonly string _existingGestureName;
         List<List<System.Drawing.Point>> _CapturedPoints = null;
         bool reName = false;
         public static event EventHandler GesturesChanged;
@@ -68,51 +68,6 @@ namespace GestureSign.UI
                 reName = value;
             }
         }
-        public string GName
-        {
-            get { return this.name; }
-            set
-            {
-                if (Equals(value, name))
-                {
-                    return;
-                }
-
-                name = value;
-                RaisePropertyChanged("NameProperty");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the PropertyChanged event if needed.
-        /// </summary>
-        /// <param name="propertyName">The name of the property that changed.</param>
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                if (columnName == "GName" && String.IsNullOrWhiteSpace(GName))
-                {
-                    return "请输入一个手势名称！";
-                }
-
-
-                return null;
-            }
-        }
-
-        public string Error { get { return string.Empty; } }
-
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -129,7 +84,7 @@ namespace GestureSign.UI
                 {
                     this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
                 }
-                this.txtGestureName.Text = GName = GestureManager.Instance.GestureName;//this.txtGestureName.Text
+                this.txtGestureName.Text = GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
             }
             this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
@@ -183,13 +138,13 @@ namespace GestureSign.UI
 
             if (reName)
             {
-                if (ExistingGestureName.Equals(newGestureName)) return true;
+                if (_existingGestureName.Equals(newGestureName)) return true;
                 if (GestureManager.Instance.GestureExists(newGestureName))
                 {
                     this.ShowMessageAsync("手势已存在", "输入的手势名称已存在，请重新输入一个手势名称", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
                     return false;
                 }
-                GestureManager.Instance.RenameGesture(ExistingGestureName, newGestureName);
+                GestureManager.Instance.RenameGesture(_existingGestureName, newGestureName);
                 GestureManager.Instance.SaveGestures();
             }
             else
