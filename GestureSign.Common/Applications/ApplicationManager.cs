@@ -90,7 +90,7 @@ namespace GestureSign.Common.Applications
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
             {
-                e.InterceptTouchInput = (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                e.InterceptTouchInput |= (app is UserApplication && (app as UserApplication).InterceptTouchInput);
                 if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
                 {
                     e.Cancel = true;
@@ -272,7 +272,7 @@ namespace GestureSign.Common.Applications
         {
             return Applications.FirstOrDefault(a => a is UserApplication && a.Name.ToLower() == ApplicationName.Trim().ToLower()) as UserApplication;
         }
-        
+
         public bool IsGlobalAction(string ActionName)
         {
             return _Applications.Exists(a => a is GlobalApplication && a.Actions.Any(ac => ac.Name.ToLower() == ActionName.Trim().ToLower()));
@@ -316,7 +316,7 @@ namespace GestureSign.Common.Applications
         {
             RemoveAction(ActionName, false);
         }
-        
+
         #endregion
 
         #region Private Methods
