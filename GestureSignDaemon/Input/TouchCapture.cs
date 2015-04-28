@@ -208,10 +208,10 @@ namespace GestureSignDaemon.Input
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray());
             OnCaptureStarted(captureStartedArgs);
-            if (captureStartedArgs.Cancel)
-                return false;
             if (OnInterceptTouchInputChange != null)
                 OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
+            if (captureStartedArgs.Cancel)
+                return false;
 
             State = CaptureState.Capturing;
 
