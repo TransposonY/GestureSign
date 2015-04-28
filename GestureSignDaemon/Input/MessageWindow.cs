@@ -275,34 +275,45 @@ namespace GestureSignDaemon.Input
             }
         }
 
-        private static string ReadReg(string item, ref bool isTouchScreen)
+        private static string GetDeviceDescriptionFromReg(string item, ref bool isTouchScreen)
         {
             // Example Device Identification string
             // @"\??\ACPI#PNP0303#3&13c0b0c5&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
+            try
+            {
+                // remove the \??\
+                item = item.Substring(4);
 
-            // remove the \??\
-            item = item.Substring(4);
+                string[] split = item.Split('#');
+                if (split.Length < 3)
+                {
+                    isTouchScreen = false;
+                    return null;
+                }
+                string id_01 = split[0]; // ACPI (Class code)
+                string id_02 = split[1]; // PNP0303 (SubClass code)
+                string id_03 = split[2]; // 3&13c0b0c5&0 (Protocol code)
+                //The final part is the class GUID and is not needed here
 
-            string[] split = item.Split('#');
+                //Open the appropriate key as read-only so no permissions
+                //are needed.
+                RegistryKey OurKey = Registry.LocalMachine;
 
-            string id_01 = split[0];    // ACPI (Class code)
-            string id_02 = split[1];    // PNP0303 (SubClass code)
-            string id_03 = split[2];    // 3&13c0b0c5&0 (Protocol code)
-            //The final part is the class GUID and is not needed here
+                string findme = string.Format(@"System\CurrentControlSet\Enum\{0}\{1}\{2}", id_01, id_02, id_03);
 
-            //Open the appropriate key as read-only so no permissions
-            //are needed.
-            RegistryKey OurKey = Registry.LocalMachine;
+                OurKey = OurKey.OpenSubKey(findme, false);
 
-            string findme = string.Format(@"System\CurrentControlSet\Enum\{0}\{1}\{2}", id_01, id_02, id_03);
+                //Retrieve the desired information and set isKeyboard
+                string deviceDesc = (string)OurKey.GetValue("DeviceDesc");
 
-            OurKey = OurKey.OpenSubKey(findme, false);
-
-            //Retrieve the desired information and set isKeyboard
-            string deviceDesc = (string)OurKey.GetValue("DeviceDesc");
-
-            isTouchScreen = deviceDesc.ToUpper().Contains("TOUCH");
-            return deviceDesc;
+                isTouchScreen = deviceDesc.ToUpper().Contains("TOUCH");
+                return deviceDesc;
+            }
+            catch
+            {
+                isTouchScreen = false;
+                return null;
+            }
         }
 
         private int EnumerateDevices()
@@ -341,7 +352,7 @@ namespace GestureSignDaemon.Input
                         {
                             bool IsTouchDevice = false;
 
-                            string DeviceDesc = ReadReg(deviceName, ref IsTouchDevice);
+                            string DeviceDesc = GetDeviceDescriptionFromReg(deviceName, ref IsTouchDevice);
 
                             if (IsTouchDevice)
                             {
