@@ -89,4 +89,70 @@ namespace GestureSign.Common.Input
 
     #endregion
 
+
+    #region POINTER_TOUCH_INFO
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINTER_TOUCH_INFO
+    {
+        [MarshalAs(UnmanagedType.Struct)] public POINTER_INFO PointerInfo;
+        public TOUCH_FLAGS TouchFlags;
+        public TOUCH_MASK TouchMask;
+        [MarshalAs(UnmanagedType.Struct)] public RECT ContactArea;
+        [MarshalAs(UnmanagedType.Struct)] public RECT ContactAreaRaw;
+        public uint Orientation;
+        public uint Pressure;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+
+        public RECT(int x, int y, int width, int height)
+        {
+            Left = x;
+            Top = y;
+            Right = Left + width;
+            Bottom = Top + height;
+        }
+
+        public int Width
+        {
+            get { return Right - Left; }
+        }
+
+        public int Height
+        {
+            get { return Bottom - Top; }
+        }
+    }
+
+    [Flags]
+    public enum TOUCH_MASK
+    {
+        NONE = 0x00000000,
+        CONTACTAREA = 0x00000001,
+        ORIENTATION = 0x00000002,
+        PRESSURE = 0x00000004,
+    }
+
+    [Flags]
+    public enum TOUCH_FLAGS
+    {
+        NONE = 0x00000000
+    }
+
+    public enum TOUCH_FEEDBACK
+    {
+        DEFAULT = 0x1,
+        INDIRECT = 0x2,
+        NONE = 0x3
+    }
+
+    #endregion
+
 }

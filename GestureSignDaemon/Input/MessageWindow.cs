@@ -60,6 +60,7 @@ namespace GestureSignDaemon.Input
 
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
+        private const uint ANRUS_TOUCH_MODIFICATION_ACTIVE = 0x0000002;
 
         #endregion const definitions
 
@@ -81,6 +82,8 @@ namespace GestureSignDaemon.Input
         int touchdataCount = 0;
         int touchlength = 0;
         bool isRegistered = false;
+        bool _isPointerMove = false;
+        POINT _lastPoint;
 
         public bool IsRegistered
         {
@@ -91,12 +94,20 @@ namespace GestureSignDaemon.Input
                 {
                     if (isRegistered) return;
                     if (RegisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
+                    {
+                        InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
+
+                        AccSetRunningUtilityState(Handle, ANRUS_TOUCH_MODIFICATION_ACTIVE, ANRUS_TOUCH_MODIFICATION_ACTIVE);
                         isRegistered = true;
+                    }
                 }
                 else
                 {
                     if (isRegistered && UnregisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
+                    {
+                        AccSetRunningUtilityState(Handle, 0, 0);
                         isRegistered = false;
+                    }
                 }
             }
         }
@@ -128,10 +139,17 @@ namespace GestureSignDaemon.Input
         [DllImport("User32")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool UnregisterPointerInputTarget(IntPtr hwnd, POINTER_INPUT_TYPE pointerType);
-
+        [DllImport("Oleacc.dll")]
+        static extern int AccSetRunningUtilityState(IntPtr hWnd, uint dwUtilityStateMask, uint dwUtilityState);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool GetPointerFrameInfo(int pointerID, ref int pointerCount, [MarshalAs(UnmanagedType.LPArray), In, Out] POINTER_INFO[] pointerInfo);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool InitializeTouchInjection(int maxCount, TOUCH_FEEDBACK feedbackMode);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool InjectTouchInput(int count, [MarshalAs(UnmanagedType.LPArray), In] POINTER_TOUCH_INFO[] contacts);
 
 
         [DllImport("user32.dll")]
@@ -197,8 +215,6 @@ namespace GestureSignDaemon.Input
 
         public MessageWindow()
         {
-
-
             Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
             var accessHandle = this.Handle;
             if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
@@ -383,10 +399,15 @@ namespace GestureSignDaemon.Input
                 //case WM_POINTERLEAVE:
                 //case WM_POINTERCAPTURECHANGED:
                 case WM_POINTERDOWN:
+                    _isPointerMove = false;
+                    _lastPoint.X = _lastPoint.Y = 0;
+                    if (ProcessPointerMessage(message)) return;
+                    break;
                 case WM_POINTERUP:
                 case WM_POINTERUPDATE:
-                    ProcessPointerMessage(message);
-                    break;
+                    _isPointerMove |= ProcessPointerMessage(message);
+                    if (_isPointerMove) return;
+                    else break;
 
             }
             base.WndProc(ref message);
@@ -401,27 +422,55 @@ namespace GestureSignDaemon.Input
                 throw new Win32Exception(errCode);
             }
         }
-        private void ProcessPointerMessage(Message message)
+        private bool ProcessPointerMessage(Message message)
         {
-            if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRatio == 0))
+            bool pointChanged = false;
+            int pointerId = (int)(message.WParam.ToInt64() & 0xffff);
+            int pCount = 0;
+            try
             {
-                int pointerID = (int)(message.WParam.ToInt64() & 0xffff);
-                int pCount = 0;
-                try
+                if (!GetPointerFrameInfo(pointerId, ref pCount, null))
                 {
-                    if (!GetPointerFrameInfo(pointerID, ref pCount, null))
+                    CheckLastError();
+                }
+                POINTER_INFO[] pointerInfos = new POINTER_INFO[pCount];
+                if (!GetPointerFrameInfo(pointerId, ref pCount, pointerInfos))
+                {
+                    CheckLastError();
+                }
+                if (pCount == 1)
+                {
+                    if (_lastPoint.X == 0 && _lastPoint.Y == 0) _lastPoint = pointerInfos[0].PtPixelLocation;
+                    else
                     {
-                        CheckLastError();
+                        pointChanged = pointerInfos[0].PtPixelLocation.X != _lastPoint.X || pointerInfos[0].PtPixelLocation.Y != _lastPoint.Y;
+                        _lastPoint = pointerInfos[0].PtPixelLocation;
                     }
-                    POINTER_INFO[] pointerInfos = new POINTER_INFO[pCount];
-                    if (!GetPointerFrameInfo(pointerID, ref pCount, pointerInfos))
+
+                    POINTER_TOUCH_INFO[] ptis = new POINTER_TOUCH_INFO[pCount];
+                    for (int i = 0; i < ptis.Length; i++)
                     {
-                        CheckLastError();
+                        ptis[i].TouchFlags = TOUCH_FLAGS.NONE;
+                        ptis[i].PointerInfo = new POINTER_INFO
+                        {
+                            pointerType = POINTER_INPUT_TYPE.TOUCH,
+                            PointerFlags = pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UPDATE) ?
+                            POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE : pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UP) ?
+                            POINTER_FLAGS.UP : POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT,
+                            PtPixelLocation = pointerInfos[i].PtPixelLocation,
+                        };
+
                     }
+                    InjectTouchInput(1, ptis);
+                }
+                else return true;
+                if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRatio == 0))
+                {
                     PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
                 }
-                catch (Win32Exception) { }
             }
+            catch (Win32Exception) { }
+            return pointChanged;
         }
 
         /// <summary>
