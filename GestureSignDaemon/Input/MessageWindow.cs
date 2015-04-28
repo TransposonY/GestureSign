@@ -632,6 +632,16 @@ namespace GestureSignDaemon.Input
         }
 
         #endregion ProcessInput
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int WS_EX_NOACTIVATE = 0x08000000;
+                CreateParams myParams = base.CreateParams;
+                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE;
+                return myParams;
+            }
+        }
     }
 }
 
