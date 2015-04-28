@@ -72,21 +72,20 @@ namespace GestureSign
 
                     }
 
+                    if (AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                    {
+                        Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+                        timer.Change(300000, Timeout.Infinite);
+                    }
+                    else if (!createdNewDaemon)
+                    {
+                        MainWindow mainWindow = new MainWindow();
+                        mainWindow.Show();
+                        mainWindow.Activate();
+                    }
                 }
                 catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning); }
 
-
-                if (AppConfig.XRatio == 0 || e.Args.Length != 0 && e.Args[0].Equals("/L"))
-                {
-                    Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-                    timer.Change(300000, Timeout.Infinite);
-                }
-                else
-                {
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    mainWindow.Activate();
-                }
                 AppConfig.ToggleWatcher();
 #if DEBUG
 
