@@ -348,7 +348,13 @@ namespace GestureSignDaemon.Input
             // I originally had to set to Disable since if you're in the popup it's disabled, however, the popup onclose
             // fires before the menu item's code, so it was back to Ready before this block was executed.  Although, it probably 
             // makes more sense to set it to Ready in the event this is called from another location.
-            State = State == CaptureState.UserDisabled ? CaptureState.Ready : CaptureState.UserDisabled;
+            if (State == CaptureState.UserDisabled)
+            {
+                State = CaptureState.Ready;
+                if (OnInterceptTouchInputChange != null)
+                    OnInterceptTouchInputChange(this, false);
+            }
+            else State = CaptureState.UserDisabled;
             OnStateChanged(new StateChangedEventArgs(State));
 
         }
