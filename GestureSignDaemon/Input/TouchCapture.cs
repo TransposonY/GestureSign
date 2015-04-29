@@ -351,10 +351,13 @@ namespace GestureSignDaemon.Input
             if (State == CaptureState.UserDisabled)
             {
                 State = CaptureState.Ready;
+            }
+            else
+            {
+                State = CaptureState.UserDisabled;
                 if (OnInterceptTouchInputChange != null)
                     OnInterceptTouchInputChange(this, false);
             }
-            else State = CaptureState.UserDisabled;
             OnStateChanged(new StateChangedEventArgs(State));
 
         }
