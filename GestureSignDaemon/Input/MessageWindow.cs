@@ -215,7 +215,7 @@ namespace GestureSignDaemon.Input
 
         public MessageWindow()
         {
-            Debug.WriteLine("size:" + Marshal.SizeOf(typeof(ntrgTouchData)));
+            Debug.WriteLine("size:" + Marshal.SizeOf(typeof(AtmelTouchData)));
             var accessHandle = this.Handle;
             if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 StringComparison.InvariantCultureIgnoreCase) != -1)
@@ -559,6 +559,11 @@ namespace GestureSignDaemon.Input
                                     (rawdate[headLength + 3] != 0 || rawdate[headLength + 4] != 0 || rawdate[headLength + 7] != 0 || rawdate[headLength + 8] != 0))
                             {
                                 touchDataType = typeof(iTouchData);
+                            }
+                            else if (rawdate[headLength + 4] == 0 && rawdate[headLength + 5] == 0 && rawdate[headLength + 8] == 0 &&
+                                rawdate[headLength + 9] == 0 && rawdate[headLength + 10] == 0 && rawdate[headLength + 11] == 0)
+                            {
+                                touchDataType = typeof(AtmelTouchData);
                             }
                             else
                             {

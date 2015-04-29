@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace GestureSignDaemon.Input
 {
-   
+
     public interface TouchData
     {
         bool Status { get; }
@@ -131,5 +131,19 @@ namespace GestureSignDaemon.Input
         public int Y { get { return y_position; } }
         public int ID { get { return num; } }
         public bool Status { get { return (status) == 0xE7; } }
+    }
+
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
+    public struct AtmelTouchData : TouchData
+    {
+        private byte data;
+        private Int32 x;
+        private Int32 y;
+        private Int16 blank;
+
+        public int X { get { return x; } }
+        public int Y { get { return y; } }
+        public int ID { get { return data >> 2; } }
+        public bool Status { get { return (data & 0x1) == 1; } }
     }
 }
