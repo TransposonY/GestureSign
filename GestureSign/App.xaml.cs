@@ -77,7 +77,9 @@ namespace GestureSign
                         Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
                         timer.Change(300000, Timeout.Infinite);
                     }
-                    else if (!createdNewDaemon)
+                    else if (createdNewDaemon)
+                    { Current.Shutdown(); }
+                    else
                     {
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Show();
