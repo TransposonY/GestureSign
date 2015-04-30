@@ -694,46 +694,42 @@ namespace GestureSign.UI
         }
     }
 
-    [ValueConversion(typeof(IApplication), typeof(bool))]
-    public class InterceptTouchInputBoolConverter : IValueConverter
+    public class InterceptTouchInputBoolConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null)
+            var userApplication = values[0] as UserApplication;
+            bool existingApp = (bool)values[1];
+            if (userApplication != null && existingApp)
             {
-                var app = value as UserApplication;
-                if (app != null)
-                    return app.InterceptTouchInput;
-                return false;
+                return userApplication.InterceptTouchInput;
             }
-            return DependencyProperty.UnsetValue;
+            return false;
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return DependencyProperty.UnsetValue;
+            return new[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
-    [ValueConversion(typeof(IApplication), typeof(bool))]
-    public class AllowSingleBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value != null)
-            {
-                var app = value as UserApplication;
-                if (app != null)
-                    return app.AllowSingleStroke;
-                return false;
-            }
-            return DependencyProperty.UnsetValue;
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public class AllowSingleBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return DependencyProperty.UnsetValue;
+            var userApplication = values[0] as UserApplication;
+            bool existingApp = (bool)values[1];
+            if (userApplication != null && existingApp)
+            {
+                return userApplication.AllowSingleStroke;
+            }
+            return false;
+        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            return new[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
+
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class Bool2VisibilityConverter : IValueConverter
     {

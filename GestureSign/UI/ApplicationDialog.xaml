@@ -318,10 +318,25 @@
             	controls:TextBoxHelper.Watermark="请输入动作名称"
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
-        <CheckBox x:Name="InterceptTouchInputCheckBox" IsChecked="{Binding SelectedItem, Converter={StaticResource interceptTouchInputBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" 
+        <CheckBox x:Name="InterceptTouchInputCheckBox"
                   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
-                  Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14"/>
-        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}" IsChecked="{Binding SelectedItem, Converter={StaticResource AllowSingleBoolConverter}, ElementName=cmbExistingApplication, Mode=OneWay}" FontSize="14"/>
+                  Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14">
+            <CheckBox.IsChecked>
+                <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}" Mode="OneWay">
+                    <Binding Path="SelectedItem" ElementName="cmbExistingApplication" Mode="OneWay" />
+                    <Binding Path="IsChecked" ElementName="ExistingApplicationRadioButton" Mode="OneWay" />
+                </MultiBinding>
+            </CheckBox.IsChecked>
+        </CheckBox>
+        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
+                  FontSize="14">
+            <CheckBox.IsChecked>
+                <MultiBinding Converter="{StaticResource AllowSingleBoolConverter}" Mode="OneWay">
+                    <Binding Path="SelectedItem" ElementName="cmbExistingApplication" Mode="OneWay" />
+                    <Binding Path="IsChecked" ElementName="ExistingApplicationRadioButton" Mode="OneWay" />
+                </MultiBinding>
+            </CheckBox.IsChecked>
+        </CheckBox>
         <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
     </Canvas>
 </controls:MetroWindow>
