@@ -403,7 +403,8 @@ namespace GestureSignDaemon.Input
             {
                 case WM_INPUT:
                     {
-                        ProcessInputCommand(message.LParam);
+                        if (!AppConfig.CompatibilityMode)
+                            ProcessInputCommand(message.LParam);
                     }
                     break;
                 //case WM_POINTERENTER:
@@ -449,6 +450,11 @@ namespace GestureSignDaemon.Input
                 {
                     CheckLastError();
                 }
+                if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRatio == 0))
+                {
+                    PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
+                }
+
                 if (pCount == 1)
                 {
                     if (_lastPoint.X == 0 && _lastPoint.Y == 0) _lastPoint = pointerInfos[0].PtPixelLocation;
@@ -474,11 +480,7 @@ namespace GestureSignDaemon.Input
                     }
                     InjectTouchInput(1, ptis);
                 }
-                else return true;
-                if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRatio == 0))
-                {
-                    PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
-                }
+                else pointChanged = true;
             }
             catch (Win32Exception) { }
             return pointChanged;
