@@ -158,7 +158,10 @@
                     <MenuItem  x:Name="CopyActionMenuItem" Header="复制动作到.." FontSize="16" />
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem" Header="导入动作" Click="ImportActionMenuItem_Click" FontSize="16" />
-                    <MenuItem x:Name="ExportActionMenuItem" Header="导出所有动作" Click="ExportActionMenuItem_Click"  FontSize="16"/>
+                    <MenuItem Header="导出动作" FontSize="16">
+                        <MenuItem x:Name="ExportAllActionMenuItem" Header="导出所有动作" Click="ExportAllActionMenuItem_Click" FontSize="16" ></MenuItem>
+                        <MenuItem Header="导出当前程序中已启用的动作" Click="ExportEnableActionMenuItem_Click" FontSize="16"></MenuItem>
+                    </MenuItem>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>

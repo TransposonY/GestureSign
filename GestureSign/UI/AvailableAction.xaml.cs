@@ -563,14 +563,55 @@ namespace GestureSign.UI
             }
         }
 
-        private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
+        private void ExportAllActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", FileName = "动作文件.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
                 Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
             }
         }
+        private void ExportEnableActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", FileName = "动作文件.json", Title = "导出当前程序中已启用的动作", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            if (sfdApplications.ShowDialog().Value)
+            {
+                IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
+                if (currentApp != null)
+                {
+                    List<IApplication> exportedApp = new List<IApplication>(1);
+                    if (currentApp is GlobalApplication)
+                    {
+                        exportedApp.Add(new GlobalApplication()
+                        {
+                            Actions = currentApp.Actions.Where(a => a.IsEnabled).ToList(),
+                            Group = currentApp.Group,
+                            IsRegEx = currentApp.IsRegEx,
+                            MatchString = currentApp.MatchString,
+                            MatchUsing = currentApp.MatchUsing
+                        });
+                    }
+                    else
+                    {
+                        UserApplication userApplication = currentApp as UserApplication;
+                        if (userApplication != null)
+                            exportedApp.Add(new UserApplication()
+                            {
+                                Actions = userApplication.Actions.Where(a => a.IsEnabled).ToList(),
+                                Group = userApplication.Group,
+                                IsRegEx = userApplication.IsRegEx,
+                                MatchString = userApplication.MatchString,
+                                MatchUsing = userApplication.MatchUsing,
+                                AllowSingleStroke = userApplication.AllowSingleStroke,
+                                InterceptTouchInput = userApplication.InterceptTouchInput,
+                                Name = userApplication.Name
+                            });
+                    }
+                    Common.Configuration.FileManager.SaveObject<List<IApplication>>(exportedApp, sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+                }
+            }
+        }
+
 
         private void ActionContextMenu_Opening(object sender, RoutedEventArgs e)
         {
