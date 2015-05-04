@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GestureSign.Common.InterProcessCommunication;
-using System.Windows;
+using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.UI;
 using Point = System.Drawing.Point;
 
 namespace GestureSign
@@ -14,7 +13,7 @@ namespace GestureSign
     class MessageProcessor : IMessageProcessor
     {
         public static event EventHandler OnInitialized;
-        public void ProcessMessages(System.IO.Pipes.NamedPipeServerStream server)
+        public void ProcessMessages(NamedPipeServerStream server)
         {
             try
             {
@@ -24,7 +23,7 @@ namespace GestureSign
                     server.CopyTo(memoryStream);
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     object data = binForm.Deserialize(memoryStream);
-                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         string message = data as string;
                         if (message != null)
@@ -36,18 +35,15 @@ namespace GestureSign
 
                                     foreach (Window win in Application.Current.Windows)
                                     {
-                                        if (win.GetType() == typeof (MainWindow))
+                                        if (win.GetType() == typeof(MainWindow))
                                         {
                                             win.Activate();
                                             return;
                                         }
                                     }
-                                    if (GestureSign.Common.Configuration.AppConfig.XRatio != 0)
-                                    {
-                                        MainWindow mw = new MainWindow();
-                                        mw.Show();
-                                        mw.Activate();
-                                    }
+                                    MainWindow mw = new MainWindow();
+                                    mw.Show();
+                                    mw.Activate();
                                     break;
                                 }
                                 case "EndGuide":
@@ -62,7 +58,7 @@ namespace GestureSign
                                     break;
                                 }
                                 case "Guide":
-                                    UI.Guide guide = new UI.Guide();
+                                    Guide guide = new Guide();
                                     guide.Show();
                                     guide.Activate();
                                     break;
@@ -72,16 +68,16 @@ namespace GestureSign
                         {
                             var newGesture = data as Tuple<string, List<List<Point>>>;
                             if (newGesture == null) return;
-                            UI.GestureDefinition gu = new UI.GestureDefinition(newGesture.Item2, newGesture.Item1, false);
+                            GestureDefinition gu = new GestureDefinition(newGesture.Item2, newGesture.Item1, false);
                             gu.Show();
                             gu.Activate();
                         }
-                    }));
+                    });
                 }
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show(e.Message);
+                MessageBox.Show(e.Message);
             }
 
         }
