@@ -240,7 +240,7 @@
         <ListBox x:Name="lstAvailableActions"
                  ContextMenuOpening="ActionContextMenu_Opening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Margin="0,0,0,5"
+                 Margin="0"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
                  Grid.Column="1"
@@ -576,12 +576,11 @@
                         <CheckBox Margin="5,0,10,0"
                                   IsChecked="{Binding Path=IsEnabled}"
                                   IsThreeState="False"
-                                  Click="ActionCheckBox_Click"
-                                  Canvas.Top="38" />
+                                  Click="ActionCheckBox_Click" />
 
                         <TextBlock TextWrapping="NoWrap"
                                    Text="{Binding ActionName}"
-                                   Margin="0,28,0,0"
+                                   Margin="0,25,0,0"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
                                    Width="Auto"
@@ -596,7 +595,7 @@
                                    Foreground="{StaticResource HighlightBrush}"
                                    Panel.ZIndex="1"
                                    Grid.Column="2"
-                                   Margin="0,0,0,28" />
+                                   Margin="0,0,0,25" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
