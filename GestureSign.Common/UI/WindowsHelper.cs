@@ -13,7 +13,7 @@ namespace GestureSign.Common.UI
 {
     public class WindowsHelper
     {
-      
+
         public static ResourceDictionary GetSystemAccent()
         {
             SolidColorBrush AccentColorBrush = (SolidColorBrush)SystemParameters.WindowGlassBrush;
@@ -76,6 +76,24 @@ namespace GestureSign.Common.UI
                     return (T)parent;
                 }
                 parent = VisualTreeHelper.GetParent(parent);
+            }
+            return null;
+        }
+
+        public static TChildItem FindVisualChild<TChildItem>(DependencyObject obj) where TChildItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                var item = child as TChildItem;
+                if (item != null)
+                    return item;
+                else
+                {
+                    TChildItem childOfChild = FindVisualChild<TChildItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
             }
             return null;
         }

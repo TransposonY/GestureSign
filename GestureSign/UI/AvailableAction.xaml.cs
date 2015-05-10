@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
+using System.Windows.Controls.Primitives;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Plugins;
@@ -39,9 +40,8 @@ namespace GestureSign.UI
             InitializeComponent();
 
             var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
-            var actionsGroupDesctrption = new PropertyGroupDescription("ApplicationName");//设置分组列
-            actionsSourceView.GroupDescriptions.Add(actionsGroupDesctrption);//在图中添加分组
-            actionsSourceView.SortDescriptions.Add(new SortDescription("ActionName", ListSortDirection.Ascending));
+            actionsSourceView.GroupDescriptions.Add(new PropertyGroupDescription("GestureName"));//在图中添加分组
+            actionsSourceView.SortDescriptions.Add(new SortDescription("GestureName", ListSortDirection.Ascending));
             lstAvailableActions.ItemsSource = actionsSourceView;//绑定数据源
 
             var applicationSourceView = new ListCollectionView(_applications);
@@ -53,13 +53,22 @@ namespace GestureSign.UI
             {
                 if (lstAvailableApplication.SelectedItem == e.Application)
                 {
-                    ActionInfos.Remove(ActionInfos.FirstOrDefault(ai => ai.ActionName.Equals(e.Action.Name, StringComparison.Ordinal)));
-                    RefreshActions(false);
+                    var oldActionInfo =
+                          ActionInfos.FirstOrDefault(ai => ai.ActionName.Equals(e.Action.Name, StringComparison.Ordinal));
+                    if (oldActionInfo != null)
+                    {
+                        int index = ActionInfos.IndexOf(oldActionInfo);
+                        var newActionInfo = Action2ActionInfo(e.Action);
+                        ActionInfos[index] = newActionInfo;
+                        RefreshGroup(e.Action.GestureName);
+                        SelectAction(newActionInfo);
+                    }
+                    else RefreshActions(false);
                 }
                 else
                 {
                     BindApplications();
-                    _selecteNewdItem = true;
+                    _selecteNewestItem = true;
                     lstAvailableApplication.SelectedItem = e.Application;
                 }
             };
@@ -72,27 +81,26 @@ namespace GestureSign.UI
         }
 
 
-        readonly Size sizThumbSize = new Size(65, 65);
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
         private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
         public static event ApplicationChangedEventHandler ShowEditApplicationFlyout;
         private Task<ActionInfo> _task;
         CancellationTokenSource _cancelTokenSource;
-        private bool _selecteNewdItem;
+        private bool _selecteNewestItem;
 
         public class ActionInfo : INotifyPropertyChanged
         {
 
-            public ActionInfo(string actionName, string applicationName, string description, ImageSource gestureThumbnail, string gestureName, bool isEnabled)
+            public ActionInfo(string actionName, string description, string gestureName, bool isEnabled)
             {
                 IsEnabled = isEnabled;
-                GestureThumbnail = gestureThumbnail;
-                ApplicationName = applicationName;
                 ActionName = actionName;
                 Description = description;
                 GestureName = gestureName;
             }
             private bool isEnabled;
+            private string _gestureName;
+
             public bool IsEnabled
             {
                 get
@@ -102,9 +110,13 @@ namespace GestureSign.UI
 
                 set { SetProperty(ref isEnabled, value); }
             }
-            public string GestureName { get; set; }
-            public ImageSource GestureThumbnail { get; set; }
-            public string ApplicationName { get; set; }
+
+            public string GestureName
+            {
+                get { return _gestureName; }
+                set { SetProperty(ref _gestureName, value); }
+            }
+
             public string ActionName { get; set; }
 
             public string Description { get; set; }
@@ -150,9 +162,6 @@ namespace GestureSign.UI
             IAction selectedAction = null;
             IApplication selectedApplication = null;
             string selectedGesture = null;
-
-            // Store selected item group header for later use
-            string strApplicationHeader = selectedItem.ApplicationName;
 
             selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
 
@@ -225,7 +234,9 @@ namespace GestureSign.UI
         {
             ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
             if (actionInfo == null) return;
-            ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, actionInfo.ApplicationName).IsEnabled = (sender as CheckBox).IsChecked.Value;
+            IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+            if (app == null) return;
+            ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, app.Name).IsEnabled = (sender as CheckBox).IsChecked.Value;
             ApplicationManager.Instance.SaveApplications();
         }
 
@@ -282,35 +293,38 @@ namespace GestureSign.UI
                     _task.Wait(1000);
                 }
                 ActionInfos.Clear();
-                AddActionsToGroup(selectedApplication.Name, selectedApplication.Actions);
+                AddActionsToGroup(selectedApplication.Actions);
             }
             else
             {
-                _selecteNewdItem = true;
+                _selecteNewestItem = true;
                 var newApp =
                     selectedApplication.Actions.Where(
                         a => !ActionInfos.Any
-                            (ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal) && ai.ApplicationName.Equals(selectedApplication.Name))).ToList();
+                            (ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal))).ToList();
                 var deletedApp =
                     ActionInfos.Where(
                         ai =>
-                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)) || !ai.ApplicationName.Equals(selectedApplication.Name, StringComparison.Ordinal))
+                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)))
                         .ToList();
 
-                foreach (ActionInfo ai in deletedApp)
-                    ActionInfos.Remove(ai);
-                AddActionsToGroup(selectedApplication.Name, newApp);
+                if (newApp.Count == 1 && deletedApp.Count == 1)
+                {
+                    var newActionInfo = Action2ActionInfo(newApp[0]);
+                    ActionInfos[ActionInfos.IndexOf(deletedApp[0])] = newActionInfo;
+                    RefreshGroup(newApp[0].GestureName);
+                    SelectAction(newActionInfo);
+                }
+                else
+                {
+                    foreach (ActionInfo ai in deletedApp)
+                        ActionInfos.Remove(ai);
+                    AddActionsToGroup(newApp);
+                }
             }
         }
-        private void AddActionsToGroup(string applicationName, List<IAction> actions)
+        private void AddActionsToGroup(List<IAction> actions)
         {
-
-            string description;
-            DrawingImage Thumb = null;
-            string gestureName;
-            string pluginName;
-            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
-            // Loop through each global action  
             _cancelTokenSource = new CancellationTokenSource();
 
             _task = new Task<ActionInfo>(() =>
@@ -319,51 +333,12 @@ namespace GestureSign.UI
                 ActionInfo actionInfo = null;
                 foreach (Applications.Action currentAction in actions)
                 {
-                    // Ensure this action has a plugin
-                    if (PluginManager.Instance.PluginExists(currentAction.PluginClass, currentAction.PluginFilename))
-                    {
+                    actionInfo = Action2ActionInfo(currentAction);
 
-                        // Get plugin for this action
-                        IPluginInfo pluginInfo =
-                            PluginManager.Instance.FindPluginByClassAndFilename(currentAction.PluginClass,
-                                currentAction.PluginFilename);
-
-                        // Feed settings to plugin
-                        if (!pluginInfo.Plugin.Deserialize(currentAction.ActionSettings))
-                            currentAction.ActionSettings = pluginInfo.Plugin.Serialize();
-
-                        pluginName = pluginInfo.Plugin.Name;
-                        description = pluginInfo.Plugin.Description;
-                    }
-                    else
-                    {
-                        pluginName = String.Empty;
-                        description = "无关联动作";
-                    }
-                    // Get handle of action gesture
-                    IGesture actionGesture = GestureManager.Instance.GetNewestGestureSample(currentAction.GestureName);
-
-                    if (actionGesture == null)
-                    {
-                        Thumb = null;
-                        gestureName = String.Empty;
-                    }
-                    else
-                    {
-                        Thumb = GestureImage.CreateImage(actionGesture.Points, sizThumbSize, brush);
-                        gestureName = actionGesture.Name;
-                    }
                     if (_cancelTokenSource.IsCancellationRequested) break;
+
                     lstAvailableApplication.Dispatcher.Invoke(() =>
                     {
-
-                        actionInfo = new ActionInfo(
-                            !String.IsNullOrEmpty(currentAction.Name) ? currentAction.Name : pluginName,
-                            applicationName,
-                            description,
-                            Thumb,
-                            gestureName,
-                            currentAction.IsEnabled);
                         ActionInfos.Add(actionInfo);
                     });
                 }
@@ -372,101 +347,126 @@ namespace GestureSign.UI
             _task.ContinueWith((t) =>
             {
                 ActionInfo ai = t.Result;
-                if (ai != null && _selecteNewdItem)
+                if (ai != null && _selecteNewestItem)
                     lstAvailableActions.Dispatcher.Invoke(() =>
                     {
-                        _selecteNewdItem = false;
-                        lstAvailableActions.SelectedItem = ai;
-                        lstAvailableActions.UpdateLayout();
-                        lstAvailableActions.ScrollIntoView(ai);
-                        EnableRelevantButtons();
+                        _selecteNewestItem = false;
+                        SelectAction(ai);
                     });
 
             });
             _task.Start();
         }
 
+        void RefreshGroup(string gestureName)
+        {
+            var temp = ActionInfos.Where(ai => ai.GestureName.Equals(gestureName, StringComparison.Ordinal)).ToList();
+            foreach (ActionInfo ai in temp)
+            {
+                int i = ActionInfos.IndexOf(ai);
+                ActionInfos.Remove(ai);
+                ActionInfos.Insert(i, ai);
+            }
+        }
+        void SelectAction(ActionInfo actionInfo)
+        {
+            lstAvailableActions.SelectedItem = actionInfo;
+            lstAvailableActions.UpdateLayout();
+            lstAvailableActions.ScrollIntoView(actionInfo);
+            EnableRelevantButtons();
+        }
+
+        private ActionInfo Action2ActionInfo(IAction action)
+        {
+            string description;
+            string pluginName;
+            // Ensure this action has a plugin
+            if (PluginManager.Instance.PluginExists(action.PluginClass, action.PluginFilename))
+            {
+
+                // Get plugin for this action
+                IPluginInfo pluginInfo =
+                    PluginManager.Instance.FindPluginByClassAndFilename(action.PluginClass,
+                        action.PluginFilename);
+
+                // Feed settings to plugin
+                if (!pluginInfo.Plugin.Deserialize(action.ActionSettings))
+                    action.ActionSettings = pluginInfo.Plugin.Serialize();
+
+                pluginName = pluginInfo.Plugin.Name;
+                description = pluginInfo.Plugin.Description;
+            }
+            else
+            {
+                pluginName = String.Empty;
+                description = "无关联动作";
+            }
+
+            return new ActionInfo(
+                !String.IsNullOrEmpty(action.Name) ? action.Name : pluginName,
+                description,
+                action.GestureName,
+                action.IsEnabled);
+        }
 
         private void EnableRelevantButtons()
         {
-            cmdEdit.IsEnabled = (lstAvailableActions.SelectedItems.Count == 1);
+            bool flag = lstAvailableActions.SelectedItems.Count == 1;
+            cmdEdit.IsEnabled = flag;
+            MoveDownButton.Visibility = MoveUpButton.Visibility = flag ? Visibility.Visible : Visibility.Hidden;
             cmdDelete.IsEnabled = (lstAvailableActions.SelectedItems.Count > 0);
         }
 
-        private void ListBoxItem_Selected(object sender, RoutedEventArgs e)
+        private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            ActionInfo ai = (sender as ListBoxItem).Content as ActionInfo;
-            if (ai != null)
+            ComboBox comboBox = sender as ComboBox;
+            Binding bind = new Binding
             {
-                // Getting the ContentPresenter of myListBoxItem
-                ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(sender as ListBoxItem);
-                if (myContentPresenter == null) return;
-                // Finding textBlock from the DataTemplate that is set on that ContentPresenter
-                // DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
-                ComboBox comboBox = (myContentPresenter.ContentTemplate.FindName("availableGesturesComboBox", myContentPresenter)) as ComboBox;
-                comboBox.Visibility = Visibility.Visible;
-                ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Visibility = Visibility.Collapsed;
+                Source =
+                    ((Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(this)).FindName(
+                        "availableGestures") as AvailableGestures).lstAvailableGestures,
+                Mode = BindingMode.OneWay,
+                Path = new PropertyPath("Items")
+            };
+            comboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
 
-                Binding bind = new Binding();
-                bind.Source = ((GestureSign.Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(this)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
-                bind.Mode = BindingMode.OneWay;
-                bind.Path = new PropertyPath("Items");
-                comboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
+            dynamic dataContext = comboBox.DataContext;
 
-                foreach (GestureItem item in comboBox.Items)
-                {
-                    if (item.Name == ai.GestureName)
-                        comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
-                }
-            }
-        }
-        private void ListBoxItem_Unselected(object sender, RoutedEventArgs e)
-        {
-            if ((sender as ListBoxItem).Content is ActionInfo)
+            foreach (GestureItem item in comboBox.Items)
             {
-                // Getting the ContentPresenter of myListBoxItem
-                ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(sender as ListBoxItem);
-                if (myContentPresenter.ContentTemplate == null) return;
-                // Finding textBlock from the DataTemplate that is set on that ContentPresenter
-                // DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
-                ((myContentPresenter.ContentTemplate.FindName("availableGesturesComboBox", myContentPresenter)) as ComboBox).Visibility = Visibility.Collapsed;
-                ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Visibility = Visibility.Visible;
+                if (item.Name == dataContext.Name)
+                    comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
             }
+
         }
 
-        private childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-                if (child != null && child is childItem)
-                    return (childItem)child;
-                else
-                {
-                    childItem childOfChild = FindVisualChild<childItem>(child);
-                    if (childOfChild != null)
-                        return childOfChild;
-                }
-            }
-            return null;
-        }
 
         private void availableGesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count != 1) return;
-            ContentPresenter myContentPresenter = Common.UI.WindowsHelper.GetParentDependencyObject<ContentPresenter>(sender as ComboBox);
-            ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as ComboBox).Content as ActionInfo;
-            IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-            if (actionInfo != null && ((GestureItem)e.AddedItems[0]).Name != actionInfo.GestureName)
-            {
-                if (app != null)
-                {
-                    IAction action = app.Actions.FirstOrDefault(a => a.Name.Equals(actionInfo.ActionName));
-                    actionInfo.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
+            if (e.AddedItems.Count == 0) return;
+            Expander expander = Common.UI.WindowsHelper.GetParentDependencyObject<Expander>(sender as ComboBox);
+            if (expander == null) return;
 
-                    ((myContentPresenter.ContentTemplate.FindName("GestureImage", myContentPresenter)) as Image).Source = ((sender as ComboBox).SelectedItem as GestureItem).Image;
-                    ApplicationManager.Instance.SaveApplications();
+            var firstListBoxItem = Common.UI.WindowsHelper.FindVisualChild<ListBoxItem>(expander);
+            if (firstListBoxItem == null) return;
+            var listBoxItemParent = Common.UI.WindowsHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
+            if (listBoxItemParent == null) return;
+            var listBoxItems = listBoxItemParent.Children;
+            foreach (ListBoxItem listBoxItem in listBoxItems)
+            {
+                ActionInfo ai = listBoxItem.Content as ActionInfo;
+                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+                if (ai != null && ((GestureItem)e.AddedItems[0]).Name != ai.GestureName)
+                {
+                    if (app != null)
+                    {
+                        IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
+                        ai.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
+
+                        ApplicationManager.Instance.SaveApplications();
+                    }
                 }
+                else return;
             }
         }
 
@@ -488,7 +488,9 @@ namespace GestureSign.UI
                     });
                 return;
             }
-            IAction selectedAction = ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, selectedItem.ApplicationName);
+            IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
+            if (currentApp == null) return;
+            IAction selectedAction = ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, currentApp.Name);
             if (selectedAction == null) return;
             Applications.Action newAction = new Applications.Action()
             {
@@ -501,9 +503,9 @@ namespace GestureSign.UI
             };
             targetApplication.AddAction(selectedAction);
 
-            if (targetApplication != lstAvailableApplication.SelectedItem)
+            if (targetApplication != currentApp)
             {
-                _selecteNewdItem = true;
+                _selecteNewestItem = true;
                 lstAvailableApplication.SelectedItem = targetApplication;
             }
             ApplicationManager.Instance.SaveApplications();
@@ -655,27 +657,7 @@ namespace GestureSign.UI
                 ApplicationManager.Instance.SaveApplications();
             }
         }
-
-        private void AllActionsCheckBoxs_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var checkbox = ((CheckBox)sender);
-
-                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                if (app == null) return;
-
-                app.Actions.ForEach(a => a.IsEnabled = checkbox.IsChecked.Value);
-                ApplicationManager.Instance.SaveApplications();
-
-                foreach (ActionInfo ai in ActionInfos)
-                {
-                    ai.IsEnabled = checkbox.IsChecked.Value;
-                }
-            }
-            catch { }
-        }
-
+        
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
@@ -683,7 +665,7 @@ namespace GestureSign.UI
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApp == null) return;
             EditAppButton.IsEnabled = selectedApp is UserApplication;
-            HeaderCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
+            EnableAllButton.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
         }
 
         private void EditAppButton_Click(object sender, RoutedEventArgs e)
@@ -709,6 +691,83 @@ namespace GestureSign.UI
                 lstAvailableApplication.SelectedIndex = 0;
                 ApplicationManager.Instance.SaveApplications();
             }
+        }
+
+        private void MoveUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = (lstAvailableActions.SelectedItem as ActionInfo);
+            var actionInfoGroup =
+                  ActionInfos.Where(ai => ai.GestureName.Equals(selected.GestureName, StringComparison.Ordinal)).ToList();
+            int index = actionInfoGroup.IndexOf(selected);
+            if (index > 0)
+            {
+                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index - 1]));
+                RefreshGroup(selected.GestureName);
+                lstAvailableActions.SelectedItem = selected;
+
+
+                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
+
+                int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
+                int lastIndex = selectedApplication.Actions.FindLastIndex(selectedIndex - 1,
+                    a => a.GestureName.Equals(selected.GestureName, StringComparison.Ordinal));
+
+                var temp = selectedApplication.Actions[lastIndex];
+                selectedApplication.Actions[lastIndex] = selectedApplication.Actions[selectedIndex];
+                selectedApplication.Actions[selectedIndex] = temp;
+
+                ApplicationManager.Instance.SaveApplications();  
+            }
+        }
+
+        private void MoveDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = (lstAvailableActions.SelectedItem as ActionInfo);
+            var actionInfoGroup =
+                  ActionInfos.Where(ai => ai.GestureName.Equals(selected.GestureName, StringComparison.Ordinal)).ToList();
+            int index = actionInfoGroup.IndexOf(selected);
+            if (index + 1 < actionInfoGroup.Count)
+            {
+
+                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index + 1]));
+                RefreshGroup(selected.GestureName);
+                lstAvailableActions.SelectedItem = selected;
+
+
+                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
+
+                int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
+                int nextIndex = selectedApplication.Actions.FindIndex(selectedIndex + 1,
+                    a => a.GestureName.Equals(selected.GestureName, StringComparison.Ordinal));
+
+                var temp = selectedApplication.Actions[nextIndex];
+                selectedApplication.Actions[nextIndex] = selectedApplication.Actions[selectedIndex];
+                selectedApplication.Actions[selectedIndex] = temp;
+
+               // ApplicationManager.Instance.SaveApplications();  
+            }
+        }
+
+        private void EnableAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var toggleButton = ((ToggleButton)sender);
+
+                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+                if (app == null) return;
+
+                app.Actions.ForEach(a => a.IsEnabled = toggleButton.IsChecked.Value);
+                ApplicationManager.Instance.SaveApplications();
+
+                foreach (ActionInfo ai in ActionInfos)
+                {
+                    ai.IsEnabled = toggleButton.IsChecked.Value;
+                }
+            }
+            catch { }
         }
 
 
@@ -743,6 +802,25 @@ namespace GestureSign.UI
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
+        }
+    }
+
+    [ValueConversion(typeof(int), typeof(Visibility))]
+    public class VisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int index = (int)value;
+            if (index == -1)
+            {
+                return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
         }
     }
 }

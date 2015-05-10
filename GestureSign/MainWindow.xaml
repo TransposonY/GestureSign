@@ -36,7 +36,7 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Grid>
-        <TabControl TabStripPlacement="Left"  >
+        <TabControl  >
             <TabItem Header="动作" controls:ControlsHelper.HeaderFontSize="32">
                 <local:AvailableAction x:Name="availableAction"></local:AvailableAction>
             </TabItem>
