@@ -57,7 +57,8 @@ namespace GestureSign.Common.Gestures
                    result =>
                    {
                        if (!result)
-                           _Gestures = new List<IGesture>();
+                           if (!LoadDefaults())
+                               _Gestures = new List<IGesture>();
                        if (OnLoadGesturesCompleted != null) OnLoadGesturesCompleted(this, EventArgs.Empty);
                        FinishedLoading = true;
                    };
@@ -157,7 +158,7 @@ namespace GestureSign.Common.Gestures
                     _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(GestureSign.Gestures.Gesture) }, true);
 
-                    if (Gestures == null)
+                    if (_Gestures == null)
                         return false;
                     else
                         return true;
@@ -167,6 +168,16 @@ namespace GestureSign.Common.Gestures
                     return false;
                 }
             });
+        }
+        private bool LoadDefaults()
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Gestures.json");
+
+            _Gestures = Configuration.FileManager.LoadObject<List<IGesture>>(path, new[] { typeof(GestureSign.Gestures.Gesture) }, true);
+
+            if (_Gestures == null)
+                return false;
+            return true;
         }
 
         public bool SaveGestures()
