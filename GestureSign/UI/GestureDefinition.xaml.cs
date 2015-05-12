@@ -41,7 +41,6 @@ namespace GestureSign.UI
         List<List<Point>> _CapturedPoints = null;
         bool reName = false;
         public static event EventHandler GesturesChanged;
-        string name;
 
         public bool ReName
         {

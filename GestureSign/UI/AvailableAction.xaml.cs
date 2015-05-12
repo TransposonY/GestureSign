@@ -657,7 +657,7 @@ namespace GestureSign.UI
                 ApplicationManager.Instance.SaveApplications();
             }
         }
-        
+
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
@@ -717,7 +717,7 @@ namespace GestureSign.UI
                 selectedApplication.Actions[lastIndex] = selectedApplication.Actions[selectedIndex];
                 selectedApplication.Actions[selectedIndex] = temp;
 
-                ApplicationManager.Instance.SaveApplications();  
+                ApplicationManager.Instance.SaveApplications();
             }
         }
 
@@ -746,7 +746,7 @@ namespace GestureSign.UI
                 selectedApplication.Actions[nextIndex] = selectedApplication.Actions[selectedIndex];
                 selectedApplication.Actions[selectedIndex] = temp;
 
-               // ApplicationManager.Instance.SaveApplications();  
+                ApplicationManager.Instance.SaveApplications();
             }
         }
 
