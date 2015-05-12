@@ -78,47 +78,9 @@ namespace GestureSign.Common.Configuration
                 SetValue("Opacity", value);
             }
         }
-        private static double? xRatio;
-        public static double XRatio
-        {
-            get
-            {
-                return xRatio ?? (xRatio = (double)GetValue("XRatio", 0.0)).Value;
-            }
-            set
-            {
-                xRatio = value;
-                SetValue("XRatio", value);
-            }
-        }
-        private static double? yRatio;
-        public static double YRatio
-        {
-            get
-            {
-                return yRatio ?? (yRatio = (double)GetValue("YRatio", 0.0)).Value;
-            }
-            set
-            {
-                yRatio = value;
-                SetValue("YRatio", value);
-            }
-        }
-
+     
         public static bool Teaching { get; set; }
-
-        public static string DeviceName
-        {
-            get
-            {
-                return (string)GetValue("DeviceName", string.Empty);
-            }
-            set
-            {
-                SetValue("DeviceName", value);
-            }
-        }
-
+        
         public static bool IsOrderByLocation
         {
             get

@@ -43,7 +43,6 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\InitializationRatio.cs" />
     <Compile Include="Input\MessageWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -143,7 +143,6 @@ namespace GestureSign.UI
         {
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(hwnd).AddHook(new HwndSourceHook(WndProc));
-            MessageProcessor.OnInitialized += MessageProcessor_OnInitialized;
         }
 
         void MessageProcessor_OnInitialized(object sender, EventArgs e)
