@@ -64,9 +64,9 @@ namespace GestureSignDaemon.Input
 
         #endregion const definitions
 
-        static bool? XAxisDirection = null;
-        static bool? YAxisDirection = null;
-        static bool IsAxisCorresponds;
+        bool? XAxisDirection = null;
+        bool? YAxisDirection = null;
+        bool IsAxisCorresponds;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
         public event EventHandler<PointerMessageEventArgs> PointerIntercepted;
         public event EventHandler<IntPtr> OnForegroundChange;
@@ -220,7 +220,7 @@ namespace GestureSignDaemon.Input
 
         public MessageWindow()
         {
-            Debug.WriteLine("size:" + Marshal.SizeOf(typeof(AtmelTouchData)));
+            Debug.WriteLine("size:" + Marshal.SizeOf(typeof(NtrgTouchData)));
             var accessHandle = this.Handle;
             if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 StringComparison.InvariantCultureIgnoreCase) != -1)
@@ -275,7 +275,7 @@ namespace GestureSignDaemon.Input
             }
         }
 
-        private static string GetDeviceDescriptionFromReg(string item, ref bool isTouchScreen)
+        private string GetDeviceDescriptionFromReg(string item, ref bool isTouchScreen)
         {
             // Example Device Identification string
             // @"\??\ACPI#PNP0303#3&13c0b0c5&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
@@ -526,12 +526,12 @@ namespace GestureSignDaemon.Input
                         int offset;
                         //If no position data
                         if (rawdate[headLength + 3] == 0 && rawdate[headLength + 4] == 0) return;
-                        if (_deviceName.Contains("NTRG"))
+                        if (_deviceName.Contains("NTRG") || _deviceName.Contains("VID_1B96"))
                         {
-                            offset = 1;
+                            offset = 3;
                             activeTouchCount = rawdate[dwSize - 5];
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 4);
-                            touchDataType = typeof(ntrgTouchData);
+                            touchDataType = typeof(NtrgTouchData);
                         }
                         else if (rawdate[headLength] == 0x0C && rawdate[headLength + 1] == 0x00)
                         {

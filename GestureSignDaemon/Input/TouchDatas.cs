@@ -113,12 +113,9 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-    public struct ntrgTouchData : TouchData
+    public struct NtrgTouchData : TouchData
     {
-        private short dataID;
-        /// BYTE->unsigned char
         private byte status;
-        /// BYTE->unsigned char
         private short num;
         /// short
         private short x;
@@ -126,6 +123,10 @@ namespace GestureSignDaemon.Input
         /// short
         private short y;
         private short y_position;
+
+        private short unknown1;
+        private short unknown2;
+        private int empty;
 
         public int X { get { return x_position; } }
         public int Y { get { return y_position; } }
