@@ -92,6 +92,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -105,6 +107,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Delay\Delay.cs" />
+    <Compile Include="Delay\DelayUI.xaml.cs">
+      <DependentUpon>DelayUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DisableGestures.cs" />
     <Compile Include="HotKey\HotKey.xaml.cs">
       <DependentUpon>HotKey.xaml</DependentUpon>
@@ -170,6 +176,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Delay\DelayUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HotKey\HotKey.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
