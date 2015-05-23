@@ -32,6 +32,7 @@ namespace GestureSignDaemon.Input
         // Create enumeration to identify Touch buttons
         public IntPtr MessageWindowHandle { get { return messageWindow.Handle; } }
         public MessageWindow MessageWindow { get { return messageWindow; } }
+        public bool TemporarilyDisableCapture { get; set; }
 
         #endregion
 
@@ -189,6 +190,12 @@ namespace GestureSignDaemon.Input
 
         protected void TouchEventTranslator_TouchUp(object sender, PointEventArgs e)
         {
+            if (TemporarilyDisableCapture && State == CaptureState.UserDisabled)
+            {
+                TemporarilyDisableCapture = false;
+                ToggleUserDisableTouchCapture();
+            }
+
             if (State == CaptureState.Capturing)
             {
                 EndCapture();

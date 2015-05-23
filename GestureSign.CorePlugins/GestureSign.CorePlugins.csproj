@@ -111,6 +111,7 @@
     <Compile Include="Delay\DelayUI.xaml.cs">
       <DependentUpon>DelayUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TemporarilyDisable.cs" />
     <Compile Include="DisableGestures.cs" />
     <Compile Include="HotKey\HotKey.xaml.cs">
       <DependentUpon>HotKey.xaml</DependentUpon>
