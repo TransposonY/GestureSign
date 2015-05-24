@@ -50,7 +50,7 @@ namespace GestureSign.CorePlugins.HotKey
                 (Keys)KeyInterop.VirtualKeyFromKey(e.Key);
 
             _KeyCode.Add(keyCode);
-            string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (new KeyboardKey(k).KeyName + " + "));
+            string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
             txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
 
         }
@@ -89,7 +89,7 @@ namespace GestureSign.CorePlugins.HotKey
                 //txtKey.Text = _Settings.KeyCode.ToString();
                 if (_KeyCode.Count > 0)
                 {
-                    string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (new KeyboardKey(k).KeyName + " + "));
+                    string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
                     txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
                 }
                 else txtKey.Text = "";

@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using GestureSign.Common.Plugins;
-
-using System.Windows.Controls;
+using System.Windows.Forms;
+using WindowsInput;
+using WindowsInput.Native;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.HotKey
 {
@@ -18,8 +21,23 @@ namespace GestureSign.CorePlugins.HotKey
 
         private HotKey _GUI = null;
         private HotKeySettings _Settings = null;
+        private const string User32 = "user32.dll";
 
         #endregion
+
+        #region PInvoke Declarations
+
+        [DllImport(User32)]
+        private static extern bool LockWorkStation();
+
+        [DllImport(User32)]
+        private static extern int GetKeyNameText(int lParam, [Out] StringBuilder lpString, int nSize);
+
+        [DllImport(User32)]
+        private static extern int MapVirtualKey(int uCode, int uMapType);
+
+        #endregion
+
 
         #region Public Properties
 
@@ -35,13 +53,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public UserControl GUI
         {
-            get
-            {
-                if (_GUI == null)
-                    _GUI = CreateGUI();
-
-                return _GUI;
-            }
+            get { return _GUI ?? (_GUI = CreateGUI()); }
         }
 
         public HotKey TypedGUI
@@ -63,6 +75,59 @@ namespace GestureSign.CorePlugins.HotKey
 
         #region Public Methods
 
+        public static string GetKeyName(Keys key)
+        {
+            bool extended;
+            switch (key)
+            {
+                case Keys.Insert:
+                case Keys.Delete:
+                case Keys.PageUp:
+                case Keys.PageDown:
+                case Keys.Home:
+                case Keys.End:
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    extended = true;
+                    break;
+                default:
+                    extended = false;
+                    break;
+            }
+            StringBuilder sb = new StringBuilder(64);
+            int scancode = MapVirtualKey((int)key, 0);
+            if (extended)
+                scancode += 0x100;
+            GetKeyNameText(scancode << 16, sb, sb.Capacity);
+            if (sb.Length == 0)
+            {
+                switch (key)
+                {
+                    case Keys.BrowserBack:
+                        sb.Append("Back");
+                        break;
+                    case Keys.BrowserForward:
+                        sb.Append("Forward");
+                        break;
+                    case (Keys)19:
+                        sb.Append("Break");
+                        break;
+                    case Keys.Apps:
+                        sb.Append("ContextMenu");
+                        break;
+                    case Keys.LWin:
+                    case Keys.RWin:
+                        sb.Append("Windows");
+                        break;
+                    case Keys.PrintScreen:
+                        sb.Append("PrintScreen");
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
         public void Initialize()
         {
 
@@ -70,9 +135,9 @@ namespace GestureSign.CorePlugins.HotKey
 
         public bool Gestured(PointInfo ActionPoint)
         {
-            if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
-                ActionPoint.Window != null)
-                ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
+            //if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
+            //    ActionPoint.Window != null)
+            //    ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
 
             SendShortcutKeys(_Settings);
 
@@ -144,7 +209,6 @@ namespace GestureSign.CorePlugins.HotKey
 
             // Open json file
             MemoryStream mStream = new MemoryStream();
-            StreamWriter sWrite = new StreamWriter(mStream);
 
             // Serialize actions into json file
             jSerial.WriteObject(mStream, _Settings);
@@ -176,7 +240,7 @@ namespace GestureSign.CorePlugins.HotKey
 
             // Create string to store key combination and final output description
             string strKeyCombo = "";
-            string strFormattedOutput = "发送快捷键 ({0}) 到程序";
+            const string strFormattedOutput = "发送快捷键 ({0}) 到程序";
 
             // Build output string
             if (Settings.Windows)
@@ -193,7 +257,7 @@ namespace GestureSign.CorePlugins.HotKey
             if (Settings.KeyCode.Count != 0)
             {
                 foreach (var k in Settings.KeyCode)
-                    strKeyCombo += new ManagedWinapi.KeyboardKey(k).KeyName + " + ";
+                    strKeyCombo += GetKeyName(k) + " + ";
             }
             strKeyCombo = strKeyCombo.TrimEnd(' ', '+');
 
@@ -201,57 +265,59 @@ namespace GestureSign.CorePlugins.HotKey
             return String.Format(strFormattedOutput, strKeyCombo);
         }
 
-        private void SendShortcutKeys(HotKeySettings Settings)
+        private void SendShortcutKeys(HotKeySettings settings)
         {
-            if (Settings == null)
+            if (settings == null)
                 return;
-
-            // Create keyboard keys to represent hot key combinations
-            ManagedWinapi.KeyboardKey winKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LWin);
-            ManagedWinapi.KeyboardKey controlKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LControlKey);
-            ManagedWinapi.KeyboardKey altKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LMenu);
-            ManagedWinapi.KeyboardKey shiftKey = new ManagedWinapi.KeyboardKey(System.Windows.Forms.Keys.LShiftKey);
+            if (settings.Windows &&
+              settings.KeyCode.Count != 0 && settings.KeyCode[0] == Keys.L)
+            {
+                LockWorkStation();
+                return;
+            }
+            InputSimulator simulator = new InputSimulator();
 
             // Deceide which keys to press
             // Windows
-            if (Settings.Windows)
-                winKey.Press();
+            if (settings.Windows)
+                simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
 
             // Control
-            if (Settings.Control)
-                controlKey.Press();
+            if (settings.Control)
+                simulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
 
             // Alt
-            if (Settings.Alt)
-                altKey.Press();
+            if (settings.Alt)
+                simulator.Keyboard.KeyDown(VirtualKeyCode.MENU);
 
             // Shift
-            if (Settings.Shift)
-                shiftKey.Press();
+            if (settings.Shift)
+                simulator.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
 
             // Modifier
-            if (Settings.KeyCode != null)
-                foreach (var k in Settings.KeyCode)
+            if (settings.KeyCode != null)
+                foreach (var k in settings.KeyCode)
                 {
-                    ManagedWinapi.KeyboardKey modifierKey = new ManagedWinapi.KeyboardKey(k);
-                    if (!String.IsNullOrEmpty(modifierKey.KeyName))
-                        modifierKey.PressAndRelease();
+                    if (!Enum.IsDefined(typeof(VirtualKeyCode), k.GetHashCode())) continue;
+
+                    var key = (VirtualKeyCode)k;
+                    simulator.Keyboard.KeyPress(key).Sleep(30);
                 }
             // Release Shift
-            if (Settings.Shift)
-                shiftKey.Release();
+            if (settings.Shift)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
 
             // Release Alt
-            if (Settings.Alt)
-                altKey.Release();
+            if (settings.Alt)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.MENU);
 
             // Release Control
-            if (Settings.Control)
-                controlKey.Release();
+            if (settings.Control)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
 
             // Release Windows
-            if (Settings.Windows)
-                winKey.Release();
+            if (settings.Windows)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
         }
 
         #endregion

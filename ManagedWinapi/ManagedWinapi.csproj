@@ -99,7 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtendedFileInfo.cs" />
-    <Compile Include="KeyboardKey.cs" />
     <Compile Include="ApiHelper.cs" />
     <Compile Include="PInvokeTypes.cs" />
     <Compile Include="SendKeysEscaper.cs" />
