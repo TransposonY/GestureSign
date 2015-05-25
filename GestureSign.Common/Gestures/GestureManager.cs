@@ -240,15 +240,14 @@ namespace GestureSign.Common.Gestures
             return Gestures.OrderBy(g => g.Name).GroupBy(g => g.Name).Select(g => g.Key).ToArray();
         }
 
-        public bool GestureExists(string GestureName)
+        public bool GestureExists(string gestureName)
         {
-            return _Gestures.Exists(g => g.Name.ToLower() == GestureName.Trim().ToLower());
+            return _Gestures.Exists(g => String.Equals(g.Name, gestureName, StringComparison.Ordinal));
         }
 
-        public IGesture GetNewestGestureSample(string GestureName)
+        public IGesture GetNewestGestureSample(string gestureName)
         {
-            if (String.IsNullOrEmpty(GestureName)) return null;
-            return Gestures.LastOrDefault(g => g.Name.ToLower() == GestureName.Trim().ToLower());
+            return String.IsNullOrEmpty(gestureName) ? null : Gestures.LastOrDefault(g => String.Equals(g.Name, gestureName, StringComparison.Ordinal));
         }
 
         public IGesture GetNewestGestureSample()
@@ -256,9 +255,9 @@ namespace GestureSign.Common.Gestures
             return GetNewestGestureSample(this.GestureName);
         }
 
-        public void DeleteGesture(string GestureName)
+        public void DeleteGesture(string gestureName)
         {
-            _Gestures.RemoveAll(g => g.Name.Trim() == GestureName.Trim());
+            _Gestures.RemoveAll(g => g.Name.Trim() == gestureName.Trim());
         }
 
         public void RenameGesture(string gestureName, string newGestureName)
