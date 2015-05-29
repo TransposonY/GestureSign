@@ -218,8 +218,7 @@ namespace GestureSignDaemon.Input
         {
             Debug.WriteLine("size:" + Marshal.SizeOf(typeof(NtrgTouchData)));
             var accessHandle = this.Handle;
-            if (AppDomain.CurrentDomain.BaseDirectory.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                StringComparison.InvariantCultureIgnoreCase) != -1)
+            if (AppConfig.IsInsideProgramFiles)
             {
                 _dele = WinEventProc;
                 _hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _dele, 0, 0, WINEVENT_OUTOFCONTEXT);
@@ -230,7 +229,8 @@ namespace GestureSignDaemon.Input
                 NumberOfTouchscreens = EnumerateDevices();
                 if (AppConfig.XRange == 0 && NumberOfTouchscreens > 0)
                 {
-                    IsRegistered = true;
+                    if (AppConfig.IsInsideProgramFiles)
+                        IsRegistered = true;
                     _rangeInitialization = new RangeInitialization(this);
                 }
             }
@@ -257,7 +257,7 @@ namespace GestureSignDaemon.Input
         }
         public void ToggleRegister(object sender, bool e)
         {
-            if (e && !AppConfig.InterceptTouchInput) return;
+            if (e && !AppConfig.InterceptTouchInput || AppConfig.XRange == 0) return;
             Invoke(new Action(() => IsRegistered = e));
         }
 
@@ -449,7 +449,7 @@ namespace GestureSignDaemon.Input
                 {
                     CheckLastError();
                 }
-                if (PointerIntercepted != null && AppConfig.CompatibilityMode)
+                if (PointerIntercepted != null && (AppConfig.CompatibilityMode || AppConfig.XRange == 0))
                 {
                     PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
                 }

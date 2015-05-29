@@ -153,8 +153,15 @@ namespace GestureSign.Common.Configuration
                 SetValue("YRange", value);
             }
         }
+
+        public static bool IsInsideProgramFiles { get; set; }
+
         static AppConfig()
         {
+            IsInsideProgramFiles = AppDomain.CurrentDomain.BaseDirectory.IndexOf(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                StringComparison.InvariantCultureIgnoreCase) != -1;
+
             Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
             var configFolder = System.IO.Path.GetDirectoryName(Path);
 
