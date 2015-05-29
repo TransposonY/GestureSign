@@ -27,7 +27,8 @@ namespace GestureSign.UI
     public partial class Options : UserControl
     {
         System.Drawing.Color _VisualFeedbackColor;
-        string taskName = "GestureSignAutoRunTask";
+        private const string TaskName = "GestureSignAutoRunTask";
+
         public Options()
         {
             InitializeComponent();
@@ -52,6 +53,12 @@ namespace GestureSign.UI
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
                 chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
                 chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
+
+                if (!Common.Configuration.AppConfig.IsInsideProgramFiles)
+                {
+                    chkInterceptTouchInput.IsEnabled = chkCompatibilityMode.IsEnabled = false;
+                }
+
                 return true;
             }
             catch
@@ -152,7 +159,7 @@ namespace GestureSign.UI
                         // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
                             return tasks.Count != 0 || System.IO.File.Exists(lnkPath);
                         }
                     }
@@ -206,7 +213,7 @@ namespace GestureSign.UI
                         // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
 
                             if (tasks.Count == 0)
                             {
@@ -225,7 +232,7 @@ namespace GestureSign.UI
                                     System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe"), null, AppDomain.CurrentDomain.BaseDirectory));
 
                                 // Register the task in the root folder
-                                ts.RootFolder.RegisterTaskDefinition(taskName, td);
+                                ts.RootFolder.RegisterTaskDefinition(TaskName, td);
                             }
                         }
                     }
@@ -254,11 +261,11 @@ namespace GestureSign.UI
                     {  // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(taskName));
+                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
 
                             if (tasks.Count != 0)
                             {
-                                ts.RootFolder.DeleteTask(taskName);
+                                ts.RootFolder.DeleteTask(TaskName);
                             }
                         }
                     }
