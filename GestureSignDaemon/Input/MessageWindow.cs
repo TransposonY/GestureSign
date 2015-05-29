@@ -276,7 +276,7 @@ namespace GestureSignDaemon.Input
             }
         }
 
-        private string GetDeviceDescriptionFromReg(string item, ref bool isTouchScreen)
+        private bool CheckDeviceIsTouchScreen(string item)
         {
             // Example Device Identification string
             // @"\??\ACPI#PNP0303#3&13c0b0c5&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
@@ -288,8 +288,7 @@ namespace GestureSignDaemon.Input
                 string[] split = item.Split('#');
                 if (split.Length < 3)
                 {
-                    isTouchScreen = false;
-                    return null;
+                    return false;
                 }
                 string id_01 = split[0]; // ACPI (Class code)
                 string id_02 = split[1]; // PNP0303 (SubClass code)
@@ -298,22 +297,20 @@ namespace GestureSignDaemon.Input
 
                 //Open the appropriate key as read-only so no permissions
                 //are needed.
-                RegistryKey OurKey = Registry.LocalMachine;
+                RegistryKey ourKey = Registry.LocalMachine;
 
                 string findme = string.Format(@"System\CurrentControlSet\Enum\{0}\{1}\{2}", id_01, id_02, id_03);
 
-                OurKey = OurKey.OpenSubKey(findme, false);
+                ourKey = ourKey.OpenSubKey(findme, false);
 
                 //Retrieve the desired information and set isKeyboard
-                string deviceDesc = (string)OurKey.GetValue("DeviceDesc");
+                string deviceDesc = (string)ourKey.GetValue("DeviceDesc");
 
-                isTouchScreen = deviceDesc.ToUpper().Contains("TOUCH");
-                return deviceDesc;
+                return deviceDesc.ToUpper().Contains("TOUCH");
             }
             catch
             {
-                isTouchScreen = false;
-                return null;
+                return false;
             }
         }
 
@@ -351,11 +348,9 @@ namespace GestureSignDaemon.Input
 
                         if (rid.dwType == RIM_TYPEHID)
                         {
-                            bool IsTouchDevice = false;
+                            var isTouchDevice = CheckDeviceIsTouchScreen(deviceName);
 
-                            string DeviceDesc = GetDeviceDescriptionFromReg(deviceName, ref IsTouchDevice);
-
-                            if (IsTouchDevice)
+                            if (isTouchDevice)
                             {
                                 NumberOfDevices++;
                                 if (!AppConfig.DeviceName.Equals(deviceName))
