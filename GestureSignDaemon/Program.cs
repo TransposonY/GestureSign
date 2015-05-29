@@ -61,6 +61,29 @@ namespace GestureSignDaemon
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
                         //return;
                     }
+                    else if (AppConfig.XRange == 0 && !Input.TouchCapture.Instance.MessageWindow.IsRegistered)
+                    {
+                        try
+                        {
+                            bool createdSetting;
+                            using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
+                            if (createdSetting)
+                            {
+                                using (Process daemon = new Process())
+                                {
+                                    daemon.StartInfo.FileName = path;
+
+                                    // pipeClient.StartInfo.Arguments =            
+                                    //daemon.StartInfo.UseShellExecute = false;
+                                    daemon.Start();
+                                    daemon.WaitForInputIdle(1000);
+                                }
+                            }
+                            GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Initialize", "GestureSignSetting");
+                        }
+                        catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+
+                    }
                     Application.Run();
                 }
                 else

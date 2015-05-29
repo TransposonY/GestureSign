@@ -74,6 +74,7 @@ namespace GestureSignDaemon.Input
 
         readonly WinEventDelegate _dele;
         private readonly IntPtr _hhook;
+        private RangeInitialization _rangeInitialization;
 
         Type touchDataType;
         List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
@@ -83,8 +84,6 @@ namespace GestureSignDaemon.Input
         bool isRegistered = false;
         bool _isPointerMove = false;
         POINT _lastPoint;
-        private string _deviceName;
-        private Point _touchScreenPhysicalRange;
 
         public bool IsRegistered
         {
@@ -160,9 +159,6 @@ namespace GestureSignDaemon.Input
         static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
 
-        [DllImport("user32.dll")]
-        static extern bool GetPointerDeviceRects(IntPtr device, out RECT pointerDeviceRect, out RECT displayRect);
-
         #endregion DllImports
 
         #region  Windows.h structure declarations
@@ -232,6 +228,11 @@ namespace GestureSignDaemon.Input
             {
                 RegisterDevices(accessHandle);
                 NumberOfTouchscreens = EnumerateDevices();
+                if (AppConfig.XRange == 0 && NumberOfTouchscreens > 0)
+                {
+                    IsRegistered = true;
+                    _rangeInitialization = new RangeInitialization(this);
+                }
             }
             catch (Exception)
             {
@@ -357,24 +358,24 @@ namespace GestureSignDaemon.Input
                             if (IsTouchDevice)
                             {
                                 NumberOfDevices++;
-                                _deviceName = deviceName;
-                                RECT touchScreenRect;
-                                RECT displayResolution;
-                                GetPointerDeviceRects(rid.hDevice, out touchScreenRect, out displayResolution);
-                                var screenOrientation = SystemInformation.ScreenOrientation;
-                                if (screenOrientation == ScreenOrientation.Angle0 ||
-                                    screenOrientation == ScreenOrientation.Angle180)
+                                if (!AppConfig.DeviceName.Equals(deviceName))
                                 {
-                                    _touchScreenPhysicalRange = new Point(touchScreenRect.Right / 10, touchScreenRect.Bottom / 10);
+                                    AppConfig.DeviceName = deviceName;
+                                    AppConfig.XRange = AppConfig.YRange = 0;
+                                    AppConfig.Save();
                                 }
-                                else
-                                    _touchScreenPhysicalRange = new Point(touchScreenRect.Bottom / 10, touchScreenRect.Right / 10);
                             }
                         }
                         Marshal.FreeHGlobal(pData);
                     }
                 }
                 Marshal.FreeHGlobal(pRawInputDeviceList);
+                if (NumberOfDevices == 0)
+                {
+                    AppConfig.DeviceName = String.Empty;
+                    AppConfig.Save();
+
+                }
                 return NumberOfDevices;
             }
             else
@@ -526,7 +527,7 @@ namespace GestureSignDaemon.Input
                         int offset;
                         //If no position data
                         if (rawdate[headLength + 3] == 0 && rawdate[headLength + 4] == 0) return;
-                        if (_deviceName.Contains("NTRG") || _deviceName.Contains("VID_1B96"))
+                        if (AppConfig.DeviceName.Contains("NTRG") || AppConfig.DeviceName.Contains("VID_1B96"))
                         {
                             offset = 3;
                             activeTouchCount = rawdate[dwSize - 5];
@@ -607,7 +608,8 @@ namespace GestureSignDaemon.Input
                             {
                                 TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, headLength + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
-                                if (YAxisDirection.HasValue && XAxisDirection.HasValue)
+                                if (AppConfig.XRange != 0 && AppConfig.YRange != 0 &&
+                                    YAxisDirection.HasValue && XAxisDirection.HasValue)
                                 {
                                     int screenWidth = Screen.PrimaryScreen.Bounds.Width;
                                     int screenHeight = Screen.PrimaryScreen.Bounds.Height;
@@ -615,13 +617,13 @@ namespace GestureSignDaemon.Input
                                     int Y;
                                     if (IsAxisCorresponds)
                                     {
-                                        X = touch.X * screenWidth / _touchScreenPhysicalRange.X;
-                                        Y = touch.Y * screenHeight / _touchScreenPhysicalRange.Y;
+                                        X = touch.X * screenWidth / AppConfig.XRange;
+                                        Y = touch.Y * screenHeight / AppConfig.YRange;
                                     }
                                     else
                                     {
-                                        X = touch.Y * screenWidth / _touchScreenPhysicalRange.Y;
-                                        Y = touch.X * screenHeight / _touchScreenPhysicalRange.X;
+                                        X = touch.Y * screenWidth / AppConfig.YRange;
+                                        Y = touch.X * screenHeight / AppConfig.XRange;
                                     }
 
                                     X = XAxisDirection.Value ? X : screenWidth - X;

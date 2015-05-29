@@ -143,11 +143,20 @@ namespace GestureSign.UI
         {
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(hwnd).AddHook(new HwndSourceHook(WndProc));
+            MessageProcessor.OnInitialized += MessageProcessor_OnInitialized;
         }
 
         void MessageProcessor_OnInitialized(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() => { this.GuideFlipView.SelectedIndex = 1; });
+            this.Dispatcher.Invoke(() =>
+            {
+                //this.GuideFlipView.SelectedIndex = 1;
+                Hide();
+                MainWindow mw = new MainWindow();
+                mw.Show();
+                mw.Activate();
+                Close();
+            });
         }
 
         internal static void CheckLastError()
@@ -191,14 +200,5 @@ namespace GestureSign.UI
             }
         }
 
-
-        private void Setting_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
-            MainWindow mw = new MainWindow();
-            mw.Show();
-            mw.Activate();
-            Close();
-        }
     }
 }

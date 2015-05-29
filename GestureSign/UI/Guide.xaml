@@ -53,10 +53,6 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </StackPanel>
-                <StackPanel>
-                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="36" Canvas.Left="30" Canvas.Top="10" Text="已完成初始化"/>
-                    <Button x:Name="Setting" Content="进入设置" HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="0,100,10,10"  FontSize="28" FontFamily="Microsoft YaHei UI" Click="Setting_Click"/>
-                </StackPanel>
             </Controls:FlipView.Items>
         </Controls:FlipView>
     </Grid>

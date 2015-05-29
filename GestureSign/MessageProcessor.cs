@@ -12,6 +12,7 @@ namespace GestureSign
 {
     class MessageProcessor : IMessageProcessor
     {
+        public static event EventHandler OnInitialized;
         public void ProcessMessages(NamedPipeServerStream server)
         {
             try
@@ -50,6 +51,17 @@ namespace GestureSign
                                     Application.Current.Shutdown();
                                     break;
                                 }
+                                case "InitializationCompleted":
+                                {
+                                    if (OnInitialized != null)
+                                        OnInitialized(this, EventArgs.Empty);
+                                    break;
+                                }
+                                case "Initialize":
+                                Guide guide = new Guide();
+                                guide.Show();
+                                guide.Activate();
+                                break;
                             }
                         }
                         else
