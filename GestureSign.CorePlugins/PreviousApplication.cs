@@ -67,11 +67,11 @@ namespace GestureSign.CorePlugins
 													!= WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
 												).First(w => w != SystemWindow.ForegroundWindow);
 			}
-			catch (InvalidOperationException ex)
+			catch (InvalidOperationException)
 			{
 				// Do nothing here, no other window open..
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				//MessageBox.Show("Oops! - " + ex.ToString());
 			}

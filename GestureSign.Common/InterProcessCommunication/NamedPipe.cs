@@ -36,7 +36,7 @@ namespace GestureSign.Common.InterProcessCommunication
                     PipeOptions.Asynchronous);
 
                 AsyncCallback ac = null;
-                ac = (o) =>
+                ac = o =>
                 {
                     NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
                     server.EndWaitForConnection(o);
@@ -107,8 +107,7 @@ namespace GestureSign.Common.InterProcessCommunication
             try
             {
                 const int timeout = 0;
-                string normalizedPath = System.IO.Path.GetFullPath(
-                 string.Format(@"\\.\pipe\{0}", pipeName));
+                string normalizedPath = Path.GetFullPath(string.Format(@"\\.\pipe\{0}", pipeName));
                 bool exists = WaitNamedPipe(normalizedPath, timeout);
                 if (!exists)
                 {
@@ -124,7 +123,7 @@ namespace GestureSign.Common.InterProcessCommunication
             catch (Exception ex)
             {
                 throw new Exception("Failure in WaitNamedPipe()", ex);
-                return true; // assume it exists
+                //return true; // assume it exists
             }
         }
 

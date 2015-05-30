@@ -11,103 +11,103 @@ using System.Windows.Controls;
 
 namespace GestureSign.CorePlugins
 {
-	public class NextApplication : IPlugin
-	{
-		#region Private Variables
+    public class NextApplication : IPlugin
+    {
+        #region Private Variables
 
-		IHostControl _HostControl = null;
+        IHostControl _HostControl = null;
 
-		#endregion
+        #endregion
 
-		#region IAction Properties
+        #region IAction Properties
 
-		public string Name
-		{
-			get { return "下一窗口"; }
-		}
+        public string Name
+        {
+            get { return "下一窗口"; }
+        }
 
-		public string Description
-		{
-			get { return "切换到下一个窗口 (相当于 Alt + Tab)"; }
-		}
+        public string Description
+        {
+            get { return "切换到下一个窗口 (相当于 Alt + Tab)"; }
+        }
 
-		public UserControl  GUI
-		{
-			get { return null; }
-		}
+        public UserControl GUI
+        {
+            get { return null; }
+        }
 
-		public string Category
-		{
-			get { return "Windows"; }
-		}
+        public string Category
+        {
+            get { return "Windows"; }
+        }
 
-		public bool IsAction
-		{
-			get { return true; }
-		}
+        public bool IsAction
+        {
+            get { return true; }
+        }
 
-		#endregion
+        #endregion
 
-		#region IAction Methods
+        #region IAction Methods
 
-		public void Initialize()
-		{
+        public void Initialize()
+        {
 
-		}
+        }
 
-		public bool Gestured(PointInfo ActionPoint)
-		{
-			try
-			{
-				SystemWindow.ForegroundWindow = SystemWindow.AllToplevelWindows.Where
-												(w => w.Visible &&	// Must be a visible windows  
-												 //w.WindowState != FormWindowState.Minimized && 
-												 w.Title != "" &&	// Must have a window title
-												//(w.Style & WindowStyleFlags.POPUPWINDOW) 
-												//	!= WindowStyleFlags.POPUPWINDOW &&
-												(w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW)
-													!= WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
-												).Last();
-			}
-			catch (InvalidOperationException ex)
-			{
-				// Do nothing here, no other window open..
-			}
-			catch (Exception ex)
-			{
-				//MessageBox.Show("Oops! - "+ex.Message);
-			}
-			finally { }
-			return true;
-		}
-
-		public bool Deserialize(string SerializedData)
-		{
+        public bool Gestured(PointInfo ActionPoint)
+        {
+            try
+            {
+                SystemWindow.ForegroundWindow = SystemWindow.AllToplevelWindows.Where
+                                                (w => w.Visible &&	// Must be a visible windows  
+                                                    //w.WindowState != FormWindowState.Minimized && 
+                                                 w.Title != "" &&	// Must have a window title
+                                                    //(w.Style & WindowStyleFlags.POPUPWINDOW) 
+                                                    //	!= WindowStyleFlags.POPUPWINDOW &&
+                                                (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW)
+                                                    != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
+                                                ).Last();
+            }
+            catch (InvalidOperationException)
+            {
+                // Do nothing here, no other window open..
+            }
+            catch (Exception)
+            {
+                //MessageBox.Show("Oops! - "+ex.Message);
+            }
+            finally { }
             return true;
-			// Nothing to deserialize
-		}
+        }
 
-		public string Serialize()
-		{
-			// Nothing to serialize, send empty string
-			return "";
-		}
+        public bool Deserialize(string SerializedData)
+        {
+            return true;
+            // Nothing to deserialize
+        }
 
-		public void ShowGUI(bool IsNew)
-		{
-			// Nothing to do here
-		}
+        public string Serialize()
+        {
+            // Nothing to serialize, send empty string
+            return "";
+        }
 
-		#endregion
+        public void ShowGUI(bool IsNew)
+        {
+            // Nothing to do here
+        }
 
-		#region Host Control
+        #endregion
 
-		public IHostControl HostControl
-		{
-			get { return _HostControl; }
-			set { _HostControl = value; }
-		}
+        #region Host Control
 
-		#endregion
-	}
+        public IHostControl HostControl
+        {
+            get { return _HostControl; }
+            set { _HostControl = value; }
+        }
+
+        #endregion
+    }
 }
