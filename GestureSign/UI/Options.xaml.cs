@@ -38,7 +38,7 @@ namespace GestureSign.UI
         #region Custom Events
 
         #endregion
-        private bool LoadSettings()
+        private void LoadSettings()
         {
             try
             {
@@ -51,20 +51,21 @@ namespace GestureSign.UI
                 chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
-                chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
-                chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
-
-                if (!Common.Configuration.AppConfig.IsInsideProgramFiles)
+                if (Common.Configuration.AppConfig.IsInsideProgramFiles)
                 {
-                    chkInterceptTouchInput.IsEnabled = chkCompatibilityMode.IsEnabled = false;
+                    chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
+                    chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
+                }
+                else
+                {
+                    chkCompatibilityMode.IsChecked = chkInterceptTouchInput.IsChecked =
+                        chkInterceptTouchInput.IsEnabled = chkCompatibilityMode.IsEnabled = false;
                 }
 
-                return true;
             }
             catch
             {
                 MessageBox.Show("无法载入设置", "发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
             }
         }
 
