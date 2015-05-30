@@ -91,7 +91,7 @@ namespace GestureSign.Common.Applications
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
             {
-                e.InterceptTouchInput |= (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                e.InterceptTouchInput |= (app is UserApplication && ((app as UserApplication).InterceptTouchInput || Configuration.AppConfig.CompatibilityMode));
                 if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
                 {
                     e.Cancel = true;
