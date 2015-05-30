@@ -59,7 +59,7 @@ namespace GestureSign.UI
                 else
                 {
                     chkCompatibilityMode.IsChecked = chkInterceptTouchInput.IsChecked =
-                        chkInterceptTouchInput.IsEnabled = chkCompatibilityMode.IsEnabled = false;
+                        chkInterceptTouchInput.IsEnabled = false;
                 }
 
             }

@@ -31,10 +31,10 @@
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="高级选项" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,5"/>
             <Button x:Name="btnOpenApplicationData"  Content="打开设置文件文件夹" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5" FontSize="12" FontWeight="Bold" Click="btnOpenApplicationData_Click"/>
 
-            <controls:ToggleSwitch x:Name="chkWindowsStartup" Header="开机启动" OnLabel="开" OffLabel="关" Margin="0,10" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="200" FontFamily="Microsoft YaHei UI" FontWeight="Bold"/>
-            <controls:ToggleSwitch x:Name="chkOrderByLocation" Header="手指识别顺序" OnLabel="按左右位置顺序" OffLabel="按接触先后顺序" Width="200" Margin="0,10" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" />
-            <controls:ToggleSwitch x:Name="chkInterceptTouchInput" Header="屏蔽触摸输入" OnLabel="开" OffLabel="关" Width="200" Margin="0,10,0,9" Checked="chkInterceptTouchInput_Checked" Unchecked="chkInterceptTouchInput_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" ></controls:ToggleSwitch>
-            <controls:ToggleSwitch x:Name="chkCompatibilityMode" Header="触摸数据获取方式" OnLabel="兼容模式" OffLabel="普通模式" Width="200" Margin="0,10" Checked="chkCompatibilityMode_Checked" Unchecked="chkCompatibilityMode_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" ></controls:ToggleSwitch>
+            <controls:ToggleSwitch x:Name="chkWindowsStartup" Header="开机启动" OnLabel="开" OffLabel="关" Margin="0,10" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="250" FontFamily="Microsoft YaHei UI" FontWeight="Bold"/>
+            <controls:ToggleSwitch x:Name="chkOrderByLocation" Header="手指识别顺序" OnLabel="按左右位置顺序" OffLabel="按接触先后顺序" Width="250" Margin="0,10" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" />
+            <controls:ToggleSwitch x:Name="chkInterceptTouchInput" Header="屏蔽触摸输入功能（安装版适用）" OnLabel="开" OffLabel="关" Width="250" Margin="0,10,0,9" Checked="chkInterceptTouchInput_Checked" Unchecked="chkInterceptTouchInput_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" ></controls:ToggleSwitch>
+            <controls:ToggleSwitch x:Name="chkCompatibilityMode" Header="触摸数据获取方式" IsEnabled="{Binding ElementName=chkInterceptTouchInput,Path=IsChecked}" OnLabel="兼容模式" OffLabel="普通模式" Width="250" Margin="0,10" Checked="chkCompatibilityMode_Checked" Unchecked="chkCompatibilityMode_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" ></controls:ToggleSwitch>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

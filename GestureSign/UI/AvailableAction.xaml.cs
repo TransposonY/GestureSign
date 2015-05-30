@@ -631,7 +631,8 @@ namespace GestureSign.UI
             }
             else
             {
-                AllowSingleMenuItem.IsEnabled = InterceptTouchInputMenuItem.IsEnabled = true;
+                AllowSingleMenuItem.IsEnabled = true;
+                InterceptTouchInputMenuItem.IsEnabled = Common.Configuration.AppConfig.IsInsideProgramFiles;
                 InterceptTouchInputMenuItem.IsChecked = userApplication.InterceptTouchInput;
                 AllowSingleMenuItem.IsChecked = userApplication.AllowSingleStroke;
             }

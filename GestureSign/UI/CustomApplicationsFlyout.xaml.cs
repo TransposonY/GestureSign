@@ -72,6 +72,7 @@ namespace GestureSign.UI
                 GroupComboBox.Text = _currentApplication.Group;
                 chkAllowSingleStroke.IsChecked = ((UserApplication)_currentApplication).AllowSingleStroke;
                 chkInterceptTouchInput.IsChecked = ((UserApplication)_currentApplication).InterceptTouchInput;
+                chkInterceptTouchInput.IsEnabled = Common.Configuration.AppConfig.IsInsideProgramFiles;
             }
 
             chkAllowSingleStroke.Visibility = chkInterceptTouchInput.Visibility = ApplicationNameTextBlock.Visibility =

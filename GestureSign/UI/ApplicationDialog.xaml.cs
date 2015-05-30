@@ -764,4 +764,17 @@ namespace GestureSign.UI
             return DependencyProperty.UnsetValue;
         }
     }
+    [ValueConversion(typeof(bool), typeof(bool))]
+    public class InterceptTouchInputCheckBoxConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value && Common.Configuration.AppConfig.IsInsideProgramFiles;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
 }

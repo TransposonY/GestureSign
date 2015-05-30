@@ -31,6 +31,7 @@
             <local:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter"></local:Bool2VisibilityConverter>
             <local:AllowSingleBoolConverter x:Key="AllowSingleBoolConverter"></local:AllowSingleBoolConverter>
             <local:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter"></local:MatchUsing2VisibilityConverter>
+            <local:InterceptTouchInputCheckBoxConverter x:Key="InterceptTouchInputCheckBoxConverter"></local:InterceptTouchInputCheckBoxConverter>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -319,7 +320,7 @@
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox"
-                  IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
+                  IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton,Converter={StaticResource InterceptTouchInputCheckBoxConverter}, Mode=OneWay}"
                   Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14">
             <CheckBox.IsChecked>
                 <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}" Mode="OneWay">
