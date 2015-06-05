@@ -561,6 +561,13 @@ namespace GestureSignDaemon.Input
                             {
                                 touchDataType = typeof(AtmelTouchData);
                             }
+                            else if (rawdate[headLength + 2] == rawdate[headLength + 4] &&
+                                     rawdate[headLength + 3] == rawdate[headLength + 5] &&
+                                     rawdate[headLength + 6] == rawdate[headLength + 8] &&
+                                     rawdate[headLength + 7] == rawdate[headLength + 9])
+                            {
+                                touchDataType = typeof(AtmelTouchData2);
+                            }
                             else
                             {
                                 touchDataType = typeof(sTouchData);

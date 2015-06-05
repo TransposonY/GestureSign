@@ -147,4 +147,20 @@ namespace GestureSignDaemon.Input
         public int ID { get { return data >> 2; } }
         public bool Status { get { return (data & 0x1) == 1; } }
     }
+
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
+    public struct AtmelTouchData2 : TouchData
+    {
+        private byte data;
+        private Int16 x1;
+        private Int16 x2;
+        private Int16 y1;
+        private Int16 y2;
+        private Int16 unknown1;
+
+        public int X { get { return x1; } }
+        public int Y { get { return y1; } }
+        public int ID { get { return data >> 2; } }
+        public bool Status { get { return (data & 0x1) == 1; } }
+    }
 }
