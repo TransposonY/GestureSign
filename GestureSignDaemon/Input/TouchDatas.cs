@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace GestureSignDaemon.Input
 {
 
-    public interface TouchData
+    public interface ITouchData
     {
         bool Status { get; }
         int ID { get; }
@@ -18,7 +18,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct sTouchData : TouchData
+    public struct sTouchData : ITouchData
     {
         /// BYTE->unsigned char
         private byte status;
@@ -35,7 +35,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-    public struct iTouchData : TouchData
+    public struct iTouchData : ITouchData
     {
         /// BYTE->unsigned char
         private byte status;
@@ -52,7 +52,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-    public struct gTouchData : TouchData
+    public struct gTouchData : ITouchData
     {
         /// BYTE->unsigned char
         private byte status;
@@ -72,7 +72,7 @@ namespace GestureSignDaemon.Input
     }
     // HID#FTSC0001&Col01#4&14bbeed5&0&0000#
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 2)]
-    public struct dTouchData : TouchData
+    public struct dTouchData : ITouchData
     {
         /// BYTE->unsigned char
         private byte status;
@@ -94,7 +94,7 @@ namespace GestureSignDaemon.Input
     }
     //HID#WCOM5008&Col01#4&2b144297&0&0000
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-    public struct wcTouchData : TouchData
+    public struct wcTouchData : ITouchData
     {
         /// BYTE->unsigned char
         private byte TouchDataStatus;
@@ -113,7 +113,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-    public struct NtrgTouchData : TouchData
+    public struct NtrgTouchData : ITouchData
     {
         private byte status;
         private short num;
@@ -135,7 +135,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-    public struct AtmelTouchData : TouchData
+    public struct AtmelTouchData : ITouchData
     {
         private byte data;
         private Int32 x;
@@ -149,7 +149,7 @@ namespace GestureSignDaemon.Input
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
-    public struct AtmelTouchData2 : TouchData
+    public struct AtmelTouchData2 : ITouchData
     {
         private byte data;
         private Int16 x1;
@@ -162,5 +162,20 @@ namespace GestureSignDaemon.Input
         public int Y { get { return y1; } }
         public int ID { get { return data >> 2; } }
         public bool Status { get { return (data & 0x1) == 1; } }
+    }
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1)]
+    public struct ElanTouchData : ITouchData
+    {
+        private byte status;
+        private Int16 unknown;
+        private Int16 x1;
+        private Int16 x2;
+        private Int16 y1;
+        private Int16 y2;
+
+        public int X { get { return x1; } }
+        public int Y { get { return y1; } }
+        public int ID { get { return status >> 2; } }
+        public bool Status { get { return (status & 1) == 1; } }
     }
 }

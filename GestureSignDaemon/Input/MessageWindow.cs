@@ -536,6 +536,16 @@ namespace GestureSignDaemon.Input
                             timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 2);
                             touchDataType = typeof(wcTouchData);
                         }
+                        else if (rawdate[headLength + 4] == rawdate[headLength + 6] &&
+                                 rawdate[headLength + 5] == rawdate[headLength + 7] &&
+                                rawdate[headLength + 8] == rawdate[headLength + 10] &&
+                                rawdate[headLength + 9] == rawdate[headLength + 11])
+                        {
+                            offset = 1;
+                            activeTouchCount = rawdate[dwSize - 1];
+                            timeStamp = BitConverter.ToUInt16(rawdate, (int)dwSize - 5);
+                            touchDataType = typeof(ElanTouchData);
+                        }
                         else
                         {
                             offset = 1;
@@ -608,7 +618,7 @@ namespace GestureSignDaemon.Input
                         {
                             for (int dataIndex = 0; dataIndex < touchdataCount; dataIndex++)
                             {
-                                TouchData touch = (TouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, headLength + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
+                                ITouchData touch = (ITouchData)Marshal.PtrToStructure(IntPtr.Add(buffer, headLength + offset + dwIndex * (int)raw.hid.dwSizHid + dataIndex * touchlength), touchDataType);
 
                                 if (AppConfig.XRange != 0 && AppConfig.YRange != 0 &&
                                     YAxisDirection.HasValue && XAxisDirection.HasValue)
