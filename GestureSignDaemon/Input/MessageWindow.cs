@@ -84,6 +84,7 @@ namespace GestureSignDaemon.Input
         bool isRegistered = false;
         bool _isPointerMove = false;
         POINT _lastPoint;
+        private List<IntPtr> hDevices = new List<IntPtr>(1);
 
         public bool IsRegistered
         {
@@ -306,7 +307,7 @@ namespace GestureSignDaemon.Input
                 //Retrieve the desired information and set isKeyboard
                 string deviceDesc = (string)ourKey.GetValue("DeviceDesc");
 
-                return deviceDesc.ToUpper().Contains("TOUCH");
+                return deviceDesc.ToLower().Contains("touch_screen");
             }
             catch
             {
@@ -348,6 +349,8 @@ namespace GestureSignDaemon.Input
 
                         if (rid.dwType == RIM_TYPEHID)
                         {
+                            hDevices.Add(rid.hDevice);
+
                             var isTouchDevice = CheckDeviceIsTouchScreen(deviceName);
 
                             if (isTouchDevice)
@@ -512,7 +515,7 @@ namespace GestureSignDaemon.Input
                 {
                     RAWINPUT raw = (RAWINPUT)Marshal.PtrToStructure(buffer, typeof(RAWINPUT));
 
-                    if (raw.header.dwType == RIM_TYPEHID)
+                    if (hDevices.Contains(raw.header.hDevice))
                     {
                         int headLength = raw.header.dwSize - (int)raw.hid.dwSizHid;
                         byte[] rawdate = new byte[dwSize];
@@ -522,7 +525,9 @@ namespace GestureSignDaemon.Input
                         int offset;
                         //If no position data
                         if (rawdate[headLength + 3] == 0 && rawdate[headLength + 4] == 0) return;
-                        if (AppConfig.DeviceName.Contains("NTRG") || AppConfig.DeviceName.Contains("VID_1B96"))
+                        if (AppConfig.DeviceName.Contains("NTRG") ||
+                            AppConfig.DeviceName.Contains("MSHW") ||
+                            AppConfig.DeviceName.Contains("VID_1B96"))
                         {
                             offset = 3;
                             activeTouchCount = rawdate[dwSize - 5];
