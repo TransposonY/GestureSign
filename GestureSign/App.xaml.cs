@@ -72,7 +72,7 @@ namespace GestureSign
 
                     }
 
-                    if (e.Args.Length != 0 && e.Args[0].Equals("/L") || (AppConfig.XRange == 0 && !AppConfig.IsInsideProgramFiles))
+                    if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
                     {
                         Application.Current.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
                         timer.Change(300000, Timeout.Infinite);

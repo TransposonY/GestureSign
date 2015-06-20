@@ -43,11 +43,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input\HidReports.cs" />
+    <Compile Include="Input\HidDeclarations.cs" />
     <Compile Include="Input\MessageWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Input\RangeInitialization.cs" />
-    <Compile Include="Input\TouchDatas.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

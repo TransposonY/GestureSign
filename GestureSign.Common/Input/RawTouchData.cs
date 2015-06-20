@@ -5,14 +5,14 @@ namespace GestureSign.Common.Input
 
     public struct RawTouchData
     {
-        public RawTouchData(bool status, int num, Point rawPointsData)
+        public RawTouchData(bool tip, int contactIdentifier, Point rawPointsData)
         {
-            this.Status = status;
-            this.Num = num;
+            this.Tip = tip;
+            this.ContactIdentifier = contactIdentifier;
             this.RawPoints = rawPointsData;
         }
-        public bool Status;
-        public int Num;
+        public bool Tip;
+        public int ContactIdentifier;
         public Point RawPoints;
     }
 }

@@ -12,7 +12,6 @@ namespace GestureSign
 {
     class MessageProcessor : IMessageProcessor
     {
-        public static event EventHandler OnInitialized;
         public void ProcessMessages(NamedPipeServerStream server)
         {
             try
@@ -31,37 +30,26 @@ namespace GestureSign
                             switch (message)
                             {
                                 case "MainWindow":
-                                {
-
-                                    foreach (Window win in Application.Current.Windows)
                                     {
-                                        if (win.GetType() == typeof(MainWindow))
+
+                                        foreach (Window win in Application.Current.Windows)
                                         {
-                                            win.Activate();
-                                            return;
+                                            if (win.GetType() == typeof(MainWindow))
+                                            {
+                                                win.Activate();
+                                                return;
+                                            }
                                         }
+                                        MainWindow mw = new MainWindow();
+                                        mw.Show();
+                                        mw.Activate();
+                                        break;
                                     }
-                                    MainWindow mw = new MainWindow();
-                                    mw.Show();
-                                    mw.Activate();
-                                    break;
-                                }
                                 case "Exit":
-                                {
-                                    Application.Current.Shutdown();
-                                    break;
-                                }
-                                case "InitializationCompleted":
-                                {
-                                    if (OnInitialized != null)
-                                        OnInitialized(this, EventArgs.Empty);
-                                    break;
-                                }
-                                case "Initialize":
-                                Guide guide = new Guide();
-                                guide.Show();
-                                guide.Activate();
-                                break;
+                                    {
+                                        Application.Current.Shutdown();
+                                        break;
+                                    }
                             }
                         }
                         else

@@ -46,12 +46,10 @@ namespace GestureSignDaemon.Input
 
         public void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
-            if (GestureSign.Common.Configuration.AppConfig.XRange == 0) return;
-
-            var pointEventArgs = new PointEventArgs(e.RawTouchsData.Select(r => (new KeyValuePair<int, Point>(r.Num, r.RawPoints))));
+            var pointEventArgs = new PointEventArgs(e.RawTouchsData.Select(r => (new KeyValuePair<int, Point>(r.ContactIdentifier, r.RawPoints))));
             foreach (RawTouchData rtd in e.RawTouchsData)
             {
-                if (!rtd.Status)
+                if (!rtd.Tip)
                 {
                     if (e.RawTouchsData.Length <= lastPointsCount)
                     {

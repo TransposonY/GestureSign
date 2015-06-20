@@ -115,44 +115,6 @@ namespace GestureSign.Common.Configuration
                 SetValue("CompatibilityMode", value);
             }
         }
-        public static string DeviceName
-        {
-            get
-            {
-                return (string)GetValue("DeviceName", string.Empty);
-            }
-            set
-            {
-                SetValue("DeviceName", value);
-            }
-        }
-
-        private static int _xRange;
-        public static int XRange
-        {
-            get
-            {
-                return _xRange == 0 ? _xRange = (int)GetValue("XRange", 0) : _xRange;
-            }
-            set
-            {
-                _xRange = value;
-                SetValue("XRange", value);
-            }
-        }
-        private static int _yRange;
-        public static int YRange
-        {
-            get
-            {
-                return _yRange == 0 ? _yRange = (int)GetValue("YRange", 0) : _yRange;
-            }
-            set
-            {
-                _yRange = value;
-                SetValue("YRange", value);
-            }
-        }
 
         public static bool IsInsideProgramFiles { get; set; }
 
