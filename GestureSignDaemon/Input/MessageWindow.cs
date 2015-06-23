@@ -31,27 +31,21 @@ namespace GestureSignDaemon.Input
         private const int VK_OEM_CLEAR = 0xFE;
         private const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
 
-        const int
+        private const int
 
-           WM_PARENTNOTIFY = 0x0210,
-           WM_NCPOINTERUPDATE = 0x0241,
-           WM_NCPOINTERDOWN = 0x0242,
-           WM_NCPOINTERUP = 0x0243,
-           WM_POINTERUPDATE = 0x0245,
-           WM_POINTERDOWN = 0x0246,
-           WM_POINTERUP = 0x0247,
-           WM_POINTERENTER = 0x0249,
-           WM_POINTERLEAVE = 0x024A,
-           WM_POINTERACTIVATE = 0x024B,
-           WM_POINTERCAPTURECHANGED = 0x024C,
-           WM_POINTERWHEEL = 0x024E,
-           WM_POINTERHWHEEL = 0x024F,
-
-           // WM_POINTERACTIVATE return codes
-           PA_ACTIVATE = 1,
-           PA_NOACTIVATE = 3,
-
-           MAX_TOUCH_COUNT = 256;
+            WM_PARENTNOTIFY = 0x0210,
+            WM_NCPOINTERUPDATE = 0x0241,
+            WM_NCPOINTERDOWN = 0x0242,
+            WM_NCPOINTERUP = 0x0243,
+            WM_POINTERUPDATE = 0x0245,
+            WM_POINTERDOWN = 0x0246,
+            WM_POINTERUP = 0x0247,
+            WM_POINTERENTER = 0x0249,
+            WM_POINTERLEAVE = 0x024A,
+            WM_POINTERACTIVATE = 0x024B,
+            WM_POINTERCAPTURECHANGED = 0x024C,
+            WM_POINTERWHEEL = 0x024E,
+            WM_POINTERHWHEEL = 0x024F;
 
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
@@ -59,30 +53,29 @@ namespace GestureSignDaemon.Input
 
         private const ushort GenericDesktopPage = 0x01;
         private const ushort TouchScreenUsagePage = 0x0D;
-        private const ushort ContactIdentifierID = 0x51;
-        private const ushort ContactCountID = 0x54;
-        private const ushort ScanTimeID = 0x56;
-        private const ushort TipID = 0x42;
-        private const ushort XCoordinateID = 0x30;
-        private const ushort YCoordinateID = 0x31;
+        private const ushort ContactIdentifierId = 0x51;
+        private const ushort ContactCountId = 0x54;
+        private const ushort ScanTimeId = 0x56;
+        private const ushort TipId = 0x42;
+        private const ushort XCoordinateId = 0x30;
+        private const ushort YCoordinateId = 0x31;
         #endregion const definitions
 
-        bool XAxisDirection;
-        bool YAxisDirection;
-        bool IsAxisCorresponds;
+        bool _xAxisDirection;
+        bool _yAxisDirection;
+        bool _isAxisCorresponds;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
         public event EventHandler<PointerMessageEventArgs> PointerIntercepted;
         public event EventHandler<IntPtr> OnForegroundChange;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        readonly WinEventDelegate _dele;
-        private readonly IntPtr _hhook;
+        readonly WinEventDelegate _winEventDele;
+        private readonly IntPtr _hWinEventHook;
 
-        List<RawTouchData> outputTouchs = new List<RawTouchData>(1);
-        int requiringContactCount = 0;
-        int touchdataCount = 0;
-        bool _isRegistered = false;
-        bool _isPointerMove = false;
+        List<RawTouchData> _outputTouchs = new List<RawTouchData>(1);
+        int _requiringContactCount;
+        bool _isRegistered;
+        bool _isPointerMove;
         POINT _lastPoint;
         private Dictionary<IntPtr, Point> _touchScreenPhysicalMax = new Dictionary<IntPtr, Point>(1);
 
@@ -218,15 +211,14 @@ namespace GestureSignDaemon.Input
 
         public MessageWindow()
         {
-            var accessHandle = this.Handle;
             if (AppConfig.IsInsideProgramFiles)
             {
-                _dele = WinEventProc;
-                _hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+                _winEventDele = WinEventProc;
+                _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT);
             }
             try
             {
-                RegisterDevices(accessHandle);
+                RegisterDevices();
                 NumberOfTouchscreens = EnumerateDevices();
             }
             catch (Exception)
@@ -237,8 +229,8 @@ namespace GestureSignDaemon.Input
 
         ~MessageWindow()
         {
-            if (_hhook != IntPtr.Zero)
-                UnhookWinEvent(_hhook);
+            if (_hWinEventHook != IntPtr.Zero)
+                UnhookWinEvent(_hWinEventHook);
         }
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
@@ -256,14 +248,14 @@ namespace GestureSignDaemon.Input
             Invoke(new Action(() => IsRegistered = e));
         }
 
-        private void RegisterDevices(IntPtr hwnd)
+        private void RegisterDevices()
         {
             RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
 
             rid[0].usUsagePage = TouchScreenUsagePage;
             rid[0].usUsage = 0x04;
             rid[0].dwFlags = RIDEV_INPUTSINK;
-            rid[0].hwndTarget = hwnd;
+            rid[0].hwndTarget = Handle;
 
             if (!RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
             {
@@ -516,22 +508,22 @@ namespace GestureSignDaemon.Input
                         switch (SystemInformation.ScreenOrientation)
                         {
                             case ScreenOrientation.Angle0:
-                                XAxisDirection = YAxisDirection = true;
-                                IsAxisCorresponds = true;
+                                _xAxisDirection = _yAxisDirection = true;
+                                _isAxisCorresponds = true;
                                 break;
                             case ScreenOrientation.Angle90:
-                                IsAxisCorresponds = false;
-                                XAxisDirection = false;
-                                YAxisDirection = true;
+                                _isAxisCorresponds = false;
+                                _xAxisDirection = false;
+                                _yAxisDirection = true;
                                 break;
                             case ScreenOrientation.Angle180:
-                                XAxisDirection = YAxisDirection = false;
-                                IsAxisCorresponds = true;
+                                _xAxisDirection = _yAxisDirection = false;
+                                _isAxisCorresponds = true;
                                 break;
                             case ScreenOrientation.Angle270:
-                                IsAxisCorresponds = false;
-                                XAxisDirection = true;
-                                YAxisDirection = false;
+                                _isAxisCorresponds = false;
+                                _xAxisDirection = true;
+                                _yAxisDirection = false;
                                 break;
                             default: break;
                         }
@@ -545,9 +537,9 @@ namespace GestureSignDaemon.Input
 
                         IntPtr pRawData = IntPtr.Add(buffer, raw.header.dwSize - raw.hid.dwSizHid);
 
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ContactCountID,
+                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ContactCountId,
                             ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ScanTimeID,
+                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ScanTimeId,
                             ref scanTime, pPreparsedData, pRawData, raw.hid.dwSizHid);
 
                         HidNativeApi.HIDP_CAPS capabilities = new HidNativeApi.HIDP_CAPS();
@@ -558,10 +550,10 @@ namespace GestureSignDaemon.Input
 
                         if (contactCount != 0)
                         {
-                            requiringContactCount = contactCount;
-                            outputTouchs = new List<RawTouchData>(contactCount);
+                            _requiringContactCount = contactCount;
+                            _outputTouchs = new List<RawTouchData>(contactCount);
                         }
-                        if (requiringContactCount == 0) return;
+                        if (_requiringContactCount == 0) return;
                         int contactIdentifier = 0;
                         int physicalX = 0;
                         int physicalY = 0;
@@ -573,15 +565,15 @@ namespace GestureSignDaemon.Input
                             for (short nodeIndex = 1; nodeIndex <= lcn[0].NumberOfChildren; nodeIndex++)
                             {
                                 IntPtr pRawDataPacket = IntPtr.Add(pRawData, dwIndex * raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, nodeIndex, ContactIdentifierID, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, XCoordinateID, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateID, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
+                                HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, nodeIndex, ContactIdentifierId, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
+                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
+                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
 
                                 HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[1];
                                 HidNativeApi.HidP_GetUsages(HidReportType.Input, TouchScreenUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
                                 int x, y;
-                                if (IsAxisCorresponds)
+                                if (_isAxisCorresponds)
                                 {
                                     x = physicalX * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].X;
                                     y = physicalY * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].Y;
@@ -592,19 +584,19 @@ namespace GestureSignDaemon.Input
                                     y = physicalX * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].X;
                                 }
 
-                                x = XAxisDirection ? x : screenWidth - x;
-                                y = YAxisDirection ? y : screenHeight - y;
+                                x = _xAxisDirection ? x : screenWidth - x;
+                                y = _yAxisDirection ? y : screenHeight - y;
 
-                                outputTouchs.Add(new RawTouchData(hd[0].DataIndex == TipID, contactIdentifier, new Point(x, y)));
+                                _outputTouchs.Add(new RawTouchData(hd[0].DataIndex == TipId, contactIdentifier, new Point(x, y)));
 
-                                if (--requiringContactCount == 0) break;
+                                if (--_requiringContactCount == 0) break;
                             }
-                            if (requiringContactCount == 0) break;
+                            if (_requiringContactCount == 0) break;
                         }
 
-                        if (requiringContactCount == 0 && PointsIntercepted != null)
+                        if (_requiringContactCount == 0 && PointsIntercepted != null)
                         {
-                            PointsIntercepted(this, new RawPointsDataMessageEventArgs(outputTouchs.OrderBy(rtd => rtd.ContactIdentifier).ToArray(), scanTime));
+                            PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs.OrderBy(rtd => rtd.ContactIdentifier).ToArray(), scanTime));
                         }
 
                     }

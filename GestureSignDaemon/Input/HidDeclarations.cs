@@ -533,7 +533,7 @@ namespace GestureSignDaemon.Input
         /// <param name="PreparsedData"></param>
         /// <returns></returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetLinkCollectionNodes([In, Out] HIDP_LINK_COLLECTION_NODE[] LinkCollectionNodes, ref int LinkCollectionNodesLength, IntPtr PreparsedData);
+        static public extern int HidP_GetLinkCollectionNodes([Out] HIDP_LINK_COLLECTION_NODE[] LinkCollectionNodes, ref int LinkCollectionNodesLength, IntPtr PreparsedData);
 
         /// <summary>
         /// HidP_GetValueCaps returns all the values (non-binary) that are a part of the given report type for the Hid device represented by the given preparsed data.
@@ -838,7 +838,7 @@ namespace GestureSignDaemon.Input
         /// IDP_STATUS_REPORT_DOES_NOT_EXIST, HIDP_STATUS_BUFFER_TOO_SMALL,
         /// HIDP_STATUS_INCOMPATIBLE_REPORT_ID, HIDP_STATUS_USAGE_NOT_FOUND</returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetUsages([MarshalAs(UnmanagedType.U4)]HidReportType ReportType, ushort UsagePage, short LinkCollection, [In, Out] HIDP_DATA[] UsageList, ref int UsageLength, IntPtr PreparsedData, IntPtr Report, int ReportLength);
+        static public extern int HidP_GetUsages(HidReportType ReportType, ushort UsagePage, short LinkCollection, [In, Out] HIDP_DATA[] UsageList, ref int UsageLength, IntPtr PreparsedData, IntPtr Report, int ReportLength);
 
         /// <summary>
         /// This function returns the binary values (buttons) in a HID report.
@@ -1051,7 +1051,7 @@ namespace GestureSignDaemon.Input
         /// HIDP_STATUS_INVALID_PREPARSED_DATA, HIDP_STATUS_INVALID_REPORT_LENGTH,
         /// HIDP_STATUS_REPORT_DOES_NOT_EXIST, HIDP_STATUS_INCOMPATIBLE_REPORT_ID, HIDP_STATUS_USAGE_NOT_FOUND</returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetUsageValue([MarshalAs(UnmanagedType.U4)]HidReportType ReportType, ushort UsagePage, short LinkCollection, ushort Usage, ref int UsageValue, IntPtr PreparsedData, IntPtr Report, int ReportLength);
+        static public extern int HidP_GetUsageValue(HidReportType ReportType, ushort UsagePage, short LinkCollection, ushort Usage, ref int UsageValue, IntPtr PreparsedData, IntPtr Report, int ReportLength);
 
         /// <summary>
         /// HidP_GetScaledUsageValue retrieves a UsageValue from the HID report packet
@@ -1098,7 +1098,7 @@ namespace GestureSignDaemon.Input
         /// HIDP_STATUS_BAD_LOG_PHY_VALUES, HIDP_STATUS_INCOMPATIBLE_REPORT_ID,
         /// HIDP_STATUS_USAGE_NOT_FOUND</returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetScaledUsageValue([MarshalAs(UnmanagedType.U4)]HidReportType ReportType, ushort UsagePage, short LinkCollection, ushort Usage, ref int UsageValue, IntPtr PreparsedData, IntPtr Report, int ReportLength);
+        static public extern int HidP_GetScaledUsageValue(HidReportType ReportType, ushort UsagePage, short LinkCollection, ushort Usage, ref int UsageValue, IntPtr PreparsedData, IntPtr Report, int ReportLength);
 
         /// <summary>
         /// A usage value array occurs when the last usage in the list of usages
