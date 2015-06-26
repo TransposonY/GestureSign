@@ -104,18 +104,6 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        public static bool CompatibilityMode
-        {
-            get
-            {
-                return (bool)GetValue("CompatibilityMode", false);
-            }
-            set
-            {
-                SetValue("CompatibilityMode", value);
-            }
-        }
-
         public static bool UiAccess { get; set; }
 
         static AppConfig()

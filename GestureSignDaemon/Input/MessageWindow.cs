@@ -387,8 +387,7 @@ namespace GestureSignDaemon.Input
             {
                 case WM_INPUT:
                     {
-                        if (!AppConfig.CompatibilityMode)
-                            ProcessInputCommand(message.LParam);
+                        ProcessInputCommand(message.LParam);
                     }
                     break;
                 //case WM_POINTERENTER:
@@ -434,7 +433,7 @@ namespace GestureSignDaemon.Input
                 {
                     CheckLastError();
                 }
-                if (PointerIntercepted != null && AppConfig.CompatibilityMode)
+                if (PointerIntercepted != null)
                 {
                     PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
                 }

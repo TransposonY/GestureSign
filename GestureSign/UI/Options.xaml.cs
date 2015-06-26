@@ -53,13 +53,11 @@ namespace GestureSign.UI
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
                 if (Common.Configuration.AppConfig.UiAccess)
                 {
-                    chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
                     chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
                 }
                 else
                 {
-                    chkCompatibilityMode.IsChecked = chkInterceptTouchInput.IsChecked =
-                        chkInterceptTouchInput.IsEnabled = false;
+                    chkInterceptTouchInput.IsChecked = chkInterceptTouchInput.IsEnabled = false;
                 }
 
             }
@@ -304,18 +302,6 @@ namespace GestureSign.UI
         private void chkInterceptTouchInput_Unchecked(object sender, RoutedEventArgs e)
         {
             Common.Configuration.AppConfig.InterceptTouchInput = false;
-            Common.Configuration.AppConfig.Save();
-        }
-
-        private void chkCompatibilityMode_Checked(object sender, RoutedEventArgs e)
-        {
-            Common.Configuration.AppConfig.CompatibilityMode = true;
-            Common.Configuration.AppConfig.Save();
-        }
-
-        private void chkCompatibilityMode_Unchecked(object sender, RoutedEventArgs e)
-        {
-            Common.Configuration.AppConfig.CompatibilityMode = false;
             Common.Configuration.AppConfig.Save();
         }
 
