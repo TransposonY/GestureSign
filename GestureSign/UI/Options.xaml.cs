@@ -51,7 +51,7 @@ namespace GestureSign.UI
                 chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
-                if (Common.Configuration.AppConfig.IsInsideProgramFiles)
+                if (Common.Configuration.AppConfig.UiAccess)
                 {
                     chkCompatibilityMode.IsChecked = Common.Configuration.AppConfig.CompatibilityMode;
                     chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;

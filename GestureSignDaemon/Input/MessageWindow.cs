@@ -211,7 +211,7 @@ namespace GestureSignDaemon.Input
 
         public MessageWindow()
         {
-            if (AppConfig.IsInsideProgramFiles)
+            if (AppConfig.UiAccess)
             {
                 _winEventDele = WinEventProc;
                 _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT);

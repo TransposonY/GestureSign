@@ -36,6 +36,15 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uiAccessRelease|AnyCPU'">
+    <OutputPath>..\GestureSign\bin\uiAccessRelease\</OutputPath>
+    <DefineConstants>TRACE;uiAccess</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -109,7 +118,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /t "http://timestamp.verisign.com/scripts/timstamp.dll" $(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>IF "$(ConfigurationName)"=="uiAccessRelease" "$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /t "http://timestamp.verisign.com/scripts/timstamp.dll" $(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
