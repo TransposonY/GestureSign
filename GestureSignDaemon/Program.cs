@@ -34,9 +34,6 @@ namespace GestureSignDaemon
                 {
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
-#if uiAccess
-                    AppConfig.UiAccess = true;
-#endif
                     Input.TouchCapture.Instance.Load();
                     Surface surface = new Surface();
                     Input.TouchCapture.Instance.EnableTouchCapture();

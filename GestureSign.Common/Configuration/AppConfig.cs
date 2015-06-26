@@ -108,6 +108,9 @@ namespace GestureSign.Common.Configuration
 
         static AppConfig()
         {
+#if uiAccess
+            UiAccess = true;
+#endif
             Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
             var configFolder = System.IO.Path.GetDirectoryName(Path);
 
