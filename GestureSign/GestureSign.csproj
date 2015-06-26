@@ -206,9 +206,6 @@
     <Compile Include="UI\Common\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Guide.xaml.cs">
-      <DependentUpon>Guide.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\GestureDefinition.xaml.cs">
       <DependentUpon>GestureDefinition.xaml</DependentUpon>
     </Compile>
@@ -256,10 +253,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Common\Crosshair.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Guide.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
