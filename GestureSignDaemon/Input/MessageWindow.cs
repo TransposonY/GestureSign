@@ -535,7 +535,7 @@ namespace GestureSignDaemon.Input
                         int scanTime = 0;
                         int contactCount = 0;
 
-                        IntPtr pRawData = IntPtr.Add(buffer, raw.header.dwSize - raw.hid.dwSizHid);
+                        IntPtr pRawData = IntPtr.Add(buffer, raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount);
 
                         HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ContactCountId,
                             ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
@@ -557,7 +557,8 @@ namespace GestureSignDaemon.Input
                         int contactIdentifier = 0;
                         int physicalX = 0;
                         int physicalY = 0;
-                        int usageLength = 1;
+                        int usageLength = capabilities.NumberInputButtonCaps / lcn[0].NumberOfChildren;
+                        if (usageLength == 0) usageLength = 1;
                         int screenWidth = Screen.PrimaryScreen.Bounds.Width;
                         int screenHeight = Screen.PrimaryScreen.Bounds.Height;
                         for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
@@ -570,7 +571,7 @@ namespace GestureSignDaemon.Input
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
 
-                                HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[1];
+                                HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
                                 HidNativeApi.HidP_GetUsages(HidReportType.Input, TouchScreenUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
                                 int x, y;
                                 if (_isAxisCorresponds)
