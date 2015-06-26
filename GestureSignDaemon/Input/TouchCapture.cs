@@ -134,7 +134,6 @@ namespace GestureSignDaemon.Input
             TouchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
             TouchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
 
-            messageWindow.PointerIntercepted += TouchEventTranslator.TranslatePointerMessage;
             this.OnInterceptTouchInputChange += messageWindow.ToggleRegister;
 
             messageWindow.OnForegroundChange += messageWindow_OnForegroundChange;

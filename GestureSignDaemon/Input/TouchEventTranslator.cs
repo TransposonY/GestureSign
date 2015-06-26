@@ -75,34 +75,7 @@ namespace GestureSignDaemon.Input
             }
 
         }
-
-        public void TranslatePointerMessage(object sender, PointerMessageEventArgs e)
-        {
-            var pointEventArgs = new PointEventArgs(e.PointerInfo.Select(
-                pointer => (new KeyValuePair<int, Point>(pointer.PointerID, new Point(pointer.PtPixelLocation.X, pointer.PtPixelLocation.Y)))));
-            foreach (POINTER_INFO pointer in e.PointerInfo)
-            {
-                if (pointer.PointerFlags.HasFlag(POINTER_FLAGS.UP))
-                {
-                    OnTouchUp(pointEventArgs);
-                    return;
-                }
-                if (pointer.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
-                {
-                    if (TouchCapture.Instance.InputPoints.Any(p => p.Count > 10))
-                    {
-                        OnTouchMove(pointEventArgs);
-
-                    }
-                    else OnTouchDown(pointEventArgs);
-                    return;
-                }
-            }
-            OnTouchMove(pointEventArgs);
-
-
-        }
-
+        
         #endregion
     }
 }

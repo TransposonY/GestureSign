@@ -65,7 +65,6 @@ namespace GestureSignDaemon.Input
         bool _yAxisDirection;
         bool _isAxisCorresponds;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
-        public event EventHandler<PointerMessageEventArgs> PointerIntercepted;
         public event EventHandler<IntPtr> OnForegroundChange;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
@@ -432,10 +431,6 @@ namespace GestureSignDaemon.Input
                 if (!GetPointerFrameInfo(pointerId, ref pCount, pointerInfos))
                 {
                     CheckLastError();
-                }
-                if (PointerIntercepted != null)
-                {
-                    PointerIntercepted(this, new PointerMessageEventArgs(pointerInfos));
                 }
 
                 if (pCount == 1)
