@@ -435,7 +435,18 @@ namespace GestureSignDaemon.Input
                     if (_lastPoint.X == 0 && _lastPoint.Y == 0) _lastPoint = pointerInfos[0].PtPixelLocation;
                     else
                     {
-                        pointChanged = pointerInfos[0].PtPixelLocation.X != _lastPoint.X || pointerInfos[0].PtPixelLocation.Y != _lastPoint.Y;
+                        if (_touchScreenPhysicalMax.ContainsKey(pointerInfos[0].SourceDevice))
+                        {
+                            pointChanged = Math.Abs(pointerInfos[0].PtPixelLocation.X - _lastPoint.X) >
+                                           _touchScreenPhysicalMax[pointerInfos[0].SourceDevice].X / 100 ||
+                                           Math.Abs(pointerInfos[0].PtPixelLocation.Y - _lastPoint.Y) >
+                                           _touchScreenPhysicalMax[pointerInfos[0].SourceDevice].Y / 100;
+                        }
+                        else
+                        {
+                            pointChanged = Math.Abs(pointerInfos[0].PtPixelLocation.X - _lastPoint.X) > 10 ||
+                                        Math.Abs(pointerInfos[0].PtPixelLocation.Y - _lastPoint.Y) > 10;
+                        }
                         _lastPoint = pointerInfos[0].PtPixelLocation;
                     }
 
