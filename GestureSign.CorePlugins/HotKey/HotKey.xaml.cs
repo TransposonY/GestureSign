@@ -35,7 +35,7 @@ namespace GestureSign.CorePlugins.HotKey
         }
 
 
-        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Canvas_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -53,6 +53,17 @@ namespace GestureSign.CorePlugins.HotKey
             string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
             txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
 
+        }
+
+        private void Canvas_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            if (e.Key == Key.PrintScreen)
+            {
+                _KeyCode.Add((Keys)KeyInterop.VirtualKeyFromKey(Key.PrintScreen));
+                string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
+                txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
+            }
         }
 
 
@@ -107,7 +118,6 @@ namespace GestureSign.CorePlugins.HotKey
         }
 
         #endregion
-
 
 
 
