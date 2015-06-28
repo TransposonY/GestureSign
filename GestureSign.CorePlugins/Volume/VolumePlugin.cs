@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using GestureSign.Common.Plugins;
-using ManagedWinapi.Windows;
-using System.Windows.Controls;
-
 using System.Runtime.InteropServices;
+using System.Windows.Controls;
+using GestureSign.Common.Plugins;
+using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.Volume
 {
@@ -77,7 +70,7 @@ namespace GestureSign.CorePlugins.Volume
 
         }
 
-        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        public bool Gestured(PointInfo ActionPoint)
         {
             return AdjustVolume(_Settings);
         }
@@ -90,18 +83,15 @@ namespace GestureSign.CorePlugins.Volume
                 _Settings = new VolumeSettings();
                 return true;
             }
-
-            // Create memory stream from serialized data string
-            MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-            // Create json serializer to deserialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(VolumeSettings));
-
-            // Deserialize json file into actions list
-            _Settings = jSerial.ReadObject(memStream) as VolumeSettings;
-
-            if (_Settings == null)
+            try
+            {
+                _Settings = JsonConvert.DeserializeObject<VolumeSettings>(SerializedData) ?? new VolumeSettings();
+            }
+            catch
+            {
                 _Settings = new VolumeSettings();
+                return false;
+            }
             return true;
         }
 
@@ -113,17 +103,7 @@ namespace GestureSign.CorePlugins.Volume
             if (_Settings == null)
                 _Settings = new VolumeSettings();
 
-            // Create json serializer to serialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(VolumeSettings));
-
-            // Open json file
-            MemoryStream mStream = new MemoryStream();
-            StreamWriter sWrite = new StreamWriter(mStream);
-
-            // Serialize actions into json file
-            jSerial.WriteObject(mStream, _Settings);
-
-            return Encoding.Default.GetString(mStream.ToArray());
+            return JsonConvert.SerializeObject(_Settings);
         }
 
         #endregion
@@ -205,7 +185,7 @@ namespace GestureSign.CorePlugins.Volume
         const uint APPCOMMAND_VOLUME_MUTE = 0x08;
         private void ChangeVolume(Method ChangeMethod)
         {
-            System.Diagnostics.Process p = System.Diagnostics.Process.GetCurrentProcess();
+            Process p = Process.GetCurrentProcess();
             int t = _Settings.Percent / 2;
             if (ChangeMethod == Method.VolumeUp)
             {

@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
-
-namespace GestureSign.CorePlugins.RunCommand
+﻿namespace GestureSign.CorePlugins.RunCommand
 {
-	[DataContract]
-	public class RunCommandSettings
-	{
-		#region Constructors
+    public class RunCommandSettings
+    {
+        #region Constructors
 
-		public RunCommandSettings()
-		{
+        public RunCommandSettings()
+        {
 
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Public Properties
+        #region Public Properties
 
-		[DataMember]
-		public string Command { get; set; }
+        public string Command { get; set; }
 
-		[DataMember]
-		public bool ShowCmd { get; set; }
+        public bool ShowCmd { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Controls;
 using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
+using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.ActivateWindow
 {
@@ -145,22 +145,16 @@ namespace GestureSign.CorePlugins.ActivateWindow
             }
             try
             {
-                // Create memory stream from serialized data string
-                MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-                // Create json serializer to deserialize json file
-                DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(ActivateWindowSettings));
-
                 // Deserialize json file into actions list
-                _settings = jSerial.ReadObject(memStream) as ActivateWindowSettings;
+                _settings = JsonConvert.DeserializeObject<ActivateWindowSettings>(SerializedData) ??
+                            new ActivateWindowSettings();
             }
             catch (Exception e)
             {
+                _settings = new ActivateWindowSettings();
                 Console.WriteLine(e.Message);
                 return false;
             }
-            if (_settings == null)
-                _settings = new ActivateWindowSettings();
             return true;
         }
 
@@ -172,16 +166,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
             if (_settings == null)
                 _settings = new ActivateWindowSettings();
 
-            // Create json serializer to serialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(ActivateWindowSettings));
-
-            // Open json file
-            MemoryStream mStream = new MemoryStream();
-
-            // Serialize actions into json file
-            jSerial.WriteObject(mStream, _settings);
-
-            return Encoding.Default.GetString(mStream.ToArray());
+            return JsonConvert.SerializeObject(_settings);
         }
 
         #endregion

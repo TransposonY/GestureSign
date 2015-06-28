@@ -10,16 +10,10 @@
 ///</summary>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Management;
 using System.Windows.Controls;
-using System.IO;
-using System.Runtime.Serialization.Json;
-
 using GestureSign.Common.Plugins;
+using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.ScreenBrightness
 {
@@ -80,7 +74,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         {
 
         }
-        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        public bool Gestured(PointInfo ActionPoint)
         {
             return AdjustBrightness(_Settings);
         }
@@ -93,18 +87,15 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                 _Settings = new BrightnessSettings();
                 return true;
             }
-
-            // Create memory stream from serialized data string
-            MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-            // Create json serializer to deserialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(BrightnessSettings));
-
-            // Deserialize json file into actions list
-            _Settings = jSerial.ReadObject(memStream) as BrightnessSettings;
-
-            if (_Settings == null)
+            try
+            {
+                _Settings = JsonConvert.DeserializeObject<BrightnessSettings>(SerializedData) ?? new BrightnessSettings();
+            }
+            catch
+            {
                 _Settings = new BrightnessSettings();
+                return false;
+            }
             return true;
         }
 
@@ -116,17 +107,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             if (_Settings == null)
                 _Settings = new BrightnessSettings();
 
-            // Create json serializer to serialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(BrightnessSettings));
-
-            // Open json file
-            MemoryStream mStream = new MemoryStream();
-            StreamWriter sWrite = new StreamWriter(mStream);
-
-            // Serialize actions into json file
-            jSerial.WriteObject(mStream, _Settings);
-
-            return Encoding.Default.GetString(mStream.ToArray());
+            return JsonConvert.SerializeObject(_Settings);
         }
 
         #endregion
@@ -203,19 +184,19 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         static int GetBrightness()
         {
             //define scope (namespace)
-            System.Management.ManagementScope s = new System.Management.ManagementScope("root\\WMI");
+            ManagementScope s = new ManagementScope("root\\WMI");
 
             //define query
-            System.Management.SelectQuery q = new System.Management.SelectQuery("WmiMonitorBrightness");
+            SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
             //output current brightness
-            System.Management.ManagementObjectSearcher mos = new System.Management.ManagementObjectSearcher(s, q);
+            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
 
-            System.Management.ManagementObjectCollection moc = mos.Get();
+            ManagementObjectCollection moc = mos.Get();
 
             //store result
             byte curBrightness = 0;
-            foreach (System.Management.ManagementObject o in moc)
+            foreach (ManagementObject o in moc)
             {
                 curBrightness = (byte)o.GetPropertyValue("CurrentBrightness");
                 break; //only work on the first object
@@ -231,23 +212,23 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         static byte[] GetBrightnessLevels()
         {
             //define scope (namespace)
-            System.Management.ManagementScope s = new System.Management.ManagementScope("root\\WMI");
+            ManagementScope s = new ManagementScope("root\\WMI");
 
             //define query
-            System.Management.SelectQuery q = new System.Management.SelectQuery("WmiMonitorBrightness");
+            SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
             //output current brightness
-            System.Management.ManagementObjectSearcher mos = new System.Management.ManagementObjectSearcher(s, q);
+            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
             byte[] BrightnessLevels = new byte[0];
 
             try
             {
-                System.Management.ManagementObjectCollection moc = mos.Get();
+                ManagementObjectCollection moc = mos.Get();
 
                 //store result
 
 
-                foreach (System.Management.ManagementObject o in moc)
+                foreach (ManagementObject o in moc)
                 {
                     BrightnessLevels = (byte[])o.GetPropertyValue("Level");
                     break; //only work on the first object
@@ -269,17 +250,17 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         static void SetBrightness(byte targetBrightness)
         {
             //define scope (namespace)
-            System.Management.ManagementScope s = new System.Management.ManagementScope("root\\WMI");
+            ManagementScope s = new ManagementScope("root\\WMI");
 
             //define query
-            System.Management.SelectQuery q = new System.Management.SelectQuery("WmiMonitorBrightnessMethods");
+            SelectQuery q = new SelectQuery("WmiMonitorBrightnessMethods");
 
             //output current brightness
-            System.Management.ManagementObjectSearcher mos = new System.Management.ManagementObjectSearcher(s, q);
+            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
 
-            System.Management.ManagementObjectCollection moc = mos.Get();
+            ManagementObjectCollection moc = mos.Get();
 
-            foreach (System.Management.ManagementObject o in moc)
+            foreach (ManagementObject o in moc)
             {
                 o.InvokeMethod("WmiSetBrightness", new Object[] { UInt32.MaxValue, targetBrightness }); //note the reversed order - won't work otherwise!
                 break; //only work on the first object

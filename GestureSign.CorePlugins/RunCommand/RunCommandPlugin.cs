@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using GestureSign.Common.Plugins;
 using System.Threading;
 
 using System.Windows.Controls;
+using GestureSign.CorePlugins.HotKey;
+using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.RunCommand
 {
@@ -87,17 +87,11 @@ namespace GestureSign.CorePlugins.RunCommand
             }
             try
             {
-                // Create memory stream from serialized data string
-                MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-                // Create json serializer to deserialize json file
-                DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(RunCommandSettings));
-
-                // Deserialize json file into actions list
-                _Settings = jSerial.ReadObject(memStream) as RunCommandSettings;
+                _Settings = JsonConvert.DeserializeObject<RunCommandSettings>(SerializedData) ?? new RunCommandSettings();
             }
             catch (Exception e)
             {
+                _Settings = new RunCommandSettings();
                 Console.WriteLine(e.Message);
                 return false;
             }
@@ -114,17 +108,7 @@ namespace GestureSign.CorePlugins.RunCommand
             if (_Settings == null)
                 _Settings = new RunCommandSettings();
 
-            // Create json serializer to serialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(RunCommandSettings));
-
-            // Open json file
-            MemoryStream mStream = new MemoryStream();
-            StreamWriter sWrite = new StreamWriter(mStream);
-
-            // Serialize actions into json file
-            jSerial.WriteObject(mStream, _Settings);
-
-            return Encoding.Default.GetString(mStream.ToArray());
+            return JsonConvert.SerializeObject(_Settings);
         }
 
         #endregion
