@@ -15,7 +15,8 @@
         <ToggleButton x:Name="chkShift"
                           Content="Shift" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" Focusable="False" FontSize="12" Canvas.Left="150" Canvas.Top="35" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="快捷键（请用键盘录入快捷键）" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="10"/>
-        <TextBox x:Name="txtKey" InputMethod.IsInputMethodEnabled="False"  HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" FontSize="14" Canvas.Left="10" Canvas.Top="68" Height="22">
+        <TextBox x:Name="txtKey" InputMethod.IsInputMethodEnabled="False"  HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" FontSize="14" Canvas.Left="10" Canvas.Top="68"
+                 MaxLines="5">
             <TextBox.ContextMenu>
                 <ContextMenu Visibility="Collapsed" />
             </TextBox.ContextMenu>

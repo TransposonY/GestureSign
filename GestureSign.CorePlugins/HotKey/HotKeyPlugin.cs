@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using GestureSign.Common.Plugins;
+using System.Text;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+using GestureSign.Common.Plugins;
+using Newtonsoft.Json;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.HotKey
@@ -152,48 +147,16 @@ namespace GestureSign.CorePlugins.HotKey
                 _Settings = new HotKeySettings();
                 return true;
             }
-
-            // Create memory stream from serialized data string
-            MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-            // Create json serializer to deserialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(HotKeySettings));
             try
             {
-                // Deserialize json file into actions list
-                _Settings = jSerial.ReadObject(memStream) as HotKeySettings;
+                _Settings = JsonConvert.DeserializeObject<HotKeySettings>(SerializedData) ?? new HotKeySettings();
             }
-            catch (System.Runtime.Serialization.SerializationException)
+            catch
             {
-                LoadOldSetting(SerializedData);
+                _Settings = new HotKeySettings();
                 return false;
             }
-
-            if (_Settings == null)
-                _Settings = new HotKeySettings();
             return true;
-        }
-
-        private void LoadOldSetting(string SerializedData)
-        {
-            MemoryStream memStream = new MemoryStream(Encoding.Default.GetBytes(SerializedData));
-
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(oldHotKeySettings));
-            try
-            {
-                // Deserialize json file into actions list
-                var oldSettings = jSerial.ReadObject(memStream) as oldHotKeySettings;
-                _Settings = new HotKeySettings()
-                {
-                    Windows = oldSettings.Windows,
-                    Alt = oldSettings.Alt,
-                    Control = oldSettings.Control,
-                    KeyCode = new List<System.Windows.Forms.Keys>(2),
-                    Shift = oldSettings.Shift
-                };
-                _Settings.KeyCode.Add(oldSettings.KeyCode);
-            }
-            catch { _Settings = new HotKeySettings(); }
         }
 
         public string Serialize()
@@ -204,16 +167,7 @@ namespace GestureSign.CorePlugins.HotKey
             if (_Settings == null)
                 _Settings = new HotKeySettings();
 
-            // Create json serializer to serialize json file
-            DataContractJsonSerializer jSerial = new DataContractJsonSerializer(typeof(HotKeySettings));
-
-            // Open json file
-            MemoryStream mStream = new MemoryStream();
-
-            // Serialize actions into json file
-            jSerial.WriteObject(mStream, _Settings);
-
-            return Encoding.Default.GetString(mStream.ToArray());
+            return JsonConvert.SerializeObject(_Settings);
         }
 
         #endregion

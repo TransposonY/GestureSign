@@ -38,32 +38,26 @@ namespace GestureSign.CorePlugins.HotKey
         private void Canvas_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                chkControl.IsChecked = true;
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
-                chkAlt.IsChecked = true;
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                chkShift.IsChecked = true;
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
-                chkWin.IsChecked = true;
+            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            //    chkControl.IsChecked = true;
+            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            //    chkAlt.IsChecked = true;
+            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            //    chkShift.IsChecked = true;
+            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
+            //    chkWin.IsChecked = true;
+        }
+
+        private void Canvas_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            
             var keyCode = (e.Key == Key.System) ? (Keys)KeyInterop.VirtualKeyFromKey(e.SystemKey) :
                 (Keys)KeyInterop.VirtualKeyFromKey(e.Key);
 
             _KeyCode.Add(keyCode);
             string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
             txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
-
-        }
-
-        private void Canvas_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-            if (e.Key == Key.PrintScreen)
-            {
-                _KeyCode.Add((Keys)KeyInterop.VirtualKeyFromKey(Key.PrintScreen));
-                string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
-                txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
-            }
         }
 
 
