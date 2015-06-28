@@ -13,7 +13,6 @@ using System;
 using System.Management;
 using System.Windows.Controls;
 using GestureSign.Common.Plugins;
-using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.ScreenBrightness
 {
@@ -81,22 +80,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         public bool Deserialize(string SerializedData)
         {
-            // Clear existing settings if nothing was passed in
-            if (String.IsNullOrEmpty(SerializedData))
-            {
-                _Settings = new BrightnessSettings();
-                return true;
-            }
-            try
-            {
-                _Settings = JsonConvert.DeserializeObject<BrightnessSettings>(SerializedData) ?? new BrightnessSettings();
-            }
-            catch
-            {
-                _Settings = new BrightnessSettings();
-                return false;
-            }
-            return true;
+            return PluginHelper.DeserializeSettings(SerializedData, out _Settings);
         }
 
         public string Serialize()
@@ -107,7 +91,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             if (_Settings == null)
                 _Settings = new BrightnessSettings();
 
-            return JsonConvert.SerializeObject(_Settings);
+            return PluginHelper.SerializeSettings(_Settings);
         }
 
         #endregion

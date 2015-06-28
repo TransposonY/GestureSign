@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
-using System.IO;
-using GestureSign.Common.Plugins;
 using System.Threading;
-
 using System.Windows.Controls;
-using GestureSign.CorePlugins.HotKey;
-using Newtonsoft.Json;
+using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins.RunCommand
 {
@@ -79,25 +72,7 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public bool Deserialize(string SerializedData)
         {
-            // Clear existing settings if nothing was passed in
-            if (String.IsNullOrEmpty(SerializedData))
-            {
-                _Settings = new RunCommandSettings();
-                return true;
-            }
-            try
-            {
-                _Settings = JsonConvert.DeserializeObject<RunCommandSettings>(SerializedData) ?? new RunCommandSettings();
-            }
-            catch (Exception e)
-            {
-                _Settings = new RunCommandSettings();
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            if (_Settings == null)
-                _Settings = new RunCommandSettings();
-            return true;
+            return PluginHelper.DeserializeSettings(SerializedData, out _Settings);
         }
 
         public string Serialize()
@@ -108,7 +83,7 @@ namespace GestureSign.CorePlugins.RunCommand
             if (_Settings == null)
                 _Settings = new RunCommandSettings();
 
-            return JsonConvert.SerializeObject(_Settings);
+            return PluginHelper.SerializeSettings(_Settings);
         }
 
         #endregion

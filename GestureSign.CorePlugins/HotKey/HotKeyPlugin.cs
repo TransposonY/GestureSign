@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Plugins;
-using Newtonsoft.Json;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.HotKey
@@ -141,22 +140,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public bool Deserialize(string SerializedData)
         {
-            // Clear existing settings if nothing was passed in
-            if (String.IsNullOrEmpty(SerializedData))
-            {
-                _Settings = new HotKeySettings();
-                return true;
-            }
-            try
-            {
-                _Settings = JsonConvert.DeserializeObject<HotKeySettings>(SerializedData) ?? new HotKeySettings();
-            }
-            catch
-            {
-                _Settings = new HotKeySettings();
-                return false;
-            }
-            return true;
+            return PluginHelper.DeserializeSettings(SerializedData, out _Settings);
         }
 
         public string Serialize()
@@ -167,7 +151,7 @@ namespace GestureSign.CorePlugins.HotKey
             if (_Settings == null)
                 _Settings = new HotKeySettings();
 
-            return JsonConvert.SerializeObject(_Settings);
+            return PluginHelper.SerializeSettings(_Settings);
         }
 
         #endregion

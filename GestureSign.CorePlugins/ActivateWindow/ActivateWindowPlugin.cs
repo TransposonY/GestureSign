@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Controls;
 using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
-using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.ActivateWindow
 {
@@ -137,25 +134,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
 
         public bool Deserialize(string SerializedData)
         {
-            // Clear existing settings if nothing was passed in
-            if (String.IsNullOrEmpty(SerializedData))
-            {
-                _settings = new ActivateWindowSettings();
-                return true;
-            }
-            try
-            {
-                // Deserialize json file into actions list
-                _settings = JsonConvert.DeserializeObject<ActivateWindowSettings>(SerializedData) ??
-                            new ActivateWindowSettings();
-            }
-            catch (Exception e)
-            {
-                _settings = new ActivateWindowSettings();
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            return true;
+            return PluginHelper.DeserializeSettings(SerializedData, out _settings);
         }
 
         public string Serialize()
@@ -166,7 +145,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
             if (_settings == null)
                 _settings = new ActivateWindowSettings();
 
-            return JsonConvert.SerializeObject(_settings);
+            return PluginHelper.SerializeSettings(_settings);
         }
 
         #endregion

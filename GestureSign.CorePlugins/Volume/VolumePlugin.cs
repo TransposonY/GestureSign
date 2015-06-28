@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using GestureSign.Common.Plugins;
-using Newtonsoft.Json;
 
 namespace GestureSign.CorePlugins.Volume
 {
@@ -77,22 +76,7 @@ namespace GestureSign.CorePlugins.Volume
 
         public bool Deserialize(string SerializedData)
         {
-            // Clear existing settings if nothing was passed in
-            if (String.IsNullOrEmpty(SerializedData))
-            {
-                _Settings = new VolumeSettings();
-                return true;
-            }
-            try
-            {
-                _Settings = JsonConvert.DeserializeObject<VolumeSettings>(SerializedData) ?? new VolumeSettings();
-            }
-            catch
-            {
-                _Settings = new VolumeSettings();
-                return false;
-            }
-            return true;
+            return PluginHelper.DeserializeSettings(SerializedData, out _Settings);
         }
 
         public string Serialize()
@@ -103,7 +87,7 @@ namespace GestureSign.CorePlugins.Volume
             if (_Settings == null)
                 _Settings = new VolumeSettings();
 
-            return JsonConvert.SerializeObject(_Settings);
+            return PluginHelper.SerializeSettings(_Settings);
         }
 
         #endregion
