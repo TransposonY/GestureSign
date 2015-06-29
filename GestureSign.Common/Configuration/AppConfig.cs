@@ -105,7 +105,28 @@ namespace GestureSign.Common.Configuration
         }
 
         public static bool UiAccess { get; set; }
-
+        public static bool ShowTrayIcon
+        {
+            get
+            {
+                return (bool)GetValue("ShowTrayIcon", true);
+            }
+            set
+            {
+                SetValue("ShowTrayIcon", value);
+            }
+        }
+        public static bool ShowBalloonTip
+        {
+            get
+            {
+                return (bool)GetValue("ShowBalloonTip", false);
+            }
+            set
+            {
+                SetValue("ShowBalloonTip", value);
+            }
+        }
         static AppConfig()
         {
 #if uiAccess

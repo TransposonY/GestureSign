@@ -18,6 +18,7 @@ using Microsoft.Win32;
 
 using Microsoft.Win32.TaskScheduler;
 using System.Security.Principal;
+using GestureSign.Common.InterProcessCommunication;
 
 namespace GestureSign.UI
 {
@@ -51,6 +52,8 @@ namespace GestureSign.UI
                 chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
+                ShowBalloonTipSwitch.IsChecked = Common.Configuration.AppConfig.ShowBalloonTip;
+                ShowTrayIconSwitch.IsChecked = Common.Configuration.AppConfig.ShowTrayIcon;
                 if (Common.Configuration.AppConfig.UiAccess)
                 {
                     chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
@@ -309,6 +312,33 @@ namespace GestureSign.UI
         {
             System.Diagnostics.Process.Start("explorer.exe", System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign"));
         }
+
+        private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            NamedPipe.SendMessageAsync("ShowTrayIcon", "GestureSignDaemon");
+            Common.Configuration.AppConfig.ShowTrayIcon = true;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void ShowTrayIconSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            NamedPipe.SendMessageAsync("HideTrayIcon", "GestureSignDaemon");
+            Common.Configuration.AppConfig.ShowTrayIcon = false;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void ShowBalloonTipSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.ShowBalloonTip = true;
+            Common.Configuration.AppConfig.Save();
+        }
+
+        private void ShowBalloonTipSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Common.Configuration.AppConfig.ShowBalloonTip = false;
+            Common.Configuration.AppConfig.Save();
+        }
+
 
     }
 }

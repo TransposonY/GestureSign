@@ -53,7 +53,6 @@ namespace GestureSignDaemon
             // Tray Icon
             TrayIcon.ContextMenuStrip = TrayMenu;
             TrayIcon.Text = "GestureSign";
-            TrayIcon.Visible = true;
             TrayIcon.DoubleClick += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             TrayIcon.Click += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             TrayIcon.Icon = Properties.Resources.normal;
@@ -169,11 +168,19 @@ namespace GestureSignDaemon
             get { return _Instance; }
         }
 
+        public bool TrayIconVisible
+        {
+            get { return TrayIcon.Visible; }
+            set { TrayIcon.Visible = value; }
+        }
+
         public void Load()
         {
             SetupTrayIconAndTrayMenu();
+            TrayIcon.Visible = GestureSign.Common.Configuration.AppConfig.ShowTrayIcon;
+            if (GestureSign.Common.Configuration.AppConfig.ShowBalloonTip)
+                this.TrayIcon.ShowBalloonTip(1000, "提示", "GestureSign已启动", ToolTipIcon.Info);
 
-            this.TrayIcon.ShowBalloonTip(500, "提示", "GestureSign已启动", ToolTipIcon.Info);
         }
 
         #endregion

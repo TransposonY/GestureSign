@@ -55,6 +55,12 @@ namespace GestureSignDaemon
                                 case "LoadGestures":
                                     GestureManager.Instance.LoadGestures().Wait();
                                     break;
+                                case "ShowTrayIcon":
+                                    TrayManager.Instance.TrayIconVisible = true;
+                                    break;
+                                case "HideTrayIcon":
+                                    TrayManager.Instance.TrayIconVisible = false;
+                                    break;
                             }
                         }));
                     }
