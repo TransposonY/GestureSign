@@ -87,15 +87,6 @@ namespace GestureSign
                     }
                 }
                 catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning); }
-
-                AppConfig.ToggleWatcher();
-#if DEBUG
-
-                MainWindow mw = new MainWindow();
-                mw.Show();
-                mw.Activate();
-
-#endif
             }
             else
             {
