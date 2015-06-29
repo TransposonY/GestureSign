@@ -290,7 +290,7 @@ namespace GestureSign.UI
                 if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
                 {
                     _cancelTokenSource.Cancel();
-                    _task.Wait(1000);
+                    _task.Wait(500);
                 }
                 ActionInfos.Clear();
                 AddActionsToGroup(selectedApplication.Actions);
@@ -329,7 +329,7 @@ namespace GestureSign.UI
 
             _task = new Task<ActionInfo>(() =>
             {
-                Thread.Sleep(100);
+                Thread.Sleep(20);
                 ActionInfo actionInfo = null;
                 foreach (Applications.Action currentAction in actions)
                 {
