@@ -86,15 +86,14 @@ namespace GestureSign.Common.Plugins
             // Clear any existing plugins
             _Plugins = new List<IPluginInfo>();
             //_Plugins.Clear();
-            foreach (string sFilePath in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*Plugins.dll"))
+            string path = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            if (path == null) return true;
+            foreach (string sFilePath in Directory.GetFiles(path, "*Plugins.dll"))
             {
-                try
-                {
-                    _Plugins.AddRange(LoadPluginsFromAssembly(Path.GetFullPath(sFilePath), host));
-                    bFailed = false;
-                }
-                catch
-                { }
+
+                _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
+                bFailed = false;
+
             }
 
 
@@ -121,29 +120,23 @@ namespace GestureSign.Common.Plugins
             List<IPluginInfo> retPlugins = new List<IPluginInfo>();
 
 
+            Assembly aPlugin = Assembly.LoadFile(AssemblyLocation);
 
-            // Catch an unexpected errors during load
-            try
-            {
-                Assembly aPlugin = Assembly.LoadFile(AssemblyLocation);
+            Type[] tPluginTypes = aPlugin.GetTypes();
 
-                Type[] tPluginTypes = aPlugin.GetTypes();
+            foreach (Type tPluginType in tPluginTypes)
+                if (tPluginType.GetInterface("IPlugin") != null)
+                {
+                    IPlugin plugin = Activator.CreateInstance(tPluginType) as IPlugin;
 
-                foreach (Type tPluginType in tPluginTypes)
-                    if (tPluginType.GetInterface("IPlugin") != null)
+                    // If we have a new instance of a plugin, initialize it and add it to return list
+                    if (plugin != null)
                     {
-                        IPlugin plugin = Activator.CreateInstance(tPluginType) as IPlugin;
-
-                        // If we have a new instance of a plugin, initialize it and add it to return list
-                        if (plugin != null)
-                        {
-                            plugin.HostControl = hostControl;
-                            plugin.Initialize();
-                            retPlugins.Add(new PluginInfo(plugin, tPluginType.FullName, Path.GetFileName(AssemblyLocation)));
-                        }
+                        plugin.HostControl = hostControl;
+                        plugin.Initialize();
+                        retPlugins.Add(new PluginInfo(plugin, tPluginType.FullName, Path.GetFileName(AssemblyLocation)));
                     }
-            }
-            catch { }
+                }
 
             return retPlugins;
         }
