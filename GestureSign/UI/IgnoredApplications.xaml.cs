@@ -107,11 +107,13 @@ namespace GestureSign.UI
 
         private void ImportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "忽略程序文件|*.json", Title = "导入忽略程序定义文件", CheckFileExists = true };
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "忽略程序文件|*.json;*.ign", Title = "导入忽略程序定义文件", CheckFileExists = true };
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                List<IApplication> newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".ign", StringComparison.OrdinalIgnoreCase) ?
+                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
+                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
@@ -150,10 +152,10 @@ namespace GestureSign.UI
 
         private void ExportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.json", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.ign", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "ign", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(IgnoredApplication) });
+                Common.Configuration.FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
             }
         }
     }

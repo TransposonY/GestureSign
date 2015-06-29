@@ -513,11 +513,13 @@ namespace GestureSign.UI
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "动作文件|*.json", Title = "导入动作定义文件", CheckFileExists = true };
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "动作文件|*.json;*.act", Title = "导入动作定义文件", CheckFileExists = true };
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                var newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".act", StringComparison.OrdinalIgnoreCase) ?
+                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
+                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
 
                 if (newApps != null)
                 {
@@ -567,15 +569,15 @@ namespace GestureSign.UI
 
         private void ExportAllActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", FileName = "动作文件.json", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.act", FileName = "动作文件.act", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "act", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Common.Configuration.FileManager.SaveObject<List<IApplication>>(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+                Common.Configuration.FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
             }
         }
         private void ExportEnableActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.json", FileName = "动作文件.json", Title = "导出当前程序中已启用的动作", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.act", FileName = "动作文件.act", Title = "导出当前程序中已启用的动作", AddExtension = true, DefaultExt = "act", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
                 IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
@@ -609,7 +611,7 @@ namespace GestureSign.UI
                                 Name = userApplication.Name
                             });
                     }
-                    Common.Configuration.FileManager.SaveObject<List<IApplication>>(exportedApp, sfdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) });
+                    Common.Configuration.FileManager.SaveObject(exportedApp, sfdApplications.FileName, true);
                 }
             }
         }

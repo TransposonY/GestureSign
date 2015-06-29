@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace GestureSign.Common.Configuration
 {
@@ -22,37 +23,52 @@ namespace GestureSign.Common.Configuration
 
         #region Public Methods
 
-        public static bool SaveObject<T>(object SerializableObject, string filePath)
-        {
-            return SaveObject<T>(SerializableObject, filePath, null);
-        }
-
-        public static bool SaveObject<T>(object SerializableObject, string filePath, Type[] KnownTypes)
+        public static bool SaveObject(object serializableObject, string filePath, bool typeName = false)
         {
             try
             {
-                // Create json serializer to serialize json file
-                DataContractJsonSerializer jSerial = KnownTypes != null ? new DataContractJsonSerializer(typeof(T), KnownTypes) : new DataContractJsonSerializer(typeof(T));
-
                 WaitFile(filePath);
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
-
-                    // Serialize actions into json file
-                    jSerial.WriteObject(sWrite.BaseStream, SerializableObject);
-                    // Close file
-                    sWrite.Close();
+                    JsonSerializer serializer = new JsonSerializer();
+                    if (typeName)
+                    {
+                        serializer.TypeNameHandling = TypeNameHandling.Objects;
+                        serializer.TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+                    }
+                    serializer.Serialize(sWrite, serializableObject);
                 }
+                //  File.WriteAllText(filePath, JsonConvert.SerializeObject(SerializableObject));
                 return true;
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message, "保存失败");
+                System.Windows.MessageBox.Show(ex.Message, "Save Failed");
                 return false;
             }
         }
 
+        public static T LoadObject<T>(string filePath, bool backup, bool typeName = false)
+        {
+            try
+            {
+                if (!File.Exists(filePath)) return default(T);
+
+                WaitFile(filePath);
+
+                string json = File.ReadAllText(filePath);
+                return JsonConvert.DeserializeObject<T>(json, typeName
+                        ? new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects }
+                        : new JsonSerializerSettings());
+            }
+            catch (Exception)
+            {
+                if (backup)
+                    BackupFile(filePath);
+                return default(T);
+            }
+        }
 
         public static T LoadObject<T>(string filePath, Type[] KnownTypes, bool backup)
         {

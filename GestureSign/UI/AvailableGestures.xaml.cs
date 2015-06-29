@@ -103,11 +103,15 @@ namespace GestureSign.UI
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdGestures = new Microsoft.Win32.OpenFileDialog() { Filter = "手势文件|*.json", Title = "导入手势数据文件", CheckFileExists = true };
+            Microsoft.Win32.OpenFileDialog ofdGestures = new Microsoft.Win32.OpenFileDialog() { Filter = "手势文件|*.json;*.gest", Title = "导入手势数据文件", CheckFileExists = true };
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IGesture> newGestures = GestureSign.Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
+
+                List<IGesture> newGestures = System.IO.Path.GetExtension(ofdGestures.FileName).Equals(".gest", StringComparison.OrdinalIgnoreCase) ?
+                    Common.Configuration.FileManager.LoadObject<List<Gestures.Gesture>>(ofdGestures.FileName, false).Cast<IGesture>().ToList() :
+                    Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
+
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)
                     {
@@ -140,10 +144,10 @@ namespace GestureSign.UI
 
         private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdGestures = new Microsoft.Win32.SaveFileDialog() { Filter = "手势文件|*.json", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "json", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdGestures = new Microsoft.Win32.SaveFileDialog() { Filter = "手势文件|*.gest", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "gest", ValidateNames = true };
             if (sfdGestures.ShowDialog().Value)
             {
-                GestureSign.Common.Configuration.FileManager.SaveObject<List<IGesture>>(GestureManager.Instance.Gestures, sfdGestures.FileName);
+                GestureSign.Common.Configuration.FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
         }
 

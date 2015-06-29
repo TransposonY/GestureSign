@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Drawing;
-using ManagedWinapi.Windows;
-using GestureSign.Common;
-using GestureSign.Common.Input;
-using GestureSign.Common.Gestures;
-using System.Text.RegularExpressions;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
+using GestureSign.Common.Input;
+using GestureSign.Common.InterProcessCommunication;
+using ManagedWinapi.Windows;
+using Action = GestureSign.Applications.Action;
+using Timer = System.Threading.Timer;
 
 namespace GestureSign.Common.Applications
 {
@@ -26,7 +26,7 @@ namespace GestureSign.Common.Applications
         List<IApplication> _Applications = new List<IApplication>();
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
-        private System.Threading.Timer timer;
+        private Timer timer;
         public event EventHandler OnLoadApplicationsCompleted;
         #endregion
 
@@ -171,7 +171,7 @@ namespace GestureSign.Common.Applications
         {
             if (timer == null)
             {
-                timer = new System.Threading.Timer(new TimerCallback(SaveFile), null, 200, Timeout.Infinite);
+                timer = new Timer(new TimerCallback(SaveFile), null, 200, Timeout.Infinite);
             }
             else timer.Change(200, Timeout.Infinite);
             return true;
@@ -180,9 +180,9 @@ namespace GestureSign.Common.Applications
         private void SaveFile(object state)
         {
             // Save application list
-            bool flag = Common.Configuration.FileManager.SaveObject<List<IApplication>>(
-                 _Applications, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"), new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(GestureSign.Applications.Action) });
-            if (flag) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
+            bool flag = FileManager.SaveObject(
+                 _Applications, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Actions.act"), true);
+            if (flag) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
 
         }
 
@@ -191,13 +191,21 @@ namespace GestureSign.Common.Applications
             return Task.Run(() =>
             {
                 // Load application list from file
-                _Applications = Configuration.FileManager.LoadObject<List<IApplication>>(
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"),
-                    new[]
-                    {
-                        typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
-                        typeof (GestureSign.Applications.Action)
-                    }, true);
+                _Applications =
+                    FileManager.LoadObject<List<IApplication>>(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign",
+                            "Actions.act"),
+                        true, true);
+                if (_Applications == null)
+                {
+                    _Applications = FileManager.LoadObject<List<IApplication>>(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"),
+                        new[]
+                        {
+                            typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
+                            typeof (Action)
+                        }, true);
+                }
                 // Ensure we got an object back
                 if (_Applications == null)
                     return false; // No object, failed
@@ -213,13 +221,9 @@ namespace GestureSign.Common.Applications
 
         private bool LoadDefaults()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Applications.json");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Actions.act");
 
-            _Applications = Configuration.FileManager.LoadObject<List<IApplication>>(path, new[]
-                {
-                    typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
-                    typeof (GestureSign.Applications.Action)
-                }, true);
+            _Applications = FileManager.LoadObject<List<IApplication>>(path, true, true);
             // Ensure we got an object back
             if (_Applications == null)
                 return false; // No object, failed
@@ -352,7 +356,7 @@ namespace GestureSign.Common.Applications
         #endregion
 
         #region P/Invoke
-        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "FindWindow")]
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         #endregion
     }
