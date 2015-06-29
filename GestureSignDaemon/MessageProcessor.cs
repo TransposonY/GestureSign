@@ -15,7 +15,6 @@ namespace GestureSignDaemon
 {
     class MessageProcessor : IMessageProcessor
     {
-        internal static event EventHandler<Point> OnGotTouchPoint;
         public void ProcessMessages(NamedPipeServerStream server)
         {
             BinaryFormatter binForm = new BinaryFormatter();
@@ -26,10 +25,9 @@ namespace GestureSignDaemon
                     server.CopyTo(memoryStream);
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     object data = binForm.Deserialize(memoryStream);
-
-                    if (data is string)
+                    string message = data as string;
+                    if (message != null)
                     {
-                        var message = data.ToString();
                         TouchCapture.Instance.MessageWindow.Invoke(new Action(() =>
                         {
                             switch (message)
@@ -59,13 +57,6 @@ namespace GestureSignDaemon
                                     break;
                             }
                         }));
-                    }
-                    else if (data is Point)
-                    {
-                        if (OnGotTouchPoint != null)
-                        {
-                            OnGotTouchPoint(this, (Point)data);
-                        }
                     }
                 }
             }
