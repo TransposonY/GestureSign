@@ -305,6 +305,10 @@ namespace GestureSign.UI
             {
                 bind.Source = ((WindowsHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
                 bind.Path = new PropertyPath("Items");
+                
+                var ai = _availableAction.lstAvailableActions.SelectedItem as AvailableAction.ActionInfo;
+                if (ai != null)
+                    _gestureName = ai.GestureName;
             }
             bind.Mode = BindingMode.OneWay;
             availableGesturesComboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
