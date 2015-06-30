@@ -544,8 +544,8 @@ namespace GestureSignDaemon.Input
                         int contactIdentifier = 0;
                         int physicalX = 0;
                         int physicalY = 0;
-                        int usageLength = capabilities.NumberInputButtonCaps / lcn[0].NumberOfChildren;
-                        if (usageLength == 0) usageLength = 1;
+                        int buttonCount = capabilities.NumberInputButtonCaps / lcn[0].NumberOfChildren;
+                        if (buttonCount == 0) buttonCount = 1;
                         int screenWidth = Screen.PrimaryScreen.Bounds.Width;
                         int screenHeight = Screen.PrimaryScreen.Bounds.Height;
                         for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
@@ -557,7 +557,7 @@ namespace GestureSignDaemon.Input
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
-
+                                int usageLength = buttonCount;
                                 HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
                                 HidNativeApi.HidP_GetUsages(HidReportType.Input, TouchScreenUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
                                 int x, y;
@@ -574,8 +574,8 @@ namespace GestureSignDaemon.Input
 
                                 x = _xAxisDirection ? x : screenWidth - x;
                                 y = _yAxisDirection ? y : screenHeight - y;
-
-                                _outputTouchs.Add(new RawTouchData(hd[0].DataIndex == TipId, contactIdentifier, new Point(x, y)));
+                                bool tip = hd.Length != 0 && hd[0].DataIndex == TipId;
+                                _outputTouchs.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
 
                                 if (--_requiringContactCount == 0) break;
                             }
