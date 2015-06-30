@@ -119,6 +119,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -137,6 +138,11 @@
     <Compile Include="Delay\Delay.cs" />
     <Compile Include="Delay\DelayUI.xaml.cs">
       <DependentUpon>DelayUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MouseClick\MouseClickPlugin.cs" />
+    <Compile Include="MouseClick\MouseClickSettings.cs" />
+    <Compile Include="MouseClick\MouseClickUI.xaml.cs">
+      <DependentUpon>MouseClickUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="TemporarilyDisable.cs" />
     <Compile Include="DisableGestures.cs" />
@@ -213,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="HotKey\HotKey.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MouseClick\MouseClickUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

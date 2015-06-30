@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
+using ManagedWinapi.Windows;
 
 namespace GestureSign.Common.Plugins
 {
@@ -10,47 +9,48 @@ namespace GestureSign.Common.Plugins
     {
         #region Private Variables
 
-        private Point _TouchLocation;
-        private IntPtr _WindowHandle;
-        private ManagedWinapi.Windows.SystemWindow _Window;
+        private Point[] _touchLocation;
+        private IntPtr _windowHandle;
+        private SystemWindow _window;
 
         #endregion
 
         #region Constructors
 
-        public PointInfo(PointF TouchLocation)
+        public PointInfo(Point[] touchLocation, List<List<Point>> points)
         {
-            _TouchLocation = Point.Round(TouchLocation);
-            _Window = ManagedWinapi.Windows.SystemWindow.FromPointEx(_TouchLocation.X, _TouchLocation.Y, true, false);
-            if (_Window == null) _WindowHandle = IntPtr.Zero;
-            else _WindowHandle = _Window.HWnd;
+            _touchLocation = touchLocation;
+            _window = SystemWindow.FromPointEx(_touchLocation[0].X, _touchLocation[0].Y, true, false);
+            _windowHandle = _window == null ? IntPtr.Zero : _window.HWnd;
+            Points = points;
         }
 
         #endregion
 
         #region Public Properties
 
-        public Point TouchLocation
+        public Point[] TouchLocation
         {
-            get { return _TouchLocation; }
+            get { return _touchLocation; }
             set
             {
-                _TouchLocation = value;
-                _Window = ManagedWinapi.Windows.SystemWindow.FromPointEx(value.X, value.Y, true, false);
-                _WindowHandle = _Window.HWnd;
+                _touchLocation = value;
+                _window = SystemWindow.FromPointEx(value[0].X, value[0].Y, true, false);
+                _windowHandle = _window.HWnd;
             }
         }
 
         public IntPtr WindowHandle
         {
-            get { return _WindowHandle; }
+            get { return _windowHandle; }
         }
 
-        public ManagedWinapi.Windows.SystemWindow Window
+        public SystemWindow Window
         {
-            get { return _Window; }
+            get { return _window; }
         }
 
+        public List<List<Point>> Points { get; set; }
         #endregion
     }
 }
