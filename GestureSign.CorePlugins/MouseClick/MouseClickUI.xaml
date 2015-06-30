@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseClick"
              mc:Ignorable="d"
              d:DesignHeight="150"
-             d:DesignWidth="300">
+             d:DesignWidth="320">
     <Canvas>
         <Canvas.Resources>
             <ObjectDataProvider ObjectType="{x:Type local:MouseButtonActionDescription}"
@@ -16,25 +16,11 @@
                                 x:Key="PositionDescription">
             </ObjectDataProvider>
         </Canvas.Resources>
-        <TextBlock Canvas.Left="10"
-                   TextWrapping="Wrap"
-                   Text="鼠标点击位置"
-                   Canvas.Top="10"
-                   FontSize="14" />
-        <ComboBox x:Name="PositionComboBox"
-                  ItemsSource="{Binding Source={StaticResource  PositionDescription},Path=DescriptionDict}"
-                  DisplayMemberPath="Value"
-                  SelectedValuePath="Key"
-                  Width="180"
-                  Canvas.Left="10"
-                  Canvas.Top="33"
-                  FontSize="14">
-        </ComboBox>
 
         <TextBlock Canvas.Left="10"
                    TextWrapping="Wrap"
                    Text="选择鼠标动作"
-                   Canvas.Top="75"
+                   Canvas.Top="10"
                    FontSize="14" />
         <ComboBox x:Name="ActionComboBox"
                   ItemsSource="{Binding Source={StaticResource ActionDescription},Path=DescriptionDict}"
@@ -42,7 +28,85 @@
                   SelectedValuePath="Key"
                   Width="180"
                   Canvas.Left="10"
-                  Canvas.Top="98"
-                  FontSize="14" />
+                  Canvas.Top="33"
+                  FontSize="14"
+                  SelectionChanged="ActionComboBox_SelectionChanged" />
+
+
+        <Canvas x:Name="ClickCanvas"
+                Height="76"
+                Canvas.Top="64"
+                Width="300"
+                Visibility="Collapsed">
+            <TextBlock Canvas.Left="10"
+                       TextWrapping="Wrap"
+                       Text="鼠标点击位置"
+                       Canvas.Top="10"
+                       FontSize="14" />
+            <ComboBox x:Name="PositionComboBox"
+                      ItemsSource="{Binding Source={StaticResource  PositionDescription},Path=DescriptionDict}"
+                      DisplayMemberPath="Value"
+                      SelectedValuePath="Key"
+                      Width="180"
+                      Canvas.Left="10"
+                      Canvas.Top="33"
+                      FontSize="14" />
+        </Canvas>
+
+        <Canvas x:Name="MoveMouseCanvas"
+                Height="86"
+                Canvas.Top="64"
+                Width="300"
+                Visibility="Collapsed">
+            <TextBlock TextWrapping="Wrap"
+                       Text="X"
+                       Canvas.Left="10"
+                       Canvas.Top="14"
+                       FontSize="14" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="Y"
+                       Canvas.Left="135"
+                       Canvas.Top="14"
+                       FontSize="14" />
+            <TextBox x:Name="XTextBox"
+                     KeyDown="TextBox_KeyDown"
+                     TextChanged="TextBox_TextChanged"
+                     Height="23"
+                     Canvas.Left="35"
+                     TextWrapping="Wrap"
+                     Canvas.Top="10"
+                     Width="60"
+                     FontSize="14" />
+            <TextBox x:Name="YTextBox"
+                     KeyDown="TextBox_KeyDown"
+                     TextChanged="TextBox_TextChanged"
+                     Height="23"
+                     Canvas.Left="160"
+                     TextWrapping="Wrap"
+                     Canvas.Top="10"
+                     Width="60"
+                     FontSize="14" />
+        </Canvas>
+        <Canvas x:Name="ScrollCanvas"
+                Height="86"
+                Width="320"
+                Canvas.Top="64">
+            <TextBlock TextWrapping="Wrap"
+                       Text="输入滚动数  正数向右/上滚动 负数向左/下滚动"
+                       Canvas.Top="10"
+                       FontSize="14"
+                       Width="309"
+                       Canvas.Left="10" />
+            <TextBox x:Name="ScrollAmountTextBox"
+                     KeyDown="TextBox_KeyDown"
+                     TextChanged="TextBox_TextChanged"
+                     Height="23"
+                     Canvas.Left="10"
+                     TextWrapping="Wrap"
+                     Canvas.Top="37"
+                     Width="60"
+                     FontSize="14" />
+        </Canvas>
+
     </Canvas>
 </UserControl>

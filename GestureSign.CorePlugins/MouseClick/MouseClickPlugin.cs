@@ -9,6 +9,7 @@ using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Plugins;
 using System.Windows.Controls;
+using System.Drawing;
 
 namespace GestureSign.CorePlugins.MouseClick
 {
@@ -24,7 +25,11 @@ namespace GestureSign.CorePlugins.MouseClick
         #region PInvoke Declarations
 
         [DllImport("user32.dll")]
-        private static extern void SetCursorPos(int x, int y);
+        static extern bool SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetCursorPos(out Point lpPoint);
 
         #endregion
 
@@ -32,7 +37,7 @@ namespace GestureSign.CorePlugins.MouseClick
 
         public string Name
         {
-            get { return "鼠标按键"; }
+            get { return "鼠标动作"; }
         }
 
         public string Description
@@ -77,28 +82,50 @@ namespace GestureSign.CorePlugins.MouseClick
             InputSimulator simulator = new InputSimulator();
             try
             {
-                if (_settings.ClickPosition != ClickPositions.Original)
+                switch (_settings.MouseButtonAction)
                 {
-                    switch (_settings.ClickPosition)
-                    {
-                        case ClickPositions.LastUp:
-                            var lastUpPoint = actionPoint.Points.Last().Last();
-                            SetCursorPos(lastUpPoint.X, lastUpPoint.Y);
-                            break;
-                        case ClickPositions.LastDown:
-                            var lastDownPoint = actionPoint.Points.Last().First();
-                            SetCursorPos(lastDownPoint.X, lastDownPoint.Y);
-                            break;
-                        case ClickPositions.FirstUp:
-                            var firstUpPoint = actionPoint.Points.First().Last();
-                            SetCursorPos(firstUpPoint.X, firstUpPoint.Y);
-                            break;
-                        case ClickPositions.FirstDown:
-                            var firstDownPoint = actionPoint.Points.First().First();
-                            SetCursorPos(firstDownPoint.X, firstDownPoint.Y);
-                            break;
-                    }
+                    case MouseButtonActions.HorizontalScroll:
+                        simulator.Mouse.HorizontalScroll(_settings.ScrollAmount);
+                        return true;
+                    case MouseButtonActions.VerticalScroll:
+                        simulator.Mouse.VerticalScroll(_settings.ScrollAmount);
+                        return true;
+                    case MouseButtonActions.MoveMouseBy:
+                        {
+                            Point p;
+                            if (GetCursorPos(out p))
+                            {
+                                if (SetCursorPos(_settings.MovePoint.X + p.X, _settings.MovePoint.Y + p.Y))
+                                {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    case MouseButtonActions.MoveMouseTo:
+                        return SetCursorPos(_settings.MovePoint.X, _settings.MovePoint.Y);
                 }
+
+                switch (_settings.ClickPosition)
+                {
+                    case ClickPositions.LastUp:
+                        var lastUpPoint = actionPoint.Points.Last().Last();
+                        SetCursorPos(lastUpPoint.X, lastUpPoint.Y);
+                        break;
+                    case ClickPositions.LastDown:
+                        var lastDownPoint = actionPoint.Points.Last().First();
+                        SetCursorPos(lastDownPoint.X, lastDownPoint.Y);
+                        break;
+                    case ClickPositions.FirstUp:
+                        var firstUpPoint = actionPoint.Points.First().Last();
+                        SetCursorPos(firstUpPoint.X, firstUpPoint.Y);
+                        break;
+                    case ClickPositions.FirstDown:
+                        var firstDownPoint = actionPoint.Points.First().First();
+                        SetCursorPos(firstDownPoint.X, firstDownPoint.Y);
+                        break;
+                }
+
                 MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseButtonAction.ToString());
                 clickMethod.Invoke(simulator.Mouse, null);
             }
@@ -143,6 +170,20 @@ namespace GestureSign.CorePlugins.MouseClick
 
         private string GetDescription()
         {
+            switch (_settings.MouseButtonAction)
+            {
+                case MouseButtonActions.HorizontalScroll:
+                    return "水平向" + (_settings.ScrollAmount >= 0 ? "右" : "左") + "滚动" + Math.Abs(_settings.ScrollAmount) +
+                           "单位";
+                case MouseButtonActions.VerticalScroll:
+                    return "垂直向" + (_settings.ScrollAmount >= 0 ? "上" : "下") + "滚动" + Math.Abs(_settings.ScrollAmount) +
+                        "单位";
+                case MouseButtonActions.MoveMouseBy:
+                    return "鼠标位移" + _settings.MovePoint;
+                case MouseButtonActions.MoveMouseTo:
+                    return "鼠标移动至"+_settings.MovePoint;
+            }
+
             return String.Format("在 {0} {1}",
                 ClickPositionDescription.DescriptionDict[_settings.ClickPosition],
                  MouseButtonActionDescription.DescriptionDict[_settings.MouseButtonAction]);

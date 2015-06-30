@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,13 @@ namespace GestureSign.CorePlugins.MouseClick
         RightButtonClick,
         RightButtonUp,
         RightButtonDown,
-        RightButtonDoubleClick
+        RightButtonDoubleClick,
+
+        VerticalScroll,
+        HorizontalScroll,
+
+        MoveMouseTo,
+        MoveMouseBy
     }
 
     public enum ClickPositions
@@ -41,6 +48,12 @@ namespace GestureSign.CorePlugins.MouseClick
                 {MouseButtonActions.RightButtonDoubleClick, "双击右键"},
                 {MouseButtonActions.RightButtonDown, "按住右键"}, 
                 {MouseButtonActions.RightButtonUp, "释放右键"},
+
+                {MouseButtonActions.VerticalScroll,"垂直滚动"},
+                {MouseButtonActions.HorizontalScroll,"水平滚动"},
+                
+                {MouseButtonActions.MoveMouseTo, "移动鼠标至指定坐标"}, 
+                {MouseButtonActions.MoveMouseBy, "将鼠标位移一段距离"},
             };
         }
 
@@ -67,5 +80,7 @@ namespace GestureSign.CorePlugins.MouseClick
     {
         public MouseButtonActions MouseButtonAction { get; set; }
         public ClickPositions ClickPosition { get; set; }
+        public Point MovePoint { get; set; }
+        public int ScrollAmount { get; set; }
     }
 }
