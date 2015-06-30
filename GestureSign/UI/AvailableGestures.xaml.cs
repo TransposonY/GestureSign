@@ -107,10 +107,15 @@ namespace GestureSign.UI
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
-
-                List<IGesture> newGestures = System.IO.Path.GetExtension(ofdGestures.FileName).Equals(".gest", StringComparison.OrdinalIgnoreCase) ?
-                    Common.Configuration.FileManager.LoadObject<List<Gestures.Gesture>>(ofdGestures.FileName, false).Cast<IGesture>().ToList() :
-                    Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
+                List<IGesture> newGestures;
+                if (System.IO.Path.GetExtension(ofdGestures.FileName)
+                    .Equals(".gest", StringComparison.OrdinalIgnoreCase))
+                {
+                    var gestures =
+                        Common.Configuration.FileManager.LoadObject<List<Gestures.Gesture>>(ofdGestures.FileName, false);
+                    newGestures = gestures == null ? null : gestures.Cast<IGesture>().ToList();
+                }
+                else newGestures = Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
 
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)

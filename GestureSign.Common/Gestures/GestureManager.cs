@@ -157,15 +157,12 @@ namespace GestureSign.Common.Gestures
                 try
                 {
                     // Load gestures from file, create empty list if load failed
-                    _Gestures =
-                        FileManager.LoadObject<List<Gesture>>(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                "GestureSign", "Gestures.gest"), true).Cast<IGesture>().ToList();
-                    if (_Gestures == null)
-                    {
-                        _Gestures = FileManager.LoadObject<List<IGesture>>(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
-                    }
+                    var gestures = FileManager.LoadObject<List<Gesture>>(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "GestureSign", "Gestures.gest"), true);
+                    _Gestures = (gestures != null ? gestures.Cast<IGesture>().ToList() : null) ??
+                                FileManager.LoadObject<List<IGesture>>(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
                     if (_Gestures == null)
                         return false;
                     else
@@ -181,7 +178,8 @@ namespace GestureSign.Common.Gestures
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Gestures.gest");
 
-            _Gestures = FileManager.LoadObject<List<Gesture>>(path, true).Cast<IGesture>().ToList();
+            var gestures = FileManager.LoadObject<List<Gesture>>(path, true);
+            _Gestures = gestures == null ? null : gestures.Cast<IGesture>().ToList();
 
             if (_Gestures == null)
                 return false;
