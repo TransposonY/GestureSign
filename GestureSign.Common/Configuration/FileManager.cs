@@ -27,7 +27,8 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                WaitFile(filePath);
+                if (File.Exists(filePath))
+                    WaitFile(filePath);
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
