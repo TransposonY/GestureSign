@@ -139,6 +139,11 @@
     <Compile Include="Delay\DelayUI.xaml.cs">
       <DependentUpon>DelayUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="KeyDownKeyUp\KeyDownKeyUpPlugin.cs" />
+    <Compile Include="KeyDownKeyUp\KeyDownKeyUpSettings.cs" />
+    <Compile Include="KeyDownKeyUp\KeyDownKeyUpUI.xaml.cs">
+      <DependentUpon>KeyDownKeyUpUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MouseClick\MouseClickPlugin.cs" />
     <Compile Include="MouseClick\MouseClickSettings.cs" />
     <Compile Include="MouseClick\MouseClickUI.xaml.cs">
@@ -219,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="HotKey\HotKey.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KeyDownKeyUp\KeyDownKeyUpUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

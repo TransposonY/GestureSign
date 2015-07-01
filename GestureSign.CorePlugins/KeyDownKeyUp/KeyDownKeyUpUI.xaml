@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="GestureSign.CorePlugins.KeyDownKeyUp.KeyDownKeyUpUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="150"
+             d:DesignWidth="320">
+    <Canvas PreviewKeyDown="KeysTextBox_PreviewKeyDown"
+            PreviewKeyUp="KeysTextBox_PreviewKeyUp">
+        <RadioButton x:Name="KeyDownRadioButton"
+                     Content="按下按键"
+                     Canvas.Left="25"
+                     Canvas.Top="10"
+                     FontSize="14" />
+        <RadioButton x:Name="KeyUpRadioButton"
+                     Content="松开按键"
+                     Canvas.Left="200"
+                     Canvas.Top="10"
+                     FontSize="14" />
+        <TextBox x:Name="KeysTextBox"
+                 InputMethod.IsInputMethodEnabled="False"
+                 HorizontalAlignment="Left"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top"
+                 Width="205"
+                 FontSize="14"
+                 Canvas.Left="10"
+                 Canvas.Top="51"
+                 MaxLines="5">
+            <TextBox.ContextMenu>
+                <ContextMenu Visibility="Collapsed" />
+            </TextBox.ContextMenu>
+        </TextBox>
+        <Button x:Name="ResetButton"
+                Content="重置"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                FontSize="14"
+                Width="65"
+                Canvas.Left="230"
+                Canvas.Top="51"
+                Height="26"
+                Click="ResetButton_Click" />
+
+    </Canvas>
+</UserControl>
