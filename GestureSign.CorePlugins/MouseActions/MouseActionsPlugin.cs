@@ -180,7 +180,7 @@ namespace GestureSign.CorePlugins.MouseActions
                     return "鼠标移动至"+_settings.MovePoint;
             }
 
-            return String.Format("在 {0} {1}",
+            return String.Format("{0} {1}",
                 ClickPositionDescription.DescriptionDict[_settings.ClickPosition],
                  MouseActionDescription.DescriptionDict[_settings.MouseAction]);
         }
