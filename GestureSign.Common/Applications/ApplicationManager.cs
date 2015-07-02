@@ -171,7 +171,7 @@ namespace GestureSign.Common.Applications
         {
             if (timer == null)
             {
-                timer = new Timer(new TimerCallback(SaveFile), null, 200, Timeout.Infinite);
+                timer = new Timer(new TimerCallback(SaveFile), true, 200, Timeout.Infinite);
             }
             else timer.Change(200, Timeout.Infinite);
             return true;
@@ -179,10 +179,11 @@ namespace GestureSign.Common.Applications
 
         private void SaveFile(object state)
         {
+            bool notice = (bool)state;
             // Save application list
             bool flag = FileManager.SaveObject(
                  _Applications, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Actions.act"), true);
-            if (flag) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
+            if (flag && notice) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
 
         }
 
@@ -205,16 +206,13 @@ namespace GestureSign.Common.Applications
                             typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
                             typeof (Action)
                         }, true);
+                    if (_Applications != null)
+                    {
+                        _Applications.ForEach(a => { if (a.Group == null) a.Group = String.Empty; });
+                        SaveFile(false);
+                    }
+                    else return false;// No object, failed
                 }
-                // Ensure we got an object back
-                if (_Applications == null)
-                    return false; // No object, failed
-                _Applications.ForEach(a =>
-                {
-                    if (a.Group == null)
-                        a.Group = String.Empty;
-                });
-
                 return true; // Success
             });
         }

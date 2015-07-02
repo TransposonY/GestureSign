@@ -160,13 +160,16 @@ namespace GestureSign.Common.Gestures
                     var gestures = FileManager.LoadObject<List<Gesture>>(
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "GestureSign", "Gestures.gest"), true);
-                    _Gestures = (gestures != null ? gestures.Cast<IGesture>().ToList() : null) ??
-                                FileManager.LoadObject<List<IGesture>>(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
-                    if (_Gestures == null)
-                        return false;
-                    else
-                        return true;
+                    if (gestures == null)
+                    {
+                        _Gestures = FileManager.LoadObject<List<IGesture>>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
+                        if (_Gestures != null)
+                            SaveGestures(false);
+                    }
+                    else _Gestures = gestures.Cast<IGesture>().ToList();
+
+
+                    return _Gestures != null;
                 }
                 catch
                 {
@@ -186,13 +189,13 @@ namespace GestureSign.Common.Gestures
             return true;
         }
 
-        public bool SaveGestures()
+        public bool SaveGestures(bool notice = true)
         {
             try
             {
                 // Save gestures to file
                 bool flag = Configuration.FileManager.SaveObject(Gestures, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.gest"));
-                if (flag) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon"); }
+                if (flag && notice) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon"); }
                 return flag;
             }
             catch
