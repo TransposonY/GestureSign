@@ -144,10 +144,10 @@
     <Compile Include="KeyDownKeyUp\KeyDownKeyUpUI.xaml.cs">
       <DependentUpon>KeyDownKeyUpUI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MouseClick\MouseClickPlugin.cs" />
-    <Compile Include="MouseClick\MouseClickSettings.cs" />
-    <Compile Include="MouseClick\MouseClickUI.xaml.cs">
-      <DependentUpon>MouseClickUI.xaml</DependentUpon>
+    <Compile Include="MouseActions\MouseActionsPlugin.cs" />
+    <Compile Include="MouseActions\MouseActionsSettings.cs" />
+    <Compile Include="MouseActions\MouseActionsUI.xaml.cs">
+      <DependentUpon>MouseActionsUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="TemporarilyDisable.cs" />
     <Compile Include="DisableGestures.cs" />
@@ -231,7 +231,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MouseClick\MouseClickUI.xaml">
+    <Page Include="MouseActions\MouseActionsUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

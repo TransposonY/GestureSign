@@ -1,15 +1,15 @@
-﻿<UserControl x:Class="GestureSign.CorePlugins.MouseClick.MouseClickUI"
+﻿<UserControl x:Class="GestureSign.CorePlugins.MouseActions.MouseActionsUI"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseClick"
+             xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseActions"
              mc:Ignorable="d"
              d:DesignHeight="150"
              d:DesignWidth="320">
     <Canvas>
         <Canvas.Resources>
-            <ObjectDataProvider ObjectType="{x:Type local:MouseButtonActionDescription}"
+            <ObjectDataProvider ObjectType="{x:Type local:MouseActionDescription}"
                                 x:Key="ActionDescription">
             </ObjectDataProvider>
             <ObjectDataProvider ObjectType="{x:Type local:ClickPositionDescription}"

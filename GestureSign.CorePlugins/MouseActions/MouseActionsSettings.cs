@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestureSign.CorePlugins.MouseClick
+namespace GestureSign.CorePlugins.MouseActions
 {
-    public enum MouseButtonActions
+    public enum MouseActions
     {
         LeftButtonClick,
         LeftButtonDoubleClick,
@@ -33,31 +33,31 @@ namespace GestureSign.CorePlugins.MouseClick
         LastDown,
         LastUp
     }
-    public class MouseButtonActionDescription
+    public class MouseActionDescription
     {
-        static MouseButtonActionDescription()
+        static MouseActionDescription()
         {
-            DescriptionDict = new Dictionary<MouseButtonActions, String>() 
+            DescriptionDict = new Dictionary<MouseActions, String>() 
             {
-                {MouseButtonActions.LeftButtonClick, "单击左键"},
-                {MouseButtonActions.LeftButtonDoubleClick, "双击左键"},
-                {MouseButtonActions.LeftButtonDown, "按住左键"}, 
-                {MouseButtonActions.LeftButtonUp, "释放左键"},
+                {MouseActions.LeftButtonClick, "单击左键"},
+                {MouseActions.LeftButtonDoubleClick, "双击左键"},
+                {MouseActions.LeftButtonDown, "按住左键"}, 
+                {MouseActions.LeftButtonUp, "释放左键"},
 
-                {MouseButtonActions.RightButtonClick, "单击右键"},
-                {MouseButtonActions.RightButtonDoubleClick, "双击右键"},
-                {MouseButtonActions.RightButtonDown, "按住右键"}, 
-                {MouseButtonActions.RightButtonUp, "释放右键"},
+                {MouseActions.RightButtonClick, "单击右键"},
+                {MouseActions.RightButtonDoubleClick, "双击右键"},
+                {MouseActions.RightButtonDown, "按住右键"}, 
+                {MouseActions.RightButtonUp, "释放右键"},
 
-                {MouseButtonActions.VerticalScroll,"垂直滚动"},
-                {MouseButtonActions.HorizontalScroll,"水平滚动"},
+                {MouseActions.VerticalScroll,"垂直滚动"},
+                {MouseActions.HorizontalScroll,"水平滚动"},
                 
-                {MouseButtonActions.MoveMouseTo, "移动鼠标至指定坐标"}, 
-                {MouseButtonActions.MoveMouseBy, "将鼠标位移一段距离"},
+                {MouseActions.MoveMouseTo, "移动鼠标至指定坐标"}, 
+                {MouseActions.MoveMouseBy, "将鼠标位移一段距离"},
             };
         }
 
-        public static Dictionary<MouseButtonActions, String> DescriptionDict { get; private set; }
+        public static Dictionary<MouseActions, String> DescriptionDict { get; private set; }
     }
 
     public class ClickPositionDescription
@@ -70,15 +70,15 @@ namespace GestureSign.CorePlugins.MouseClick
                 {ClickPositions.FirstUp, "第一根手指抬起点"},
                 {ClickPositions.LastDown, "最后手指落点"},
                 {ClickPositions.LastUp, "最后手指抬起点"},
-                {ClickPositions.Original, "原始位置"}
+                {ClickPositions.Original, "不移动鼠标位置"}
             };
         }
         public static Dictionary<ClickPositions, String> DescriptionDict { get; private set; }
     }
 
-    public class MouseClickSettings
+    public class MouseActionsSettings
     {
-        public MouseButtonActions MouseButtonAction { get; set; }
+        public MouseActions MouseAction { get; set; }
         public ClickPositions ClickPosition { get; set; }
         public Point MovePoint { get; set; }
         public int ScrollAmount { get; set; }

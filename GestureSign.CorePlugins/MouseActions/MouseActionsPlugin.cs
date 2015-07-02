@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsInput;
-using WindowsInput.Native;
-using GestureSign.Common.Plugins;
 using System.Windows.Controls;
-using System.Drawing;
+using WindowsInput;
+using GestureSign.Common.Plugins;
 
-namespace GestureSign.CorePlugins.MouseClick
+namespace GestureSign.CorePlugins.MouseActions
 {
-    public class MouseClickPlugin : IPlugin
+    public class MouseActionsPlugin : IPlugin
     {
         #region Private Variables
 
-        private MouseClickUI _gui = null;
-        private MouseClickSettings _settings = null;
+        private MouseActionsUI _gui = null;
+        private MouseActionsSettings _settings = null;
 
         #endregion
 
@@ -50,9 +46,9 @@ namespace GestureSign.CorePlugins.MouseClick
             get { return _gui ?? (_gui = CreateGUI()); }
         }
 
-        public MouseClickUI TypedGUI
+        public MouseActionsUI TypedGUI
         {
-            get { return (MouseClickUI)GUI; }
+            get { return (MouseActionsUI)GUI; }
         }
 
         public string Category
@@ -82,15 +78,15 @@ namespace GestureSign.CorePlugins.MouseClick
             InputSimulator simulator = new InputSimulator();
             try
             {
-                switch (_settings.MouseButtonAction)
+                switch (_settings.MouseAction)
                 {
-                    case MouseButtonActions.HorizontalScroll:
+                    case MouseActions.HorizontalScroll:
                         simulator.Mouse.HorizontalScroll(_settings.ScrollAmount);
                         return true;
-                    case MouseButtonActions.VerticalScroll:
+                    case MouseActions.VerticalScroll:
                         simulator.Mouse.VerticalScroll(_settings.ScrollAmount);
                         return true;
-                    case MouseButtonActions.MoveMouseBy:
+                    case MouseActions.MoveMouseBy:
                         {
                             Point p;
                             if (GetCursorPos(out p))
@@ -102,7 +98,7 @@ namespace GestureSign.CorePlugins.MouseClick
                             }
                             return false;
                         }
-                    case MouseButtonActions.MoveMouseTo:
+                    case MouseActions.MoveMouseTo:
                         return SetCursorPos(_settings.MovePoint.X, _settings.MovePoint.Y);
                 }
 
@@ -126,7 +122,7 @@ namespace GestureSign.CorePlugins.MouseClick
                         break;
                 }
 
-                MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseButtonAction.ToString());
+                MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
                 clickMethod.Invoke(simulator.Mouse, null);
             }
             catch
@@ -147,7 +143,7 @@ namespace GestureSign.CorePlugins.MouseClick
                 _settings = _gui.Settings;
 
             if (_settings == null)
-                _settings = new MouseClickSettings();
+                _settings = new MouseActionsSettings();
 
             return PluginHelper.SerializeSettings(_settings);
         }
@@ -156,9 +152,9 @@ namespace GestureSign.CorePlugins.MouseClick
 
         #region Private Methods
 
-        private MouseClickUI CreateGUI()
+        private MouseActionsUI CreateGUI()
         {
-            MouseClickUI newGUI = new MouseClickUI();
+            MouseActionsUI newGUI = new MouseActionsUI();
 
             newGUI.Loaded += (o, e) =>
             {
@@ -170,23 +166,23 @@ namespace GestureSign.CorePlugins.MouseClick
 
         private string GetDescription()
         {
-            switch (_settings.MouseButtonAction)
+            switch (_settings.MouseAction)
             {
-                case MouseButtonActions.HorizontalScroll:
+                case MouseActions.HorizontalScroll:
                     return "水平向" + (_settings.ScrollAmount >= 0 ? "右" : "左") + "滚动" + Math.Abs(_settings.ScrollAmount) +
                            "单位";
-                case MouseButtonActions.VerticalScroll:
+                case MouseActions.VerticalScroll:
                     return "垂直向" + (_settings.ScrollAmount >= 0 ? "上" : "下") + "滚动" + Math.Abs(_settings.ScrollAmount) +
                         "单位";
-                case MouseButtonActions.MoveMouseBy:
+                case MouseActions.MoveMouseBy:
                     return "鼠标位移" + _settings.MovePoint;
-                case MouseButtonActions.MoveMouseTo:
+                case MouseActions.MoveMouseTo:
                     return "鼠标移动至"+_settings.MovePoint;
             }
 
             return String.Format("在 {0} {1}",
                 ClickPositionDescription.DescriptionDict[_settings.ClickPosition],
-                 MouseButtonActionDescription.DescriptionDict[_settings.MouseButtonAction]);
+                 MouseActionDescription.DescriptionDict[_settings.MouseAction]);
         }
 
         #endregion

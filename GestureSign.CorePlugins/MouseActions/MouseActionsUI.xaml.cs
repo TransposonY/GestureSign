@@ -13,24 +13,24 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace GestureSign.CorePlugins.MouseClick
+namespace GestureSign.CorePlugins.MouseActions
 {
     /// <summary>
     /// MouseClickUI.xaml 的交互逻辑
     /// </summary>
-    public partial class MouseClickUI : UserControl
+    public partial class MouseActionsUI : UserControl
     {
         #region Private Variables
 
-        MouseClickSettings _settings;
+        MouseActionsSettings _settings;
 
         #endregion
-        public MouseClickUI()
+        public MouseActionsUI()
         {
             InitializeComponent();
         }
 
-        public MouseClickSettings Settings
+        public MouseActionsSettings Settings
         {
             get
             {
@@ -43,10 +43,10 @@ namespace GestureSign.CorePlugins.MouseClick
                 flag = int.TryParse(ScrollAmountTextBox.Text, out scrollAmount);
                 scrollAmount = flag ? scrollAmount : 0;
 
-                _settings = new MouseClickSettings
+                _settings = new MouseActionsSettings
                 {
                     ClickPosition = (ClickPositions)PositionComboBox.SelectedValue,
-                    MouseButtonAction = (MouseButtonActions)ActionComboBox.SelectedValue,
+                    MouseAction = (MouseActions)ActionComboBox.SelectedValue,
                     MovePoint = new System.Drawing.Point(x, y),
                     ScrollAmount = scrollAmount
                 };
@@ -54,8 +54,8 @@ namespace GestureSign.CorePlugins.MouseClick
             }
             set
             {
-                _settings = value ?? new MouseClickSettings();
-                ActionComboBox.SelectedValue = _settings.MouseButtonAction;
+                _settings = value ?? new MouseActionsSettings();
+                ActionComboBox.SelectedValue = _settings.MouseAction;
                 PositionComboBox.SelectedValue = _settings.ClickPosition;
                 XTextBox.Text = _settings.MovePoint.X.ToString();
                 YTextBox.Text = _settings.MovePoint.Y.ToString();
@@ -119,16 +119,16 @@ namespace GestureSign.CorePlugins.MouseClick
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            var dict = (KeyValuePair<MouseButtonActions, String>)e.AddedItems[0];
+            var dict = (KeyValuePair<MouseActions, String>)e.AddedItems[0];
             switch (dict.Key)
             {
-                case MouseButtonActions.HorizontalScroll:
-                case MouseButtonActions.VerticalScroll:
+                case MouseActions.HorizontalScroll:
+                case MouseActions.VerticalScroll:
                     ScrollCanvas.Visibility = Visibility.Visible;
                     ClickCanvas.Visibility = MoveMouseCanvas.Visibility = Visibility.Hidden;
                     break;
-                case MouseButtonActions.MoveMouseBy:
-                case MouseButtonActions.MoveMouseTo:
+                case MouseActions.MoveMouseBy:
+                case MouseActions.MoveMouseTo:
                     MoveMouseCanvas.Visibility = Visibility.Visible;
                     ClickCanvas.Visibility = ScrollCanvas.Visibility = Visibility.Hidden;
                     break;
