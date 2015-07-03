@@ -141,6 +141,10 @@ namespace GestureSignDaemon.Input
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool InitializeTouchInjection(int maxCount, TOUCH_FEEDBACK feedbackMode);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool InjectTouchInput(int count, [MarshalAs(UnmanagedType.LPArray), In] POINTER_TOUCH_INFO[] contacts);
+
+
 
         [DllImport("user32.dll")]
         static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
@@ -450,6 +454,21 @@ namespace GestureSignDaemon.Input
                         _lastPoint = pointerInfos[0].PtPixelLocation;
                     }
 
+                    //Allow single-finger slide
+                    POINTER_TOUCH_INFO[] ptis = new POINTER_TOUCH_INFO[pCount];
+                    for (int i = 0; i < ptis.Length; i++)
+                    {
+                        ptis[i].TouchFlags = TOUCH_FLAGS.NONE;
+                        ptis[i].PointerInfo = new POINTER_INFO
+                        {
+                            pointerType = POINTER_INPUT_TYPE.TOUCH,
+                            PointerFlags = pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UPDATE) ?
+                            POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE : pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UP) ?
+                            POINTER_FLAGS.UP : POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT,
+                            PtPixelLocation = pointerInfos[i].PtPixelLocation,
+                        };
+                    }
+                    InjectTouchInput(1, ptis);
                 }
                 else pointChanged = true;
             }
