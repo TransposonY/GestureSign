@@ -33,13 +33,16 @@ namespace GestureSign
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
                 if (!File.Exists(path))
                 {
-                    MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
                     Current.Shutdown();
                     return;
                 }
 
                 bool createdNewDaemon;
-                using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon)) { }
+                using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
+                {
+                }
                 if (createdNewDaemon)
                 {
                     using (Process daemon = new Process())
@@ -73,7 +76,11 @@ namespace GestureSign
                 }
 
             }
-            catch (Exception exception) { MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning); }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Current.Shutdown();
+            }
 
         }
 
