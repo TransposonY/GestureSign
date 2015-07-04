@@ -26,7 +26,7 @@
                  Width="205"
                  FontSize="14"
                  Canvas.Left="10"
-                 Canvas.Top="51"
+                 Canvas.Top="65"
                  MaxLines="5">
             <TextBox.ContextMenu>
                 <ContextMenu Visibility="Collapsed" />
@@ -38,10 +38,15 @@
                 VerticalAlignment="Top"
                 FontSize="14"
                 Width="65"
-                Canvas.Left="230"
-                Canvas.Top="51"
+                Canvas.Left="245"
+                Canvas.Top="65"
                 Height="26"
                 Click="ResetButton_Click" />
+        <TextBlock Canvas.Left="10"
+                   TextWrapping="Wrap"
+                   Text="请用键盘录入按键"
+                   Canvas.Top="42"
+                   FontSize="14" />
 
     </Canvas>
 </UserControl>
