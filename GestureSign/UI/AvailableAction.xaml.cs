@@ -21,9 +21,10 @@ using System.Threading;
 using System.Windows.Controls.Primitives;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
-using GestureSign.Common.Drawing;
+using GestureSign.UI.Common;
 using MahApps.Metro.Controls.Dialogs;
 
 
@@ -232,7 +233,7 @@ namespace GestureSign.UI
         //如果有全选需求，再分别选择：界面+保存的数据
         private void ActionCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            ActionInfo actionInfo = Common.UI.WindowsHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
+            ActionInfo actionInfo = UIHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
             if (actionInfo == null) return;
             IApplication app = lstAvailableApplication.SelectedItem as IApplication;
             if (app == null) return;
@@ -423,7 +424,7 @@ namespace GestureSign.UI
             Binding bind = new Binding
             {
                 Source =
-                    ((Common.UI.WindowsHelper.GetParentDependencyObject<TabControl>(this)).FindName(
+                    ((UIHelper.GetParentDependencyObject<TabControl>(this)).FindName(
                         "availableGestures") as AvailableGestures).lstAvailableGestures,
                 Mode = BindingMode.OneWay,
                 Path = new PropertyPath("Items")
@@ -444,12 +445,12 @@ namespace GestureSign.UI
         private void availableGesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            Expander expander = Common.UI.WindowsHelper.GetParentDependencyObject<Expander>(sender as ComboBox);
+            Expander expander = UIHelper.GetParentDependencyObject<Expander>(sender as ComboBox);
             if (expander == null) return;
 
-            var firstListBoxItem = Common.UI.WindowsHelper.FindVisualChild<ListBoxItem>(expander);
+            var firstListBoxItem = UIHelper.FindVisualChild<ListBoxItem>(expander);
             if (firstListBoxItem == null) return;
-            var listBoxItemParent = Common.UI.WindowsHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
+            var listBoxItemParent = UIHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
             if (listBoxItemParent == null) return;
             var listBoxItems = listBoxItemParent.Children;
             foreach (ListBoxItem listBoxItem in listBoxItems)
@@ -518,8 +519,8 @@ namespace GestureSign.UI
             {
                 int addcount = 0;
                 var newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".act", StringComparison.OrdinalIgnoreCase) ?
-                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
-                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
+                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
 
                 if (newApps != null)
                 {
@@ -572,7 +573,7 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.act", FileName = "动作文件.act", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "act", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Common.Configuration.FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
+                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
             }
         }
         private void ExportEnableActionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -611,7 +612,7 @@ namespace GestureSign.UI
                                 Name = userApplication.Name
                             });
                     }
-                    Common.Configuration.FileManager.SaveObject(exportedApp, sfdApplications.FileName, true);
+                    FileManager.SaveObject(exportedApp, sfdApplications.FileName, true);
                 }
             }
         }
@@ -634,7 +635,7 @@ namespace GestureSign.UI
             else
             {
                 AllowSingleMenuItem.IsEnabled = true;
-                InterceptTouchInputMenuItem.IsEnabled = Common.Configuration.AppConfig.UiAccess;
+                InterceptTouchInputMenuItem.IsEnabled = AppConfig.UiAccess;
                 InterceptTouchInputMenuItem.IsChecked = userApplication.InterceptTouchInput;
                 AllowSingleMenuItem.IsChecked = userApplication.AllowSingleStroke;
             }

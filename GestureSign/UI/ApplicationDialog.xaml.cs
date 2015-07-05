@@ -15,11 +15,11 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GestureSign.Common.Applications;
-using GestureSign.Common.Drawing;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Plugins;
-using GestureSign.Common.UI;
+using GestureSign.UI.Common;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
@@ -303,7 +303,7 @@ namespace GestureSign.UI
             }
             else
             {
-                bind.Source = ((WindowsHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
+                bind.Source = ((UIHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
                 bind.Path = new PropertyPath("Items");
                 
                 var ai = _availableAction.lstAvailableActions.SelectedItem as AvailableAction.ActionInfo;
@@ -773,7 +773,7 @@ namespace GestureSign.UI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value && Common.Configuration.AppConfig.UiAccess;
+            return (bool)value && AppConfig.UiAccess;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

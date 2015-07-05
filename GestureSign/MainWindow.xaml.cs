@@ -20,7 +20,6 @@ using MahApps.Metro.Controls.Dialogs;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Applications;
-using GestureSign.Common.Drawing;
 using GestureSign.Common;
 using GestureSign.Common.Input;
 

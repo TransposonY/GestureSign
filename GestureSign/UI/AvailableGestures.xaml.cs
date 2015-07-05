@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using GestureSign.Common;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-
-using GestureSign.Common.Drawing;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
-
-using GestureSign.PointPatterns;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Gestures;
+using GestureSign.UI.Common;
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 
 namespace GestureSign.UI
 {
@@ -85,7 +79,7 @@ namespace GestureSign.UI
                 //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            UI.GestureDefinition gd = new UI.GestureDefinition(
+            GestureDefinition gd = new GestureDefinition(
                 GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
                 ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name, true);
             gd.ShowDialog();
@@ -98,24 +92,24 @@ namespace GestureSign.UI
                   MessageDialogStyle.AffirmativeAndNegative,
                   new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
             {
-                Common.InterProcessCommunication.NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
+                NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdGestures = new Microsoft.Win32.OpenFileDialog() { Filter = "手势文件|*.json;*.gest", Title = "导入手势数据文件", CheckFileExists = true };
+            OpenFileDialog ofdGestures = new OpenFileDialog() { Filter = "手势文件|*.json;*.gest", Title = "导入手势数据文件", CheckFileExists = true };
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
                 List<IGesture> newGestures;
-                if (System.IO.Path.GetExtension(ofdGestures.FileName)
+                if (Path.GetExtension(ofdGestures.FileName)
                     .Equals(".gest", StringComparison.OrdinalIgnoreCase))
                 {
                     var gestures =
-                        Common.Configuration.FileManager.LoadObject<List<Gestures.Gesture>>(ofdGestures.FileName, false);
+                        FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
                     newGestures = gestures == null ? null : gestures.Cast<IGesture>().ToList();
                 }
-                else newGestures = Common.Configuration.FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gestures.Gesture) }, false);
+                else newGestures = FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gesture) }, false);
 
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)
@@ -149,10 +143,10 @@ namespace GestureSign.UI
 
         private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdGestures = new Microsoft.Win32.SaveFileDialog() { Filter = "手势文件|*.gest", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "gest", ValidateNames = true };
+            SaveFileDialog sfdGestures = new SaveFileDialog() { Filter = "手势文件|*.gest", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "gest", ValidateNames = true };
             if (sfdGestures.ShowDialog().Value)
             {
-                GestureSign.Common.Configuration.FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
+                FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
         }
 
@@ -170,7 +164,7 @@ namespace GestureSign.UI
         {
             // Get all available gestures from gesture manager
             IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
-            System.Threading.Thread.Sleep(300);
+            Thread.Sleep(300);
             var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
 
             foreach (IGesture gesture in results)

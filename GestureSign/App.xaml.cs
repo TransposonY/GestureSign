@@ -8,7 +8,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Plugins;
-using GestureSign.Common.UI;
+using GestureSign.UI.Common;
 using MahApps.Metro;
 
 namespace GestureSign
@@ -20,7 +20,7 @@ namespace GestureSign
     {
         Mutex mutex;
 
-        private static readonly Timer Timer = new Timer((o) =>
+        private static readonly Timer Timer = new Timer(o =>
         {
             Current.Dispatcher.Invoke(
                 () => { if (Current.Windows.Count == 0) Current.Shutdown(); else  Timer.Change(300000, Timeout.Infinite); });
@@ -102,7 +102,7 @@ namespace GestureSign
                 ApplicationManager.Instance.Load(null);
                 PluginManager.Instance.Load(null);
 
-                var systemAccent = WindowsHelper.GetSystemAccent();
+                var systemAccent = UIHelper.GetSystemAccent();
                 if (systemAccent != null)
                 {
                     var accent = ThemeManager.GetAccent(systemAccent);

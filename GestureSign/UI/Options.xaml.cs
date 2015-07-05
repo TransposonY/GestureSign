@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using GestureSign.Common.UI;
-using Microsoft.Win32;
-
-using Microsoft.Win32.TaskScheduler;
+using System.Diagnostics;
+using System.IO;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Media;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
+using IWshRuntimeLibrary;
+using ManagedWinapi.Windows;
+using Microsoft.Win32.TaskScheduler;
+using Application = System.Windows.Application;
+using Color = System.Drawing.Color;
+using File = System.IO.File;
+using MessageBox = System.Windows.MessageBox;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.UI
 {
@@ -27,7 +24,7 @@ namespace GestureSign.UI
     /// </summary>
     public partial class Options : UserControl
     {
-        System.Drawing.Color _VisualFeedbackColor;
+        Color _VisualFeedbackColor;
         private const string TaskName = "GestureSignAutoRunTask";
 
         public Options()
@@ -46,17 +43,17 @@ namespace GestureSign.UI
                 // Try to load saved settings
                 //  Common.Configuration.AppConfig.Reload();
 
-                _VisualFeedbackColor = Common.Configuration.AppConfig.VisualFeedbackColor;
-                VisualFeedbackWidthSlider.Value = Common.Configuration.AppConfig.VisualFeedbackWidth;
-                MinimumPointDistanceSlider.Value = Common.Configuration.AppConfig.MinimumPointDistance;
+                _VisualFeedbackColor = AppConfig.VisualFeedbackColor;
+                VisualFeedbackWidthSlider.Value = AppConfig.VisualFeedbackWidth;
+                MinimumPointDistanceSlider.Value = AppConfig.MinimumPointDistance;
                 chkWindowsStartup.IsChecked = GetStartupStatus();
-                OpacitySlider.Value = Common.Configuration.AppConfig.Opacity;
-                chkOrderByLocation.IsChecked = Common.Configuration.AppConfig.IsOrderByLocation;
-                ShowBalloonTipSwitch.IsChecked = Common.Configuration.AppConfig.ShowBalloonTip;
-                ShowTrayIconSwitch.IsChecked = Common.Configuration.AppConfig.ShowTrayIcon;
-                if (Common.Configuration.AppConfig.UiAccess)
+                OpacitySlider.Value = AppConfig.Opacity;
+                chkOrderByLocation.IsChecked = AppConfig.IsOrderByLocation;
+                ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
+                ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
+                if (AppConfig.UiAccess)
                 {
-                    chkInterceptTouchInput.IsChecked = Common.Configuration.AppConfig.InterceptTouchInput;
+                    chkInterceptTouchInput.IsChecked = AppConfig.InterceptTouchInput;
                 }
                 else
                 {
@@ -82,12 +79,12 @@ namespace GestureSign.UI
         private void btnPickColor_Click(object sender, RoutedEventArgs e)
         {
             // Set color picker dialog color to current visual feedback color
-            System.Windows.Forms.ColorDialog cdColorPicker = new System.Windows.Forms.ColorDialog();
+            ColorDialog cdColorPicker = new ColorDialog();
             cdColorPicker.AllowFullOpen = true;
             cdColorPicker.Color = _VisualFeedbackColor;// System.Drawing.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B);
 
             // Show color picker dialog
-            if (cdColorPicker.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            if (cdColorPicker.ShowDialog() != DialogResult.OK)
                 return;
             // Change color of visual feedback and refresh example
             //_VisualFeedbackColor.A = cdColorPicker.Color.A;
@@ -95,36 +92,36 @@ namespace GestureSign.UI
             //_VisualFeedbackColor.B = cdColorPicker.Color.B;
             //_VisualFeedbackColor.G = cdColorPicker.Color.G;
             _VisualFeedbackColor = cdColorPicker.Color;
-            Common.Configuration.AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
+            AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
             UpdateVisualFeedbackExample();
 
-            Common.Configuration.AppConfig.Save();
+            AppConfig.Save();
         }
 
         private void VisualFeedbackWidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateVisualFeedbackExample();
 
-            Common.Configuration.AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
+            AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
 
-            Common.Configuration.AppConfig.Save();
+            AppConfig.Save();
         }
 
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Change opacity display text with new value
             OpacityText.Text = String.Format("不透明度: {0}%", GetAlphaPercentage(OpacitySlider.Value));
-            Common.Configuration.AppConfig.Opacity = OpacitySlider.Value;
+            AppConfig.Opacity = OpacitySlider.Value;
 
-            Common.Configuration.AppConfig.Save();
+            AppConfig.Save();
         }
 
         private void MinimumPointDistanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (e.OldValue == 0) return;
-            Common.Configuration.AppConfig.MinimumPointDistance = (int)Math.Round(e.NewValue);
+            AppConfig.MinimumPointDistance = (int)Math.Round(e.NewValue);
 
-            Common.Configuration.AppConfig.Save();
+            AppConfig.Save();
         }
 
 
@@ -134,7 +131,7 @@ namespace GestureSign.UI
             if (VisualFeedbackWidthSlider.Value > 0)
             {
                 VisualFeedbackExample.Stroke = new SolidColorBrush(
-                    Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B));
+                    System.Windows.Media.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B));
 
                 VisualFeedbackWidthText.Text = String.Format("轨迹宽度 {0:0} px", VisualFeedbackWidthSlider.Value);
             }
@@ -149,7 +146,7 @@ namespace GestureSign.UI
 
         private bool GetStartupStatus()
         {
-            string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+            string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
             try
             {
@@ -161,11 +158,11 @@ namespace GestureSign.UI
                         // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
-                            return tasks.Count != 0 || System.IO.File.Exists(lnkPath);
+                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
+                            return tasks.Count != 0 || File.Exists(lnkPath);
                         }
                     }
-                    else return System.IO.File.Exists(lnkPath);
+                    else return File.Exists(lnkPath);
                 }
             }
             catch (Exception ex)
@@ -183,16 +180,16 @@ namespace GestureSign.UI
 
         private void DisableIncompatibleControls()
         {
-            OpacitySlider.IsEnabled = ManagedWinapi.Windows.DesktopWindowManager.IsCompositionEnabled();
+            OpacitySlider.IsEnabled = DesktopWindowManager.IsCompositionEnabled();
         }
 
         private void CreateLnk(string lnkPath)
         {
-            if (!System.IO.File.Exists(lnkPath))
+            if (!File.Exists(lnkPath))
             {
-                IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                IWshRuntimeLibrary.IWshShortcut shortCut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(lnkPath);
-                shortCut.TargetPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                WshShell shell = new WshShell();
+                IWshShortcut shortCut = (IWshShortcut)shell.CreateShortcut(lnkPath);
+                shortCut.TargetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
                 //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
                 shortCut.WindowStyle = 7;
                 shortCut.Arguments = "";
@@ -215,7 +212,7 @@ namespace GestureSign.UI
                         // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
+                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
 
                             if (tasks.Count == 0)
                             {
@@ -231,7 +228,7 @@ namespace GestureSign.UI
                                 td.Triggers.Add(lt);
                                 // Create an action that will launch Notepad whenever the trigger fires
                                 td.Actions.Add(new ExecAction(
-                                    System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe"), null, AppDomain.CurrentDomain.BaseDirectory));
+                                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe"), null, AppDomain.CurrentDomain.BaseDirectory));
 
                                 // Register the task in the root folder
                                 ts.RootFolder.RegisterTaskDefinition(TaskName, td);
@@ -240,7 +237,7 @@ namespace GestureSign.UI
                     }
                     else
                     {
-                        string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                        string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                             "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
 
                         CreateLnk(lnkPath);
@@ -263,7 +260,7 @@ namespace GestureSign.UI
                     {  // Get the service on the local machine
                         using (TaskService ts = new TaskService())
                         {
-                            var tasks = ts.RootFolder.GetTasks(new System.Text.RegularExpressions.Regex(TaskName));
+                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
 
                             if (tasks.Count != 0)
                             {
@@ -272,11 +269,11 @@ namespace GestureSign.UI
                         }
                     }
 
-                    string lnkPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                    string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                       "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
 
-                    if (System.IO.File.Exists(lnkPath))
-                        System.IO.File.Delete(lnkPath);
+                    if (File.Exists(lnkPath))
+                        File.Delete(lnkPath);
 
                 }
             }
@@ -286,57 +283,57 @@ namespace GestureSign.UI
 
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.IsOrderByLocation = true;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.IsOrderByLocation = true;
+            AppConfig.Save();
         }
 
         private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.IsOrderByLocation = false;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.IsOrderByLocation = false;
+            AppConfig.Save();
         }
 
         private void chkInterceptTouchInput_Checked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.InterceptTouchInput = true;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.InterceptTouchInput = true;
+            AppConfig.Save();
         }
 
         private void chkInterceptTouchInput_Unchecked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.InterceptTouchInput = false;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.InterceptTouchInput = false;
+            AppConfig.Save();
         }
 
         private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign"));
+            Process.Start("explorer.exe", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign"));
         }
 
         private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
         {
             NamedPipe.SendMessageAsync("ShowTrayIcon", "GestureSignDaemon");
-            Common.Configuration.AppConfig.ShowTrayIcon = true;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.ShowTrayIcon = true;
+            AppConfig.Save();
         }
 
         private void ShowTrayIconSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             NamedPipe.SendMessageAsync("HideTrayIcon", "GestureSignDaemon");
-            Common.Configuration.AppConfig.ShowTrayIcon = false;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.ShowTrayIcon = false;
+            AppConfig.Save();
         }
 
         private void ShowBalloonTipSwitch_Checked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.ShowBalloonTip = true;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.ShowBalloonTip = true;
+            AppConfig.Save();
         }
 
         private void ShowBalloonTipSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
-            Common.Configuration.AppConfig.ShowBalloonTip = false;
-            Common.Configuration.AppConfig.Save();
+            AppConfig.ShowBalloonTip = false;
+            AppConfig.Save();
         }
 
 

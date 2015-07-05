@@ -143,11 +143,9 @@
     <Compile Include="Applications\UserApplication.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\FileManager.cs" />
-    <Compile Include="Drawing\GestureImage.cs" />
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureEventArgs.cs" />
     <Compile Include="Gestures\GestureEventHandler.cs" />
-    <Compile Include="Gestures\GestureItem.cs" />
     <Compile Include="Gestures\GestureManager.cs" />
     <Compile Include="Gestures\IGesture.cs" />
     <Compile Include="Gestures\RecognitionEventArgs.cs" />
@@ -182,10 +180,8 @@
     <Compile Include="Plugins\PointInfo.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\OptionsSavedEventHandler.cs" />
     <Compile Include="Input\StateChangedEventArgs.cs" />
     <Compile Include="Input\StateChangedEventHandler.cs" />
-    <Compile Include="UI\WindowsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj">

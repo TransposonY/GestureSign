@@ -190,6 +190,8 @@
     <Compile Include="UI\AvailableAction.xaml.cs">
       <DependentUpon>AvailableAction.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Common\GestureImage.cs" />
+    <Compile Include="UI\Common\GestureItem.cs" />
     <Compile Include="UI\Common\MatchUsingRadio.xaml.cs">
       <DependentUpon>MatchUsingRadio.xaml</DependentUpon>
     </Compile>

@@ -17,7 +17,7 @@ using GestureSign.Common.Applications;
 using System.Windows.Interop;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
-
+using GestureSign.UI.Common;
 using ManagedWinapi.Windows;
 
 using MahApps.Metro.Controls;

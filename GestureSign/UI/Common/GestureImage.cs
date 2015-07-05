@@ -10,7 +10,7 @@ using System.Windows;
 
 using System.Management;
 
-namespace GestureSign.Common.Drawing
+namespace GestureSign.UI.Common
 {
     public class GestureImage
     {

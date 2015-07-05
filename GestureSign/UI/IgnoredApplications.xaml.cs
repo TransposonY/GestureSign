@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using GestureSign.Common.Applications;
-
+using GestureSign.Common.Configuration;
 using MahApps.Metro.Controls;
 
 namespace GestureSign.UI
@@ -112,8 +112,8 @@ namespace GestureSign.UI
             {
                 int addcount = 0;
                 List<IApplication> newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".ign", StringComparison.OrdinalIgnoreCase) ?
-                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
-                    Common.Configuration.FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
+                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
@@ -155,7 +155,7 @@ namespace GestureSign.UI
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.ign", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "ign", ValidateNames = true };
             if (sfdApplications.ShowDialog().Value)
             {
-                Common.Configuration.FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
+                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
             }
         }
     }
