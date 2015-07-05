@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -13,6 +14,7 @@ using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Windows;
 using Action = GestureSign.Applications.Action;
+using Point = System.Drawing.Point;
 using Timer = System.Threading.Timer;
 
 namespace GestureSign.Common.Applications
@@ -80,13 +82,15 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-            if (SystemWindow.FromPointEx(SystemInformation.PrimaryMonitorSize.Width - 1, 1, true, true).HWnd.Equals(hwndCharmBar))
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
-                e.Cancel = e.InterceptTouchInput = false;
-                return;
+                IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
+                if (SystemWindow.FromPointEx((int)(SystemParameters.VirtualScreenWidth * graphics.DpiX / 96 - 1), 1, true, true).HWnd.Equals(hwndCharmBar))
+                {
+                    e.Cancel = e.InterceptTouchInput = false;
+                    return;
+                }
             }
-
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
@@ -108,6 +112,7 @@ namespace GestureSign.Common.Applications
                     }
                 }
             }
+
 
         }
 
