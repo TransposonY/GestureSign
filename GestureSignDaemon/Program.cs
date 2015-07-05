@@ -52,9 +52,16 @@ namespace GestureSignDaemon
                     GestureSign.Common.Plugins.PluginManager.Instance.Load(hostControl);
                     TrayManager.Instance.Load();
 
-                    GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor());
-
                     AppConfig.ToggleWatcher();
+                    try
+                    {
+                        GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer(
+                            "GestureSignDaemon", new MessageProcessor());
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                     if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");

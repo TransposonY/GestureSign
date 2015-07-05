@@ -30,29 +30,22 @@ namespace GestureSign.Common.InterProcessCommunication
         }
         public void RunNamedPipeServer(string pipeName, IMessageProcessor messageProcessor)
         {
-            try
+            pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In, 1, PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous);
+
+            AsyncCallback ac = null;
+            ac = o =>
             {
-                pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In, 1, PipeTransmissionMode.Message,
-                    PipeOptions.Asynchronous);
+                NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
+                server.EndWaitForConnection(o);
 
-                AsyncCallback ac = null;
-                ac = o =>
-                {
-                    NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
-                    server.EndWaitForConnection(o);
+                messageProcessor.ProcessMessages(server);
+                server.Disconnect();
 
-                    messageProcessor.ProcessMessages(server);
-                    server.Disconnect();
+                server.BeginWaitForConnection(ac, server);
 
-                    server.BeginWaitForConnection(ac, server);
-
-                };
-                pipeServer.BeginWaitForConnection(ac, pipeServer);
-            }
-            catch (Exception e)
-            {
-                System.Windows.Forms.MessageBox.Show(e.ToString(), "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-            }
+            };
+            pipeServer.BeginWaitForConnection(ac, pipeServer);
         }
 
 
