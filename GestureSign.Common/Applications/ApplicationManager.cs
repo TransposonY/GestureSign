@@ -229,9 +229,9 @@ namespace GestureSign.Common.Applications
             return true; // Success
         }
 
-        public SystemWindow GetWindowFromPoint(PointF Point)
+        public SystemWindow GetWindowFromPoint(Point point)
         {
-            return SystemWindow.FromPointEx((int)Math.Floor(Point.X), (int)Math.Floor(Point.Y), true, true);
+            return SystemWindow.FromPointEx(point.X, point.Y, true, true);
         }
 
         public IApplication[] GetApplicationFromWindow(SystemWindow Window, bool userApplicationOnly = false)
@@ -250,9 +250,9 @@ namespace GestureSign.Common.Applications
                 : userApplicationOnly ? null : new IApplication[] { GetGlobalApplication() };
         }
 
-        public IEnumerable<IApplication> GetApplicationFromPoint(PointF TestPoint)
+        public IEnumerable<IApplication> GetApplicationFromPoint(Point testPoint)
         {
-            var systemWindow = GetWindowFromPoint(TestPoint);
+            var systemWindow = GetWindowFromPoint(testPoint);
             return GetApplicationFromWindow(systemWindow);
         }
 
