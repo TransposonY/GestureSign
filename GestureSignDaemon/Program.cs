@@ -12,6 +12,7 @@ namespace GestureSignDaemon
 {
     static class Program
     {
+        private static Surface surface;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -26,7 +27,7 @@ namespace GestureSignDaemon
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
                     TouchCapture.Instance.Load();
-                    Surface surface = new Surface();
+                    surface = new Surface();
                     TouchCapture.Instance.EnableTouchCapture();
 
                     GestureManager.Instance.Load(TouchCapture.Instance);
