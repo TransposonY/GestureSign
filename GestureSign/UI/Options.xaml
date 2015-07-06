@@ -7,18 +7,21 @@
              xmlns:common="clr-namespace:GestureSign.UI.Common"
              mc:Ignorable="d" Height="381" Width="380" Loaded="UserControl_Loaded">
     <ScrollViewer PanningMode="VerticalFirst">
-        <StackPanel Margin="0,0,0.4,0" Grid.RowSpan="2">
+        <StackPanel Margin="0,0,0.4,0">
             <StackPanel.Resources>
                 <ResourceDictionary>
+                    <Style TargetType="controls:ToggleSwitch" BasedOn="{StaticResource {x:Type controls:ToggleSwitch}}">
+                        <Setter Property="FontFamily" Value="{StaticResource DefaultFont}" />
+                    </Style>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
                         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </StackPanel.Resources>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="手势轨迹" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,0"/>
             <StackPanel Height="80">
-                <Button x:Name="btnPickColor"  Content="选择颜色.." HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPickColor_Click" Margin="0,5" FontSize="12" FontFamily="Microsoft YaHei UI" FontWeight="Bold" DockPanel.Dock="Right"/>
+                <Button x:Name="btnPickColor"  Content="选择颜色.." HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPickColor_Click" Margin="0,5" FontSize="12"
+                        FontWeight="Bold" DockPanel.Dock="Right"/>
                 <Line x:Name="VisualFeedbackExample"    X1="0" Y1="0"    X2="280" Y2="0" StrokeEndLineCap="Round" StrokeStartLineCap="Round" StrokeThickness="{Binding Value, ElementName=VisualFeedbackWidthSlider}" Opacity="{Binding Value, ElementName=OpacitySlider}" Margin="0,15,0,5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </StackPanel>
             <TextBlock x:Name="OpacityText" HorizontalAlignment="Center" TextWrapping="Wrap" Text="不透明度" VerticalAlignment="Top" Margin="15,5,0,5" FontSize="14"/>
@@ -31,7 +34,8 @@
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="高级选项" VerticalAlignment="Top" FontSize="20" Margin="10,10,0,5"/>
             <Button x:Name="btnOpenApplicationData"  Content="打开设置文件文件夹" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5" FontSize="12" FontWeight="Bold" Click="btnOpenApplicationData_Click"/>
 
-            <controls:ToggleSwitch x:Name="chkWindowsStartup" Header="开机启动" OnLabel="开" OffLabel="关" Margin="0,10" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="250" FontFamily="Microsoft YaHei UI" FontWeight="Bold"/>
+            <controls:ToggleSwitch x:Name="chkWindowsStartup" Header="开机启动" OnLabel="开" OffLabel="关" Margin="0,10" FontSize="14" Checked="chkWindowsStartup_Checked" Unchecked="chkWindowsStartup_Unchecked" Width="250"
+                                   FontWeight="Bold"/>
             <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"
                                    Header="任务栏图标"
                                    OnLabel="显示"
@@ -39,7 +43,6 @@
                                    Width="250"
                                    Margin="0,10,0,9"
                                    FontSize="14"
-                                   FontFamily="Microsoft YaHei UI"
                                    FontWeight="Bold"
                                    Checked="ShowTrayIconSwitch_Checked"
                                    Unchecked="ShowTrayIconSwitch_Unchecked"></controls:ToggleSwitch>
@@ -50,12 +53,13 @@
                                    Width="250"
                                    Margin="0,10,0,9"
                                    FontSize="14"
-                                   FontFamily="Microsoft YaHei UI"
                                    FontWeight="Bold"
                                    Unchecked="ShowBalloonTipSwitch_Unchecked"
                                    Checked="ShowBalloonTipSwitch_Checked"></controls:ToggleSwitch>
-            <controls:ToggleSwitch x:Name="chkOrderByLocation" Header="手指识别顺序" OnLabel="按左右位置顺序" OffLabel="按接触先后顺序" Width="250" Margin="0,10" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" />
-            <controls:ToggleSwitch x:Name="chkInterceptTouchInput" Header="屏蔽触摸输入功能（安装版适用）" OnLabel="开" OffLabel="关" Width="250" Margin="0,10,0,9" Checked="chkInterceptTouchInput_Checked" Unchecked="chkInterceptTouchInput_Unchecked" FontSize="14" FontFamily="Microsoft YaHei UI" FontWeight="Bold" ></controls:ToggleSwitch>
+            <controls:ToggleSwitch x:Name="chkOrderByLocation" Header="手指识别顺序" OnLabel="按左右位置顺序" OffLabel="按接触先后顺序" Width="250" Margin="0,10" Checked="chkOrderByLocation_Checked" Unchecked="chkOrderByLocation_Unchecked" FontSize="14"
+                                   FontWeight="Bold" />
+            <controls:ToggleSwitch x:Name="chkInterceptTouchInput" Header="屏蔽触摸输入功能（安装版适用）" OnLabel="开" OffLabel="关" Width="250" Margin="0,10,0,9" Checked="chkInterceptTouchInput_Checked" Unchecked="chkInterceptTouchInput_Unchecked" FontSize="14"
+                                   FontWeight="Bold" ></controls:ToggleSwitch>
           
         </StackPanel>
     </ScrollViewer>

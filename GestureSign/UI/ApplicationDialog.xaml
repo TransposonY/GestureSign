@@ -105,18 +105,21 @@
             </Canvas>
             <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="15"/>
-                <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True" />
+                <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True"
+                          FontSize="14" />
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="52"/>
                 <local:MatchUsingRadio x:Name="matchUsingRadio" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Height="26" Canvas.Left="103" Canvas.Top="47"/>
                 <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配文本" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="94"/>
-                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
+                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
                     <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="TwoWay">
                         <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay" />
                         <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
                     </MultiBinding>
                 </TextBox>
-                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" Grid.Row="1" Canvas.Left="10" Canvas.Top="207" FontSize="14"/>
-                <Button x:Name="cmdBrowse" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" FontFamily="Microsoft YaHei UI" Click="cmdBrowse_Click" FontSize="14"
+                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top"
+                          Grid.Row="1" Canvas.Left="10" Canvas.Top="207" FontSize="14"/>
+                <Button x:Name="cmdBrowse" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold"
+                        Click="cmdBrowse_Click" FontSize="14"
                         Canvas.Left="246" Canvas.Top="202" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
                            Width="216" Canvas.Left="51" Canvas.Top="255"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口"/><Run Text="或点击右侧按钮选择运行中的程序"/></TextBlock>
@@ -294,20 +297,22 @@
             <StackPanel Margin="0,5" Orientation="Vertical">
                 <ComboBox x:Name="cmbPlugins"
         		Margin="10"
-        		DisplayMemberPath="DisplayText" SelectionChanged="cmbPlugins_SelectionChanged" FontSize="14" FontFamily="Microsoft YaHei UI" MaxDropDownHeight="300" />
+        		DisplayMemberPath="DisplayText" SelectionChanged="cmbPlugins_SelectionChanged" FontSize="14"
+                          MaxDropDownHeight="300" />
                 <ContentControl x:Name="SettingsContent"  Margin="5,10,5,5"/>
             </StackPanel>
         </StackPanel>
         <Button x:Name="cmdCancel"
         	Content="取消"
-        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="95" Canvas.Left="222" Canvas.Top="480" FontFamily="Microsoft YaHei UI" Click="cmdCancel_Click" />
+        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="95" Canvas.Left="222" Canvas.Top="480"
+                Click="cmdCancel_Click" />
         <Button x:Name="cmdDone"
         	Content="保存"
         	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="cmdDone_Click" Width="95" Canvas.Left="388" Canvas.Top="480" IsDefault="True"  />
         <Canvas Height="58" Canvas.Top="408" Width="674" Canvas.Left="10">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
             <TextBox x:Name="txtApplicationName" TextWrapping="Wrap" 
-            	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80" FontFamily="Microsoft YaHei UI">
+            	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80">
                 <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="TwoWay">
                     <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="TwoWay" />
                     <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="TwoWay"/>
@@ -317,7 +322,7 @@
             <TextBlock TextWrapping="Wrap" Text="动作名称" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
             <TextBox x:Name="TxtActionName"
             	controls:TextBoxHelper.Watermark="请输入动作名称"
-            	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" FontFamily="Microsoft YaHei UI" MaxLines="3" MaxLength="80" />
+            	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" MaxLines="3" MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox"
                   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton,Converter={StaticResource InterceptTouchInputCheckBoxConverter}, Mode=OneWay}"
