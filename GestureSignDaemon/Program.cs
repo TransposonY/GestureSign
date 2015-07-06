@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
 using System.Threading;
-using System.Diagnostics;
-
-using System.IO;
+using System.Windows.Forms;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Plugins;
+using GestureSignDaemon.Input;
 
 namespace GestureSignDaemon
 {
@@ -21,48 +19,40 @@ namespace GestureSignDaemon
         static void Main()
         {
             bool createdNew;
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-
-            if (!File.Exists(path))
-            {
-                MessageBox.Show("未找到本软件组件\"GestureSign.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
             using (Mutex mutex = new Mutex(true, "GestureSignDaemon", out createdNew))
             {
                 if (createdNew)
                 {
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
-                    Input.TouchCapture.Instance.Load();
+                    TouchCapture.Instance.Load();
                     Surface surface = new Surface();
-                    Input.TouchCapture.Instance.EnableTouchCapture();
+                    TouchCapture.Instance.EnableTouchCapture();
 
-                    GestureSign.Common.Gestures.GestureManager.Instance.Load(Input.TouchCapture.Instance);
-                    GestureSign.Common.Applications.ApplicationManager.Instance.Load(Input.TouchCapture.Instance);
+                    GestureManager.Instance.Load(TouchCapture.Instance);
+                    ApplicationManager.Instance.Load(TouchCapture.Instance);
                     // Create host control class and pass to plugins
-                    GestureSign.Common.Plugins.HostControl hostControl = new GestureSign.Common.Plugins.HostControl()
+                    HostControl hostControl = new HostControl()
                     {
-                        _ApplicationManager = global::GestureSign.Common.Applications.ApplicationManager.Instance,
-                        _GestureManager = global::GestureSign.Common.Gestures.GestureManager.Instance,
-                        _TouchCapture = Input.TouchCapture.Instance,
-                        _PluginManager = GestureSign.Common.Plugins.PluginManager.Instance,
+                        _ApplicationManager = ApplicationManager.Instance,
+                        _GestureManager = GestureManager.Instance,
+                        _TouchCapture = TouchCapture.Instance,
+                        _PluginManager = PluginManager.Instance,
                         _TrayManager = TrayManager.Instance
                     };
-                    GestureSign.Common.Plugins.PluginManager.Instance.Load(hostControl);
+                    PluginManager.Instance.Load(hostControl);
                     TrayManager.Instance.Load();
 
                     AppConfig.ToggleWatcher();
                     try
                     {
-                        GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer(
-                            "GestureSignDaemon", new MessageProcessor());
+                        NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor());
                     }
                     catch (Exception e)
                     {
                         MessageBox.Show(e.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
-                    if (Input.TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
+                    if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
                         MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
                         //return;
@@ -71,7 +61,6 @@ namespace GestureSignDaemon
                 }
                 else
                 {
-                    //MessageBox.Show("本程序已经运行", "提示");
                     Application.Exit();
                 }
             }

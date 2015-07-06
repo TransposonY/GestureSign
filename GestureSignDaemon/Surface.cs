@@ -5,14 +5,15 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
-using GestureSign.Common.UI;
+using GestureSignDaemon.Input;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
 
 namespace GestureSignDaemon
 {
-    public partial class Surface : Form
+    public class Surface : Form
     {
         #region Private Variables
 
@@ -55,10 +56,10 @@ namespace GestureSignDaemon
         {
             InitializeForm();
 
-            Input.TouchCapture.Instance.PointCaptured += new PointsCapturedEventHandler(MouseCapture_PointCaptured);
-            Input.TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
-            Input.TouchCapture.Instance.CaptureCanceled += new PointsCapturedEventHandler(MouseCapture_CaptureCanceled);
-            GestureSign.Common.Configuration.AppConfig.ConfigChanged += AppConfig_ConfigChanged;
+            TouchCapture.Instance.PointCaptured += MouseCapture_PointCaptured;
+            TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
+            TouchCapture.Instance.CaptureCanceled += MouseCapture_CaptureCanceled;
+            AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             // Respond to system event changes by reinitializing the form
             SystemEvents.DisplaySettingsChanged += (o, e) => { InitializeForm(); };
             SystemEvents.UserPreferenceChanged += (o, e) => { InitializeForm(); };
@@ -67,7 +68,7 @@ namespace GestureSignDaemon
             //+= (o, se) => { InitializeForm(); };
         }
 
-     
+
 
         #endregion
 
@@ -75,25 +76,25 @@ namespace GestureSignDaemon
 
         protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing)
+            if (AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing)
                 this.DrawSegments(e.Points);
         }
 
         protected void MouseCapture_CaptureEnded(object sender, EventArgs e)
         {
-            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0)
+            if (AppConfig.VisualFeedbackWidth > 0)
                 this.EndDraw();
         }
 
         protected void MouseCapture_CaptureCanceled(object sender, PointsCapturedEventArgs e)
         {
-            if (GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth > 0)
+            if (AppConfig.VisualFeedbackWidth > 0)
                 this.EndDraw();
         }
 
         void AppConfig_ConfigChanged(object sender, EventArgs e)
         {
-            this.Invoke(new Action(() => { InitializeForm(); }));
+            this.Invoke(new Action(InitializeForm));
         }
 
         #endregion
@@ -182,7 +183,7 @@ namespace GestureSignDaemon
                 this.BackColor = this.TransparencyKey = TransparentColor;
 
                 // Set opacity value
-                this.Opacity = GestureSign.Common.Configuration.AppConfig.Opacity;
+                this.Opacity = AppConfig.Opacity;
 
                 // We have composition enabled, use standard mode
                 RenderMethod = RenderMode.Standard;
@@ -230,7 +231,7 @@ namespace GestureSignDaemon
 
         private void InitializePen()
         {
-            DrawingPen = new Pen(GestureSign.Common.Configuration.AppConfig.VisualFeedbackColor, GestureSign.Common.Configuration.AppConfig.VisualFeedbackWidth);
+            DrawingPen = new Pen(AppConfig.VisualFeedbackColor, AppConfig.VisualFeedbackWidth);
             DrawingPen.StartCap = DrawingPen.EndCap = LineCap.Round;
             DrawingPen.LineJoin = LineJoin.Round;
         }
@@ -273,72 +274,6 @@ namespace GestureSignDaemon
 
         [DllImport("user32.dll")]
         static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
-
-        class Win32
-        {
-            [StructLayout(LayoutKind.Sequential)]
-            public struct Size
-            {
-                public Int32 cx;
-                public Int32 cy;
-
-                public Size(Int32 x, Int32 y)
-                {
-                    cx = x;
-                    cy = y;
-                }
-            }
-
-            [StructLayout(LayoutKind.Sequential, Pack = 1)]
-            public struct BLENDFUNCTION
-            {
-                public byte BlendOp;
-                public byte BlendFlags;
-                public byte SourceConstantAlpha;
-                public byte AlphaFormat;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct Point
-            {
-                public Int32 x;
-                public Int32 y;
-
-                public Point(Int32 x, Int32 y)
-                {
-                    this.x = x;
-                    this.y = y;
-                }
-            }
-
-            public const byte AC_SRC_OVER = 0;
-            public const Int32 ULW_ALPHA = 2;
-            public const byte AC_SRC_ALPHA = 1;
-
-            [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
-
-            [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern IntPtr GetDC(IntPtr hWnd);
-
-            [DllImport("gdi32.dll", ExactSpelling = true)]
-            public static extern IntPtr SelectObject(IntPtr hDC, IntPtr hObj);
-
-            [DllImport("user32.dll", ExactSpelling = true)]
-            public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-            [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern int DeleteDC(IntPtr hDC);
-
-            [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern int DeleteObject(IntPtr hObj);
-
-            [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern int UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pptSrc, Int32 crKey, ref BLENDFUNCTION pblend, Int32 dwFlags);
-
-            [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
-            public static extern IntPtr ExtCreateRegion(IntPtr lpXform, uint nCount, IntPtr rgnData);
-        }
 
         #endregion
 
