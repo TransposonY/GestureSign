@@ -38,10 +38,10 @@ namespace GestureSign.UI
         {
             InitializeComponent();
             this.IsOpenChanged += RuningApplicationsFlyout_IsOpenChanged;
-            CustomApplicationsFlyout.OpenIgnoredRuningFlyout += CustomApplicationsFlyout_OpenIgnoredRuningFlyout;
+            EditApplicationFlyout.OpenIgnoredRuningFlyout += EditApplicationFlyout_OpenIgnoredRuningFlyout;
         }
 
-        void CustomApplicationsFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)
+        void EditApplicationFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)
         {
             this.IsOpen = !IsOpen;
         }

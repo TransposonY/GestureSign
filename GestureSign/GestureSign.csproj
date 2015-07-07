@@ -195,8 +195,8 @@
     <Compile Include="UI\Common\MatchUsingRadio.xaml.cs">
       <DependentUpon>MatchUsingRadio.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\CustomApplicationsFlyout.xaml.cs">
-      <DependentUpon>CustomApplicationsFlyout.xaml</DependentUpon>
+    <Compile Include="UI\EditApplicationFlyout.xaml.cs">
+      <DependentUpon>EditApplicationFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Common\UIHelper.cs" />
     <Compile Include="UI\IgnoredApplications.xaml.cs">
@@ -242,7 +242,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\CustomApplicationsFlyout.xaml">
+    <Page Include="UI\EditApplicationFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

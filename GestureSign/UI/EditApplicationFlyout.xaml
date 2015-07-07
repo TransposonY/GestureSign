@@ -1,11 +1,10 @@
-﻿<controls:Flyout x:Class="GestureSign.UI.CustomApplicationsFlyout"
+﻿<controls:Flyout x:Class="GestureSign.UI.EditApplicationFlyout"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
         xmlns:local="clr-namespace:GestureSign.UI"
-                 x:Name="customApplicationsFlyout"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="280" Header="自定义规则" Position="Right" Width="280" IsModal="True" ClosingFinished="Flyout_ClosingFinished">
     <controls:Flyout.Resources>
@@ -32,7 +31,7 @@
             <local:MatchUsingRadio x:Name="matchUsingRadio" Margin="10,5,10,0"></local:MatchUsingRadio>
             <TextBox x:Name="txtMatchString" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" MaxLines="3">
                 <MultiBinding Converter="{StaticResource MatchStringConverter}" Mode="TwoWay">
-                    <Binding ElementName="customApplicationsFlyout"  Path="ApplicationListViewItem" Mode="TwoWay" />
+                    <Binding ElementName="EditApplicationFlyout"  Path="ApplicationListViewItem" Mode="TwoWay" />
                     <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay"/>
                 </MultiBinding>
             </TextBox>

@@ -30,8 +30,8 @@
 
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl >
-            <local:RuningApplicationsFlyout x:Name="runingAppFlyout"></local:RuningApplicationsFlyout>
-            <local:CustomApplicationsFlyout x:Name="CustomAppFlyout" ></local:CustomApplicationsFlyout>
+            <local:RuningApplicationsFlyout x:Name="RuningAppFlyout"></local:RuningApplicationsFlyout>
+            <local:EditApplicationFlyout x:Name="EditAppFlyout" ></local:EditApplicationFlyout>
             <!--<local:EditActionFlyout DataContext="{Binding ElementName=availableAction,Path=SelectedItem}"></local:EditActionFlyout>-->
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>

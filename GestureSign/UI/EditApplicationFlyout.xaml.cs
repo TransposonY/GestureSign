@@ -17,10 +17,7 @@ using Point = System.Drawing.Point;
 
 namespace GestureSign.UI
 {
-    /// <summary>
-    /// CustomApplicationsFlyout.xaml 的交互逻辑
-    /// </summary>
-    public partial class CustomApplicationsFlyout : Flyout
+    public partial class EditApplicationFlyout : Flyout
     {
         public static event EventHandler OpenIgnoredRuningFlyout;
         public static event EventHandler RefreshIgnoredApplications;
@@ -37,7 +34,7 @@ namespace GestureSign.UI
 
         }
         public static readonly DependencyProperty ApplicationListViewItemProperty =
-            DependencyProperty.Register("ApplicationListViewItem", typeof(ApplicationListViewItem), typeof(CustomApplicationsFlyout), new FrameworkPropertyMetadata(null));
+            DependencyProperty.Register("ApplicationListViewItem", typeof(ApplicationListViewItem), typeof(EditApplicationFlyout), new FrameworkPropertyMetadata(null));
 
 
         [DllImport("user32.dll")]
@@ -45,7 +42,7 @@ namespace GestureSign.UI
         static extern bool GetCursorPos(out Point lpPoint);
 
 
-        public CustomApplicationsFlyout()
+        public EditApplicationFlyout()
         {
             InitializeComponent();
             crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
