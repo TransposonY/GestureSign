@@ -27,31 +27,28 @@ using Point = System.Drawing.Point;
 
 namespace GestureSign.UI
 {
-    /// <summary>
-    /// ApplicationDialog.xaml 的交互逻辑
-    /// </summary>
-    public partial class ApplicationDialog : MetroWindow
+    public partial class ActionDialog : MetroWindow
     {
-        public ApplicationDialog()
+        public ActionDialog()
         {
             InitializeComponent();
         }
 
         //Add action by new gesture
-        public ApplicationDialog(string newGestureName)
+        public ActionDialog(string newGestureName)
             : this()
         {
             _gestureName = newGestureName;
         }
         //Add action by existing gesture
-        public ApplicationDialog(AvailableAction source, IApplication selectedApplication)
+        public ActionDialog(AvailableAction source, IApplication selectedApplication)
             : this()
         {
             _selectedApplication = selectedApplication;
             _availableAction = source;
         }
         //Edit action
-        public ApplicationDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
+        public ActionDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
             : this(source, selectedApplication)
         {
             Title = "编辑动作";

@@ -105,7 +105,7 @@ namespace GestureSign.UI
             if (SaveGesture())
             {
                 this.Hide();
-                ApplicationDialog ad = new ApplicationDialog(GestureManager.Instance.GestureName);
+                ActionDialog ad = new ActionDialog(GestureManager.Instance.GestureName);
                 ad.Show();
                 this.Close();
             }

@@ -183,8 +183,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\ApplicationDialog.xaml.cs">
-      <DependentUpon>ApplicationDialog.xaml</DependentUpon>
+    <Compile Include="UI\ActionDialog.xaml.cs">
+      <DependentUpon>ActionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Common\ApplicationListViewItem.cs" />
     <Compile Include="UI\AvailableAction.xaml.cs">
@@ -230,7 +230,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UI\ApplicationDialog.xaml">
+    <Page Include="UI\ActionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

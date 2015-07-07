@@ -50,7 +50,7 @@ namespace GestureSign.UI
             applicationSourceView.GroupDescriptions.Add(applicationGroupDesctrption);//在图中添加分组
             lstAvailableApplication.ItemsSource = applicationSourceView;
 
-            ApplicationDialog.ActionsChanged += (o, e) =>
+            ActionDialog.ActionsChanged += (o, e) =>
             {
                 if (lstAvailableApplication.SelectedItem == e.Application)
                 {
@@ -180,8 +180,8 @@ namespace GestureSign.UI
             ApplicationManager.Instance.CurrentApplication = selectedApplication;
             GestureManager.Instance.GestureName = selectedGesture;
 
-            ApplicationDialog applicationDialog = new ApplicationDialog(this, selectedAction, selectedApplication);
-            applicationDialog.ShowDialog();
+            ActionDialog actionDialog = new ActionDialog(this, selectedAction, selectedApplication);
+            actionDialog.ShowDialog();
         }
 
         private async void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
@@ -256,8 +256,8 @@ namespace GestureSign.UI
                 });
                 return;
             }
-            ApplicationDialog applicationDialog = new ApplicationDialog(this, lstAvailableApplication.SelectedItem as IApplication);
-            applicationDialog.Show();
+            ActionDialog actionDialog = new ActionDialog(this, lstAvailableApplication.SelectedItem as IApplication);
+            actionDialog.Show();
         }
 
 

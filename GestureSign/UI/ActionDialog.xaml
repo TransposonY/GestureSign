@@ -1,9 +1,8 @@
-﻿<controls:MetroWindow x:Class="GestureSign.UI.ApplicationDialog"
+﻿<controls:MetroWindow x:Class="GestureSign.UI.ActionDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:local="clr-namespace:GestureSign.UI"
-                      xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
                       BorderBrush="{StaticResource AccentColorBrush}"
         Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
