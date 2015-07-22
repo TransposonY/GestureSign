@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins.RunCommand
@@ -19,12 +20,12 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public string Name
         {
-            get { return "命令或程序"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Name"); }
         }
 
         public string Description
         {
-            get { return "运行指定的命令或程序"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Description"); }
         }
 
         public UserControl GUI
@@ -45,7 +46,7 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public string Category
         {
-            get { return "运行"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Category"); }
         }
 
         public bool IsAction

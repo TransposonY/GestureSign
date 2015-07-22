@@ -5,6 +5,7 @@ using System.Text;
 using GestureSign.Common.Plugins;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
@@ -20,12 +21,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-			get { return "最大化或还原"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MaximizeRestore.Name"); }
 		}
 
 		public string Description
 		{
-            get { return "最大化或还原当前窗口"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MaximizeRestore.Description"); }
 		}
 
 		public UserControl GUI

@@ -12,6 +12,7 @@
 using System;
 using System.Management;
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins.ScreenBrightness
@@ -30,7 +31,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         #region Public Properties
         public string Name
         {
-            get { return "调整屏幕亮度"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name"); }
         }
 
         public string Description
@@ -56,7 +57,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         public string Category
         {
-            get { return "系统"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Category"); }
         }
 
         public bool IsAction
@@ -115,7 +116,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         private string GetDescription(BrightnessSettings Settings)
         {
             if (Settings == null)
-                return "调整屏幕亮度";
+                return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name");
 
             // Create string to store final output description
             string strOutput = "";
@@ -124,10 +125,10 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = "增大亮度 " + Settings.Percent.ToString() + "%";
+                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.IncreaseBrightness") + Settings.Percent;
                     break;
                 case 1:
-                    strOutput = "减小亮度 " + Settings.Percent.ToString() + "%";
+                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.DecreaseBrightness") + Settings.Percent;
                     break;
             }
 

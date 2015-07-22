@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -37,7 +38,7 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
 
         public string Name
         {
-            get { return "按下或松开按键"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Name"); }
         }
 
         public string Description
@@ -57,7 +58,7 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
 
         public string Category
         {
-            get { return "键盘"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Category"); }
         }
 
         public bool IsAction
@@ -186,7 +187,9 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
 
             // Create string to store key combination and final output description
             string strKeyCombo = "";
-            string strFormattedOutput = _settings.IsKeyDown ? "按下 ({0})" : "松开 ({0})";
+            string strFormattedOutput = _settings.IsKeyDown
+                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyDown")
+                : LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyUp");
 
 
             if (_settings.KeyCode.Count != 0)

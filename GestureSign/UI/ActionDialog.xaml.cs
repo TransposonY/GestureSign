@@ -18,6 +18,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.UI.Common;
 using MahApps.Metro.Controls;
@@ -51,7 +52,7 @@ namespace GestureSign.UI
         public ActionDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
             : this(source, selectedApplication)
         {
-            Title = "编辑动作";
+            Title = LanguageDataManager.Instance.GetTextValue("ActionDialog.EditActionTitle");
             _currentAction = selectedAction;
         }
 
@@ -153,7 +154,10 @@ namespace GestureSign.UI
 
         private void cmdBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofdExecutable = new OpenFileDialog { Filter = "可执行文件|*.exe" };
+            OpenFileDialog ofdExecutable = new OpenFileDialog
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
+            };
             if (ValidateFilepath(txtMatchString.Text.Trim()))
             {
                 ofdExecutable.InitialDirectory = Path.GetDirectoryName(txtMatchString.Text);
@@ -202,7 +206,11 @@ namespace GestureSign.UI
                 {
                     if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("动作 “{0}”已经定义给 {1}", TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
+                        return
+                            ShowErrorMessage(
+                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                    TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
                 }
                 ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
@@ -214,16 +222,23 @@ namespace GestureSign.UI
 
                 // Make sure we have a valid application name
                 if (String.IsNullOrWhiteSpace(appName))
-                    return ShowErrorMessage("无程序名", "请定义程序名");
+                    return
+                        ShowErrorMessage(
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"));
 
                 if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(appName))
-                    return ShowErrorMessage("该程序名已经存在", "程序名称已经存在，请输入其他名字");
+                    return ShowErrorMessage(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
+                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExists"));
 
 
                 string matchString = txtMatchString.Text.Trim();
                 // Make sure the user entered a match string
                 if (String.IsNullOrEmpty(matchString))
-                    return ShowErrorMessage("无匹配字段", "请先定义一个匹配字段");
+                    return
+                        ShowErrorMessage(
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
 
                 try
                 {
@@ -232,7 +247,10 @@ namespace GestureSign.UI
                 }
                 catch
                 {
-                    return ShowErrorMessage("格式错误", "正则表达式格式错误，请重新检查");
+                    return
+                        ShowErrorMessage(
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.RegularExpressionsErrorTitle"),
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.RegularExpressionsError"));
                 }
 
                 _newApplication = new UserApplication
@@ -257,7 +275,7 @@ namespace GestureSign.UI
         private bool ShowErrorMessage(string title, string message)
         {
             MessageFlyoutText.Text = message;
-            MessageFlyout.Header = "错误： " + title;
+            MessageFlyout.Header = title;
             MessageFlyout.IsOpen = true;
             return false;
         }
@@ -302,7 +320,7 @@ namespace GestureSign.UI
             {
                 bind.Source = ((UIHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
                 bind.Path = new PropertyPath("Items");
-                
+
                 var ai = _availableAction.lstAvailableActions.SelectedItem as AvailableAction.ActionInfo;
                 if (ai != null)
                     _gestureName = ai.GestureName;
@@ -430,7 +448,10 @@ namespace GestureSign.UI
         private bool SaveAction()
         {
             if (availableGesturesComboBox.SelectedItem == null)
-                return ShowErrorMessage("手势未定义", "未选择手势，请先选择一个手势。");
+                return
+                    ShowErrorMessage(
+                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGestureTitle"),
+                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGesture"));
             // Check if we're creating a new action
             bool isNew = false;
             if (_currentAction == null)
@@ -441,7 +462,10 @@ namespace GestureSign.UI
             string newActionName = TxtActionName.Text.Trim();
 
             if (String.IsNullOrEmpty(newActionName))
-                return ShowErrorMessage("无动作名", "未填写动作名称，请先为该动作命名。");
+                return
+                    ShowErrorMessage(
+                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoActionNameTitle"),
+                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoActionName"));
 
             if (isNew)
             {
@@ -450,7 +474,11 @@ namespace GestureSign.UI
                     if (ApplicationManager.Instance.IsGlobalAction(newActionName))
                     {
                         _currentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
+                        return
+                            ShowErrorMessage(
+                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
+                                    newActionName));
                     }
                 }
                 else
@@ -458,7 +486,11 @@ namespace GestureSign.UI
                     if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)))
                     {
                         _currentAction = null;
-                        return ShowErrorMessage("此动作已存在", String.Format("程序“{0}”已存在动作 “{1}”", ApplicationManager.Instance.CurrentApplication.Name, newActionName));
+                        return
+                            ShowErrorMessage(
+                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                    newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
             }
@@ -468,15 +500,22 @@ namespace GestureSign.UI
                 {
                     if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _currentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("在全局动作中已存在 “{0}” ", newActionName));
+                        return
+                            ShowErrorMessage(
+                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
+                                    newActionName));
                     }
                 }
                 else
                 {
                     if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
                     {
-                        return ShowErrorMessage("此动作已存在", String.Format("程序“{0}”已存在动作 “{1}”", ApplicationManager.Instance.CurrentApplication.Name, newActionName));
-
+                        return
+                            ShowErrorMessage(
+                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                    newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
             }
@@ -678,13 +717,13 @@ namespace GestureSign.UI
             switch (mu)
             {
                 case MatchUsing.All:
-                    return "所有程序";
+                    return LanguageDataManager.Instance.GetTextValue("Common.AllApplications");
                 case MatchUsing.ExecutableFilename:
-                    return "文件名";
+                    return LanguageDataManager.Instance.GetTextValue("Common.FileName");
                 case MatchUsing.WindowClass:
-                    return "窗口类名称";
+                    return LanguageDataManager.Instance.GetTextValue("Common.WindowClass");
                 case MatchUsing.WindowTitle:
-                    return "窗口标题";
+                    return LanguageDataManager.Instance.GetTextValue("Common.WindowTitle");
                 default: return DependencyProperty.UnsetValue;
             }
         }

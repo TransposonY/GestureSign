@@ -263,7 +263,7 @@ namespace GestureSignDaemon.Input
                     try
                     {
                         bool createdSetting;
-                        using (new Mutex(false, "GestureSignSetting", out createdSetting)) { }
+                        using (new Mutex(false, "GestureSignControlPanel", out createdSetting)) { }
                         if (createdSetting)
                         {
                             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
@@ -283,7 +283,7 @@ namespace GestureSignDaemon.Input
 
                     Tuple<string, List<List<Point>>> message =
                         new Tuple<string, List<List<Point>>>(GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
-                    if (await NamedPipe.SendMessageAsync(message, "GestureSignSetting"))
+                    if (await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
                         Instance.DisableTouchCapture();
 
                 }

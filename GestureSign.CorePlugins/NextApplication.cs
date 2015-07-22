@@ -8,6 +8,7 @@ using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
@@ -23,12 +24,12 @@ namespace GestureSign.CorePlugins
 
         public string Name
         {
-            get { return "下一窗口"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.NextApplication.Name"); }
         }
 
         public string Description
         {
-            get { return "切换到下一个窗口 (相当于 Alt + Tab)"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.NextApplication.Description"); }
         }
 
         public UserControl GUI

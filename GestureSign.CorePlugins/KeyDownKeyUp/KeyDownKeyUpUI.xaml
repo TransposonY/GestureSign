@@ -3,18 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="150"
              d:DesignWidth="320">
     <Canvas PreviewKeyDown="KeysTextBox_PreviewKeyDown"
             PreviewKeyUp="KeysTextBox_PreviewKeyUp">
         <RadioButton x:Name="KeyDownRadioButton"
-                     Content="按下按键"
+                     Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.KeyDown}"
                      Canvas.Left="25"
                      Canvas.Top="10"
                      FontSize="14" />
         <RadioButton x:Name="KeyUpRadioButton"
-                     Content="松开按键"
+                     Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.KeyUp}"
                      Canvas.Left="200"
                      Canvas.Top="10"
                      FontSize="14" />
@@ -33,7 +34,7 @@
             </TextBox.ContextMenu>
         </TextBox>
         <Button x:Name="ResetButton"
-                Content="重置"
+                Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.Reset}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 FontSize="14"
@@ -44,7 +45,7 @@
                 Click="ResetButton_Click" />
         <TextBlock Canvas.Left="10"
                    TextWrapping="Wrap"
-                   Text="请用键盘录入按键"
+                   Text="{localization:LocalisedText CorePlugins.KeyDownKeyUp.Tip}"
                    Canvas.Top="42"
                    FontSize="14" />
 

@@ -71,6 +71,27 @@ namespace GestureSignDaemon.Properties {
         }
         
         /// <summary>
+        ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;0.13&quot;&gt;
+        ///  &lt;Messages&gt;
+        ///    &lt;Error&gt;Error&lt;/Error&gt;
+        ///    &lt;TouchscreenNotFoundTitle&gt;Error&lt;/TouchscreenNotFoundTitle&gt;
+        ///    &lt;TouchscreenNotFound&gt;Can not find Touchscreen!&lt;/TouchscreenNotFound&gt;
+        ///  &lt;/Messages&gt;
+        ///  &lt;TrayMenu&gt;
+        ///    &lt;Text&gt;GestureSign Tray Menu&lt;/Text&gt;
+        ///    &lt;TrainingMode&gt;Training Mode&lt;/TrainingMode&gt;
+        ///    &lt;Disable&gt;Disable GestureSign&lt;/Disable&gt;
+        ///    &lt;ControlPanel&gt;GestureSign Control Panel&lt;/ControlPanel&gt;
+        ///    &lt;Exit&gt; [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        /// </summary>
+        internal static string en {
+            get {
+                return ResourceManager.GetString("en", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
         /// </summary>
         internal static System.Drawing.Icon normal {

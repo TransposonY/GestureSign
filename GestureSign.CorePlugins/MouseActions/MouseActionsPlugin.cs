@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using WindowsInput;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins.MouseActions
@@ -33,7 +34,7 @@ namespace GestureSign.CorePlugins.MouseActions
 
         public string Name
         {
-            get { return "鼠标动作"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Name"); }
         }
 
         public string Description
@@ -53,7 +54,7 @@ namespace GestureSign.CorePlugins.MouseActions
 
         public string Category
         {
-            get { return "鼠标"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Category"); }
         }
 
         public bool IsAction
@@ -169,15 +170,25 @@ namespace GestureSign.CorePlugins.MouseActions
             switch (_settings.MouseAction)
             {
                 case MouseActions.HorizontalScroll:
-                    return "水平向" + (_settings.ScrollAmount >= 0 ? "右" : "左") + "滚动" + Math.Abs(_settings.ScrollAmount) +
-                           "单位";
+                    return
+                        String.Format(
+                            LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.HorizontalScroll"),
+                            (_settings.ScrollAmount >= 0
+                                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Right")
+                                : LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Left")),
+                            Math.Abs(_settings.ScrollAmount));
                 case MouseActions.VerticalScroll:
-                    return "垂直向" + (_settings.ScrollAmount >= 0 ? "上" : "下") + "滚动" + Math.Abs(_settings.ScrollAmount) +
-                        "单位";
+                    return
+                        String.Format(
+                            LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.VerticalScroll"),
+                            (_settings.ScrollAmount >= 0
+                                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Up")
+                                : LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Down")),
+                            Math.Abs(_settings.ScrollAmount));
                 case MouseActions.MoveMouseBy:
-                    return "鼠标位移" + _settings.MovePoint;
+                    return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseBy") + _settings.MovePoint;
                 case MouseActions.MoveMouseTo:
-                    return "鼠标移动至"+_settings.MovePoint;
+                    return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseTo") + _settings.MovePoint;
             }
 
             return String.Format("{0} {1}",

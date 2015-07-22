@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Language DisplayName="English" Culture="en" Version="0.13">
+  <Messages>
+    <Error>Error</Error>
+    <TouchscreenNotFoundTitle>Error</TouchscreenNotFoundTitle>
+    <TouchscreenNotFound>Can not find Touchscreen!</TouchscreenNotFound>
+  </Messages>
+  <TrayMenu>
+    <Text>GestureSign Tray Menu</Text>
+    <TrainingMode>Training Mode</TrainingMode>
+    <Disable>Disable GestureSign</Disable>
+    <ControlPanel>GestureSign Control Panel</ControlPanel>
+    <Exit>Exit</Exit>
+    <BalloonTipTitle>Tip</BalloonTipTitle>
+    <BalloonTip>GestureSign has started.</BalloonTip>
+  </TrayMenu>
+</Language>

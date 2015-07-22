@@ -2,14 +2,20 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="310">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="命令" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left"
+                   Margin="10,10,0,0"
+                   TextWrapping="Wrap"
+                   Text="{localization:LocalisedText CorePlugins.RunCommand.Command}" VerticalAlignment="Top"/>
         <TextBox x:Name="txtCommand" HorizontalAlignment="Left" Margin="10,30,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="290" Height="77" MaxLines="5"/>
-        <Button x:Name="cmdSelectFile" Content="浏览.." HorizontalAlignment="Left" Margin="256,113,0,0" VerticalAlignment="Top" Width="44" Click="cmdSelectFile_Click" FontSize="12" FontFamily="Microsoft YaHei UI"/>
-        <CheckBox x:Name="showCmdCheckBox" Content="显示CMD窗口" HorizontalAlignment="Left" Height="28" Margin="10,112,0,0" VerticalAlignment="Top" Width="136"/>
+        <Button x:Name="cmdSelectFile"
+                Content="{localization:LocalisedText CorePlugins.RunCommand.Browse}" HorizontalAlignment="Left" Margin="256,113,0,0" VerticalAlignment="Top" Width="44" Click="cmdSelectFile_Click" FontSize="12" />
+        <CheckBox x:Name="showCmdCheckBox"
+                  Content="{localization:LocalisedText CorePlugins.RunCommand.ShowCMD}" HorizontalAlignment="Left" Height="28" Margin="10,112,0,0" VerticalAlignment="Top" Width="136"/>
 
     </Grid>
 </UserControl>

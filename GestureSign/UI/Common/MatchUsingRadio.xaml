@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="233">
     <UserControl.Resources>
@@ -83,13 +84,16 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <RadioButton x:Name="FileNameRadio" IsChecked="True" GroupName="MatchUsing" VerticalAlignment="Center" HorizontalContentAlignment="Center" >
-            <TextBlock VerticalAlignment="Center">文件名</TextBlock>
+            <TextBlock VerticalAlignment="Center"
+                       Text="{localization:LocalisedText Common.FileName}" />
         </RadioButton>
         <RadioButton x:Name="TitleRadio" Grid.Column="1" GroupName="MatchUsing" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-            <TextBlock VerticalAlignment="Center">窗口标题</TextBlock>
+            <TextBlock VerticalAlignment="Center"
+                       Text="{localization:LocalisedText Common.WindowTitle}"></TextBlock>
         </RadioButton>
         <RadioButton x:Name="ClassRadio" Grid.Column="2" GroupName="MatchUsing" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-            <TextBlock VerticalAlignment="Center">窗口类</TextBlock>
+            <TextBlock VerticalAlignment="Center"
+                       Text="{localization:LocalisedText Common.WindowClass}"></TextBlock>
         </RadioButton>
     </Grid>
 </UserControl>

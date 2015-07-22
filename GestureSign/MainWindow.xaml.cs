@@ -22,6 +22,7 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Applications;
 using GestureSign.Common;
 using GestureSign.Common.Input;
+using GestureSign.Common.Localization;
 
 namespace GestureSign
 {
@@ -38,15 +39,18 @@ namespace GestureSign
 
         private void SetAboutInfo()
         {
-            string version = "Version:   " + System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion;
-            string releaseDate = "\r\nReleaseDate:   " +
-                new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build).AddSeconds(Application.ResourceAssembly.GetName().Version.Revision * 2).ToString();
-            this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + releaseDate + "\r\n");
+            string version = LanguageDataManager.Instance.GetTextValue("About.Version") +
+                             System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location)
+                                 .FileVersion;
+            string releaseDate = LanguageDataManager.Instance.GetTextValue("About.ReleaseDate") +
+                                 new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build)
+                                     .AddSeconds(Application.ResourceAssembly.GetName().Version.Revision*2);
+            this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + "\r\n"+ releaseDate + "\r\n");
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://git.oschina.net/TransY/GestureSign/wikis/home");
+            System.Diagnostics.Process.Start(LanguageDataManager.Instance.GetTextValue("About.HelpPageUrl"));
         }
     }
 }

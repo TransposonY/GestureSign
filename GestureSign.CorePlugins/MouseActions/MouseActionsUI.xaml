@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseActions"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="150"
              d:DesignWidth="320">
@@ -19,7 +20,7 @@
 
         <TextBlock Canvas.Left="10"
                    TextWrapping="Wrap"
-                   Text="选择鼠标动作"
+                   Text="{localization:LocalisedText CorePlugins.MouseActions.SelectAction}"
                    Canvas.Top="10"
                    FontSize="14" />
         <ComboBox x:Name="ActionComboBox"
@@ -40,7 +41,7 @@
                 Visibility="Collapsed">
             <TextBlock Canvas.Left="10"
                        TextWrapping="Wrap"
-                       Text="鼠标点击位置"
+                       Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
                        Canvas.Top="10"
                        FontSize="14" />
             <ComboBox x:Name="PositionComboBox"
@@ -92,7 +93,7 @@
                 Width="320"
                 Canvas.Top="64">
             <TextBlock TextWrapping="Wrap"
-                       Text="输入滚动数  正数向右/上滚动 负数向左/下滚动"
+                       Text="{localization:LocalisedText CorePlugins.MouseActions.ScrollAmountTip}"
                        Canvas.Top="10"
                        FontSize="14"
                        Width="309"

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins.Volume
@@ -26,7 +27,7 @@ namespace GestureSign.CorePlugins.Volume
 
         public string Name
         {
-            get { return "调整音量"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Name"); }
         }
 
         public string Description
@@ -52,7 +53,7 @@ namespace GestureSign.CorePlugins.Volume
 
         public string Category
         {
-            get { return "系统"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Category"); }
         }
 
         public bool IsAction
@@ -110,7 +111,7 @@ namespace GestureSign.CorePlugins.Volume
         private string GetDescription(VolumeSettings Settings)
         {
             if (Settings == null)
-                return "调整系统音量";
+                return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Name");
 
             // Create string to store final output description
             string strOutput = "";
@@ -119,13 +120,13 @@ namespace GestureSign.CorePlugins.Volume
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = "增大音量 " + Settings.Percent.ToString() + "%";
+                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Increase") + " by " + Settings.Percent;
                     break;
                 case 1:
-                    strOutput = "减小音量 " + Settings.Percent.ToString() + "%";
+                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Decrease") + " by " + Settings.Percent;
                     break;
                 case 2:
-                    strOutput = "静音";
+                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Mute");
                     break;
             }
 

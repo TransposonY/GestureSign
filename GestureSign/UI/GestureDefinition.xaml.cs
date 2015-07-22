@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Gestures;
 using GestureSign.UI.Common;
 using MahApps.Metro.Controls;
@@ -49,11 +50,13 @@ namespace GestureSign.UI
             {
                 if (value)
                 {
+                    Title = LanguageDataManager.Instance.GetTextValue("GestureDefinition.Rename");
                     this.cmdNext.Visibility = Visibility.Hidden;
                     this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
                     this.txtGestureName.Visibility = Visibility.Visible;
                     this.txtGestureName.Focus();
                 }
+                else Title = LanguageDataManager.Instance.GetTextValue("GestureDefinition.Title");
                 reName = value;
             }
         }
@@ -130,7 +133,13 @@ namespace GestureSign.UI
                 if (_existingGestureName.Equals(newGestureName)) return true;
                 if (GestureManager.Instance.GestureExists(newGestureName))
                 {
-                    this.ShowMessageAsync("手势已存在", "输入的手势名称已存在，请重新输入一个手势名称", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                    this.ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
+                        LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
+                        MessageDialogStyle.Affirmative,
+                        new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                        });
                     return false;
                 }
                 GestureManager.Instance.RenameGesture(_existingGestureName, newGestureName);
@@ -142,7 +151,14 @@ namespace GestureSign.UI
                 {
                     if (GestureManager.Instance.GestureExists(newGestureName))
                     {
-                        this.ShowMessageAsync("手势已存在", "输入的手势名称已存在，请重新输入一个手势名称", MessageDialogStyle.Affirmative, new MetroDialogSettings() { AffirmativeButtonText = "确定" });
+                        this.ShowMessageAsync(
+                            LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
+                            LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
+                            MessageDialogStyle.Affirmative,
+                            new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            });
                         return false;
                     }
                     // Add new gesture to gesture manager

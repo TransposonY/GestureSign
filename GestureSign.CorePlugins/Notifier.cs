@@ -12,12 +12,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-			get { return "提示"; }
+            get { return "Notifier"; }
 		}
 
 		public string Description
 		{
-			get { return "提示用户所执行的动作"; }
+            get { return "Notifies user of performed actions"; }
 		}
 
         public UserControl GUI

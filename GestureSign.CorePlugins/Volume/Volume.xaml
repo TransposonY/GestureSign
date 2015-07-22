@@ -2,17 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d" 
              d:DesignHeight="70" d:DesignWidth="320">
     <Grid>
         <ComboBox x:Name="cboMethod" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Width="179" SelectionChanged="cboMethod_SelectionChanged">
-            <ComboBoxItem Content="增大音量"/>
-            <ComboBoxItem Content="减小音量"/>
-            <ComboBoxItem Content="静音"/>
+            <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Increase}"/>
+            <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Decrease}"/>
+            <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Mute}"/>
         </ComboBox>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="动作" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="229,10,0,0" TextWrapping="Wrap" Text="百分比" VerticalAlignment="Top"/>
         <ComboBox x:Name="cboPercent" HorizontalAlignment="Left" Margin="229,30,0,0" VerticalAlignment="Top" Width="81"/>
 
     </Grid>

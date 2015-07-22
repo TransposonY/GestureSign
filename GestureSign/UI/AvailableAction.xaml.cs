@@ -24,6 +24,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
+using GestureSign.Common.Localization;
 using GestureSign.UI.Common;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -140,23 +141,10 @@ namespace GestureSign.UI
                 this.OnPropertyChanged(propertyName);
             }
         }
-        private async void cmdEditAction_Click(object sender, RoutedEventArgs e)
+        private void cmdEditAction_Click(object sender, RoutedEventArgs e)
         {
             // Make sure at least one item is selected
-            if (lstAvailableActions.SelectedItems.Count == 0)
-            {
-                var mySettings = new MetroDialogSettings()
-                {
-                    AffirmativeButtonText = "确定",
-                    // NegativeButtonText = "Go away!",
-                    // FirstAuxiliaryButtonText = "Cancel",
-                    ColorScheme = MetroDialogColorScheme.Accented //: MetroDialogColorScheme.Theme
-                };
-
-                MessageDialogResult result = await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要先选择一项动作 ", MessageDialogStyle.Affirmative, mySettings);
-                // MessageBox.Show("You must select an item before editing", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+            if (lstAvailableActions.SelectedItems.Count == 0) return;
 
             // Get first item selected, associated action, and selected application
             ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
@@ -187,24 +175,19 @@ namespace GestureSign.UI
         private async void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
         {
             // Verify that we have an item selected
-            if (lstAvailableActions.SelectedItems.Count == 0)
-            {
-                await UIHelper.GetParentWindow(this).ShowMessageAsync("未选择项目", "删除前需要先选择一项 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
-                {
-                    AffirmativeButtonText = "确定",
-                    ColorScheme = MetroDialogColorScheme.Accented
-                });
-                // MessageBox.Show("Please select and item before trying to delete.", "No Item Selected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+            if (lstAvailableActions.SelectedItems.Count == 0) return;
 
             // Confirm user really wants to delete selected items
-            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定要删除这个动作吗？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-            {
-                AffirmativeButtonText = "确定",
-                NegativeButtonText = "取消",
-                ColorScheme = MetroDialogColorScheme.Accented
-            }) != MessageDialogResult.Affirmative) return;
+            if (await
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+                        LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"),
+                        MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            ColorScheme = MetroDialogColorScheme.Accented
+                        }) != MessageDialogResult.Affirmative) return;
 
 
             // Loop through selected actions
@@ -249,11 +232,14 @@ namespace GestureSign.UI
         {
             if (GestureManager.Instance.Gestures.Length == 0)
             {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("无可用手势", "添加动作前需要先添加至少一项手势 ", MessageDialogStyle.Affirmative, new MetroDialogSettings()
-                {
-                    AffirmativeButtonText = "确定",
-                    ColorScheme = MetroDialogColorScheme.Accented
-                });
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.NoGestureTitle"),
+                        LanguageDataManager.Instance.GetTextValue("Action.Messages.NoGesture"), MessageDialogStyle.Affirmative,
+                        new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            ColorScheme = MetroDialogColorScheme.Accented
+                        });
                 return;
             }
             ActionDialog actionDialog = new ActionDialog(this, lstAvailableApplication.SelectedItem as IApplication);
@@ -400,7 +386,7 @@ namespace GestureSign.UI
             else
             {
                 pluginName = String.Empty;
-                description = "无关联动作";
+                description = LanguageDataManager.Instance.GetTextValue("Action.Messages.NoAssociationAction");
             }
 
             return new ActionInfo(
@@ -481,12 +467,15 @@ namespace GestureSign.UI
 
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
             {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("此动作已存在", String.Format("在 {0} 中已经存在 {1} 动作", menuItem.Header, selectedItem.ActionName),
-                    MessageDialogStyle.Affirmative, new MetroDialogSettings()
-                    {
-                        AffirmativeButtonText = "确定",
-                        ColorScheme = MetroDialogColorScheme.Accented
-                    });
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                        String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                            selectedItem.ActionName, menuItem.Header),
+                        MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            ColorScheme = MetroDialogColorScheme.Accented
+                        });
                 return;
             }
             IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
@@ -514,13 +503,24 @@ namespace GestureSign.UI
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "动作文件|*.json;*.act", Title = "导入动作定义文件", CheckFileExists = true };
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.json;*.act",
+                Title = LanguageDataManager.Instance.GetTextValue("Action.ImportActions"),
+                CheckFileExists = true
+            };
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                var newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".act", StringComparison.OrdinalIgnoreCase) ?
-                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
-                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                var newApps = System.IO.Path.GetExtension(ofdApplications.FileName)
+                    .Equals(".act", StringComparison.OrdinalIgnoreCase)
+                    ? FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true)
+                    : FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName,
+                        new Type[]
+                        {
+                            typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
+                            typeof (Applications.Action)
+                        }, false);
 
                 if (newApps != null)
                 {
@@ -534,7 +534,13 @@ namespace GestureSign.UI
                             {
                                 if (existingApp.Actions.Exists(action => action.Name.Equals(newAction.Name)))
                                 {
-                                    var result = MessageBox.Show(String.Format("在 \"{0}\" 中已经存在 \"{1}\" 动作，是否覆盖？", existingApp.Name, newAction.Name), "已存在同名动作", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                    var result =
+                                        MessageBox.Show(
+                                            String.Format(
+                                                LanguageDataManager.Instance.GetTextValue("Action.Messages.ReplaceConfirm"),
+                                                newAction.Name, existingApp.Name),
+                                            LanguageDataManager.Instance.GetTextValue("Action.Messages.ReplaceConfirmTitle"),
+                                            MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                     if (result == MessageBoxResult.Yes)
                                     {
                                         existingApp.Actions.RemoveAll(ac => ac.Name.Equals(newAction.Name));
@@ -564,13 +570,23 @@ namespace GestureSign.UI
                     BindApplications();
                     lstAvailableApplication.SelectedIndex = 0;
                 }
-                MessageBox.Show(String.Format("已添加 {0} 个动作", addcount), "导入完成");
+                MessageBox.Show(
+                    String.Format(LanguageDataManager.Instance.GetTextValue("Action.Messages.ImportComplete"), addcount),
+                    LanguageDataManager.Instance.GetTextValue("Action.Messages.ImportCompleteTitle"));
             }
         }
 
         private void ExportAllActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.act", FileName = "动作文件.act", Title = "导出动作定义文件", AddExtension = true, DefaultExt = "act", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.act",
+                FileName = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + ".act",
+                Title = LanguageDataManager.Instance.GetTextValue("Action.ExportActions"),
+                AddExtension = true,
+                DefaultExt = "act",
+                ValidateNames = true
+            };
             if (sfdApplications.ShowDialog().Value)
             {
                 FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
@@ -578,7 +594,15 @@ namespace GestureSign.UI
         }
         private void ExportEnableActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "动作文件|*.act", FileName = "动作文件.act", Title = "导出当前程序中已启用的动作", AddExtension = true, DefaultExt = "act", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.act",
+                FileName = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + ".act",
+                Title = LanguageDataManager.Instance.GetTextValue("Action.ExportSpecificActions"),
+                AddExtension = true,
+                DefaultExt = "act",
+                ValidateNames = true
+            };
             if (sfdApplications.ShowDialog().Value)
             {
                 IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
@@ -681,13 +705,16 @@ namespace GestureSign.UI
 
         private async void DeleteAppButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除该程序吗，控制该程序的相关动作也将一并删除 ",
-              MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-              {
-                  AffirmativeButtonText = "确定",
-                  NegativeButtonText = "取消",
-                  ColorScheme = MetroDialogColorScheme.Accented
-              }) == MessageDialogResult.Affirmative)
+            if (await
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+                        LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"),
+                        MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            ColorScheme = MetroDialogColorScheme.Accented
+                        }) == MessageDialogResult.Affirmative)
             {
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
 
@@ -785,7 +812,7 @@ namespace GestureSign.UI
             var app = value as IApplication;
             if (app != null)
             {
-                return String.Format("{0}  ( {1}个动作 )", app.Name, app.Actions.Count);
+                return String.Format(LanguageDataManager.Instance.GetTextValue("Action.ActionCount"), app.Name, app.Actions.Count);
             }
             return Binding.DoNothing;
         }
@@ -801,7 +828,9 @@ namespace GestureSign.UI
         {
             string name = values[0] as string;
             int count = (int)values[1];
-            return String.IsNullOrEmpty(name) ? String.Format("未分组 {0}程序", count) : String.Format("{0} {1}程序", name, count);
+            return String.IsNullOrEmpty(name)
+                ? String.Format(LanguageDataManager.Instance.GetTextValue("Action.NotGroupedAppCount"), count)
+                : String.Format(LanguageDataManager.Instance.GetTextValue("Action.AppCount"), name, count);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {

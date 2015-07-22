@@ -1,12 +1,13 @@
 ﻿<controls:Flyout x:Class="GestureSign.UI.EditApplicationFlyout"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
-        xmlns:local="clr-namespace:GestureSign.UI"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="280" Header="自定义规则" Position="Right" Width="280" IsModal="True" ClosingFinished="Flyout_ClosingFinished">
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                 xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:local="clr-namespace:GestureSign.UI"
+                 xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                 mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="280" Position="Right" Width="280" IsModal="True" ClosingFinished="Flyout_ClosingFinished">
     <controls:Flyout.Resources>
         <local:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter"></local:MatchUsing2VisibilityConverter>
         <local:MatchStringConverter x:Key="MatchStringConverter"></local:MatchStringConverter>
@@ -18,16 +19,24 @@
             <RowDefinition Height="100"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <Button x:Name="ShowRunningButton" Content="选择运行中的窗口.." HorizontalAlignment="Left" VerticalAlignment="Bottom"  Click="ShowRunningButton_Click" Margin="10,0,0,10" Grid.Row="3" FontSize="12" FontWeight="Bold" Height="25" Width="123"/>
-        <Button x:Name="btnAddCustom" Content="保存" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80" Click="btnAddCustom_Click" Margin="0,0,10,10" Grid.Row="3" FontSize="12"
+        <Button x:Name="ShowRunningButton"
+                Content="{localization:LocalisedText EditApplicationFlyout.ShowRunningApplications}" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Click="ShowRunningButton_Click" Margin="10,0,0,10" Grid.Row="3" FontSize="12" FontWeight="Bold" Height="25" Width="123"/>
+        <Button x:Name="btnAddCustom"
+                Content="{localization:LocalisedText Common.Save}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80" Click="btnAddCustom_Click" Margin="0,0,10,10" Grid.Row="3" FontSize="12"
                 FontWeight="Bold"/>
-        <!--<Button Content="取消" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" />-->
         <StackPanel Margin="0">
-            <TextBlock x:Name="ApplicationNameTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,0,0,0"/>
-            <TextBlock x:Name="GroupNameTextBlock" HorizontalAlignment="Right" TextWrapping="Wrap" Text="分组名" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,-20,70,0"/>
+            <TextBlock x:Name="ApplicationNameTextBlock"
+                       HorizontalAlignment="Left"
+                       TextWrapping="Wrap"
+                       Text="{localization:LocalisedText EditApplicationFlyout.AppName}" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,0,0,0"/>
+            <TextBlock x:Name="GroupNameTextBlock"
+                       HorizontalAlignment="Right"
+                       TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.Group}" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Margin="10,-20,115,0"/>
             <TextBox x:Name="ApplicationNameTextBox"  HorizontalAlignment="Left" Height="26" Margin="10,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="137"/>
             <ComboBox x:Name="GroupComboBox" HorizontalAlignment="Right" Height="26" Margin="0,-26,5,0" VerticalAlignment="Top" Width="113" IsEditable="True" />
-            <TextBlock TextWrapping="Wrap" Text="匹配方式" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" HorizontalAlignment="Left" Margin="10,15,0,0"/>
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.MatchUsing}" VerticalAlignment="Top" Foreground="{StaticResource AccentColorBrush}" FontSize="16" HorizontalAlignment="Left" Margin="10,15,0,0"/>
             <local:MatchUsingRadio x:Name="matchUsingRadio" Margin="10,5,10,0"></local:MatchUsingRadio>
             <TextBox x:Name="txtMatchString" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" MaxLines="3">
                 <MultiBinding Converter="{StaticResource MatchStringConverter}" Mode="TwoWay">
@@ -35,13 +44,21 @@
                     <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay"/>
                 </MultiBinding>
             </TextBox>
-            <Button x:Name="btnBrowse" Content="浏览.." Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>
+            <Button x:Name="btnBrowse"
+                    Content="{localization:LocalisedText ActionDialog.Browse}" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,5,0" Click="btnBrowse_Click" FontSize="12" FontWeight="Bold" Height="26" Width="51"/>
         </StackPanel>
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="定位窗口" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Height="20" Grid.Row="2" Width="64" />
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="将右侧图标拖至你想忽略的程序窗口上以选择窗口，然后释放鼠标按键" VerticalAlignment="Top" Margin="10,35,0,0" Width="147" Height="46" Grid.Row="2"/>
+        <TextBlock HorizontalAlignment="Left"
+                   TextWrapping="Wrap"
+                   Text="{localization:LocalisedText EditApplicationFlyout.LocateWindow}" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{StaticResource AccentColorBrush}" FontSize="16" Height="20" Grid.Row="2" Width="64" />
+        <TextBlock HorizontalAlignment="Left"
+                   TextWrapping="Wrap"
+                   Text="{localization:LocalisedText EditApplicationFlyout.LocateWindowTip}" VerticalAlignment="Top" Margin="10,35,0,0" Width="147" Height="46" Grid.Row="2"/>
         <local:Crosshair x:Name="crosshairMain" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Height="50" Grid.Row="2" Width="50"/>
-        <CheckBox x:Name="chkPattern" Content="正则表达式" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
-        <CheckBox x:Name="chkAllowSingleStroke" Content="允许单指" HorizontalAlignment="Left" Margin="198,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
-        <CheckBox x:Name="chkInterceptTouchInput" Content="屏蔽触摸" HorizontalAlignment="Left" Margin="109,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
+        <CheckBox x:Name="chkPattern"
+                  Content="{localization:LocalisedText EditApplicationFlyout.UsingRegularExpression}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
+        <CheckBox x:Name="chkAllowSingleStroke"
+                  Content="{localization:LocalisedText EditApplicationFlyout.AllowSingleFinger}" HorizontalAlignment="Left" Margin="198,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
+        <CheckBox x:Name="chkInterceptTouchInput"
+                  Content="{localization:LocalisedText EditApplicationFlyout.InterceptTouchInput}" HorizontalAlignment="Left" Margin="109,10,0,0" VerticalAlignment="Top" Height="18" Grid.Row="1"/>
     </Grid>
 </controls:Flyout>

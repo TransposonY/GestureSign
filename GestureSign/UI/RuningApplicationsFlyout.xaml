@@ -3,22 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
-        xmlns:local="clr-namespace:GestureSign.UI"
-             mc:Ignorable="d" 
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:local="clr-namespace:GestureSign.UI"
+                 xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                 mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="280" Width="280" Theme="Adapt"
-      Header="选择运行中的窗口" Position="Left" IsPinned="False" >
+                 Header="{localization:LocalisedText RuningApplicationsFlyout.Title}" Position="Left" IsPinned="False" >
     <ListView x:Name="lstRunningApplications"  Margin="5,0,5,10" BorderThickness="0" SelectionChanged="lstRunningApplications_SelectionChanged">
         <ListView.View>
             <GridView>
-                <GridViewColumn Header="图标" Width="55">
+                <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}" Width="55">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding Path=ApplicationIcon}" Height="35" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="程序文件名及标题" Width="300">
+                <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}" Width="300">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>

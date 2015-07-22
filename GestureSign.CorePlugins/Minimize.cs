@@ -6,6 +6,7 @@ using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
@@ -21,12 +22,12 @@ namespace GestureSign.CorePlugins
 
         public string Name
         {
-            get { return "最小化"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Minimize.Name"); }
         }
 
         public string Description
         {
-            get { return "最小化当前窗口"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Minimize.Description"); }
         }
 
         public UserControl GUI

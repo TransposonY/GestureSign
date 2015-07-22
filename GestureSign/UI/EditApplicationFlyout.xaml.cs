@@ -11,6 +11,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using System.Linq;
 using System.Windows.Data;
+using GestureSign.Common.Localization;
 using GestureSign.UI.Common;
 using ManagedWinapi.Windows;
 using Point = System.Drawing.Point;
@@ -82,11 +83,11 @@ namespace GestureSign.UI
             {
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
                 _editMode = true;
-                Header = "修改程序匹配方式";
+                Header = LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.EditApplicationTitle");
                 chkPattern.IsChecked = _currentApplication.IsRegEx;
                 txtMatchString.Text = _currentApplication.MatchString;
             }
-            else Header = "添加忽略的程序";
+            else Header = LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.AddIgnoredAppTitle");
             IsOpen = true;
         }
         void RuningApplicationsFlyout_RuningAppSelectionChanged(object sender, ApplicationListViewItem e)
@@ -131,7 +132,7 @@ namespace GestureSign.UI
             }
             catch (Exception ex)
             {
-                txtMatchString.Text = "错误：" + ex.Message;
+                txtMatchString.Text = LanguageDataManager.Instance.GetTextValue("Messages.Error") + "：" + ex.Message;
             }
         }
 
@@ -139,7 +140,10 @@ namespace GestureSign.UI
 
         private void btnBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog op = new OpenFileDialog { Filter = "可执行文件|*.exe" };
+            OpenFileDialog op = new OpenFileDialog
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
+            };
             if (op.ShowDialog().Value)
             {
                 txtMatchString.Text = op.SafeFileName;
@@ -152,7 +156,15 @@ namespace GestureSign.UI
 
             if (String.IsNullOrEmpty(matchString))
             {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("字段为空", "匹配字段不能为空，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyStringTitle"),
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyString"),
+                        settings:
+                            new MetroDialogSettings
+                            {
+                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                            });
                 return;
             }
             try
@@ -162,7 +174,15 @@ namespace GestureSign.UI
             }
             catch
             {
-                UIHelper.GetParentWindow(this).ShowMessageAsync("格式错误", "正则表达式格式错误，请重新检查", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.FormatErrorTitle"),
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.FormatError"),
+                        settings:
+                            new MetroDialogSettings
+                            {
+                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            });
                 return;
             }
             string name;
@@ -173,12 +193,27 @@ namespace GestureSign.UI
                 groupName = groupName.Trim();
                 if (name.Length == 0)
                 {
-                    UIHelper.GetParentWindow(this).ShowMessageAsync("无程序名", "请定义程序名", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"),
+                            settings:
+                                new MetroDialogSettings
+                                {
+                                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                });
                     return;
                 }
                 if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
                 {
-                    UIHelper.GetParentWindow(this).ShowMessageAsync("该程序名已经存在", "程序名称已经存在，请输入其他名字", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
+                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExists"),
+                            settings:
+                                new MetroDialogSettings
+                                {
+                                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                });
                     return;
                 }
                 _currentApplication.Name = name;
@@ -198,14 +233,29 @@ namespace GestureSign.UI
                 {
                     if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                     {
-                        UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                        UIHelper.GetParentWindow(this)
+                            .ShowMessageAsync(
+                                LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
+                                LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
+                                settings:
+                                    new MetroDialogSettings
+                                    {
+                                        AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                    });
                         return;
                     }
                     ApplicationManager.Instance.RemoveApplication(_currentApplication);
                 }
                 else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                 {
-                    UIHelper.GetParentWindow(this).ShowMessageAsync("该忽略程序已存在", "该忽略程序已存在，请重新输入匹配字段", settings: new MetroDialogSettings { AffirmativeButtonText = "确定" });
+                    UIHelper.GetParentWindow(this).ShowMessageAsync(
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
+                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
+                        settings:
+                            new MetroDialogSettings
+                            {
+                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                            });
                     return;
                 }
 

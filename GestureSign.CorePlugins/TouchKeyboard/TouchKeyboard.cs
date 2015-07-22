@@ -8,6 +8,7 @@ using System.Windows.Controls;
 
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.TouchKeyboard
 {
@@ -46,18 +47,23 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         public string Name
         {
-            get { return "触摸键盘"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Name"); }
         }
 
         public string Description
         {
-            get { return isShow ? "显示触摸键盘" : "隐藏触摸键盘"; }
+            get
+            {
+                return isShow
+                    ? LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Show")
+                    : LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Hide");
+            }
         }
 
 
         public string Category
         {
-            get { return "键盘"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Category"); }
         }
 
         public bool IsAction

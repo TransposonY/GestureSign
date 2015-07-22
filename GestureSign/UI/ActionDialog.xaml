@@ -3,8 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:local="clr-namespace:GestureSign.UI"
+                      xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                      FlowDirection="{StaticResource DefaultFlowDirection}"
                       BorderBrush="{StaticResource AccentColorBrush}"
-        Title="添加动作" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
+                      Title="{localization:LocalisedText ActionDialog.AddActionTitle}" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <Style x:Key="ShowCanvasStyle" TargetType="{x:Type Canvas}">
@@ -61,14 +63,14 @@
             <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="图标" Width="55">
+                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}" Width="55">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Image Source="{Binding ApplicationIcon}" Height="35" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="程序文件名及标题" Width="300">
+                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}" Width="300">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
@@ -84,44 +86,66 @@
         </Popup>
         <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330" Height="370">
 
-            <TextBlock TextWrapping="Wrap" Text="选择要控制的程序" FontSize="24"/>
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.SelectApp}" FontSize="24"/>
 
-            <RadioButton Margin="10,10,0,0" Content="保存的程序" x:Name="ExistingApplicationRadioButton"
+            <RadioButton Margin="10,10,0,0"
+                         Content="{localization:LocalisedText ActionDialog.ExistingApplications}" x:Name="ExistingApplicationRadioButton"
                          GroupName="1" FontSize="18" IsChecked="True" IsTabStop="False" Focusable="False" />
             <RadioButton x:Name="NewApplicationRadioButton"
                 Margin="0,-23,10,0"
-                         Content="添加新程序"
+                         Content="{localization:LocalisedText ActionDialog.NewApp}"
                          GroupName="1" FontSize="18" HorizontalAlignment="Right" IsTabStop="False" Focusable="False"/>
             <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
                 <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="选择已有程序" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="66" TextWrapping="Wrap" Text="分组" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.SelectExistingApp}" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="66"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.Group}" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14"/>
-                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配类型" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="38" TextWrapping="Wrap" Text="匹配文本" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchUsing}" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Canvas.Left="38"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchString}" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="115" FontSize="14" Width="193"/>
             </Canvas>
             <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="分组名称" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="15"/>
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.Group}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="15"/>
                 <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True"
                           FontSize="14" />
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配类型" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="52"/>
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchUsing}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="52"/>
                 <local:MatchUsingRadio x:Name="matchUsingRadio" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Height="26" Canvas.Left="103" Canvas.Top="47"/>
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="匹配文本" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="94"/>
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchString}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="94"/>
                 <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
                     <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="TwoWay">
                         <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay" />
                         <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
                     </MultiBinding>
                 </TextBox>
-                <CheckBox x:Name="chkRegex" Content="使用正则表达式" HorizontalAlignment="Left" VerticalAlignment="Top"
+                <CheckBox x:Name="chkRegex"
+                          Content="{localization:LocalisedText ActionDialog.UsingRegularExpression}" HorizontalAlignment="Left" VerticalAlignment="Top"
                           Grid.Row="1" Canvas.Left="10" Canvas.Top="207" FontSize="14"/>
-                <Button x:Name="cmdBrowse" Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}" Content="浏览文件" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold"
+                <Button x:Name="cmdBrowse"
+                        Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}"
+                        Content="{localization:LocalisedText ActionDialog.Browse}" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold"
                         Click="cmdBrowse_Click" FontSize="14"
                         Canvas.Left="246" Canvas.Top="202" />
                 <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
-                           Width="216" Canvas.Left="51" Canvas.Top="255"><Run Text="将左侧图标拖至想"/><Run Text="控制"/><Run Text="的程序窗口"/><Run Text="或点击右侧按钮选择运行中的程序"/></TextBlock>
+                           Width="216"
+                           Canvas.Left="51"
+                           Canvas.Top="255"
+                           Text="{localization:LocalisedText ActionDialog.ApplicationTools}" />
 
                 <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="36" Width="36" Canvas.Left="10" Canvas.Top="255"/>
                 <ToggleButton x:Name="btnExistingApplication"
@@ -137,13 +161,14 @@
             </Canvas>
         </StackPanel>
         <StackPanel Canvas.Left="356" Canvas.Top="10" Width="328">
-            <TextBlock Text="选择手势" FontSize="24"/>
+            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}" FontSize="24"/>
             <ComboBox x:Name="availableGesturesComboBox"
                           HorizontalContentAlignment="Left"
                            HorizontalAlignment="Center"
                           VerticalContentAlignment="Center"
                            Margin="10,5,5,5"
-                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True"  IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265" Canvas.Left="30" MaxWidth="300" Width="280">
+                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True"  IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265"
+                      MaxWidth="300" Width="280">
                 <!--<ComboBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
@@ -292,7 +317,7 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="选择想执行的动作" FontSize="24"/>
+            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}" FontSize="24"/>
             <StackPanel Margin="0,5" Orientation="Vertical">
                 <ComboBox x:Name="cmbPlugins"
         		Margin="10"
@@ -302,30 +327,33 @@
             </StackPanel>
         </StackPanel>
         <Button x:Name="cmdCancel"
-        	Content="取消"
+                Content="{localization:LocalisedText Common.Cancel}"
         	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="95" Canvas.Left="222" Canvas.Top="480"
                 Click="cmdCancel_Click" />
         <Button x:Name="cmdDone"
-        	Content="保存"
+                Content="{localization:LocalisedText Common.Save}"
         	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="cmdDone_Click" Width="95" Canvas.Left="388" Canvas.Top="480" IsDefault="True"  />
         <Canvas Height="58" Canvas.Top="408" Width="674" Canvas.Left="10">
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="程序名称" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
-            <TextBox x:Name="txtApplicationName" TextWrapping="Wrap" 
-            	controls:TextBoxHelper.Watermark="请输入要控制的程序名称" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80">
+            <TextBlock HorizontalAlignment="Left"
+                       TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.AppName}" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
+            <TextBox x:Name="txtApplicationName" TextWrapping="Wrap"
+                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.AppNameWatermark}" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80">
                 <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="TwoWay">
                     <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="TwoWay" />
                     <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="TwoWay"/>
                     <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
                 </MultiBinding>
             </TextBox>
-            <TextBlock TextWrapping="Wrap" Text="动作名称" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.ActionName}" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
             <TextBox x:Name="TxtActionName"
-            	controls:TextBoxHelper.Watermark="请输入动作名称"
+                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
             	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" MaxLines="3" MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox"
                   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton,Converter={StaticResource InterceptTouchInputCheckBoxConverter}, Mode=OneWay}"
-                  Content="屏蔽此程序触屏输入" Canvas.Left="10" Canvas.Top="385" FontSize="14">
+                  Content="{localization:LocalisedText ActionDialog.InterceptTouchInput}" Canvas.Left="10" Canvas.Top="385" FontSize="14">
             <CheckBox.IsChecked>
                 <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}" Mode="OneWay">
                     <Binding Path="SelectedItem" ElementName="cmbExistingApplication" Mode="OneWay" />
@@ -333,7 +361,8 @@
                 </MultiBinding>
             </CheckBox.IsChecked>
         </CheckBox>
-        <CheckBox x:Name="AllowSingleCheckBox" Content="允许单指手势" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
+        <CheckBox x:Name="AllowSingleCheckBox"
+                  Content="{localization:LocalisedText ActionDialog.AllowSingleFinger}" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
                   FontSize="14">
             <CheckBox.IsChecked>
                 <MultiBinding Converter="{StaticResource AllowSingleBoolConverter}" Mode="OneWay">

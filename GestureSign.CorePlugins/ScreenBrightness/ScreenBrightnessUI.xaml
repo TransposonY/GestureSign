@@ -2,15 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d" 
              d:DesignHeight="70" d:DesignWidth="320">
     <Grid>
         <ComboBox x:Name="cboMethod" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" Margin="29,22,0,22" SelectedIndex="0">
-            <ComboBoxItem Content="增大屏幕亮度"/>
-            <ComboBoxItem Content="减小屏幕亮度"/>
+            <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.IncreaseBrightness}"/>
+            <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.DecreaseBrightness}"/>
         </ComboBox>
-        <TextBlock HorizontalAlignment="Left" Margin="0,29,0,26" TextWrapping="Wrap" Text="每次" VerticalAlignment="Center"/>
 
         <TextBox x:Name="NumPercent" InputMethod.IsInputMethodEnabled="False" TextAlignment="Left"  HorizontalAlignment="Right" Margin="0,22,76,22" Width="71" KeyDown="NumPercent_KeyDown" TextChanged="NumPercent_TextChanged" />
         <TextBlock HorizontalAlignment="Left" Margin="269,28,0,0" TextWrapping="Wrap" Text="(1-100)" VerticalAlignment="Top"/>

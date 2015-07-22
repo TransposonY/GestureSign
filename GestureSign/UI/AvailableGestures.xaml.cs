@@ -10,6 +10,7 @@ using System.Windows.Media;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Gestures;
 using GestureSign.UI.Common;
 using MahApps.Metro.Controls.Dialogs;
@@ -48,17 +49,19 @@ namespace GestureSign.UI
 
         private async void btnDelGesture_Click(object sender, RoutedEventArgs e)
         {
-
             // Make sure at least one item is selected
-            if (lstAvailableGestures.SelectedItems.Count == 0)
-            {
-                await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "删除前需要选择至少一项手势", MessageDialogStyle.Affirmative,
-                   new MetroDialogSettings() { AffirmativeButtonText = "确定" });
-                //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            if (await UIHelper.GetParentWindow(this).ShowMessageAsync("删除确认", "确定删除这手势吗？",
-                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消", AnimateHide = false }) == MessageDialogResult.Affirmative)
+            if (lstAvailableGestures.SelectedItems.Count == 0) return;
+            if (await UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(
+                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.DeleteConfirmTitle"),
+                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.DeleteGestureConfirm"),
+                        MessageDialogStyle.AffirmativeAndNegative,
+                        new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            AnimateHide = false
+                        }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
                     GestureManager.Instance.DeleteGesture(listItem.Name);
@@ -69,16 +72,11 @@ namespace GestureSign.UI
                 GestureManager.Instance.SaveGestures();
             }
         }
-        private async void btnEditGesture_Click(object sender, RoutedEventArgs e)
+        private void btnEditGesture_Click(object sender, RoutedEventArgs e)
         {
             // Make sure at least one item is selected
-            if (lstAvailableGestures.SelectedItems.Count == 0)
-            {
-                await UIHelper.GetParentWindow(this).ShowMessageAsync("请选择", "编辑前需要选择至少一项手势", MessageDialogStyle.Affirmative,
-                   new MetroDialogSettings() { AffirmativeButtonText = "确定" });
-                //MessageBox.Show("You must select an item before deleting", "Please Select an Item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+            if (lstAvailableGestures.SelectedItems.Count == 0) return;
+
             GestureDefinition gd = new GestureDefinition(
                 GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
                 ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name, true);
@@ -88,16 +86,26 @@ namespace GestureSign.UI
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)
         {
             if (await UIHelper.GetParentWindow(this).ShowMessageAsync(
-                  "新建手势", "点击“确定”以打开学习模式。",
-                  MessageDialogStyle.AffirmativeAndNegative,
-                  new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" }) == MessageDialogResult.Affirmative)
+                LanguageDataManager.Instance.GetTextValue("Gesture.Messages.AddGestureTitle"),
+                LanguageDataManager.Instance.GetTextValue("Gesture.Messages.AddGesture"),
+                MessageDialogStyle.AffirmativeAndNegative,
+                new MetroDialogSettings()
+                {
+                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                    NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel")
+                }) == MessageDialogResult.Affirmative)
             {
                 NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofdGestures = new OpenFileDialog() { Filter = "手势文件|*.json;*.gest", Title = "导入手势数据文件", CheckFileExists = true };
+            OpenFileDialog ofdGestures = new OpenFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Gesture.GestureFile") + "|*.json;*.gest",
+                Title = LanguageDataManager.Instance.GetTextValue("Gesture.ImportGesture"),
+                CheckFileExists = true
+            };
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
@@ -116,7 +124,13 @@ namespace GestureSign.UI
                     {
                         if (GestureManager.Instance.GestureExists(newGesture.Name))
                         {
-                            var result = MessageBox.Show(String.Format("已经存在手势 \"{0}\" ，是否覆盖？", newGesture.Name), "已存在同名手势", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                            var result =
+                                MessageBox.Show(
+                                    String.Format(
+                                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ReplaceConfirm"),
+                                        newGesture.Name),
+                                    LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ReplaceConfirmTitle"),
+                                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                             if (result == MessageBoxResult.Yes)
                             {
                                 GestureManager.Instance.DeleteGesture(newGesture.Name);
@@ -137,13 +151,22 @@ namespace GestureSign.UI
                     GestureManager.Instance.SaveGestures();
                     BindGestures();
                 }
-                MessageBox.Show(String.Format("已添加 {0} 个手势", addcount), "导入完成");
+                MessageBox.Show(
+                    String.Format(LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
+                        addcount), LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"));
             }
         }
 
         private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog sfdGestures = new SaveFileDialog() { Filter = "手势文件|*.gest", Title = "导出手势数据文件", AddExtension = true, DefaultExt = "gest", ValidateNames = true };
+            SaveFileDialog sfdGestures = new SaveFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
+                Title = LanguageDataManager.Instance.GetTextValue("Gesture.ExportGestures"),
+                AddExtension = true,
+                DefaultExt = "gest",
+                ValidateNames = true
+            };
             if (sfdGestures.ShowDialog().Value)
             {
                 FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);

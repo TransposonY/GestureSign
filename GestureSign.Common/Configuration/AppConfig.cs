@@ -127,6 +127,18 @@ namespace GestureSign.Common.Configuration
                 SetValue("ShowBalloonTip", value);
             }
         }
+        public static string CultureName
+        {
+            get
+            {
+                return (string)GetValue("CultureName", "");
+            }
+            set
+            {
+                SetValue("CultureName", value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess

@@ -2,6 +2,7 @@
 using GestureSign.Common.Plugins;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.SendKeystrokes
 {
@@ -18,17 +19,17 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         public string Name
         {
-            get { return "发送文本"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Name"); }
         }
 
         public string Category
         {
-            get { return "键盘"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Category"); }
         }
 
         public string Description
         {
-            get { return "发送一段文本到程序"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Description"); }
         }
 
         public bool IsAction

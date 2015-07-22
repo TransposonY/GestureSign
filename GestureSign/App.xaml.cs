@@ -5,8 +5,10 @@ using System.Security.Principal;
 using System.Threading;
 using System.Windows;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.UI.Common;
 using MahApps.Metro;
@@ -30,11 +32,13 @@ namespace GestureSign
         {
             try
             {
+                LoadLanguageData();
+
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
                 if (!File.Exists(path))
                 {
-                    MessageBox.Show("未找到本软件组件\"GestureSignDaemon.exe\"，请重新下载或安装本软件.", "错误", MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                    MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
+                        LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                     Current.Shutdown();
                     return;
                 }
@@ -78,7 +82,7 @@ namespace GestureSign
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.ToString(), "错误", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown();
             }
 
@@ -94,7 +98,7 @@ namespace GestureSign
         private void Initialization()
         {
             bool createdNew;
-            mutex = new Mutex(true, "GestureSignSetting", out createdNew);
+            mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
             if (createdNew)
             {
 
@@ -109,13 +113,31 @@ namespace GestureSign
                     ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
                 }
 
-                NamedPipe.Instance.RunNamedPipeServer("GestureSignSetting", new MessageProcessor());
+                NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
             }
             else
             {
-                MessageBox.Show("本程序已经运行", "提示");
+                MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.AlreadyRunning"),
+                    LanguageDataManager.Instance.GetTextValue("Messages.AlreadyRunningTitle"));
                 Current.Shutdown();
             }
+        }
+
+        private void LoadLanguageData()
+        {
+            if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("ControlPanel"))
+            {
+                LanguageDataManager.Instance.LoadFromResource(GestureSign.Properties.Resources.en);
+            }
+
+            Application.Current.Resources.Remove("DefaultFlowDirection");
+            Current.Resources.Add("DefaultFlowDirection", LanguageDataManager.Instance.FlowDirection);
+            Application.Current.Resources.Remove("DefaultFont");
+            Current.Resources.Add("DefaultFont", LanguageDataManager.Instance.Font);
+            Application.Current.Resources.Remove("HeaderFontFamily");
+            Current.Resources.Add("HeaderFontFamily", LanguageDataManager.Instance.Font);
+            Application.Current.Resources.Remove("ContentFontFamily");
+            Current.Resources.Add("ContentFontFamily", LanguageDataManager.Instance.Font);
         }
     }
 }

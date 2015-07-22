@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GestureSign.UI"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540">
@@ -157,12 +158,12 @@
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="InterceptTouchInputMenuItem"
-                              Header="屏蔽此程序触屏输入"
+                              Header="{localization:LocalisedText ActionDialog.InterceptTouchInput}"
                               IsCheckable="True"
                               FontSize="16"
                               Click="InterceptTouchInputMenuItem_Click" />
                     <MenuItem x:Name="AllowSingleMenuItem"
-                              Header="允许单指手势"
+                              Header="{localization:LocalisedText ActionDialog.AllowSingleFinger}"
                               IsCheckable="True"
                               FontSize="16"
                               Click="AllowSingleMenuItem_Click" />
@@ -540,20 +541,20 @@
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="CopyActionMenuItem"
-                               Header="复制动作到.."
+                               Header="{localization:LocalisedText Action.CopyAction}"
                                FontSize="16" />
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem"
-                              Header="导入动作"
+                              Header="{localization:LocalisedText Action.ImportActions}"
                               Click="ImportActionMenuItem_Click"
                               FontSize="16" />
-                    <MenuItem Header="导出动作"
+                    <MenuItem Header="{localization:LocalisedText Action.ExportActions}"
                               FontSize="16">
                         <MenuItem x:Name="ExportAllActionMenuItem"
-                                  Header="导出所有动作"
+                                  Header="{localization:LocalisedText Action.ExportAllActions}"
                                   Click="ExportAllActionMenuItem_Click"
                                   FontSize="16"></MenuItem>
-                        <MenuItem Header="导出当前程序中已启用的动作"
+                        <MenuItem Header="{localization:LocalisedText Action.ExportSpecificActions}"
                                   Click="ExportEnableActionMenuItem_Click"
                                   FontSize="16"></MenuItem>
                     </MenuItem>

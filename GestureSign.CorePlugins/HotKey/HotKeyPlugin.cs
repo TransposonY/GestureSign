@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -37,7 +38,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public string Name
         {
-            get { return "发送快捷键"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Name"); }
         }
 
         public string Description
@@ -57,7 +58,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public string Category
         {
-            get { return "键盘"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Category"); }
         }
 
         public bool IsAction
@@ -174,11 +175,11 @@ namespace GestureSign.CorePlugins.HotKey
         private string GetDescription(HotKeySettings Settings)
         {
             if (Settings == null || Settings.KeyCode == null)
-                return "发送快捷键组合到程序";
+                return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Description");
 
             // Create string to store key combination and final output description
             string strKeyCombo = "";
-            const string strFormattedOutput = "发送快捷键 ({0}) 到程序";
+            string strFormattedOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.SpecificDescription");
 
             // Build output string
             if (Settings.Windows)

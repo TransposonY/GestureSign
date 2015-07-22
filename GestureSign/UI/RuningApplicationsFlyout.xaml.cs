@@ -30,10 +30,7 @@ namespace GestureSign.UI
     public partial class RuningApplicationsFlyout : Flyout
     {
         public static event EventHandler<ApplicationListViewItem> RuningAppSelectionChanged;
-        #region Public Instance Properties
-
-
-        #endregion
+       
         public RuningApplicationsFlyout()
         {
             InitializeComponent();

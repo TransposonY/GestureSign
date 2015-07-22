@@ -148,6 +148,10 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="LanguageData\en.xml" />
+    <Content Include="LanguageData\zh.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF "$(ConfigurationName)"=="uiAccessRelease" "$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /t "http://timestamp.verisign.com/scripts/timstamp.dll" $(TargetFileName)</PostBuildEvent>

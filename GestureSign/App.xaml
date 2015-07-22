@@ -7,9 +7,10 @@
     <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
         <ResourceDictionary>
-            <FontFamily x:Key="DefaultFont">Microsoft YaHei UI</FontFamily>
-            <FontFamily x:Key="HeaderFontFamily">Microsoft YaHei UI</FontFamily>
-            <FontFamily x:Key="ContentFontFamily">Microsoft YaHei UI</FontFamily>
+            <FlowDirection x:Key="DefaultFlowDirection">LeftToRight</FlowDirection>
+            <FontFamily x:Key="DefaultFont">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="HeaderFontFamily">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="ContentFontFamily">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
             <system:Double x:Key="HeaderFontSize">40</system:Double>
             <system:Double x:Key="SubHeaderFontSize">29.333</system:Double>
             <system:Double x:Key="WindowTitleFontSize">16</system:Double>

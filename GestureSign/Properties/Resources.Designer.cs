@@ -71,6 +71,23 @@ namespace GestureSign.Properties {
         }
         
         /// <summary>
+        ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;0.13&quot;&gt;
+        ///  &lt;Font&gt;Segoe UI, Lucida Sans Unicode, Verdana&lt;/Font&gt;
+        ///  &lt;IsRightToLeft&gt;False&lt;/IsRightToLeft&gt;
+        ///  &lt;Title&gt;GestureSign Control Panel&lt;/Title&gt;
+        ///  &lt;Messages&gt;
+        ///    &lt;AlreadyRunning&gt;GestureSign Control Panel is already running.&lt;/AlreadyRunning&gt;
+        ///    &lt;AlreadyRunningTitle&gt;Reminder&lt;/AlreadyRunningTitle&gt;
+        ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.&lt;/Cannot [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        /// </summary>
+        internal static string en {
+            get {
+                return ResourceManager.GetString("en", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似于 (Icon) 的 System.Drawing.Icon 类型的本地化资源。
         /// </summary>
         internal static System.Drawing.Icon normal {

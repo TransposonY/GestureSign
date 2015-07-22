@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using IWshRuntimeLibrary;
 using ManagedWinapi.Windows;
 using Microsoft.Win32.TaskScheduler;
@@ -33,9 +34,6 @@ namespace GestureSign.UI
             LoadSettings();
         }
 
-        #region Custom Events
-
-        #endregion
         private void LoadSettings()
         {
             try
@@ -60,10 +58,14 @@ namespace GestureSign.UI
                     chkInterceptTouchInput.IsChecked = chkInterceptTouchInput.IsEnabled = false;
                 }
 
+                LanguageComboBox.ItemsSource = LanguageDataManager.Instance.GetLanguageList("ControlPanel");
+                LanguageComboBox.SelectedValue = AppConfig.CultureName;
             }
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("无法载入设置", "发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Options.Messages.LoadSettingError"),
+                    LanguageDataManager.Instance.GetTextValue("Options.Messages.LoadSettingErrorTitle"), MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -110,7 +112,7 @@ namespace GestureSign.UI
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Change opacity display text with new value
-            OpacityText.Text = String.Format("不透明度: {0}%", GetAlphaPercentage(OpacitySlider.Value));
+            OpacityText.Text = String.Format(LanguageDataManager.Instance.GetTextValue("Options.Opacity"), GetAlphaPercentage(OpacitySlider.Value));
             AppConfig.Opacity = OpacitySlider.Value;
 
             AppConfig.Save();
@@ -133,11 +135,11 @@ namespace GestureSign.UI
                 VisualFeedbackExample.Stroke = new SolidColorBrush(
                     System.Windows.Media.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B));
 
-                VisualFeedbackWidthText.Text = String.Format("轨迹宽度 {0:0} px", VisualFeedbackWidthSlider.Value);
+                VisualFeedbackWidthText.Text = String.Format(LanguageDataManager.Instance.GetTextValue("Options.VisualFeedbackWidth"), VisualFeedbackWidthSlider.Value);
             }
             else
             {
-                VisualFeedbackWidthText.Text = "关闭";
+                VisualFeedbackWidthText.Text = LanguageDataManager.Instance.GetTextValue("Options.Off");
             }
 
         }
@@ -167,7 +169,7 @@ namespace GestureSign.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
@@ -245,7 +247,7 @@ namespace GestureSign.UI
                 }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
 
         }
 
@@ -278,7 +280,7 @@ namespace GestureSign.UI
                 }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
@@ -333,6 +335,13 @@ namespace GestureSign.UI
         private void ShowBalloonTipSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.ShowBalloonTip = false;
+            AppConfig.Save();
+        }
+
+        private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (LanguageComboBox.SelectedValue == null) return;
+            AppConfig.CultureName = (string)LanguageComboBox.SelectedValue;
             AppConfig.Save();
         }
 

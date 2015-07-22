@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using GestureSign.Common.Plugins;
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
@@ -20,12 +21,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-			get { return "临时禁用手势识别"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Name"); }
 		}
 
 		public string Description
 		{
-			get { return "停止接收下一次触屏数据"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Description"); }
 		}
 
 		public UserControl GUI

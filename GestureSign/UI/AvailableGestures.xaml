@@ -1,8 +1,9 @@
 ﻿<UserControl x:Class="GestureSign.UI.AvailableGestures"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="450">
     <UserControl.Resources>
@@ -80,8 +81,10 @@
         <ListBox x:Name="lstAvailableGestures"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstAvailableGestures_SelectionChanged" Margin="0">
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="ImportGestureMenuItem" Header="导入手势" Click="ImportGestureMenuItem_Click"  FontSize="16"/>
-                    <MenuItem x:Name="ExportGestureMenuItem" Header="导出所有手势" Click="ExportGestureMenuItem_Click"  FontSize="16"/>
+                    <MenuItem x:Name="ImportGestureMenuItem"
+                              Header="{localization:LocalisedText Gesture.ImportGesture}" Click="ImportGestureMenuItem_Click"  FontSize="16"/>
+                    <MenuItem x:Name="ExportGestureMenuItem"
+                              Header="{localization:LocalisedText Gesture.ExportGestures}" Click="ExportGestureMenuItem_Click"  FontSize="16"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
@@ -99,7 +102,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <Button x:Name="btnDelGesture"
-        		Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" IsEnabled="False" Click="btnDelGesture_Click" Grid.Row="1" Canvas.Left="390" Margin="0,0,10,10" >
+        		Style="{DynamicResource MetroCircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" IsEnabled="False" Click="btnDelGesture_Click" Grid.Row="1"
+                Margin="0,0,10,10" >
             <Rectangle Width="18"
         			Height="20"
         			Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -109,7 +113,8 @@
             </Rectangle>
         </Button>
         <Button x:Name="btnEditGesture"
-        		Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsEnabled="False" Click="btnEditGesture_Click" Grid.Row="1" Canvas.Left="335" Margin="0,0,65,10" 
+        		Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsEnabled="False" Click="btnEditGesture_Click" Grid.Row="1"
+                Margin="0,0,65,10" 
                         >
             <Rectangle Width="20"
         			Height="20"
@@ -121,7 +126,8 @@
             </Rectangle>
         </Button>
         <Button x:Name="btnAddGesture"
-        		Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="btnAddGesture_Click" Grid.Row="1" Canvas.Left="280" Margin="0,0,120,10" 
+        		Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="btnAddGesture_Click" Grid.Row="1"
+                Margin="0,0,120,10" 
                         >
             <Rectangle Width="20"
         			Height="20">

@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="200"
              d:DesignWidth="320">
     <Canvas>
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="窗口类名"
+                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.ClassName}"
                    VerticalAlignment="Top"
                    Canvas.Left="10" />
         <TextBox x:Name="ClassNameTextBox"
@@ -21,7 +22,7 @@
                  Width="300" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="窗口名"
+                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.WindowTitle}"
                    VerticalAlignment="Top"
                    Canvas.Left="10"
                    Canvas.Top="51" />
@@ -33,13 +34,13 @@
                  Canvas.Top="71"
                  Width="300" />
         <CheckBox x:Name="IsRegExCheckBox"
-                  Content="使用正则表达式"
+                  Content="{localization:LocalisedText CorePlugins.ActivateWindow.UsingRegularExpression}"
                   HorizontalAlignment="Left"
                   Canvas.Left="10"
                   Canvas.Top="104" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="等待窗口时间"
+                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.Timeout}"
                    VerticalAlignment="Top"
                    Canvas.Left="10"
                    Canvas.Top="142" />
@@ -56,7 +57,7 @@
                  Canvas.Top="137" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="毫秒"
+                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.Millisecond}"
                    VerticalAlignment="Top"
                    Canvas.Left="183"
                    Canvas.Top="142" />

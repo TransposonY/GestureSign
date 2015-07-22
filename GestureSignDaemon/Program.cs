@@ -5,6 +5,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSignDaemon.Input;
 
@@ -26,6 +27,12 @@ namespace GestureSignDaemon
                 {
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
+
+                    if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("Daemon"))
+                    {
+                        LanguageDataManager.Instance.LoadFromResource(Properties.Resources.en);
+                    }
+
                     TouchCapture.Instance.Load();
                     surface = new Surface();
                     TouchCapture.Instance.EnableTouchCapture();
@@ -51,11 +58,14 @@ namespace GestureSignDaemon
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(e.ToString(), LanguageDataManager.Instance.GetTextValue("Messages.Error"),
+                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                     if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
-                        MessageBox.Show("未检测到触摸屏设备，本软件或无法正常使用！", "错误");
+                        MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.TouchscreenNotFound"),
+                            LanguageDataManager.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
+                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         //return;
                     }
                     Application.Run();

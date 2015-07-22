@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
 
 namespace GestureSign.UI
@@ -107,7 +108,12 @@ namespace GestureSign.UI
 
         private void ImportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog() { Filter = "忽略程序文件|*.json;*.ign", Title = "导入忽略程序定义文件", CheckFileExists = true };
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.json;*.ign",
+                Title = LanguageDataManager.Instance.GetTextValue("Ignored.ImportIgnoredApps"),
+                CheckFileExists = true
+            };
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
@@ -122,9 +128,17 @@ namespace GestureSign.UI
                             if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
                             {
                                 var existingApp = ApplicationManager.Instance.Applications.Find(a => a is IgnoredApplication && a.Name == newApp.Name);
-                                DataConverter dc = new DataConverter();
+                                MatchUsingToStringConverter dc = new MatchUsingToStringConverter();
 
-                                var result = MessageBox.Show(String.Format("{0} 已经存在 \"{1}\" ，是否覆盖？", dc.Convert(existingApp.MatchUsing, null, null, null), existingApp.MatchString), "已存在同名程序", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                var result =
+                                    MessageBox.Show(
+                                        String.Format(
+                                            LanguageDataManager.Instance.GetTextValue(
+                                                "Ignored.Messages.ReplaceConfirm"),
+                                            dc.Convert(existingApp.MatchUsing, null, null, null),
+                                            existingApp.MatchString),
+                                        LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ReplaceConfirmTitle"),
+                                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                 if (result == MessageBoxResult.Yes)
                                 {
                                     ApplicationManager.Instance.RemoveIgnoredApplications(newApp.Name);
@@ -146,13 +160,23 @@ namespace GestureSign.UI
                     BindIgnoredApplications();
                     ApplicationManager.Instance.SaveApplications();
                 }
-                MessageBox.Show(String.Format("已添加 {0} 个程序", addcount), "导入完成");
+                MessageBox.Show(
+                    String.Format(LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ImportComplete"),
+                        addcount),
+                    LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ImportCompleteTitle"));
             }
         }
 
         private void ExportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog() { Filter = "忽略程序文件|*.ign", Title = "导出忽略程序定义文件", AddExtension = true, DefaultExt = "ign", ValidateNames = true };
+            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = LanguageDataManager.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
+                Title = LanguageDataManager.Instance.GetTextValue("Ignored.ExportIgnoredApps"),
+                AddExtension = true,
+                DefaultExt = "ign",
+                ValidateNames = true
+            };
             if (sfdApplications.ShowDialog().Value)
             {
                 FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
@@ -160,52 +184,22 @@ namespace GestureSign.UI
         }
     }
 
-    [ValueConversion(typeof(MatchUsing), typeof(string))]
-    public class DataConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            MatchUsing mu = (MatchUsing)value;
-            switch (mu)
-            {
-                case MatchUsing.All:
-                    return "所有程序";
-                case MatchUsing.ExecutableFilename:
-                    return "匹配类型： 文件名";
-                case MatchUsing.WindowClass:
-                    return "匹配类型： 窗口类名称";
-                case MatchUsing.WindowTitle:
-                    return "匹配类型： 窗口标题";
-                default: return DependencyProperty.UnsetValue;
-            }
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return DependencyProperty.UnsetValue;
-
-        }
-    }
     [ValueConversion(typeof(bool), typeof(string))]
     public class BoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool v = (bool)value;
-            if (v) return "是";
-            else return "否";
+            if (v) return LanguageDataManager.Instance.GetTextValue("Common.Yes");
+            else return LanguageDataManager.Instance.GetTextValue("Common.No");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             string strValue = value as string;
-            switch (strValue)
-            {
-                case "是": return true;
-                case "否": return false;
-                default: return DependencyProperty.UnsetValue;
-            }
-
+            if (strValue == LanguageDataManager.Instance.GetTextValue("Common.Yes")) return true;
+            return false;
         }
     }
 }

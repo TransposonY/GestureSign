@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
 
@@ -36,12 +37,12 @@ namespace GestureSign.CorePlugins.ActivateWindow
 
         public string Name
         {
-            get { return "激活窗口"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ActivateWindow.Name"); }
         }
 
         public string Description
         {
-            get { return "使指定窗口前置"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ActivateWindow.Description"); }
         }
 
         public UserControl GUI

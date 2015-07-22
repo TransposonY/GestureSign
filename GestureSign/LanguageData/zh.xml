@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Language DisplayName="中文" Culture="zh-CN" Version="0.13">
+  <Font>Microsoft YaHei UI</Font>
+  <IsRightToLeft>False</IsRightToLeft>
+  <Title>设置</Title>
+  <Messages>
+    <AlreadyRunning>本程序已经运行</AlreadyRunning>
+    <AlreadyRunningTitle>提示</AlreadyRunningTitle>
+    <CannotFindDaemonMessage>未找到组件GestureSignDaemon.exe，请重新下载或安装本软件。</CannotFindDaemonMessage>
+    <Error>错误</Error>
+  </Messages>
+  <Common>
+    <AllApplications>所有程序</AllApplications>
+    <Cancel>取消</Cancel>
+    <FileName>文件名</FileName>
+    <No>否</No>
+    <OK>确定</OK>
+    <Save>保存</Save>
+    <WindowClass>窗口类</WindowClass>
+    <WindowTitle>窗口标题</WindowTitle>
+    <Yes>是</Yes>
+  </Common>
+  <About>
+    <Header>关于</Header>
+    <Help>打开帮助页面</Help>
+    <HelpPageUrl>http://git.oschina.net/TransY/GestureSign/wikis/home</HelpPageUrl>
+    <Version>版本：  </Version>
+    <ReleaseDate>发布时间：  </ReleaseDate>
+    <Information>作者:   TransposonY
+如有发现bug或建议，欢迎反馈：
+553078206@qq.com
+
+项目主页:
+OSC:
+http://git.oschina.net/TransY/GestureSign
+    </Information>
+  </About>
+  <ActionDialog>
+    <AddActionTitle>添加动作</AddActionTitle>
+    <ActionName>动作名称</ActionName>
+    <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
+    <AllowSingleFinger>允许单指手势</AllowSingleFinger>
+    <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
+    <ApplicationTools>将左侧图标拖至想控制的程序窗口或点击右侧按钮选择运行中的程序</ApplicationTools>
+    <AppName>程序名称</AppName>
+    <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
+    <Browse>浏览..</Browse>
+    <EditActionTitle>编辑动作</EditActionTitle>
+    <ExecutableFile>可执行文件</ExecutableFile>
+    <ExistingApplications>保存的程序</ExistingApplications>
+    <Group>分组</Group>
+    <Icon>图标</Icon>
+    <InterceptTouchInput>屏蔽此程序触屏输入</InterceptTouchInput>
+    <MatchUsing>匹配类型</MatchUsing>
+    <MatchString>匹配文本</MatchString>
+    <NewApp>添加新程序</NewApp>
+    <SelectApp>选择要控制的程序</SelectApp>
+    <SelectCommand>选择想执行的命令</SelectCommand>
+    <SelectExistingApp>选择已有程序</SelectExistingApp>
+    <SelectGesture>选择手势</SelectGesture>
+    <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
+    <Messages>
+      <ActionExistsTitle>此动作已存在</ActionExistsTitle>
+      <ActionExists>动作 “{0}”已经定义给 {1}</ActionExists>
+      <ActionExistsInGlobal>在全局动作中已存在 “{0}” </ActionExistsInGlobal>
+      <NoApplicationNameTitle>无程序名</NoApplicationNameTitle>
+      <NoApplicationName>请定义程序名</NoApplicationName>
+      <AppExistsTitle>该程序名已经存在</AppExistsTitle>
+      <AppExists>程序名称已经存在，请输入其他名字</AppExists>
+      <NoMatchStringTitle>无匹配字段</NoMatchStringTitle>
+      <NoMatchString>请先定义一个匹配字段</NoMatchString>
+      <RegularExpressionsErrorTitle>格式错误</RegularExpressionsErrorTitle>
+      <RegularExpressionsError>正则表达式格式错误，请重新检查</RegularExpressionsError>
+      <NoSelectedGestureTitle>手势未定义</NoSelectedGestureTitle>
+      <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
+      <NoActionNameTitle>无动作名</NoActionNameTitle>
+      <NoActionName>未填写动作名称，请先为该动作命名</NoActionName>
+    </Messages>
+  </ActionDialog>
+  <Action>
+    <Header>动作</Header>
+    <ActionFile>动作文件</ActionFile>
+    <ActionCount>{0}  ( {1}个动作 )</ActionCount>
+    <AppCount>{0} {1}程序</AppCount>
+    <NotGroupedAppCount>未分组 {0}程序</NotGroupedAppCount>
+    <ImportActions>导入动作文件</ImportActions>
+    <ExportActions>导出动作文件</ExportActions>
+    <ExportSpecificActions>导出当前程序中已启用的动作</ExportSpecificActions>
+    <CopyAction>复制动作到..</CopyAction>
+    <ExportAllActions>导出所有动作</ExportAllActions>
+    <Messages>
+      <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
+      <DeleteActionConfirm>确定要删除这个动作吗？</DeleteActionConfirm>
+      <DeleteAppConfirm>确定删除该程序吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
+      <NoGestureTitle>无可用手势</NoGestureTitle>
+      <NoGesture>添加动作前需要先添加至少一项手势</NoGesture>
+      <NoAssociationAction>无关联动作</NoAssociationAction>
+      <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
+      <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
+      <ImportCompleteTitle>导入完成</ImportCompleteTitle>
+      <ImportComplete>已添加 {0} 个动作</ImportComplete>
+    </Messages>
+  </Action>
+  <Gesture>
+    <Header>手势</Header>
+    <GestureFile>手势文件</GestureFile>
+    <ImportGesture>导入手势文件</ImportGesture>
+    <ExportGestures>导出手势数据</ExportGestures>
+    <Messages>
+      <DeleteConfirmTitle>删除手势</DeleteConfirmTitle>
+      <DeleteGestureConfirm>确定删除这手势吗？</DeleteGestureConfirm>
+      <AddGestureTitle>添加手势</AddGestureTitle>
+      <AddGesture>是否打开“学习模式”以便添加手势？</AddGesture>
+      <ReplaceConfirmTitle>已存在同名手势</ReplaceConfirmTitle>
+      <ReplaceConfirm>已经存在手势 {0} ，是否覆盖？</ReplaceConfirm>
+      <ImportCompleteTitle>导入完成</ImportCompleteTitle>
+      <ImportComplete>已添加 {0} 个手势</ImportComplete>
+    </Messages>
+  </Gesture>
+  <EditApplicationFlyout>
+    <EditApplicationTitle>修改程序</EditApplicationTitle>
+    <AddIgnoredAppTitle>添加忽略的程序</AddIgnoredAppTitle>
+    <ShowRunningApplications>选择运行中的窗口..</ShowRunningApplications>
+    <AppName>程序名称</AppName>
+    <LocateWindow>定位窗口</LocateWindow>
+    <LocateWindowTip>将右侧图标拖至目标程序窗口上，然后释放鼠标按键</LocateWindowTip>
+    <UsingRegularExpression>正则表达式</UsingRegularExpression>
+    <InterceptTouchInput>屏蔽触屏</InterceptTouchInput>
+    <AllowSingleFinger>允许单指</AllowSingleFinger>
+    <Messages>
+      <EmptyStringTitle>字段为空</EmptyStringTitle>
+      <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
+      <FormatErrorTitle>格式错误</FormatErrorTitle>
+      <FormatError>正则表达式格式错误，请重新检查</FormatError>
+      <IgnoredAppExistsTitle>该忽略程序已存在</IgnoredAppExistsTitle>
+      <IgnoredAppExists>该忽略程序已存在，请重新输入匹配字段</IgnoredAppExists>
+    </Messages>
+  </EditApplicationFlyout>
+  <RuningApplicationsFlyout>
+    <Title>选择运行中的窗口</Title>
+  </RuningApplicationsFlyout>
+  <GestureDefinition>
+    <Title>保存手势</Title>
+    <Rename>重命名</Rename>
+    <ExistingGesture>
+      已存在以下相似手势：
+      点击“新建动作”或“保存”覆盖同名旧手势或输入其他手势名称，另存新手势
+    </ExistingGesture>
+    <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
+    <NewAction>新建动作</NewAction>
+    <Messages>
+      <GestureExistsTitle>手势已存在</GestureExistsTitle>
+      <GestureExists>输入的手势名称已存在，请重新输入一个手势名称</GestureExists>
+    </Messages>
+  </GestureDefinition>
+  <Ignored>
+    <Header>忽略</Header>
+    <IgnoredAppFile>忽略程序文件</IgnoredAppFile>
+    <ImportIgnoredApps>导入忽略程序</ImportIgnoredApps>
+    <ExportIgnoredApps>导出忽略程序</ExportIgnoredApps>
+    <Count>(共{0}条)</Count>
+    <Enable>启用</Enable>
+    <Messages>
+      <ReplaceConfirmTitle>已存在</ReplaceConfirmTitle>
+      <ReplaceConfirm> {0} 已经存在 {1} ，是否覆盖？</ReplaceConfirm>
+      <ImportCompleteTitle>导入完成</ImportCompleteTitle>
+      <ImportComplete>已添加 {0} 个程序</ImportComplete>
+    </Messages>
+  </Ignored>
+  <Options>
+    <Header>选项</Header>
+    <Language>语言（重启生效）</Language>
+    <Opacity>不透明度 {0}%</Opacity>
+    <VisualFeedbackWidth>轨迹宽度 {0:0} px</VisualFeedbackWidth>
+    <Off>关闭</Off>
+    <PickColor>选择颜色..</PickColor>
+    <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
+    <OpenConfigFolder>打开设置文件文件夹</OpenConfigFolder>
+    <WindowsStartup>
+      <Header>开机启动</Header>
+      <OnLabel>开</OnLabel>
+      <OffLabel>关</OffLabel>
+    </WindowsStartup>
+    <ShowTrayIconSwitch>
+      <Header>任务栏图标</Header>
+      <OnLabel>显示</OnLabel>
+      <OffLabel>隐藏</OffLabel>
+    </ShowTrayIconSwitch>
+    <ShowBalloonTipSwitch>
+      <Header>启动时气泡提示</Header>
+      <OnLabel>开</OnLabel>
+      <OffLabel>关</OffLabel>
+    </ShowBalloonTipSwitch>
+    <OrderByLocation>
+      <Header>手指识别顺序</Header>
+      <OnLabel>按左右位置顺序</OnLabel>
+      <OffLabel>按接触先后顺序</OffLabel>
+    </OrderByLocation>
+    <InterceptTouchInput>
+      <Header>屏蔽触摸输入功能（安装版适用）</Header>
+      <OnLabel>开</OnLabel>
+      <OffLabel>关</OffLabel>
+    </InterceptTouchInput>
+    <Messages>
+      <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
+      <LoadSettingError>无法载入设置</LoadSettingError>
+    </Messages>
+  </Options>
+  <CorePlugins>
+    <ActivateWindow>
+      <Name>激活窗口</Name>
+      <Description>使指定窗口前置</Description>
+      <ClassName>窗口类名</ClassName>
+      <WindowTitle>窗口名</WindowTitle>
+      <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
+      <Timeout>等待窗口时间</Timeout>
+      <Millisecond>毫秒</Millisecond>
+    </ActivateWindow>
+    <Delay>
+      <Name>延时</Name>
+      <Description>延迟 {0} 毫秒</Description>
+      <Millisecond>毫秒</Millisecond>
+    </Delay>
+    <HotKey>
+      <Name>发送快捷键</Name>
+      <Category>键盘</Category>
+      <Description>发送快捷键组合到程序</Description>
+      <SpecificDescription>发送快捷键 ({0}) 到程序</SpecificDescription>
+      <Tip>快捷键（请用键盘录入快捷键）</Tip>
+      <Reset>重置</Reset>
+    </HotKey>
+    <KeyDownKeyUp>
+      <Name>按下或松开按键</Name>
+      <Category>键盘</Category>
+      <Description>
+        <KeyDown>按下 ({0})</KeyDown>
+        <KeyUp>松开 ({0})</KeyUp>
+      </Description>
+      <KeyDown>按下按键</KeyDown>
+      <KeyUp>松开按键</KeyUp>
+      <Tip>请用键盘录入按键</Tip>
+      <Reset>重置</Reset>
+    </KeyDownKeyUp>
+    <MouseActions>
+      <Name>鼠标动作</Name>
+      <Category>鼠标</Category>
+      <MouseActions>
+        <LeftButtonClick>单击左键</LeftButtonClick>
+        <LeftButtonDoubleClick>双击左键</LeftButtonDoubleClick>
+        <LeftButtonDown>按住左键</LeftButtonDown>
+        <LeftButtonUp>释放左键</LeftButtonUp>
+        <RightButtonClick>单击右键</RightButtonClick>
+        <RightButtonDoubleClick>双击右键</RightButtonDoubleClick>
+        <RightButtonDown>按住右键</RightButtonDown>
+        <RightButtonUp>释放右键</RightButtonUp>
+        <VerticalScroll>垂直滚动</VerticalScroll>
+        <HorizontalScroll>水平滚动</HorizontalScroll>
+        <MoveMouseTo>移动鼠标至指定坐标</MoveMouseTo>
+        <MoveMouseBy>将鼠标位移一段距离</MoveMouseBy>
+      </MouseActions>
+      <ClickPositions>
+        <FirstDown>第一根手指落点</FirstDown>
+        <FirstUp>第一根手指抬起点</FirstUp>
+        <LastDown>最后手指落点</LastDown>
+        <LastUp>最后手指抬起点</LastUp>
+        <Original>不移动鼠标位置</Original>
+      </ClickPositions>
+      <Description>
+        <Right>右</Right>
+        <Left>左</Left>
+        <Up>上</Up>
+        <Down>下</Down>
+        <HorizontalScroll>水平向{0}滚动{1}单位</HorizontalScroll>
+        <VerticalScroll>垂直向{0}滚动{1}单位</VerticalScroll>
+        <MoveMouseBy>鼠标位移</MoveMouseBy>
+        <MoveMouseTo>鼠标移动至</MoveMouseTo>
+      </Description>
+      <SelectAction>选择鼠标动作</SelectAction>
+      <ClickPosition>鼠标点击位置</ClickPosition>
+      <ScrollAmountTip>输入滚动数  正数向右/上滚动 负数向左/下滚动</ScrollAmountTip>
+    </MouseActions>
+    <RunCommand>
+      <Name>命令或程序</Name>
+      <Description>运行指定的命令或程序</Description>
+      <Category>运行</Category>
+      <Command>命令</Command>
+      <Browse>浏览..</Browse>
+      <ShowCMD>显示CMD窗口</ShowCMD>
+    </RunCommand>
+    <ScreenBrightness>
+      <Name>调整屏幕亮度</Name>
+      <Category>系统</Category>
+      <IncreaseBrightness>增大亮度</IncreaseBrightness>
+      <DecreaseBrightness>减小亮度</DecreaseBrightness>
+    </ScreenBrightness>
+    <SendKeystrokes>
+      <Name>发送文本</Name>
+      <Category>键盘</Category>
+      <Description>发送一段文本或命令到程序</Description>
+      <!--Escapes a literal string-->
+      <EscapesString>转义已输入的文本</EscapesString>
+      <Tip>适用标准的SendKeys语法</Tip>
+    </SendKeystrokes>
+    <TouchKeyboard>
+      <Name>触摸键盘</Name>
+      <Category>键盘</Category>
+      <Show>显示键盘</Show>
+      <Hide>隐藏键盘</Hide>
+      <Tip>提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度</Tip>
+    </TouchKeyboard>
+    <Volume>
+      <Name>调整音量</Name>
+      <Category>系统</Category>
+      <Increase>增大音量</Increase>
+      <Decrease>减小音量</Decrease>
+      <Mute>静音</Mute>
+    </Volume>
+    <DefaultBrowser>
+      <Name>打开浏览器</Name>
+      <Description>打开本机默认设置的浏览器</Description>
+      <Category>网络</Category>
+    </DefaultBrowser>
+    <DisableGestures>
+      <Name>关闭手势</Name>
+      <Description>停止手势识别功能</Description>
+    </DisableGestures>
+    <MaximizeRestore>
+      <Name>最大化或还原</Name>
+      <Description>最大化或还原当前窗口</Description>
+    </MaximizeRestore>
+    <Minimize>
+      <Name>最小化</Name>
+      <Description>最小化当前窗口</Description>
+    </Minimize>
+    <NextApplication>
+      <Name>下一窗口</Name>
+      <Description>切换到下一个窗口 (相当于 Alt + Tab)</Description>
+    </NextApplication>
+    <PreviousApplication>
+      <Name>上一窗口</Name>
+      <Description>切换到上一窗口 (相当于 Shift + Alt + Tab)</Description>
+    </PreviousApplication>
+    <TemporarilyDisable>
+      <Name>临时禁用手势识别</Name>
+      <Description>停止接收下一次触屏数据</Description>
+    </TemporarilyDisable>
+  </CorePlugins>
+</Language>

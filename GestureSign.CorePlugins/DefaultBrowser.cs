@@ -7,121 +7,122 @@ using GestureSign.Common.Plugins;
 using Microsoft.Win32;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
-	public class DefaultBrowser : IPlugin
-	{
-		#region Private Variables
+    public class DefaultBrowser : IPlugin
+    {
+        #region Private Variables
 
-		IHostControl _HostControl = null;
+        IHostControl _HostControl = null;
 
-		#endregion
+        #endregion
 
-		#region IAction Properties
+        #region IAction Properties
 
-		public string Name
-		{
-			get { return "打开浏览器"; }
-		}
+        public string Name
+        {
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Name"); }
+        }
 
-		public string Description
-		{
-			get { return "打开本机默认设置的浏览器"; }
-		}
+        public string Description
+        {
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Description"); }
+        }
 
-		public UserControl GUI
-		{
-			get { return null; }
-		}
+        public UserControl GUI
+        {
+            get { return null; }
+        }
 
-		public string Category
-		{
-			get { return "网络"; }
-		}
+        public string Category
+        {
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Category"); }
+        }
 
-		public bool IsAction
-		{
-			get { return true; }
-		}
+        public bool IsAction
+        {
+            get { return true; }
+        }
 
-		#endregion
+        #endregion
 
-		#region IAction Methods
+        #region IAction Methods
 
-		public void Initialize()
-		{
+        public void Initialize()
+        {
 
-		}
+        }
 
-		public bool Gestured(PointInfo ActionPoint)
-		{
-			// Extract default browser path from registery
-			string defaultBrowserPath = GetDefaultBrowserPath();
+        public bool Gestured(PointInfo ActionPoint)
+        {
+            // Extract default browser path from registery
+            string defaultBrowserPath = GetDefaultBrowserPath();
 
-			// If path is incorrect or empty and exception will be thrown, catch it and return false
-			try { Process.Start(defaultBrowserPath); }
-			catch { return false; }
+            // If path is incorrect or empty and exception will be thrown, catch it and return false
+            try { Process.Start(defaultBrowserPath); }
+            catch { return false; }
 
-			return true;
-		}
-
-		public bool Deserialize(string SerializedData)
-		{
             return true;
-			// Nothing to deserialize
-		}
+        }
 
-		public string Serialize()
-		{
-			// Nothing to serialize, send empty string
-			return "";
-		}
+        public bool Deserialize(string SerializedData)
+        {
+            return true;
+            // Nothing to deserialize
+        }
 
-		#endregion
+        public string Serialize()
+        {
+            // Nothing to serialize, send empty string
+            return "";
+        }
 
-		#region Private Methods
+        #endregion
 
-		/// <summary>
-		/// Reads path of default browser from registry
-		/// </summary>
-		/// <returns>Rooted path to the browser</returns>
-		private string GetDefaultBrowserPath()
-		{
-			string key = @"HTTP\shell\open\command";
-			RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(key, false);
+        #region Private Methods
 
-			// Ensure we found a registry key
-			if (registryKey == null)
-				return "";
+        /// <summary>
+        /// Reads path of default browser from registry
+        /// </summary>
+        /// <returns>Rooted path to the browser</returns>
+        private string GetDefaultBrowserPath()
+        {
+            string key = @"HTTP\shell\open\command";
+            RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(key, false);
 
-			// Get default browser path
-			string registryValue = (string)registryKey.GetValue(null, null) ?? "";
-			
-			// Make sure we got a value back
-			if (String.IsNullOrEmpty(registryValue))
-				return "";
+            // Ensure we found a registry key
+            if (registryKey == null)
+                return "";
 
-			// We have a value, seperate parts
-			string[] pathPieces = registryValue.Split('"');
+            // Get default browser path
+            string registryValue = (string)registryKey.GetValue(null, null) ?? "";
 
-			// Do we have the peice we need
-			if (pathPieces.Count() >= 2)
-				return pathPieces[1];
-			else
-				return "";
-		}
+            // Make sure we got a value back
+            if (String.IsNullOrEmpty(registryValue))
+                return "";
 
-		#endregion
+            // We have a value, seperate parts
+            string[] pathPieces = registryValue.Split('"');
 
-		#region Host Control
+            // Do we have the peice we need
+            if (pathPieces.Count() >= 2)
+                return pathPieces[1];
+            else
+                return "";
+        }
 
-		public IHostControl HostControl
-		{
-			get { return _HostControl; }
-			set { _HostControl = value; }
-		}
+        #endregion
 
-		#endregion
-	}
+        #region Host Control
+
+        public IHostControl HostControl
+        {
+            get { return _HostControl; }
+            set { _HostControl = value; }
+        }
+
+        #endregion
+    }
 }

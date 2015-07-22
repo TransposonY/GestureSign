@@ -2,6 +2,7 @@
 using GestureSign.Common.Plugins;
 
 using System.Windows.Controls;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.Delay
 {
@@ -18,7 +19,7 @@ namespace GestureSign.CorePlugins.Delay
 
         public string Name
         {
-            get { return "延时"; }
+            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Delay.Name"); }
         }
 
         public string Category
@@ -28,7 +29,7 @@ namespace GestureSign.CorePlugins.Delay
 
         public string Description
         {
-            get { return String.Format("延迟 {0} 毫秒", _timeout); }
+            get { return String.Format(LanguageDataManager.Instance.GetTextValue("CorePlugins.Delay.Description"), _timeout); }
         }
 
         public bool IsAction
