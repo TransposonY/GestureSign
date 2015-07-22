@@ -161,8 +161,6 @@ http://git.oschina.net/TransY/GestureSign
     <Count>(共{0}条)</Count>
     <Enable>启用</Enable>
     <Messages>
-      <ReplaceConfirmTitle>已存在</ReplaceConfirmTitle>
-      <ReplaceConfirm> {0} 已经存在 {1} ，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
       <ImportComplete>已添加 {0} 个程序</ImportComplete>
     </Messages>

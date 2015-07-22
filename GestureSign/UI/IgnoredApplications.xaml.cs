@@ -123,35 +123,11 @@ namespace GestureSign.UI
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
-                        if (newApp is IgnoredApplication)
+                        if (newApp is IgnoredApplication &&
+                            !ApplicationManager.Instance.ApplicationExists(newApp.Name))
                         {
-                            if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
-                            {
-                                var existingApp = ApplicationManager.Instance.Applications.Find(a => a is IgnoredApplication && a.Name == newApp.Name);
-                                MatchUsingToStringConverter dc = new MatchUsingToStringConverter();
-
-                                var result =
-                                    MessageBox.Show(
-                                        String.Format(
-                                            LanguageDataManager.Instance.GetTextValue(
-                                                "Ignored.Messages.ReplaceConfirm"),
-                                            dc.Convert(existingApp.MatchUsing, null, null, null),
-                                            existingApp.MatchString),
-                                        LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ReplaceConfirmTitle"),
-                                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                                if (result == MessageBoxResult.Yes)
-                                {
-                                    ApplicationManager.Instance.RemoveIgnoredApplications(newApp.Name);
-                                    ApplicationManager.Instance.AddApplication(newApp);
-                                    addcount++;
-                                }
-                                else if (result == MessageBoxResult.Cancel) goto End;
-                            }
-                            else
-                            {
-                                ApplicationManager.Instance.AddApplication(newApp);
-                                addcount++;
-                            }
+                            ApplicationManager.Instance.AddApplication(newApp);
+                            addcount++;
                         }
                     }
             End:

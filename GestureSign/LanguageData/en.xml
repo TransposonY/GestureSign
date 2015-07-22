@@ -159,8 +159,6 @@ Click New Action or Save to replace existing gesture,or enter different name
     <Count>  ( {0} Ignored Applications )</Count>
     <Enable>Enable</Enable>
     <Messages>
-      <ReplaceConfirmTitle>已存在</ReplaceConfirmTitle>
-      <ReplaceConfirm> {0} 已经存在 {1} ，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
       <ImportComplete>{0} Ignored Applications have been added</ImportComplete>
     </Messages>
