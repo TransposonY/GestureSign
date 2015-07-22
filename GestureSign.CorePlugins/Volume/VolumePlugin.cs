@@ -12,7 +12,7 @@ namespace GestureSign.CorePlugins.Volume
         #region Private Variables
 
         private Volume _GUI = null;
-        private VolumeSettings _Settings = null;
+        private VolumeSettings _settings = null;
 
         private enum Method
         {
@@ -27,12 +27,12 @@ namespace GestureSign.CorePlugins.Volume
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Name"); }
         }
 
         public string Description
         {
-            get { return GetDescription(_Settings); }
+            get { return GetDescription(_settings); }
         }
 
         public UserControl GUI
@@ -53,7 +53,7 @@ namespace GestureSign.CorePlugins.Volume
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Category"); }
         }
 
         public bool IsAction
@@ -72,23 +72,23 @@ namespace GestureSign.CorePlugins.Volume
 
         public bool Gestured(PointInfo ActionPoint)
         {
-            return AdjustVolume(_Settings);
+            return AdjustVolume(_settings);
         }
 
         public bool Deserialize(string SerializedData)
         {
-            return PluginHelper.DeserializeSettings(SerializedData, out _Settings);
+            return PluginHelper.DeserializeSettings(SerializedData, out _settings);
         }
 
         public string Serialize()
         {
             if (_GUI != null)
-                _Settings = _GUI.Settings;
+                _settings = _GUI.Settings;
 
-            if (_Settings == null)
-                _Settings = new VolumeSettings();
+            if (_settings == null)
+                _settings = new VolumeSettings();
 
-            return PluginHelper.SerializeSettings(_Settings);
+            return PluginHelper.SerializeSettings(_settings);
         }
 
         #endregion
@@ -101,7 +101,7 @@ namespace GestureSign.CorePlugins.Volume
 
             newGUI.Loaded += (o, e) =>
             {
-                TypedGUI.Settings = _Settings;
+                TypedGUI.Settings = _settings;
                 TypedGUI.HostControl = HostControl;
             };
 
@@ -111,7 +111,7 @@ namespace GestureSign.CorePlugins.Volume
         private string GetDescription(VolumeSettings Settings)
         {
             if (Settings == null)
-                return LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Name");
+                return LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Name");
 
             // Create string to store final output description
             string strOutput = "";
@@ -120,13 +120,13 @@ namespace GestureSign.CorePlugins.Volume
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Increase") + " by " + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Increase") + " by " + Settings.Percent;
                     break;
                 case 1:
-                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Decrease") + " by " + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Decrease") + " by " + Settings.Percent;
                     break;
                 case 2:
-                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.Volume.Mute");
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Mute");
                     break;
             }
 
@@ -141,7 +141,7 @@ namespace GestureSign.CorePlugins.Volume
 
             try
             {
-                switch ((Method)_Settings.Method)
+                switch ((Method)_settings.Method)
                 {
                     case Method.VolumeUp:
                         ChangeVolume(Method.VolumeUp);
@@ -171,7 +171,7 @@ namespace GestureSign.CorePlugins.Volume
         private void ChangeVolume(Method ChangeMethod)
         {
             Process p = Process.GetCurrentProcess();
-            int t = _Settings.Percent / 2;
+            int t = _settings.Percent / 2;
             if (ChangeMethod == Method.VolumeUp)
             {
                 for (int i = 0; i < t; i++)

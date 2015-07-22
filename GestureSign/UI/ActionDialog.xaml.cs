@@ -52,7 +52,7 @@ namespace GestureSign.UI
         public ActionDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
             : this(source, selectedApplication)
         {
-            Title = LanguageDataManager.Instance.GetTextValue("ActionDialog.EditActionTitle");
+            Title = LocalizationProvider.Instance.GetTextValue("ActionDialog.EditActionTitle");
             _currentAction = selectedAction;
         }
 
@@ -156,7 +156,7 @@ namespace GestureSign.UI
         {
             OpenFileDialog ofdExecutable = new OpenFileDialog
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
+                Filter = LocalizationProvider.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
             };
             if (ValidateFilepath(txtMatchString.Text.Trim()))
             {
@@ -208,8 +208,8 @@ namespace GestureSign.UI
                     {
                         return
                             ShowErrorMessage(
-                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
                                     TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
                     }
                 }
@@ -224,12 +224,12 @@ namespace GestureSign.UI
                 if (String.IsNullOrWhiteSpace(appName))
                     return
                         ShowErrorMessage(
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"));
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"));
 
                 if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(appName))
-                    return ShowErrorMessage(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
-                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExists"));
+                    return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
+                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExists"));
 
 
                 string matchString = txtMatchString.Text.Trim();
@@ -237,8 +237,8 @@ namespace GestureSign.UI
                 if (String.IsNullOrEmpty(matchString))
                     return
                         ShowErrorMessage(
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
 
                 _newApplication = new UserApplication
                 {
@@ -437,8 +437,8 @@ namespace GestureSign.UI
             if (availableGesturesComboBox.SelectedItem == null)
                 return
                     ShowErrorMessage(
-                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGestureTitle"),
-                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGesture"));
+                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGestureTitle"),
+                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGesture"));
             // Check if we're creating a new action
             bool isNew = false;
             if (_currentAction == null)
@@ -451,8 +451,8 @@ namespace GestureSign.UI
             if (String.IsNullOrEmpty(newActionName))
                 return
                     ShowErrorMessage(
-                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoActionNameTitle"),
-                        LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoActionName"));
+                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionNameTitle"),
+                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionName"));
 
             if (isNew)
             {
@@ -463,8 +463,8 @@ namespace GestureSign.UI
                         _currentAction = null;
                         return
                             ShowErrorMessage(
-                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
+                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
                                     newActionName));
                     }
                 }
@@ -475,8 +475,8 @@ namespace GestureSign.UI
                         _currentAction = null;
                         return
                             ShowErrorMessage(
-                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
                                     newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
@@ -489,8 +489,8 @@ namespace GestureSign.UI
                     {
                         return
                             ShowErrorMessage(
-                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
+                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
                                     newActionName));
                     }
                 }
@@ -500,8 +500,8 @@ namespace GestureSign.UI
                     {
                         return
                             ShowErrorMessage(
-                                LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
                                     newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                     }
                 }
@@ -704,13 +704,13 @@ namespace GestureSign.UI
             switch (mu)
             {
                 case MatchUsing.All:
-                    return LanguageDataManager.Instance.GetTextValue("Common.AllApplications");
+                    return LocalizationProvider.Instance.GetTextValue("Common.AllApplications");
                 case MatchUsing.ExecutableFilename:
-                    return LanguageDataManager.Instance.GetTextValue("Common.FileName");
+                    return LocalizationProvider.Instance.GetTextValue("Common.FileName");
                 case MatchUsing.WindowClass:
-                    return LanguageDataManager.Instance.GetTextValue("Common.WindowClass");
+                    return LocalizationProvider.Instance.GetTextValue("Common.WindowClass");
                 case MatchUsing.WindowTitle:
-                    return LanguageDataManager.Instance.GetTextValue("Common.WindowTitle");
+                    return LocalizationProvider.Instance.GetTextValue("Common.WindowTitle");
                 default: return DependencyProperty.UnsetValue;
             }
         }

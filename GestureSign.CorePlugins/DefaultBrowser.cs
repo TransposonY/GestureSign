@@ -23,12 +23,12 @@ namespace GestureSign.CorePlugins
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DefaultBrowser.Name"); }
         }
 
         public string Description
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DefaultBrowser.Description"); }
         }
 
         public UserControl GUI
@@ -38,7 +38,7 @@ namespace GestureSign.CorePlugins
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.DefaultBrowser.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DefaultBrowser.Category"); }
         }
 
         public bool IsAction

@@ -19,7 +19,7 @@ namespace GestureSign.CorePlugins.Delay
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.Delay.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.Delay.Name"); }
         }
 
         public string Category
@@ -29,7 +29,7 @@ namespace GestureSign.CorePlugins.Delay
 
         public string Description
         {
-            get { return String.Format(LanguageDataManager.Instance.GetTextValue("CorePlugins.Delay.Description"), _timeout); }
+            get { return String.Format(LocalizationProvider.Instance.GetTextValue("CorePlugins.Delay.Description"), _timeout); }
         }
 
         public bool IsAction

@@ -37,8 +37,8 @@ namespace GestureSign
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
                 if (!File.Exists(path))
                 {
-                    MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
-                        LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
+                        LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                     Current.Shutdown();
                     return;
                 }
@@ -117,27 +117,27 @@ namespace GestureSign
             }
             else
             {
-                MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.AlreadyRunning"),
-                    LanguageDataManager.Instance.GetTextValue("Messages.AlreadyRunningTitle"));
+                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.AlreadyRunning"),
+                    LocalizationProvider.Instance.GetTextValue("Messages.AlreadyRunningTitle"));
                 Current.Shutdown();
             }
         }
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("ControlPanel", GestureSign.Properties.Resources.en))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", GestureSign.Properties.Resources.en))
             {
-                LanguageDataManager.Instance.LoadFromResource(GestureSign.Properties.Resources.en);
+                LocalizationProvider.Instance.LoadFromResource(GestureSign.Properties.Resources.en);
             }
 
             Application.Current.Resources.Remove("DefaultFlowDirection");
-            Current.Resources.Add("DefaultFlowDirection", LanguageDataManager.Instance.FlowDirection);
+            Current.Resources.Add("DefaultFlowDirection", LocalizationProvider.Instance.FlowDirection);
             Application.Current.Resources.Remove("DefaultFont");
-            Current.Resources.Add("DefaultFont", LanguageDataManager.Instance.Font);
+            Current.Resources.Add("DefaultFont", LocalizationProvider.Instance.Font);
             Application.Current.Resources.Remove("HeaderFontFamily");
-            Current.Resources.Add("HeaderFontFamily", LanguageDataManager.Instance.Font);
+            Current.Resources.Add("HeaderFontFamily", LocalizationProvider.Instance.Font);
             Application.Current.Resources.Remove("ContentFontFamily");
-            Current.Resources.Add("ContentFontFamily", LanguageDataManager.Instance.Font);
+            Current.Resources.Add("ContentFontFamily", LocalizationProvider.Instance.Font);
         }
     }
 }

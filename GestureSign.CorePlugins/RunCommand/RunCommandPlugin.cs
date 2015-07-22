@@ -20,12 +20,12 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Name"); }
         }
 
         public string Description
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Description"); }
         }
 
         public UserControl GUI
@@ -46,7 +46,7 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.RunCommand.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Category"); }
         }
 
         public bool IsAction

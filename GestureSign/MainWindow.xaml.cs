@@ -39,10 +39,10 @@ namespace GestureSign
 
         private void SetAboutInfo()
         {
-            string version = LanguageDataManager.Instance.GetTextValue("About.Version") +
+            string version = LocalizationProvider.Instance.GetTextValue("About.Version") +
                              System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location)
                                  .FileVersion;
-            string releaseDate = LanguageDataManager.Instance.GetTextValue("About.ReleaseDate") +
+            string releaseDate = LocalizationProvider.Instance.GetTextValue("About.ReleaseDate") +
                                  new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build)
                                      .AddSeconds(Application.ResourceAssembly.GetName().Version.Revision*2);
             this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + "\r\n"+ releaseDate + "\r\n");
@@ -50,7 +50,7 @@ namespace GestureSign
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(LanguageDataManager.Instance.GetTextValue("About.HelpPageUrl"));
+            System.Diagnostics.Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
         }
     }
 }

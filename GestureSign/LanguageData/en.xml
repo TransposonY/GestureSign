@@ -26,8 +26,7 @@
     <HelpPageUrl>http://git.oschina.net/TransY/GestureSign/wikis/home</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
-    <Information>
-Author:TransposonY
+    <Information>Author:TransposonY
 Translator:TransposonY
 Email:ccfyzh@gmail.com
 Page:https://github.com/TransposonY
@@ -136,8 +135,7 @@ Page:https://github.com/TransposonY
   <GestureDefinition>
     <Title>Save</Title>
     <Rename>Rename</Rename>
-    <ExistingGesture>
-Exist similar gesture:
+    <ExistingGesture>Exist similar gesture:
 Click New Action or Save to replace existing gesture,or enter different name
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>

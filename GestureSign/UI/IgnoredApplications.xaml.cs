@@ -110,8 +110,8 @@ namespace GestureSign.UI
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.json;*.ign",
-                Title = LanguageDataManager.Instance.GetTextValue("Ignored.ImportIgnoredApps"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.json;*.ign",
+                Title = LocalizationProvider.Instance.GetTextValue("Ignored.ImportIgnoredApps"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
@@ -137,9 +137,9 @@ namespace GestureSign.UI
                     ApplicationManager.Instance.SaveApplications();
                 }
                 MessageBox.Show(
-                    String.Format(LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ImportComplete"),
+                    String.Format(LocalizationProvider.Instance.GetTextValue("Ignored.Messages.ImportComplete"),
                         addcount),
-                    LanguageDataManager.Instance.GetTextValue("Ignored.Messages.ImportCompleteTitle"));
+                    LocalizationProvider.Instance.GetTextValue("Ignored.Messages.ImportCompleteTitle"));
             }
         }
 
@@ -147,8 +147,8 @@ namespace GestureSign.UI
         {
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
-                Title = LanguageDataManager.Instance.GetTextValue("Ignored.ExportIgnoredApps"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
+                Title = LocalizationProvider.Instance.GetTextValue("Ignored.ExportIgnoredApps"),
                 AddExtension = true,
                 DefaultExt = "ign",
                 ValidateNames = true
@@ -167,14 +167,14 @@ namespace GestureSign.UI
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool v = (bool)value;
-            if (v) return LanguageDataManager.Instance.GetTextValue("Common.Yes");
-            else return LanguageDataManager.Instance.GetTextValue("Common.No");
+            if (v) return LocalizationProvider.Instance.GetTextValue("Common.Yes");
+            else return LocalizationProvider.Instance.GetTextValue("Common.No");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             string strValue = value as string;
-            if (strValue == LanguageDataManager.Instance.GetTextValue("Common.Yes")) return true;
+            if (strValue == LocalizationProvider.Instance.GetTextValue("Common.Yes")) return true;
             return false;
         }
     }

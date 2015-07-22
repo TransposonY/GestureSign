@@ -37,12 +37,12 @@ namespace GestureSign.CorePlugins.ActivateWindow
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ActivateWindow.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ActivateWindow.Name"); }
         }
 
         public string Description
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ActivateWindow.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ActivateWindow.Description"); }
         }
 
         public UserControl GUI

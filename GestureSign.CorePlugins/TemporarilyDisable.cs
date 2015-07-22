@@ -21,12 +21,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Name"); }
 		}
 
 		public string Description
 		{
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Description"); }
 		}
 
 		public UserControl GUI

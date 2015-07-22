@@ -33,12 +33,11 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
         private static extern int MapVirtualKey(int uCode, int uMapType);
         #endregion
 
-
         #region Public Properties
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Name"); }
         }
 
         public string Description
@@ -58,7 +57,7 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Category"); }
         }
 
         public bool IsAction
@@ -67,7 +66,6 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
         }
 
         #endregion
-
 
         #region Public Methods
         public static string GetKeyName(Keys key)
@@ -188,8 +186,8 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
             // Create string to store key combination and final output description
             string strKeyCombo = "";
             string strFormattedOutput = _settings.IsKeyDown
-                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyDown")
-                : LanguageDataManager.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyUp");
+                ? LocalizationProvider.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyDown")
+                : LocalizationProvider.Instance.GetTextValue("CorePlugins.KeyDownKeyUp.Description.KeyUp");
 
 
             if (_settings.KeyCode.Count != 0)

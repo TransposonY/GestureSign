@@ -83,11 +83,11 @@ namespace GestureSign.UI
             {
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
                 _editMode = true;
-                Header = LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.EditApplicationTitle");
+                Header = LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.EditApplicationTitle");
                 chkPattern.IsChecked = _currentApplication.IsRegEx;
                 txtMatchString.Text = _currentApplication.MatchString;
             }
-            else Header = LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.AddIgnoredAppTitle");
+            else Header = LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.AddIgnoredAppTitle");
             IsOpen = true;
         }
         void RuningApplicationsFlyout_RuningAppSelectionChanged(object sender, ApplicationListViewItem e)
@@ -132,7 +132,7 @@ namespace GestureSign.UI
             }
             catch (Exception ex)
             {
-                txtMatchString.Text = LanguageDataManager.Instance.GetTextValue("Messages.Error") + "：" + ex.Message;
+                txtMatchString.Text = LocalizationProvider.Instance.GetTextValue("Messages.Error") + "：" + ex.Message;
             }
         }
 
@@ -142,7 +142,7 @@ namespace GestureSign.UI
         {
             OpenFileDialog op = new OpenFileDialog
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
+                Filter = LocalizationProvider.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
             };
             if (op.ShowDialog().Value)
             {
@@ -158,12 +158,12 @@ namespace GestureSign.UI
             {
                 UIHelper.GetParentWindow(this)
                     .ShowMessageAsync(
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyStringTitle"),
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyString"),
+                        LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyStringTitle"),
+                        LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.EmptyString"),
                         settings:
                             new MetroDialogSettings
                             {
-                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                             });
                 return;
             }
@@ -178,24 +178,24 @@ namespace GestureSign.UI
                 {
                     UIHelper.GetParentWindow(this)
                         .ShowMessageAsync(
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"),
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"),
                             settings:
                                 new MetroDialogSettings
                                 {
-                                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                                 });
                     return;
                 }
                 if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
                 {
                     UIHelper.GetParentWindow(this)
-                        .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.AppExists"),
+                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExists"),
                             settings:
                                 new MetroDialogSettings
                                 {
-                                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                                 });
                     return;
                 }
@@ -218,12 +218,12 @@ namespace GestureSign.UI
                     {
                         UIHelper.GetParentWindow(this)
                             .ShowMessageAsync(
-                                LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
-                                LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
+                                LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
+                                LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
                                 settings:
                                     new MetroDialogSettings
                                     {
-                                        AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                        AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                                     });
                         return;
                     }
@@ -232,12 +232,12 @@ namespace GestureSign.UI
                 else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
                 {
                     UIHelper.GetParentWindow(this).ShowMessageAsync(
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
+                        LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExistsTitle"),
+                        LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.IgnoredAppExists"),
                         settings:
                             new MetroDialogSettings
                             {
-                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                             });
                     return;
                 }

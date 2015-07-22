@@ -34,7 +34,7 @@ namespace GestureSign.CorePlugins.MouseActions
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Name"); }
         }
 
         public string Description
@@ -54,7 +54,7 @@ namespace GestureSign.CorePlugins.MouseActions
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Category"); }
         }
 
         public bool IsAction
@@ -172,23 +172,23 @@ namespace GestureSign.CorePlugins.MouseActions
                 case MouseActions.HorizontalScroll:
                     return
                         String.Format(
-                            LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.HorizontalScroll"),
+                            LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.HorizontalScroll"),
                             (_settings.ScrollAmount >= 0
-                                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Right")
-                                : LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Left")),
+                                ? LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Right")
+                                : LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Left")),
                             Math.Abs(_settings.ScrollAmount));
                 case MouseActions.VerticalScroll:
                     return
                         String.Format(
-                            LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.VerticalScroll"),
+                            LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.VerticalScroll"),
                             (_settings.ScrollAmount >= 0
-                                ? LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Up")
-                                : LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.Down")),
+                                ? LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Up")
+                                : LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Down")),
                             Math.Abs(_settings.ScrollAmount));
                 case MouseActions.MoveMouseBy:
-                    return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseBy") + _settings.MovePoint;
+                    return LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseBy") + _settings.MovePoint;
                 case MouseActions.MoveMouseTo:
-                    return LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseTo") + _settings.MovePoint;
+                    return LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseTo") + _settings.MovePoint;
             }
 
             return String.Format("{0} {1}",

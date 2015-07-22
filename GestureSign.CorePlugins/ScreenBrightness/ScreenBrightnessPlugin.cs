@@ -19,6 +19,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 {
     class ScreenBrightnessPlugin : IPlugin
     {
+        #region Private Variables
         private ScreenBrightnessUI _GUI = null;
         private BrightnessSettings _Settings = null;
 
@@ -27,11 +28,12 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             BrightnessUp = 0,
             BrightnessDown = 1
         }
+        #endregion
 
         #region Public Properties
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name"); }
         }
 
         public string Description
@@ -57,7 +59,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.Category"); }
         }
 
         public bool IsAction
@@ -97,7 +99,6 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         #endregion
 
-
         #region Private Methods
 
         private ScreenBrightnessUI CreateGUI()
@@ -116,7 +117,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         private string GetDescription(BrightnessSettings Settings)
         {
             if (Settings == null)
-                return LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name");
+                return LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.Name");
 
             // Create string to store final output description
             string strOutput = "";
@@ -125,10 +126,10 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.IncreaseBrightness") + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.IncreaseBrightness") + Settings.Percent;
                     break;
                 case 1:
-                    strOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.ScreenBrightness.DecreaseBrightness") + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.DecreaseBrightness") + Settings.Percent;
                     break;
             }
 
@@ -255,10 +256,6 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             mos.Dispose();
         }
         #endregion
-
-
-
-
 
         #region Host Control
 

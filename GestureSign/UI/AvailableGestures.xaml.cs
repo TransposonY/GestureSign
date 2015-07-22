@@ -53,13 +53,13 @@ namespace GestureSign.UI
             if (lstAvailableGestures.SelectedItems.Count == 0) return;
             if (await UIHelper.GetParentWindow(this)
                     .ShowMessageAsync(
-                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.DeleteConfirmTitle"),
-                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.DeleteGestureConfirm"),
+                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.DeleteConfirmTitle"),
+                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.DeleteGestureConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative,
                         new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
-                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             AnimateHide = false
                         }) == MessageDialogResult.Affirmative)
             {
@@ -86,13 +86,13 @@ namespace GestureSign.UI
         private async void btnAddGesture_Click(object sender, RoutedEventArgs e)
         {
             if (await UIHelper.GetParentWindow(this).ShowMessageAsync(
-                LanguageDataManager.Instance.GetTextValue("Gesture.Messages.AddGestureTitle"),
-                LanguageDataManager.Instance.GetTextValue("Gesture.Messages.AddGesture"),
+                LocalizationProvider.Instance.GetTextValue("Gesture.Messages.AddGestureTitle"),
+                LocalizationProvider.Instance.GetTextValue("Gesture.Messages.AddGesture"),
                 MessageDialogStyle.AffirmativeAndNegative,
                 new MetroDialogSettings()
                 {
-                    AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
-                    NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel")
+                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                    NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel")
                 }) == MessageDialogResult.Affirmative)
             {
                 NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
@@ -102,8 +102,8 @@ namespace GestureSign.UI
         {
             OpenFileDialog ofdGestures = new OpenFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Gesture.GestureFile") + "|*.json;*.gest",
-                Title = LanguageDataManager.Instance.GetTextValue("Gesture.ImportGesture"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.json;*.gest",
+                Title = LocalizationProvider.Instance.GetTextValue("Gesture.ImportGesture"),
                 CheckFileExists = true
             };
             if (ofdGestures.ShowDialog().Value)
@@ -127,9 +127,9 @@ namespace GestureSign.UI
                             var result =
                                 MessageBox.Show(
                                     String.Format(
-                                        LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ReplaceConfirm"),
+                                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ReplaceConfirm"),
                                         newGesture.Name),
-                                    LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ReplaceConfirmTitle"),
+                                    LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ReplaceConfirmTitle"),
                                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                             if (result == MessageBoxResult.Yes)
                             {
@@ -152,8 +152,8 @@ namespace GestureSign.UI
                     BindGestures();
                 }
                 MessageBox.Show(
-                    String.Format(LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
-                        addcount), LanguageDataManager.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"));
+                    String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
+                        addcount), LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"));
             }
         }
 
@@ -161,8 +161,8 @@ namespace GestureSign.UI
         {
             SaveFileDialog sfdGestures = new SaveFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
-                Title = LanguageDataManager.Instance.GetTextValue("Gesture.ExportGestures"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
+                Title = LocalizationProvider.Instance.GetTextValue("Gesture.ExportGestures"),
                 AddExtension = true,
                 DefaultExt = "gest",
                 ValidateNames = true

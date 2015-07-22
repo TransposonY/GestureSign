@@ -9,14 +9,14 @@ using GestureSign.Common.Configuration;
 
 namespace GestureSign.Common.Localization
 {
-    public class LanguageDataManager
+    public class LocalizationProvider
     {
         private string _resource;
         private Dictionary<string, string> _texts = new Dictionary<string, string>(10);
         private FlowDirection _flowDirection;
         private FontFamily _font;
-        private static LanguageDataManager _instance;
-        internal LanguageDataManager()
+        private static LocalizationProvider _instance;
+        internal LocalizationProvider()
         {
         }
 
@@ -30,9 +30,9 @@ namespace GestureSign.Common.Localization
             get { return _flowDirection; }
         }
 
-        public static LanguageDataManager Instance
+        public static LocalizationProvider Instance
         {
-            get { return _instance ?? (_instance = new LanguageDataManager()); }
+            get { return _instance ?? (_instance = new LocalizationProvider()); }
         }
 
         public FontFamily Font

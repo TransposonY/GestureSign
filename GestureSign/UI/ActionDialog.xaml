@@ -1,29 +1,54 @@
 ﻿<controls:MetroWindow x:Class="GestureSign.UI.ActionDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:local="clr-namespace:GestureSign.UI"
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       BorderBrush="{StaticResource AccentColorBrush}"
-                      Title="{localization:LocalisedText ActionDialog.AddActionTitle}" Height="550" Width="700" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" SizeToContent="Manual" Closed="MetroWindow_Closed" Icon="/GestureSign;component/Resources/normal.ico" BorderThickness="1" ShowIconOnTitleBar="False" WindowStartupLocation="CenterScreen">
+                      Title="{localization:LocalisedText ActionDialog.AddActionTitle}"
+                      Height="550"
+                      Width="700"
+                      WindowStyle="ToolWindow"
+                      ResizeMode="CanMinimize"
+                      Loaded="MetroWindow_Loaded"
+                      SizeToContent="Manual"
+                      Closed="MetroWindow_Closed"
+                      Icon="/GestureSign;component/Resources/normal.ico"
+                      BorderThickness="1"
+                      ShowIconOnTitleBar="False"
+                      WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
-            <Style x:Key="ShowCanvasStyle" TargetType="{x:Type Canvas}">
+            <Style x:Key="ShowCanvasStyle"
+                   TargetType="{x:Type Canvas}">
                 <Style.Triggers>
-                    <Trigger Property="Canvas.Visibility" Value="Visible">
+                    <Trigger Property="Canvas.Visibility"
+                             Value="Visible">
                         <Trigger.EnterActions>
                             <BeginStoryboard>
                                 <Storyboard Storyboard.TargetProperty="Opacity">
-                                    <DoubleAnimation From="0" To="1" Duration="00:00:00.2" BeginTime="00:00:00"/>
+                                    <DoubleAnimation From="0"
+                                                     To="1"
+                                                     Duration="00:00:00.2"
+                                                     BeginTime="00:00:00" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </Trigger.EnterActions>
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            <Canvas x:Key="appbar_chevron_right" Width="76" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
-                <Path Width="25.3333" Height="28.5" Canvas.Left="25.1849" Canvas.Top="23.3542" Stretch="Fill" Fill="#FF000000" Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z "/>
+            <Canvas x:Key="appbar_chevron_right"
+                    Width="76"
+                    Height="76"
+                    Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
+                <Path Width="25.3333"
+                      Height="28.5"
+                      Canvas.Left="25.1849"
+                      Canvas.Top="23.3542"
+                      Stretch="Fill"
+                      Fill="#FF000000"
+                      Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z " />
             </Canvas>
             <local:SelectedItemConverter x:Key="selectedItemConverter"></local:SelectedItemConverter>
             <local:MatchUsingToStringConverter x:Key="matchUsingToStringConverter"></local:MatchUsingToStringConverter>
@@ -47,35 +72,45 @@
                              IsPinned="False"
                              Height="75">
                 <TextBlock Name="MessageFlyoutText"
-                    VerticalAlignment="Center"
-                           HorizontalAlignment="Center" FontSize="16" />
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           FontSize="16" />
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Canvas Height="520">
-        <Popup x:Name="RunningApplicationsPopup" Width="349" Height="520"  
-        	Opened="RunningApplicationsPopup_Opened"
-        	StaysOpen="False"   
-        	IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"   
-        	AllowsTransparency="True"  
-        	PopupAnimation="Fade"
-        	Placement="RelativePoint">
-            <ListView x:Name="alvRunningApplications" BorderBrush="{StaticResource AccentColorBrush}" BorderThickness="3">
+        <Popup x:Name="RunningApplicationsPopup"
+               Width="349"
+               Height="520"
+               Opened="RunningApplicationsPopup_Opened"
+               StaysOpen="False"
+               IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"
+               AllowsTransparency="True"
+               PopupAnimation="Fade"
+               Placement="RelativePoint">
+            <ListView x:Name="alvRunningApplications"
+                      BorderBrush="{StaticResource AccentColorBrush}"
+                      BorderThickness="3">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}" Width="55">
+                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}"
+                                        Width="55">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding ApplicationIcon}" Height="35" />
+                                    <Image Source="{Binding ApplicationIcon}"
+                                           Height="35" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}" Width="300">
+                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}"
+                                        Width="300">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <TextBlock  Text="{Binding WindowFilename}" Margin="0,5,0,2"/>
-                                        <TextBlock  Text="{Binding WindowTitle}"  Foreground="{StaticResource AccentColorBrush}"/>
+                                        <TextBlock  Text="{Binding WindowFilename}"
+                                                    Margin="0,5,0,2" />
+                                        <TextBlock  Text="{Binding WindowTitle}"
+                                                    Foreground="{StaticResource AccentColorBrush}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -84,75 +119,194 @@
                 </ListView.View>
             </ListView>
         </Popup>
-        <StackPanel Canvas.Left="10" Canvas.Top="10" Width="330" Height="370">
+        <StackPanel Canvas.Left="10"
+                    Canvas.Top="10"
+                    Width="330"
+                    Height="370">
 
             <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.SelectApp}" FontSize="24"/>
+                       Text="{localization:LocalisedText ActionDialog.SelectApp}"
+                       FontSize="24" />
 
             <RadioButton Margin="10,10,0,0"
-                         Content="{localization:LocalisedText ActionDialog.ExistingApplications}" x:Name="ExistingApplicationRadioButton"
-                         GroupName="1" FontSize="18" IsChecked="True" IsTabStop="False" Focusable="False" />
+                         Content="{localization:LocalisedText ActionDialog.ExistingApplications}"
+                         x:Name="ExistingApplicationRadioButton"
+                         GroupName="1"
+                         FontSize="18"
+                         IsChecked="True"
+                         IsTabStop="False"
+                         Focusable="False" />
             <RadioButton x:Name="NewApplicationRadioButton"
-                Margin="0,-23,10,0"
+                         Margin="0,-23,10,0"
                          Content="{localization:LocalisedText ActionDialog.NewApp}"
-                         GroupName="1" FontSize="18" HorizontalAlignment="Right" IsTabStop="False" Focusable="False"/>
-            <Canvas x:Name="ExistingApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Height="165" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
-                <ComboBox x:Name="cmbExistingApplication" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="193" Canvas.Left="127" Canvas.Top="10" FontSize="14"/>
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.SelectExistingApp}" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="17" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="66"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.Group}" Canvas.Top="50" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="50" FontSize="14"/>
-                <TextBlock Canvas.Left="38"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchUsing}" Canvas.Top="82" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Canvas.Left="38"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchString}" Canvas.Top="115" FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="82" FontSize="14" Width="193"/>
-                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}" Canvas.Left="127" TextWrapping="Wrap" Canvas.Top="115" FontSize="14" Width="193"/>
-            </Canvas>
-            <Canvas x:Name="NewApplicationCanvas" Style="{StaticResource ShowCanvasStyle}" Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.Group}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="15"/>
-                <ComboBox x:Name="GroupComboBox" Canvas.Left="103" Canvas.Top="10" Width="217" IsEditable="True"
+                         GroupName="1"
+                         FontSize="18"
+                         HorizontalAlignment="Right"
+                         IsTabStop="False"
+                         Focusable="False" />
+            <Canvas x:Name="ExistingApplicationCanvas"
+                    Style="{StaticResource ShowCanvasStyle}"
+                    Height="165"
+                    Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
+                <ComboBox x:Name="cmbExistingApplication"
+                          DisplayMemberPath="Name"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Width="193"
+                          Canvas.Left="127"
+                          Canvas.Top="10"
                           FontSize="14" />
                 <TextBlock HorizontalAlignment="Left"
                            TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchUsing}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Width="56" Canvas.Left="24" Canvas.Top="52"/>
-                <local:MatchUsingRadio x:Name="matchUsingRadio" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Height="26" Canvas.Left="103" Canvas.Top="47"/>
+                           Text="{localization:LocalisedText ActionDialog.SelectExistingApp}"
+                           VerticalAlignment="Top"
+                           Canvas.Left="10"
+                           Canvas.Top="17"
+                           FontSize="14"
+                           FontWeight="Bold" />
+                <TextBlock Canvas.Left="66"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.Group}"
+                           Canvas.Top="50"
+                           FontSize="14"
+                           FontWeight="Bold" />
+                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}"
+                           Canvas.Left="127"
+                           TextWrapping="Wrap"
+                           Canvas.Top="50"
+                           FontSize="14" />
+                <TextBlock Canvas.Left="38"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchUsing}"
+                           Canvas.Top="82"
+                           FontSize="14"
+                           FontWeight="Bold" />
+                <TextBlock Canvas.Left="38"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchString}"
+                           Canvas.Top="115"
+                           FontSize="14"
+                           FontWeight="Bold" />
+                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}"
+                           Canvas.Left="127"
+                           TextWrapping="Wrap"
+                           Canvas.Top="82"
+                           FontSize="14"
+                           Width="193" />
+                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}"
+                           Canvas.Left="127"
+                           TextWrapping="Wrap"
+                           Canvas.Top="115"
+                           FontSize="14"
+                           Width="193" />
+            </Canvas>
+            <Canvas x:Name="NewApplicationCanvas"
+                    Style="{StaticResource ShowCanvasStyle}"
+                    Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}">
                 <TextBlock HorizontalAlignment="Left"
                            TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchString}" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Height="18" Canvas.Left="24" Canvas.Top="94"/>
-                <TextBox x:Name="txtMatchString" TextWrapping="Wrap" Width="217" FontSize="14" MaxLines="4" MaxLength="100" Canvas.Left="103" Canvas.Top="89">
-                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}" Mode="TwoWay">
-                        <Binding ElementName="matchUsingRadio" Path="MatchUsing" Mode="TwoWay" />
-                        <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
+                           Text="{localization:LocalisedText ActionDialog.Group}"
+                           VerticalAlignment="Top"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Height="18"
+                           Canvas.Left="24"
+                           Canvas.Top="15" />
+                <ComboBox x:Name="GroupComboBox"
+                          Canvas.Left="103"
+                          Canvas.Top="10"
+                          Width="217"
+                          IsEditable="True"
+                          FontSize="14" />
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchUsing}"
+                           VerticalAlignment="Top"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Height="18"
+                           Width="56"
+                           Canvas.Left="24"
+                           Canvas.Top="52" />
+                <local:MatchUsingRadio x:Name="matchUsingRadio"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Width="217"
+                                       Height="26"
+                                       Canvas.Left="103"
+                                       Canvas.Top="47" />
+                <TextBlock HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="{localization:LocalisedText ActionDialog.MatchString}"
+                           VerticalAlignment="Top"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Height="18"
+                           Canvas.Left="24"
+                           Canvas.Top="94" />
+                <TextBox x:Name="txtMatchString"
+                         TextWrapping="Wrap"
+                         Width="217"
+                         FontSize="14"
+                         MaxLines="4"
+                         MaxLength="100"
+                         Canvas.Left="103"
+                         Canvas.Top="89">
+                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}"
+                                  Mode="TwoWay">
+                        <Binding ElementName="matchUsingRadio"
+                                 Path="MatchUsing"
+                                 Mode="TwoWay" />
+                        <Binding ElementName="alvRunningApplications"
+                                 Path="SelectedItem"
+                                 Mode="TwoWay" />
                     </MultiBinding>
                 </TextBox>
                 <CheckBox x:Name="chkRegex"
-                          Content="{localization:LocalisedText ActionDialog.UsingRegularExpression}" HorizontalAlignment="Left" VerticalAlignment="Top"
-                          Grid.Row="1" Canvas.Left="10" Canvas.Top="207" FontSize="14"/>
+                          Content="{localization:LocalisedText ActionDialog.UsingRegularExpression}"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Grid.Row="1"
+                          Canvas.Left="10"
+                          Canvas.Top="207"
+                          FontSize="14" />
                 <Button x:Name="cmdBrowse"
                         Visibility="{Binding ElementName=matchUsingRadio,Path=MatchUsing,Converter={StaticResource MatchUsing2VisibilityConverter},Mode=OneWay}"
-                        Content="{localization:LocalisedText ActionDialog.Browse}" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold"
-                        Click="cmdBrowse_Click" FontSize="14"
-                        Canvas.Left="246" Canvas.Top="202" />
-                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="14"
+                        Content="{localization:LocalisedText ActionDialog.Browse}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontWeight="Bold"
+                        Click="cmdBrowse_Click"
+                        FontSize="14"
+                        Canvas.Left="246"
+                        Canvas.Top="202" />
+                <TextBlock TextWrapping="Wrap"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           FontSize="14"
                            Width="216"
                            Canvas.Left="51"
                            Canvas.Top="255"
                            Text="{localization:LocalisedText ActionDialog.ApplicationTools}" />
 
-                <local:Crosshair x:Name="chCrosshair" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="36" Width="36" Canvas.Left="10" Canvas.Top="255"/>
+                <local:Crosshair x:Name="chCrosshair"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Bottom"
+                                 Height="36"
+                                 Width="36"
+                                 Canvas.Left="10"
+                                 Canvas.Top="255" />
                 <ToggleButton x:Name="btnExistingApplication"
-                    Style="{DynamicResource MetroCircleToggleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Canvas.Left="272" Canvas.Top="247" IsTabStop="False" 
-                        >
+                              Style="{DynamicResource MetroCircleToggleButtonStyle}"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom"
+                              Height="50"
+                              Width="50"
+                              Canvas.Left="272"
+                              Canvas.Top="247"
+                              IsTabStop="False">
                     <Rectangle Width="20"
-                           Height="20">
+                               Height="20">
                         <Rectangle.Fill>
                             <VisualBrush Visual="{StaticResource appbar_chevron_right}" />
                         </Rectangle.Fill>
@@ -160,15 +314,26 @@
                 </ToggleButton>
             </Canvas>
         </StackPanel>
-        <StackPanel Canvas.Left="356" Canvas.Top="10" Width="328">
-            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}" FontSize="24"/>
+        <StackPanel Canvas.Left="356"
+                    Canvas.Top="10"
+                    Width="328">
+            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
+                       FontSize="24" />
             <ComboBox x:Name="availableGesturesComboBox"
-                          HorizontalContentAlignment="Left"
-                           HorizontalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                           Margin="10,5,5,5"
-                         VerticalAlignment="Center" BorderThickness="0" Height="80" IsEditable="False" IsReadOnly="True"  IsDropDownOpen="False" ScrollViewer.IsDeferredScrollingEnabled="True" MaxDropDownHeight="265"
-                      MaxWidth="300" Width="280">
+                      HorizontalContentAlignment="Left"
+                      HorizontalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Margin="10,5,5,5"
+                      VerticalAlignment="Center"
+                      BorderThickness="0"
+                      Height="80"
+                      IsEditable="False"
+                      IsReadOnly="True"
+                      IsDropDownOpen="False"
+                      ScrollViewer.IsDeferredScrollingEnabled="True"
+                      MaxDropDownHeight="265"
+                      MaxWidth="300"
+                      Width="280">
                 <!--<ComboBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
@@ -176,31 +341,41 @@
                                 </ItemsPanelTemplate>
                             </ComboBox.ItemsPanel>-->
                 <ComboBox.Resources>
-                    <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
-                        <Setter Property="Foreground" Value="{StaticResource AccentSelectedColorBrush}" />
-                        <Setter Property="BorderBrush" Value="{StaticResource HighlightBrush}" />
-                        <Setter Property="Background" Value="White" />
-                        <Setter Property="SnapsToDevicePixels" Value="true"/>
+                    <Style TargetType="{x:Type ComboBox}"
+                           BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="Foreground"
+                                Value="{StaticResource AccentSelectedColorBrush}" />
+                        <Setter Property="BorderBrush"
+                                Value="{StaticResource HighlightBrush}" />
+                        <Setter Property="Background"
+                                Value="White" />
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="true" />
                         <!--<Setter Property="OverridesDefaultStyle" Value="true"/>-->
-                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-                        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-                        <Setter Property="FontWeight" Value="Bold" />
-                        <Setter Property="MinWidth" Value="50"/>
-                        <Setter Property="MinHeight" Value="32"/>
+                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                                Value="Auto" />
+                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                                Value="Auto" />
+                        <Setter Property="ScrollViewer.CanContentScroll"
+                                Value="False" />
+                        <Setter Property="FontWeight"
+                                Value="Bold" />
+                        <Setter Property="MinWidth"
+                                Value="50" />
+                        <Setter Property="MinHeight"
+                                Value="32" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ComboBox}">
                                     <Grid>
-                                        <ToggleButton
-                                x:Name="ToggleButton"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                Background="{TemplateBinding Background}"
-                            Foreground="{TemplateBinding Foreground}"
-                                Grid.Column="2"
-                                Focusable="false"
-                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                ClickMode="Press">
+                                        <ToggleButton x:Name="ToggleButton"
+                                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                                      Background="{TemplateBinding Background}"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      Grid.Column="2"
+                                                      Focusable="false"
+                                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                      ClickMode="Press">
                                             <ToggleButton.Style>
                                                 <Style  TargetType="{x:Type ToggleButton}">
                                                     <Setter Property="Template">
@@ -210,25 +385,29 @@
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition />
                                                                     </Grid.ColumnDefinitions>
-                                                                    <Border
-                          x:Name="Border"
-                          Grid.ColumnSpan="2"
-                          CornerRadius="0"
-                          Background="{TemplateBinding Background}"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="1" />
-                                                                    <Border
-                          Grid.Column="0"
-                          CornerRadius="0"
-                          Background="Transparent"
-                          BorderBrush="Transparent"
-                          BorderThickness="10" />
+                                                                    <Border x:Name="Border"
+                                                                            Grid.ColumnSpan="2"
+                                                                            CornerRadius="0"
+                                                                            Background="{TemplateBinding Background}"
+                                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                                            BorderThickness="1" />
+                                                                    <Border Grid.Column="0"
+                                                                            CornerRadius="0"
+                                                                            Background="Transparent"
+                                                                            BorderBrush="Transparent"
+                                                                            BorderThickness="10" />
                                                                 </Grid>
                                                                 <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsEnabled" Value="False">
-                                                                        <Setter TargetName="Border" Property="Background" Value="LightGray" />
-                                                                        <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
-                                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                                    <Trigger Property="IsEnabled"
+                                                                             Value="False">
+                                                                        <Setter TargetName="Border"
+                                                                                Property="Background"
+                                                                                Value="LightGray" />
+                                                                        <Setter TargetName="Border"
+                                                                                Property="BorderBrush"
+                                                                                Value="Gray" />
+                                                                        <Setter Property="Foreground"
+                                                                                Value="Gray" />
                                                                     </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>
@@ -237,68 +416,84 @@
                                                 </Style>
                                             </ToggleButton.Style>
                                         </ToggleButton>
-                                        <ContentPresenter
-                                x:Name="ContentSite"
-                                IsHitTestVisible="False"
-                                Content="{TemplateBinding SelectionBoxItem}"
-                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                Margin="10,3,30,3"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center" />
+                                        <ContentPresenter x:Name="ContentSite"
+                                                          IsHitTestVisible="False"
+                                                          Content="{TemplateBinding SelectionBoxItem}"
+                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                          Margin="10,3,30,3"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center" />
                                         <TextBox x:Name="PART_EditableTextBox"
-                                Style="{x:Null}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="3,3,23,3"
-                                Focusable="True"                               
-                                Visibility="Hidden"
-                                IsReadOnly="{TemplateBinding IsReadOnly}">
+                                                 Style="{x:Null}"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"
+                                                 Margin="3,3,23,3"
+                                                 Focusable="True"
+                                                 Visibility="Hidden"
+                                                 IsReadOnly="{TemplateBinding IsReadOnly}">
                                             <TextBox.Template>
                                                 <ControlTemplate TargetType="{x:Type TextBox}">
-                                                    <Border x:Name="PART_ContentHost" Focusable="True" />
+                                                    <Border x:Name="PART_ContentHost"
+                                                            Focusable="True" />
                                                 </ControlTemplate>
                                             </TextBox.Template>
                                         </TextBox>
-                                        <Popup
-                                x:Name="Popup"
-                                Placement="Bottom"
-                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                                AllowsTransparency="True"
-                                Focusable="False"
-                                PopupAnimation="Slide">
-                                            <Grid
-                                  x:Name="DropDown"
-                                  SnapsToDevicePixels="True"               
-                                  MinWidth="{TemplateBinding ActualWidth}"
-                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                                <Border
-                                        x:Name="DropDownBorder"
-                                        Background="White"
-                                        BorderThickness="2"
-                                        BorderBrush="Gray"/>
-                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        <Popup x:Name="Popup"
+                                               Placement="Bottom"
+                                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                                               AllowsTransparency="True"
+                                               Focusable="False"
+                                               PopupAnimation="Slide">
+                                            <Grid x:Name="DropDown"
+                                                  SnapsToDevicePixels="True"
+                                                  MinWidth="{TemplateBinding ActualWidth}"
+                                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                                <Border x:Name="DropDownBorder"
+                                                        Background="White"
+                                                        BorderThickness="2"
+                                                        BorderBrush="Gray" />
+                                                <ScrollViewer Margin="4,6,4,6"
+                                                              SnapsToDevicePixels="True">
+                                                    <StackPanel IsItemsHost="True"
+                                                                KeyboardNavigation.DirectionalNavigation="Contained" />
                                                 </ScrollViewer>
                                             </Grid>
                                         </Popup>
 
                                     </Grid>
                                     <ControlTemplate.Triggers>
-                                        <Trigger Property="HasItems" Value="false">
-                                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                                        <Trigger Property="HasItems"
+                                                 Value="false">
+                                            <Setter TargetName="DropDownBorder"
+                                                    Property="MinHeight"
+                                                    Value="95" />
                                         </Trigger>
-                                        <Trigger Property="IsGrouping" Value="true">
-                                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                        <Trigger Property="IsGrouping"
+                                                 Value="true">
+                                            <Setter Property="ScrollViewer.CanContentScroll"
+                                                    Value="false" />
                                         </Trigger>
-                                        <Trigger SourceName="Popup" Property="AllowsTransparency" Value="true">
-                                            <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
-                                            <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                                        <Trigger SourceName="Popup"
+                                                 Property="AllowsTransparency"
+                                                 Value="true">
+                                            <Setter TargetName="DropDownBorder"
+                                                    Property="CornerRadius"
+                                                    Value="0" />
+                                            <Setter TargetName="DropDownBorder"
+                                                    Property="Margin"
+                                                    Value="0,2,0,0" />
                                         </Trigger>
-                                        <Trigger Property="IsEditable" Value="true">
-                                            <Setter Property="IsTabStop" Value="false"/>
-                                            <Setter TargetName="PART_EditableTextBox" Property="Visibility"    Value="Visible"/>
-                                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                                        <Trigger Property="IsEditable"
+                                                 Value="true">
+                                            <Setter Property="IsTabStop"
+                                                    Value="false" />
+                                            <Setter TargetName="PART_EditableTextBox"
+                                                    Property="Visibility"
+                                                    Value="Visible" />
+                                            <Setter TargetName="ContentSite"
+                                                    Property="Visibility"
+                                                    Value="Hidden" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -311,63 +506,136 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Image}" Height="65" Stretch="Uniform"  StretchDirection="DownOnly" Width="200" HorizontalAlignment="Stretch" />
-                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                            <Image Source="{Binding Image}"
+                                   Height="65"
+                                   Stretch="Uniform"
+                                   StretchDirection="DownOnly"
+                                   Width="200"
+                                   HorizontalAlignment="Stretch" />
+                            <TextBlock TextWrapping="Wrap"
+                                       Text="{Binding Name}"
+                                       Margin="0"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Stretch" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}" FontSize="24"/>
-            <StackPanel Margin="0,5" Orientation="Vertical">
+            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}"
+                       FontSize="24" />
+            <StackPanel Margin="0,5"
+                        Orientation="Vertical">
                 <ComboBox x:Name="cmbPlugins"
-        		Margin="10"
-        		DisplayMemberPath="DisplayText" SelectionChanged="cmbPlugins_SelectionChanged" FontSize="14"
+                          Margin="10"
+                          DisplayMemberPath="DisplayText"
+                          SelectionChanged="cmbPlugins_SelectionChanged"
+                          FontSize="14"
                           MaxDropDownHeight="300" />
-                <ContentControl x:Name="SettingsContent"  Margin="5,10,5,5"/>
+                <ContentControl x:Name="SettingsContent"
+                                Margin="5,10,5,5" />
             </StackPanel>
         </StackPanel>
         <Button x:Name="cmdCancel"
                 Content="{localization:LocalisedText Common.Cancel}"
-        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="95" Canvas.Left="222" Canvas.Top="480"
+                Style="{DynamicResource SquareButtonStyle}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Width="95"
+                Canvas.Left="222"
+                Canvas.Top="480"
                 Click="cmdCancel_Click" />
         <Button x:Name="cmdDone"
                 Content="{localization:LocalisedText Common.Save}"
-        	Style="{DynamicResource SquareButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="cmdDone_Click" Width="95" Canvas.Left="388" Canvas.Top="480" IsDefault="True"  />
-        <Canvas Height="58" Canvas.Top="408" Width="674" Canvas.Left="10">
+                Style="{DynamicResource SquareButtonStyle}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Click="cmdDone_Click"
+                Width="95"
+                Canvas.Left="388"
+                Canvas.Top="480"
+                IsDefault="True" />
+        <Canvas Height="58"
+                Canvas.Top="408"
+                Width="674"
+                Canvas.Left="10">
             <TextBlock HorizontalAlignment="Left"
                        TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.AppName}" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="14" FontSize="14" FontWeight="Bold"/>
-            <TextBox x:Name="txtApplicationName" TextWrapping="Wrap"
-                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.AppNameWatermark}" Canvas.Left="71" Canvas.Top="10" Width="252" FontSize="14" MaxLines="3" MaxLength="80">
-                <MultiBinding Converter="{StaticResource selectedItemConverter}" Mode="TwoWay">
-                    <Binding ElementName="ExistingApplicationRadioButton" Path="IsChecked" Mode="TwoWay" />
-                    <Binding ElementName="cmbExistingApplication" Path="SelectedItem" Mode="TwoWay"/>
-                    <Binding ElementName="alvRunningApplications" Path="SelectedItem" Mode="TwoWay"/>
+                       Text="{localization:LocalisedText ActionDialog.AppName}"
+                       VerticalAlignment="Top"
+                       Canvas.Left="10"
+                       Canvas.Top="14"
+                       FontSize="14"
+                       FontWeight="Bold" />
+            <TextBox x:Name="txtApplicationName"
+                     TextWrapping="Wrap"
+                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.AppNameWatermark}"
+                     Canvas.Left="71"
+                     Canvas.Top="10"
+                     Width="252"
+                     FontSize="14"
+                     MaxLines="3"
+                     MaxLength="80">
+                <MultiBinding Converter="{StaticResource selectedItemConverter}"
+                              Mode="TwoWay">
+                    <Binding ElementName="ExistingApplicationRadioButton"
+                             Path="IsChecked"
+                             Mode="TwoWay" />
+                    <Binding ElementName="cmbExistingApplication"
+                             Path="SelectedItem"
+                             Mode="TwoWay" />
+                    <Binding ElementName="alvRunningApplications"
+                             Path="SelectedItem"
+                             Mode="TwoWay" />
                 </MultiBinding>
             </TextBox>
             <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.ActionName}" FontWeight="Bold" FontSize="14" Canvas.Left="363" Canvas.Top="14"/>
+                       Text="{localization:LocalisedText ActionDialog.ActionName}"
+                       FontWeight="Bold"
+                       FontSize="14"
+                       Canvas.Left="363"
+                       Canvas.Top="14" />
             <TextBox x:Name="TxtActionName"
                      controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
-            	 Canvas.Left="424" Canvas.Top="10" Width="240" FontSize="14" MaxLines="3" MaxLength="80" />
+                     Canvas.Left="424"
+                     Canvas.Top="10"
+                     Width="240"
+                     FontSize="14"
+                     MaxLines="3"
+                     MaxLength="80" />
         </Canvas>
         <CheckBox x:Name="InterceptTouchInputCheckBox"
                   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton,Converter={StaticResource InterceptTouchInputCheckBoxConverter}, Mode=OneWay}"
-                  Content="{localization:LocalisedText ActionDialog.InterceptTouchInput}" Canvas.Left="10" Canvas.Top="385" FontSize="14">
+                  Content="{localization:LocalisedText ActionDialog.InterceptTouchInput}"
+                  Canvas.Left="10"
+                  Canvas.Top="385"
+                  FontSize="14">
             <CheckBox.IsChecked>
-                <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}" Mode="OneWay">
-                    <Binding Path="SelectedItem" ElementName="cmbExistingApplication" Mode="OneWay" />
-                    <Binding Path="IsChecked" ElementName="ExistingApplicationRadioButton" Mode="OneWay" />
+                <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}"
+                              Mode="OneWay">
+                    <Binding Path="SelectedItem"
+                             ElementName="cmbExistingApplication"
+                             Mode="OneWay" />
+                    <Binding Path="IsChecked"
+                             ElementName="ExistingApplicationRadioButton"
+                             Mode="OneWay" />
                 </MultiBinding>
             </CheckBox.IsChecked>
         </CheckBox>
         <CheckBox x:Name="AllowSingleCheckBox"
-                  Content="{localization:LocalisedText ActionDialog.AllowSingleFinger}" Canvas.Left="232" Canvas.Top="385"   IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
+                  Content="{localization:LocalisedText ActionDialog.AllowSingleFinger}"
+                  Canvas.Left="232"
+                  Canvas.Top="385"
+                  IsEnabled="{Binding IsChecked, ElementName= NewApplicationRadioButton, Mode=OneWay}"
                   FontSize="14">
             <CheckBox.IsChecked>
-                <MultiBinding Converter="{StaticResource AllowSingleBoolConverter}" Mode="OneWay">
-                    <Binding Path="SelectedItem" ElementName="cmbExistingApplication" Mode="OneWay" />
-                    <Binding Path="IsChecked" ElementName="ExistingApplicationRadioButton" Mode="OneWay" />
+                <MultiBinding Converter="{StaticResource AllowSingleBoolConverter}"
+                              Mode="OneWay">
+                    <Binding Path="SelectedItem"
+                             ElementName="cmbExistingApplication"
+                             Mode="OneWay" />
+                    <Binding Path="IsChecked"
+                             ElementName="ExistingApplicationRadioButton"
+                             Mode="OneWay" />
                 </MultiBinding>
             </CheckBox.IsChecked>
         </CheckBox>

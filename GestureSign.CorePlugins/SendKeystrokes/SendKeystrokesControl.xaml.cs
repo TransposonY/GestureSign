@@ -29,7 +29,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         {
 
             // Escape existing text in textbox
-            txtSendKeys.Text = ManagedWinapi.SendKeysEscaper.Instance.escape(txtSendKeys.Text, false);
+            TxtSendKeys.Text = ManagedWinapi.SendKeysEscaper.Instance.escape(TxtSendKeys.Text, false);
         }
     }
 }

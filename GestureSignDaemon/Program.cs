@@ -28,9 +28,9 @@ namespace GestureSignDaemon
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
 
-                    if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("Daemon", Properties.Resources.en))
+                    if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("Daemon", Properties.Resources.en))
                     {
-                        LanguageDataManager.Instance.LoadFromResource(Properties.Resources.en);
+                        LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
                     }
 
                     TouchCapture.Instance.Load();
@@ -58,13 +58,13 @@ namespace GestureSignDaemon
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.ToString(), LanguageDataManager.Instance.GetTextValue("Messages.Error"),
+                        MessageBox.Show(e.ToString(), LocalizationProvider.Instance.GetTextValue("Messages.Error"),
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                     if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
                     {
-                        MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Messages.TouchscreenNotFound"),
-                            LanguageDataManager.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
+                        MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFound"),
+                            LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         //return;
                     }

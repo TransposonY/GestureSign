@@ -42,7 +42,7 @@ namespace GestureSign.CorePlugins.MouseActions
             foreach (MouseActions mouseAction in Enum.GetValues(typeof(MouseActions)))
             {
                 DescriptionDict.Add(mouseAction,
-                    LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.MouseActions." + mouseAction));
+                    LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.MouseActions." + mouseAction));
             }
         }
 
@@ -57,7 +57,7 @@ namespace GestureSign.CorePlugins.MouseActions
             foreach (ClickPositions position in Enum.GetValues(typeof(ClickPositions)))
             {
                 DescriptionDict.Add(position,
-                    LanguageDataManager.Instance.GetTextValue("CorePlugins.MouseActions.ClickPositions." + position));
+                    LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.ClickPositions." + position));
             }
         }
         public static Dictionary<ClickPositions, String> DescriptionDict { get; private set; }

@@ -19,17 +19,17 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.SendKeystrokes.Name"); }
         }
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.SendKeystrokes.Category"); }
         }
 
         public string Description
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.SendKeystrokes.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.SendKeystrokes.Description"); }
         }
 
         public bool IsAction
@@ -91,7 +91,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         {
             if (_GUI != null)
             {
-                _keystrokes = _GUI.txtSendKeys.Text;
+                _keystrokes = _GUI.TxtSendKeys.Text;
                 return _keystrokes;
             }
             else return _keystrokes ?? String.Empty;
@@ -106,7 +106,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             SendKeystrokesControl sendKeystrokesControl = new SendKeystrokesControl();
             sendKeystrokesControl.Loaded += (s, o) =>
             {
-                TypedGUI.txtSendKeys.Text = _keystrokes;
+                TypedGUI.TxtSendKeys.Text = _keystrokes;
             };
             return sendKeystrokesControl;
         }

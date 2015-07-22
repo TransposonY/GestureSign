@@ -50,13 +50,13 @@ namespace GestureSign.UI
             {
                 if (value)
                 {
-                    Title = LanguageDataManager.Instance.GetTextValue("GestureDefinition.Rename");
+                    Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
                     this.cmdNext.Visibility = Visibility.Hidden;
                     this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
                     this.txtGestureName.Visibility = Visibility.Visible;
                     this.txtGestureName.Focus();
                 }
-                else Title = LanguageDataManager.Instance.GetTextValue("GestureDefinition.Title");
+                else Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Title");
                 reName = value;
             }
         }
@@ -133,12 +133,12 @@ namespace GestureSign.UI
                 if (_existingGestureName.Equals(newGestureName)) return true;
                 if (GestureManager.Instance.GestureExists(newGestureName))
                 {
-                    this.ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
-                        LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
+                    this.ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
+                        LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
                         MessageDialogStyle.Affirmative,
                         new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK")
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                         });
                     return false;
                 }
@@ -152,12 +152,12 @@ namespace GestureSign.UI
                     if (GestureManager.Instance.GestureExists(newGestureName))
                     {
                         this.ShowMessageAsync(
-                            LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
-                            LanguageDataManager.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
+                            LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
+                            LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
                             MessageDialogStyle.Affirmative,
                             new MetroDialogSettings()
                             {
-                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             });
                         return false;
                     }

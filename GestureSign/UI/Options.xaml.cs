@@ -58,13 +58,13 @@ namespace GestureSign.UI
                     chkInterceptTouchInput.IsChecked = chkInterceptTouchInput.IsEnabled = false;
                 }
 
-                LanguageComboBox.ItemsSource = LanguageDataManager.Instance.GetLanguageList("ControlPanel");
+                LanguageComboBox.ItemsSource = LocalizationProvider.Instance.GetLanguageList("ControlPanel");
                 LanguageComboBox.SelectedValue = AppConfig.CultureName;
             }
             catch (Exception e)
             {
-                MessageBox.Show(LanguageDataManager.Instance.GetTextValue("Options.Messages.LoadSettingError"),
-                    LanguageDataManager.Instance.GetTextValue("Options.Messages.LoadSettingErrorTitle"), MessageBoxButton.OK,
+                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Options.Messages.LoadSettingError"),
+                    LocalizationProvider.Instance.GetTextValue("Options.Messages.LoadSettingErrorTitle"), MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
         }
@@ -112,7 +112,7 @@ namespace GestureSign.UI
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Change opacity display text with new value
-            OpacityText.Text = String.Format(LanguageDataManager.Instance.GetTextValue("Options.Opacity"), GetAlphaPercentage(OpacitySlider.Value));
+            OpacityText.Text = String.Format(LocalizationProvider.Instance.GetTextValue("Options.Opacity"), GetAlphaPercentage(OpacitySlider.Value));
             AppConfig.Opacity = OpacitySlider.Value;
 
             AppConfig.Save();
@@ -135,11 +135,11 @@ namespace GestureSign.UI
                 VisualFeedbackExample.Stroke = new SolidColorBrush(
                     System.Windows.Media.Color.FromArgb(_VisualFeedbackColor.A, _VisualFeedbackColor.R, _VisualFeedbackColor.G, _VisualFeedbackColor.B));
 
-                VisualFeedbackWidthText.Text = String.Format(LanguageDataManager.Instance.GetTextValue("Options.VisualFeedbackWidth"), VisualFeedbackWidthSlider.Value);
+                VisualFeedbackWidthText.Text = String.Format(LocalizationProvider.Instance.GetTextValue("Options.VisualFeedbackWidth"), VisualFeedbackWidthSlider.Value);
             }
             else
             {
-                VisualFeedbackWidthText.Text = LanguageDataManager.Instance.GetTextValue("Options.Off");
+                VisualFeedbackWidthText.Text = LocalizationProvider.Instance.GetTextValue("Options.Off");
             }
 
         }
@@ -169,7 +169,7 @@ namespace GestureSign.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
@@ -247,7 +247,7 @@ namespace GestureSign.UI
                 }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
 
         }
 
@@ -280,7 +280,7 @@ namespace GestureSign.UI
                 }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message, LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)

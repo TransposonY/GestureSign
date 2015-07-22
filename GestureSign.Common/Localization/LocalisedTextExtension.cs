@@ -15,7 +15,7 @@ namespace GestureSign.Common.Localization
         }
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return LanguageDataManager.Instance.GetTextValue(_key);
+            return LocalizationProvider.Instance.GetTextValue(_key);
         }
 
     }

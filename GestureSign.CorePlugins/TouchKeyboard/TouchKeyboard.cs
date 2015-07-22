@@ -47,7 +47,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Name"); }
         }
 
         public string Description
@@ -55,15 +55,15 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             get
             {
                 return isShow
-                    ? LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Show")
-                    : LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Hide");
+                    ? LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Show")
+                    : LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Hide");
             }
         }
 
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.TouchKeyboard.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Category"); }
         }
 
         public bool IsAction

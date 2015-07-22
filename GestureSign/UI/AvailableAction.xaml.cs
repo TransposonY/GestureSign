@@ -180,12 +180,12 @@ namespace GestureSign.UI
             // Confirm user really wants to delete selected items
             if (await
                 UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
-                        LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"),
+                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+                        LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
-                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented
                         }) != MessageDialogResult.Affirmative) return;
 
@@ -233,11 +233,11 @@ namespace GestureSign.UI
             if (GestureManager.Instance.Gestures.Length == 0)
             {
                 UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.NoGestureTitle"),
-                        LanguageDataManager.Instance.GetTextValue("Action.Messages.NoGesture"), MessageDialogStyle.Affirmative,
+                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.NoGestureTitle"),
+                        LocalizationProvider.Instance.GetTextValue("Action.Messages.NoGesture"), MessageDialogStyle.Affirmative,
                         new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             ColorScheme = MetroDialogColorScheme.Accented
                         });
                 return;
@@ -386,7 +386,7 @@ namespace GestureSign.UI
             else
             {
                 pluginName = String.Empty;
-                description = LanguageDataManager.Instance.GetTextValue("Action.Messages.NoAssociationAction");
+                description = LocalizationProvider.Instance.GetTextValue("Action.Messages.NoAssociationAction");
             }
 
             return new ActionInfo(
@@ -468,12 +468,12 @@ namespace GestureSign.UI
             if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
             {
                 UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                        String.Format(LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                        String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
                             selectedItem.ActionName, menuItem.Header),
                         MessageDialogStyle.Affirmative, new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             ColorScheme = MetroDialogColorScheme.Accented
                         });
                 return;
@@ -505,8 +505,8 @@ namespace GestureSign.UI
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.json;*.act",
-                Title = LanguageDataManager.Instance.GetTextValue("Action.ImportActions"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.json;*.act",
+                Title = LocalizationProvider.Instance.GetTextValue("Action.ImportActions"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
@@ -537,9 +537,9 @@ namespace GestureSign.UI
                                     var result =
                                         MessageBox.Show(
                                             String.Format(
-                                                LanguageDataManager.Instance.GetTextValue("Action.Messages.ReplaceConfirm"),
+                                                LocalizationProvider.Instance.GetTextValue("Action.Messages.ReplaceConfirm"),
                                                 newAction.Name, existingApp.Name),
-                                            LanguageDataManager.Instance.GetTextValue("Action.Messages.ReplaceConfirmTitle"),
+                                            LocalizationProvider.Instance.GetTextValue("Action.Messages.ReplaceConfirmTitle"),
                                             MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                     if (result == MessageBoxResult.Yes)
                                     {
@@ -571,8 +571,8 @@ namespace GestureSign.UI
                     lstAvailableApplication.SelectedIndex = 0;
                 }
                 MessageBox.Show(
-                    String.Format(LanguageDataManager.Instance.GetTextValue("Action.Messages.ImportComplete"), addcount),
-                    LanguageDataManager.Instance.GetTextValue("Action.Messages.ImportCompleteTitle"));
+                    String.Format(LocalizationProvider.Instance.GetTextValue("Action.Messages.ImportComplete"), addcount),
+                    LocalizationProvider.Instance.GetTextValue("Action.Messages.ImportCompleteTitle"));
             }
         }
 
@@ -580,9 +580,9 @@ namespace GestureSign.UI
         {
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.act",
-                FileName = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + ".act",
-                Title = LanguageDataManager.Instance.GetTextValue("Action.ExportActions"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.act",
+                FileName = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + ".act",
+                Title = LocalizationProvider.Instance.GetTextValue("Action.ExportActions"),
                 AddExtension = true,
                 DefaultExt = "act",
                 ValidateNames = true
@@ -596,9 +596,9 @@ namespace GestureSign.UI
         {
             Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
             {
-                Filter = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + "|*.act",
-                FileName = LanguageDataManager.Instance.GetTextValue("Action.ActionFile") + ".act",
-                Title = LanguageDataManager.Instance.GetTextValue("Action.ExportSpecificActions"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.act",
+                FileName = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + ".act",
+                Title = LocalizationProvider.Instance.GetTextValue("Action.ExportSpecificActions"),
                 AddExtension = true,
                 DefaultExt = "act",
                 ValidateNames = true
@@ -707,12 +707,12 @@ namespace GestureSign.UI
         {
             if (await
                 UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
-                        LanguageDataManager.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"),
+                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+                        LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
-                            AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
-                            NegativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.Cancel"),
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                            NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented
                         }) == MessageDialogResult.Affirmative)
             {
@@ -812,7 +812,7 @@ namespace GestureSign.UI
             var app = value as IApplication;
             if (app != null)
             {
-                return String.Format(LanguageDataManager.Instance.GetTextValue("Action.ActionCount"), app.Name, app.Actions.Count);
+                return String.Format(LocalizationProvider.Instance.GetTextValue("Action.ActionCount"), app.Name, app.Actions.Count);
             }
             return Binding.DoNothing;
         }
@@ -829,8 +829,8 @@ namespace GestureSign.UI
             string name = values[0] as string;
             int count = (int)values[1];
             return String.IsNullOrEmpty(name)
-                ? String.Format(LanguageDataManager.Instance.GetTextValue("Action.NotGroupedAppCount"), count)
-                : String.Format(LanguageDataManager.Instance.GetTextValue("Action.AppCount"), name, count);
+                ? String.Format(LocalizationProvider.Instance.GetTextValue("Action.NotGroupedAppCount"), count)
+                : String.Format(LocalizationProvider.Instance.GetTextValue("Action.AppCount"), name, count);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {

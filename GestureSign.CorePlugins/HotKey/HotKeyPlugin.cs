@@ -38,7 +38,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public string Name
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.Name"); }
         }
 
         public string Description
@@ -58,7 +58,7 @@ namespace GestureSign.CorePlugins.HotKey
 
         public string Category
         {
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Category"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.Category"); }
         }
 
         public bool IsAction
@@ -175,11 +175,11 @@ namespace GestureSign.CorePlugins.HotKey
         private string GetDescription(HotKeySettings Settings)
         {
             if (Settings == null || Settings.KeyCode == null)
-                return LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.Description");
+                return LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.Description");
 
             // Create string to store key combination and final output description
             string strKeyCombo = "";
-            string strFormattedOutput = LanguageDataManager.Instance.GetTextValue("CorePlugins.HotKey.SpecificDescription");
+            string strFormattedOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.SpecificDescription");
 
             // Build output string
             if (Settings.Windows)

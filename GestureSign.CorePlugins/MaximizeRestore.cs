@@ -21,12 +21,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MaximizeRestore.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MaximizeRestore.Name"); }
 		}
 
 		public string Description
 		{
-            get { return LanguageDataManager.Instance.GetTextValue("CorePlugins.MaximizeRestore.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MaximizeRestore.Description"); }
 		}
 
 		public UserControl GUI

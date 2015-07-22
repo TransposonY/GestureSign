@@ -62,7 +62,7 @@ namespace GestureSignDaemon
             TrayMenu.Items.AddRange(new ToolStripItem[] { miTrainingMode, miDisableGestures, miSeperator1, _controlPanelMenuItem, miSeperator2, miExitGestureSign });
             TrayMenu.Name = "TrayMenu";
             TrayMenu.Size = new Size(194, 82);
-            TrayMenu.Text = LanguageDataManager.Instance.GetTextValue("TrayMenu.Text");
+            TrayMenu.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Text");
             //TrayMenu.Opened += (o, e) => { Input.TouchCapture.Instance.DisableTouchCapture(); };
             //TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
 
@@ -70,7 +70,7 @@ namespace GestureSignDaemon
             miTrainingMode.CheckOnClick = true;
             miTrainingMode.Name = "TrainingModeMenuItem";
             miTrainingMode.Size = new Size(193, 22);
-            miTrainingMode.Text = LanguageDataManager.Instance.GetTextValue("TrayMenu.TrainingMode");
+            miTrainingMode.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.TrainingMode");
             miTrainingMode.Click += (o, e) => { ToggleTeaching(); };
 
             // Disable Gestures Menu Item
@@ -79,7 +79,7 @@ namespace GestureSignDaemon
             miDisableGestures.CheckState = CheckState.Unchecked;
             miDisableGestures.Name = "DisableGesturesMenuItem";
             miDisableGestures.Size = new Size(193, 22);
-            miDisableGestures.Text = LanguageDataManager.Instance.GetTextValue("TrayMenu.Disable");
+            miDisableGestures.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Disable");
             miDisableGestures.Click += (o, e) => { ToggleDisableGestures(); };
 
             // First Seperator Menu Item
@@ -92,7 +92,7 @@ namespace GestureSignDaemon
             // Control Panel Menu Item
             _controlPanelMenuItem.Name = "ControlPanel";
             _controlPanelMenuItem.Size = new Size(193, 22);
-            _controlPanelMenuItem.Text = LanguageDataManager.Instance.GetTextValue("TrayMenu.ControlPanel");
+            _controlPanelMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.ControlPanel");
             _controlPanelMenuItem.Click += (o, e) =>
             {
                 bool createdSetting;
@@ -114,7 +114,7 @@ namespace GestureSignDaemon
                             catch (Exception exception)
                             {
                                 MessageBox.Show(exception.ToString(),
-                                    LanguageDataManager.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
+                                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
                             }
 
@@ -130,7 +130,7 @@ namespace GestureSignDaemon
             // Exit High Sign Menu Item
             miExitGestureSign.Name = "ExitGestureSign";
             miExitGestureSign.Size = new Size(193, 22);
-            miExitGestureSign.Text = LanguageDataManager.Instance.GetTextValue("TrayMenu.Exit");
+            miExitGestureSign.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Exit");
             miExitGestureSign.Click += async (o, e) =>
             {
                 await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel");
@@ -185,8 +185,8 @@ namespace GestureSignDaemon
             SetupTrayIconAndTrayMenu();
             TrayIcon.Visible = GestureSign.Common.Configuration.AppConfig.ShowTrayIcon;
             if (GestureSign.Common.Configuration.AppConfig.ShowBalloonTip)
-                this.TrayIcon.ShowBalloonTip(1000, LanguageDataManager.Instance.GetTextValue("TrayMenu.BalloonTipTitle"),
-                    LanguageDataManager.Instance.GetTextValue("TrayMenu.BalloonTip"), ToolTipIcon.Info);
+                this.TrayIcon.ShowBalloonTip(1000, LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTipTitle"),
+                    LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTip"), ToolTipIcon.Info);
 
         }
 

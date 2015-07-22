@@ -1,29 +1,78 @@
 ﻿<UserControl x:Class="GestureSign.CorePlugins.HotKey.HotKey"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
-             mc:Ignorable="d" d:DesignWidth="320" Height="110">
-    <Canvas PreviewKeyDown="Canvas_PreviewKeyDown" Margin="0"
+             mc:Ignorable="d"
+             d:DesignWidth="320"
+             Height="110">
+    <Canvas PreviewKeyDown="Canvas_PreviewKeyDown"
+            Margin="0"
             PreviewKeyUp="Canvas_PreviewKeyUp">
         <ToggleButton x:Name="chkWin"
-                          Content="Win" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" Focusable="False" FontSize="12" Canvas.Left="10" Canvas.Top="35" />
+                      Content="Win"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="65"
+                      Focusable="False"
+                      FontSize="12"
+                      Canvas.Left="10"
+                      Canvas.Top="35" />
         <ToggleButton x:Name="chkControl"
-                          Content="Ctrl" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" Focusable="False" FontSize="12" Canvas.Left="80" Canvas.Top="35" />
+                      Content="Ctrl"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="65"
+                      Focusable="False"
+                      FontSize="12"
+                      Canvas.Left="80"
+                      Canvas.Top="35" />
         <ToggleButton x:Name="chkAlt"
-                          Content="Alt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" Focusable="False" FontSize="12" Canvas.Left="220" Canvas.Top="35" />
+                      Content="Alt"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="65"
+                      Focusable="False"
+                      FontSize="12"
+                      Canvas.Left="220"
+                      Canvas.Top="35" />
         <ToggleButton x:Name="chkShift"
-                          Content="Shift" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" Focusable="False" FontSize="12" Canvas.Left="150" Canvas.Top="35" />
+                      Content="Shift"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="65"
+                      Focusable="False"
+                      FontSize="12"
+                      Canvas.Left="150"
+                      Canvas.Top="35" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="{localization:LocalisedText CorePlugins.HotKey.Tip}" VerticalAlignment="Top" Canvas.Left="10" Canvas.Top="10"/>
-        <TextBox x:Name="txtKey" InputMethod.IsInputMethodEnabled="False"  HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" FontSize="14" Canvas.Left="10" Canvas.Top="68"
+                   Text="{localization:LocalisedText CorePlugins.HotKey.Tip}"
+                   VerticalAlignment="Top"
+                   Canvas.Left="10"
+                   Canvas.Top="10" />
+        <TextBox x:Name="txtKey"
+                 InputMethod.IsInputMethodEnabled="False"
+                 HorizontalAlignment="Left"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top"
+                 Width="205"
+                 FontSize="14"
+                 Canvas.Left="10"
+                 Canvas.Top="68"
                  MaxLines="5">
             <TextBox.ContextMenu>
                 <ContextMenu Visibility="Collapsed" />
             </TextBox.ContextMenu>
         </TextBox>
-        <Button Content="{localization:LocalisedText CorePlugins.HotKey.Reset}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="14" Width="65" Click="Button_Click" Canvas.Left="220" Canvas.Top="68"/>
+        <Button Content="{localization:LocalisedText CorePlugins.HotKey.Reset}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                FontSize="14"
+                Width="65"
+                Click="Button_Click"
+                Canvas.Left="220"
+                Canvas.Top="68" />
     </Canvas>
 </UserControl>
