@@ -42,18 +42,21 @@ namespace GestureSign.Common.Localization
         public Dictionary<string, string> GetLanguageList(string languageFolderName)
         {
             var languageList = new Dictionary<string, string>(2) { { "Built-in", "English (Built-in)" } };
-            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", languageFolderName);
+            var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", languageFolderName);
+            if (!Directory.Exists(folderPath)) return null;
             foreach (string file in Directory.GetFiles(folderPath, "*.xml"))
             {
                 using (XmlTextReader xtr = new XmlTextReader(file) { WhitespaceHandling = WhitespaceHandling.None })
                 {
-                    xtr.Read();
-                    xtr.Read();
-                    if ("language".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
+                    while (xtr.Read())
                     {
-                        string key = xtr.GetAttribute("Culture");
-                        if (key != null && !languageList.ContainsKey(key))
-                            languageList.Add(key, xtr.GetAttribute("DisplayName"));
+                        if ("language".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string key = xtr.GetAttribute("Culture");
+                            if (key != null && !languageList.ContainsKey(key))
+                                languageList.Add(key, xtr.GetAttribute("DisplayName"));
+                            break;
+                        }
                     }
                 }
             }
@@ -97,13 +100,15 @@ namespace GestureSign.Common.Localization
             {
                 using (XmlTextReader xtr = new XmlTextReader(file) { WhitespaceHandling = WhitespaceHandling.None })
                 {
-                    xtr.Read();
-                    xtr.Read();
-                    if ("language".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
+                    while (xtr.Read())
                     {
-                        if (culture.Name.Equals(xtr.GetAttribute("Culture"), StringComparison.OrdinalIgnoreCase))
+                        if ("language".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            return file;
+                            if (culture.Name.Equals(xtr.GetAttribute("Culture"), StringComparison.OrdinalIgnoreCase))
+                            {
+                                return file;
+                            }
+                            break;
                         }
                     }
                 }
@@ -114,25 +119,28 @@ namespace GestureSign.Common.Localization
         private void LoadLanguageData(XmlTextReader xmlTextReader)
         {
             List<string> nodes = new List<string>(4);
-            xmlTextReader.Read();
-            xmlTextReader.Read();
             while (xmlTextReader.Read())
             {
-                if (xmlTextReader.NodeType == XmlNodeType.Element)
+                if (!"language".Equals(xmlTextReader.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                while (xmlTextReader.Read())
                 {
-                    nodes.Add(xmlTextReader.Name);
+                    if (xmlTextReader.NodeType == XmlNodeType.Element)
+                    {
+                        nodes.Add(xmlTextReader.Name);
+                    }
+                    else if (xmlTextReader.NodeType == XmlNodeType.EndElement)
+                    {
+                        if (nodes.Count != 0)
+                            nodes.RemoveAt(nodes.Count - 1);
+                    }
+                    else if (xmlTextReader.NodeType == XmlNodeType.Text)
+                    {
+                        var key = String.Join(".", nodes);
+                        if (!_texts.ContainsKey(key))
+                            _texts.Add(key, xmlTextReader.Value);
+                    }
                 }
-                else if (xmlTextReader.NodeType == XmlNodeType.EndElement)
-                {
-                    if (nodes.Count != 0)
-                        nodes.RemoveAt(nodes.Count - 1);
-                }
-                else if (xmlTextReader.NodeType == XmlNodeType.Text)
-                {
-                    var key = String.Join(".", nodes);
-                    if (!_texts.ContainsKey(key))
-                        _texts.Add(key, xmlTextReader.Value);
-                }
+                break;
             }
 
             if (_texts.ContainsKey("Font"))
