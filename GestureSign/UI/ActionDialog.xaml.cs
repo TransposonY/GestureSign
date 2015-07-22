@@ -240,19 +240,6 @@ namespace GestureSign.UI
                             LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
                             LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
 
-                try
-                {
-                    if (chkRegex.IsChecked.Value)
-                        Regex.IsMatch(matchString, "teststring");
-                }
-                catch
-                {
-                    return
-                        ShowErrorMessage(
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.RegularExpressionsErrorTitle"),
-                            LanguageDataManager.Instance.GetTextValue("ActionDialog.Messages.RegularExpressionsError"));
-                }
-
                 _newApplication = new UserApplication
                 {
                     InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,

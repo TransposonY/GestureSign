@@ -67,8 +67,6 @@ Page:https://github.com/TransposonY
       <AppExists>The application name you provided already exists, please provide a different name</AppExists>
       <NoMatchStringTitle>No Match String</NoMatchStringTitle>
       <NoMatchString>Please provide Match String for the application</NoMatchString>
-      <RegularExpressionsErrorTitle>Match String Error</RegularExpressionsErrorTitle>
-      <RegularExpressionsError>Regular expression format error</RegularExpressionsError>
       <NoSelectedGestureTitle>No Gesture Specified</NoSelectedGestureTitle>
       <NoSelectedGesture>Please select a gesture</NoSelectedGesture>
       <NoActionNameTitle>No Action Name</NoActionNameTitle>
@@ -128,8 +126,6 @@ Page:https://github.com/TransposonY
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
       <EmptyString>Please provide Match String for the application</EmptyString>
-      <FormatErrorTitle>Match String Error</FormatErrorTitle>
-      <FormatError>Regular expression format error</FormatError>
       <IgnoredAppExistsTitle>Ignored Application Conflict</IgnoredAppExistsTitle>
       <IgnoredAppExists>The Match String you provided already exists, please provide a different Match String</IgnoredAppExists>
     </Messages>

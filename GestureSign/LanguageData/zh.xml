@@ -69,8 +69,6 @@ http://git.oschina.net/TransY/GestureSign
       <AppExists>程序名称已经存在，请输入其他名字</AppExists>
       <NoMatchStringTitle>无匹配字段</NoMatchStringTitle>
       <NoMatchString>请先定义一个匹配字段</NoMatchString>
-      <RegularExpressionsErrorTitle>格式错误</RegularExpressionsErrorTitle>
-      <RegularExpressionsError>正则表达式格式错误，请重新检查</RegularExpressionsError>
       <NoSelectedGestureTitle>手势未定义</NoSelectedGestureTitle>
       <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
       <NoActionNameTitle>无动作名</NoActionNameTitle>
@@ -130,8 +128,6 @@ http://git.oschina.net/TransY/GestureSign
     <Messages>
       <EmptyStringTitle>字段为空</EmptyStringTitle>
       <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
-      <FormatErrorTitle>格式错误</FormatErrorTitle>
-      <FormatError>正则表达式格式错误，请重新检查</FormatError>
       <IgnoredAppExistsTitle>该忽略程序已存在</IgnoredAppExistsTitle>
       <IgnoredAppExists>该忽略程序已存在，请重新输入匹配字段</IgnoredAppExists>
     </Messages>

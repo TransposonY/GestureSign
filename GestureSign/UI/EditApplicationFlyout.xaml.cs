@@ -167,24 +167,7 @@ namespace GestureSign.UI
                             });
                 return;
             }
-            try
-            {
-                if (chkPattern.IsChecked.Value)
-                    System.Text.RegularExpressions.Regex.IsMatch(matchString, "teststring");
-            }
-            catch
-            {
-                UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.FormatErrorTitle"),
-                        LanguageDataManager.Instance.GetTextValue("EditApplicationFlyout.Messages.FormatError"),
-                        settings:
-                            new MetroDialogSettings
-                            {
-                                AffirmativeButtonText = LanguageDataManager.Instance.GetTextValue("Common.OK"),
-                            });
-                return;
-            }
+
             string name;
             if (_isUserApp)
             {
