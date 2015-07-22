@@ -11,9 +11,10 @@ namespace GestureSign.Common.Localization
 {
     public class LanguageDataManager
     {
+        private string _resource;
         private Dictionary<string, string> _texts = new Dictionary<string, string>(10);
         private FlowDirection _flowDirection;
-        private FontFamily _font = new FontFamily("Segoe UI, Lucida Sans Unicode, Verdana");
+        private FontFamily _font;
         private static LanguageDataManager _instance;
         internal LanguageDataManager()
         {
@@ -65,11 +66,15 @@ namespace GestureSign.Common.Localization
 
         public string GetTextValue(string key)
         {
+            if (_texts.ContainsKey(key)) return _texts[key];
+            if (_resource != null)
+                LoadFromResource(_resource);
             return _texts.ContainsKey(key) ? _texts[key] : "";
         }
 
-        public bool LoadFromFile(string languageFolderName)
+        public bool LoadFromFile(string languageFolderName, string resource)
         {
+            _resource = resource;
             string languageFile = GetLanguageFilePath(languageFolderName);
             if (languageFile == null) return false;
             using (XmlTextReader xtr = new XmlTextReader(languageFile) { WhitespaceHandling = WhitespaceHandling.None })

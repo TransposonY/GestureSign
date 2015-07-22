@@ -125,7 +125,7 @@ namespace GestureSign
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("ControlPanel"))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("ControlPanel", GestureSign.Properties.Resources.en))
             {
                 LanguageDataManager.Instance.LoadFromResource(GestureSign.Properties.Resources.en);
             }

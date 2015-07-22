@@ -28,7 +28,7 @@ namespace GestureSignDaemon
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
 
-                    if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("Daemon"))
+                    if ("Built-in".Equals(AppConfig.CultureName) || !LanguageDataManager.Instance.LoadFromFile("Daemon", Properties.Resources.en))
                     {
                         LanguageDataManager.Instance.LoadFromResource(Properties.Resources.en);
                     }
