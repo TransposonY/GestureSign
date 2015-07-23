@@ -23,7 +23,7 @@
   <About>
     <Header>About</Header>
     <Help>Open the help page</Help>
-    <HelpPageUrl>http://git.oschina.net/TransY/GestureSign/wikis/home</HelpPageUrl>
+    <HelpPageUrl>https://github.com/TransposonY/GestureSign</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
     <Information>Author:TransposonY
@@ -44,13 +44,13 @@ Page:https://github.com/TransposonY
     <AppNameWatermark>Please enter application name</AppNameWatermark>
     <Browse>Browse...</Browse>
     <ExecutableFile>Executable File</ExecutableFile>
-    <ExistingApplications>Existing Applications</ExistingApplications>
+    <ExistingApplications>Existing App</ExistingApplications>
     <Group>Group</Group>
     <Icon>Icon</Icon>
     <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
     <MatchUsing>Match Using</MatchUsing>
     <MatchString>Match String</MatchString>
-    <NewApp>New Application</NewApp>
+    <NewApp>New App</NewApp>
     <SelectApp>Select Application</SelectApp>
     <SelectCommand>Select Command</SelectCommand>
     <SelectExistingApp>Select Existing Application</SelectExistingApp>
@@ -79,10 +79,10 @@ Page:https://github.com/TransposonY
     <AppCount>{0} {1} </AppCount>
     <NotGroupedAppCount>Ungrouped {0} </NotGroupedAppCount>
     <ImportActions>Import Actions...</ImportActions>
-    <ExportActions>Export Actions...</ExportActions>
+    <ExportActions>Export Actions</ExportActions>
     <ExportSpecificActions>Export Enabled Actions in Current Application...</ExportSpecificActions>
     <CopyAction>Copy This Action to...</CopyAction>
-    <ExportAllActions>Export All Actions</ExportAllActions>
+    <ExportAllActions>Export All Actions...</ExportAllActions>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteActionConfirm>Are you sure?</DeleteActionConfirm>
@@ -114,7 +114,7 @@ Page:https://github.com/TransposonY
   </Gesture>
   <EditApplicationFlyout>
     <EditApplicationTitle>Edit Application</EditApplicationTitle>
-    <AddIgnoredAppTitle>Add Ignored Application</AddIgnoredAppTitle>
+    <AddIgnoredAppTitle>New Ignored</AddIgnoredAppTitle>
     <ShowRunningApplications>Select Running...</ShowRunningApplications>
     <AppName>Application Name</AppName>
     <LocateWindow>Locate Window</LocateWindow>
@@ -148,8 +148,8 @@ Click New Action or Save to replace existing gesture,or enter different name
   <Ignored>
     <Header>Ignored</Header>
     <IgnoredAppFile>Ignored Application File</IgnoredAppFile>
-    <ImportIgnoredApps>Import Ignored Application</ImportIgnoredApps>
-    <ExportIgnoredApps>Export Ignored Application</ExportIgnoredApps>
+    <ImportIgnoredApps>Import Ignored Application...</ImportIgnoredApps>
+    <ExportIgnoredApps>Export Ignored Application...</ExportIgnoredApps>
     <Count>  ( {0} Ignored Applications )</Count>
     <Enable>Enable</Enable>
     <Messages>
@@ -159,7 +159,7 @@ Click New Action or Save to replace existing gesture,or enter different name
   </Ignored>
   <Options>
     <Header>Options</Header>
-    <Language>Language（restart GestureSign to take effect）</Language>
+    <Language>Language（Restart GestureSign to take effect）</Language>
     <Opacity>Opacity {0}%</Opacity>
     <VisualFeedbackWidth>Visual Feedback Width {0:0} px</VisualFeedbackWidth>
     <Off>Off</Off>
@@ -280,8 +280,8 @@ Click New Action or Save to replace existing gesture,or enter different name
     <ScreenBrightness>
       <Name>Screen Brightness</Name>
       <Category>System</Category>
-      <IncreaseBrightness>Increase Brightness</IncreaseBrightness>
-      <DecreaseBrightness>Decrease Brightness</DecreaseBrightness>
+      <IncreaseBrightness>Increase Brightness </IncreaseBrightness>
+      <DecreaseBrightness>Decrease Brightness </DecreaseBrightness>
     </ScreenBrightness>
     <SendKeystrokes>
       <Name>Send Keystrokes</Name>
@@ -300,8 +300,8 @@ Click New Action or Save to replace existing gesture,or enter different name
     <Volume>
       <Name>Adjust Volume</Name>
       <Category>System</Category>
-      <Increase>Increase the system volume</Increase>
-      <Decrease>Decrease the system volume</Decrease>
+      <Increase>Increase the system volume </Increase>
+      <Decrease>Decrease the system volume </Decrease>
       <Mute>Toggle the system mute</Mute>
     </Volume>
     <DefaultBrowser>

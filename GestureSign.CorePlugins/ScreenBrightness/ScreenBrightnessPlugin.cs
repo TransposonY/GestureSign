@@ -126,10 +126,10 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.IncreaseBrightness") + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.IncreaseBrightness") + Settings.Percent + " %";
                     break;
                 case 1:
-                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.DecreaseBrightness") + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.ScreenBrightness.DecreaseBrightness") + Settings.Percent + " %";
                     break;
             }
 

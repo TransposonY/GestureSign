@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="150"
+             d:DesignHeight="120"
              d:DesignWidth="320">
     <Canvas PreviewKeyDown="KeysTextBox_PreviewKeyDown"
-            PreviewKeyUp="KeysTextBox_PreviewKeyUp">
+            PreviewKeyUp="KeysTextBox_PreviewKeyUp"
+            Height="120">
         <RadioButton x:Name="KeyDownRadioButton"
                      Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.KeyDown}"
                      Canvas.Left="25"

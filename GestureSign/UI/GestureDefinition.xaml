@@ -46,14 +46,16 @@
                     Width="80"
                     Click="cmdCancel_Click"
                     IsCancel="True"
-                    Focusable="False" />
+                    Focusable="False"
+                    FontSize="14" />
             <Button x:Name="cmdDone"
                     Content="{localization:LocalisedText Common.Save}"
                     Style="{DynamicResource SquareButtonStyle}"
                     Width="80"
                     Click="cmdDone_Click"
                     DockPanel.Dock="Right"
-                    Focusable="False" />
+                    Focusable="False"
+                    FontSize="14" />
             <Button x:Name="cmdNext"
                     Content="{localization:LocalisedText GestureDefinition.NewAction}"
                     Style="{DynamicResource SquareButtonStyle}"
@@ -61,7 +63,8 @@
                     Click="cmdNext_Click"
                     HorizontalAlignment="Center"
                     IsDefault="True"
-                    Focusable="False" />
+                    Focusable="False"
+                    FontSize="14" />
         </DockPanel>
 
     </StackPanel>

@@ -6,7 +6,7 @@
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       Title="{localization:LocalisedText Title}"
-                      Height="450"
+                      Height="500"
                       Width="650"
                       ShowIconOnTitleBar="False"
                       ShowTitleBar="True"
@@ -14,7 +14,7 @@
                       BorderThickness="1"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       MinWidth="586"
-                      MinHeight="412">
+                      MinHeight="420">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

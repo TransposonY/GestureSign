@@ -7,13 +7,16 @@
              mc:Ignorable="d"
              d:DesignHeight="70"
              d:DesignWidth="320">
-    <Grid>
+    <Canvas>
         <ComboBox x:Name="cboMethod"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
-                  Width="120"
-                  Margin="29,22,0,22"
-                  SelectedIndex="0">
+                  Width="167"
+                  SelectedIndex="0"
+                  FontSize="14"
+                  Canvas.Left="10"
+                  Canvas.Top="10"
+                  Height="27">
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.IncreaseBrightness}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.DecreaseBrightness}" />
         </ComboBox>
@@ -22,14 +25,19 @@
                  InputMethod.IsInputMethodEnabled="False"
                  TextAlignment="Left"
                  HorizontalAlignment="Right"
-                 Margin="0,22,76,22"
                  Width="71"
                  KeyDown="NumPercent_KeyDown"
-                 TextChanged="NumPercent_TextChanged" />
+                 TextChanged="NumPercent_TextChanged"
+                 FontSize="14"
+                 Canvas.Left="186"
+                 Canvas.Top="10"
+                 Height="27" />
         <TextBlock HorizontalAlignment="Left"
-                   Margin="269,28,0,0"
                    TextWrapping="Wrap"
                    Text="(1-100)"
-                   VerticalAlignment="Top" />
-    </Grid>
+                   VerticalAlignment="Top"
+                   FontSize="14"
+                   Canvas.Left="272"
+                   Canvas.Top="17" />
+    </Canvas>
 </UserControl>

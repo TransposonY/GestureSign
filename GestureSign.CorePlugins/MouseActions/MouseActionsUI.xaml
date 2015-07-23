@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseActions"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="150"
+             d:DesignHeight="140"
              d:DesignWidth="320">
-    <Canvas>
+    <Canvas Height="140">
         <Canvas.Resources>
             <ObjectDataProvider ObjectType="{x:Type local:MouseActionDescription}"
                                 x:Key="ActionDescription">
@@ -27,7 +27,7 @@
                   ItemsSource="{Binding Source={StaticResource ActionDescription},Path=DescriptionDict}"
                   DisplayMemberPath="Value"
                   SelectedValuePath="Key"
-                  Width="180"
+                  Width="300"
                   Canvas.Left="10"
                   Canvas.Top="33"
                   FontSize="14"
@@ -37,8 +37,7 @@
         <Canvas x:Name="ClickCanvas"
                 Height="76"
                 Canvas.Top="64"
-                Width="300"
-                Visibility="Collapsed">
+                Width="320">
             <TextBlock Canvas.Left="10"
                        TextWrapping="Wrap"
                        Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
@@ -48,7 +47,7 @@
                       ItemsSource="{Binding Source={StaticResource  PositionDescription},Path=DescriptionDict}"
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key"
-                      Width="180"
+                      Width="300"
                       Canvas.Left="10"
                       Canvas.Top="33"
                       FontSize="14" />
@@ -57,8 +56,7 @@
         <Canvas x:Name="MoveMouseCanvas"
                 Height="86"
                 Canvas.Top="64"
-                Width="300"
-                Visibility="Collapsed">
+                Width="300">
             <TextBlock TextWrapping="Wrap"
                        Text="X"
                        Canvas.Left="10"
@@ -92,21 +90,21 @@
                 Height="86"
                 Width="320"
                 Canvas.Top="64">
-            <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText CorePlugins.MouseActions.ScrollAmountTip}"
-                       Canvas.Top="10"
-                       FontSize="14"
-                       Width="309"
-                       Canvas.Left="10" />
             <TextBox x:Name="ScrollAmountTextBox"
                      KeyDown="TextBox_KeyDown"
                      TextChanged="TextBox_TextChanged"
                      Height="23"
                      Canvas.Left="10"
                      TextWrapping="Wrap"
-                     Canvas.Top="37"
+                     Canvas.Top="10"
                      Width="60"
                      FontSize="14" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText CorePlugins.MouseActions.ScrollAmountTip}"
+                       Canvas.Top="41"
+                       FontSize="14"
+                       Width="300"
+                       Canvas.Left="10" />
         </Canvas>
 
     </Canvas>

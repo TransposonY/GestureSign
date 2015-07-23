@@ -259,6 +259,12 @@ namespace GestureSign.UI
             chkAllowSingleStroke.IsChecked = chkInterceptTouchInput.IsChecked = chkPattern.IsChecked = false;
         }
 
+        private void txtMatchString_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            MatchStringPopup.IsOpen = true;
+            MatchStringPopupTextBox.Focus();
+        }
+
 
     }
     public class MatchStringConverter : IMultiValueConverter

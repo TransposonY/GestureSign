@@ -10,19 +10,21 @@
     <Grid>
         <ComboBox x:Name="cboMethod"
                   HorizontalAlignment="Left"
-                  Margin="10,30,0,0"
+                  Margin="10,10,0,0"
                   VerticalAlignment="Top"
-                  Width="179"
-                  SelectionChanged="cboMethod_SelectionChanged">
+                  Width="204"
+                  SelectionChanged="cboMethod_SelectionChanged"
+                  FontSize="14">
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Increase}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Decrease}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Mute}" />
         </ComboBox>
         <ComboBox x:Name="cboPercent"
-                  HorizontalAlignment="Left"
-                  Margin="229,30,0,0"
+                  HorizontalAlignment="Right"
+                  Margin="0,10,10,0"
                   VerticalAlignment="Top"
-                  Width="81" />
+                  Width="81"
+                  FontSize="14" />
 
     </Grid>
 </UserControl>

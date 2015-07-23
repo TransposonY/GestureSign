@@ -16,11 +16,10 @@
                  KeyDown="TimeoutTextBox_KeyDown"
                  TextChanged="TimeoutTextBox_TextChanged"
                  VerticalAlignment="Center"
-                 Margin="50,0,0,0" />
+                 Margin="10,10,0,34" />
         <TextBlock HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.Delay.Millisecond}"
                    VerticalAlignment="Center"
-                   Margin="140,0,0,0" />
+                   Margin="86,15,-115,40" />
     </Grid>
 </UserControl>

@@ -120,10 +120,10 @@ namespace GestureSign.CorePlugins.Volume
             switch (Settings.Method)
             {
                 case 0:
-                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Increase") + " by " + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Increase") + Settings.Percent + " %";
                     break;
                 case 1:
-                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Decrease") + " by " + Settings.Percent;
+                    strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Decrease") + Settings.Percent + " %";
                     break;
                 case 2:
                     strOutput = LocalizationProvider.Instance.GetTextValue("CorePlugins.Volume.Mute");

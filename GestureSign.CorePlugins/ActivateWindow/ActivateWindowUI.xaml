@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="200"
+             d:DesignHeight="170"
              d:DesignWidth="320">
-    <Canvas>
+    <Canvas Height="170">
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.ActivateWindow.ClassName}"
@@ -38,29 +38,26 @@
                   HorizontalAlignment="Left"
                   Canvas.Left="10"
                   Canvas.Top="104" />
-        <TextBlock HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.Timeout}"
-                   VerticalAlignment="Top"
-                   Canvas.Left="10"
-                   Canvas.Top="142" />
-        <TextBox x:Name="TimeoutTextBox"
-                 InputMethod.IsInputMethodEnabled="False"
-                 KeyDown="TimeoutTextBox_KeyDown"
-                 TextChanged="TimeoutTextBox_TextChanged"
-                 Height="23"
-                 TextWrapping="Wrap"
-                 VerticalAlignment="Top"
-                 HorizontalAlignment="Left"
-                 Width="80"
-                 Canvas.Left="98"
-                 Canvas.Top="137" />
-        <TextBlock HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   Text="{localization:LocalisedText CorePlugins.ActivateWindow.Millisecond}"
-                   VerticalAlignment="Top"
-                   Canvas.Left="183"
-                   Canvas.Top="142" />
-
+        <StackPanel Orientation="Horizontal"
+                    Canvas.Top="132"
+                    Width="320">
+            <TextBlock HorizontalAlignment="Left"
+                       TextWrapping="Wrap"
+                       Text="{localization:LocalisedText CorePlugins.ActivateWindow.Timeout}"
+                       VerticalAlignment="Center" />
+            <TextBox x:Name="TimeoutTextBox"
+                     InputMethod.IsInputMethodEnabled="False"
+                     KeyDown="TimeoutTextBox_KeyDown"
+                     TextChanged="TimeoutTextBox_TextChanged"
+                     Height="23"
+                     TextWrapping="Wrap"
+                     HorizontalAlignment="Left"
+                     Width="80"
+                     Margin="5,0" />
+            <TextBlock HorizontalAlignment="Left"
+                       TextWrapping="Wrap"
+                       Text="{localization:LocalisedText CorePlugins.ActivateWindow.Millisecond}"
+                       VerticalAlignment="Center" />
+        </StackPanel>
     </Canvas>
 </UserControl>

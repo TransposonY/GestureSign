@@ -628,6 +628,12 @@ namespace GestureSign.UI
             RefreshApplications();
         }
 
+        private void txtMatchString_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            MatchStringPopup.IsOpen = true;
+            MatchStringPopupTextBox.Focus();
+        }
+
 
 
 
