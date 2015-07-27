@@ -272,7 +272,7 @@
                 </TextBox>
                 <Popup x:Name="MatchStringPopup"
                        PlacementTarget="{Binding ElementName=txtMatchString}"
-                       Placement="Relative"
+                       Placement="Center"
                        StaysOpen="{Binding ElementName=txtMatchString,Path=IsKeyboardFocused}">
                     <TextBox x:Name="MatchStringPopupTextBox"
                              Text="{Binding ElementName=txtMatchString,Path=Text,Mode=TwoWay}"
