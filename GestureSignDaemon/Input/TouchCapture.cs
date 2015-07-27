@@ -216,7 +216,7 @@ namespace GestureSignDaemon.Input
             OnCaptureStarted(captureStartedArgs);
             if (OnInterceptTouchInputChange != null)
                 OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
-            if (captureStartedArgs.Cancel)
+            if (captureStartedArgs.Cancel && !AppConfig.Teaching)
                 return false;
 
             State = CaptureState.Capturing;
