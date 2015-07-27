@@ -172,7 +172,7 @@ namespace GestureSign.CorePlugins.HotKey
             return newGUI;
         }
 
-        private string GetDescription(HotKeySettings Settings)
+        public static string GetDescription(HotKeySettings Settings)
         {
             if (Settings == null || Settings.KeyCode == null)
                 return LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.Description");

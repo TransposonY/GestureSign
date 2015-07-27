@@ -215,7 +215,7 @@ Click New Action or Save to replace existing gesture,or enter different name
       <Name>Send Hot Key</Name>
       <Category>Keyboard</Category>
       <Description>Send a hot key combination to application</Description>
-      <SpecificDescription>Send the hot key ({0}) to application</SpecificDescription>
+      <SpecificDescription>Send the hot key ({0})</SpecificDescription>
       <Tip>Hot Key(Use keyboard to enter)</Tip>
       <Reset>Reset</Reset>
     </HotKey>
@@ -333,5 +333,23 @@ Click New Action or Save to replace existing gesture,or enter different name
       <Name>Temporarily Disable</Name>
       <Description>Disables GestureSign for the next contact only</Description>
     </TemporarilyDisable>
+    <SendMessage>
+      <Name>Send Message</Name>
+      <Category>Message</Category>
+      <DescriptionTemplate>{0} to {1}</DescriptionTemplate>
+      <TargetWindow>Target Window</TargetWindow>
+      <SpecificWindow>Specific Window</SpecificWindow>
+      <CurrentWindow>Current Window</CurrentWindow>
+      <WindowClass>Window Class</WindowClass>
+      <WindowTitle>Title</WindowTitle>
+      <RegEx>Match as pattern</RegEx>
+      <MessageContent>Message</MessageContent>
+      <HotKey>Send Hot Key</HotKey>
+      <Custom>Custom</Custom>
+      <Method>Method</Method>
+      <PostMessage>PostMessage</PostMessage>
+      <SendMessage>SendMessage</SendMessage>
+      <MessageID>Message ID</MessageID>
+    </SendMessage>
   </CorePlugins>
 </Language>

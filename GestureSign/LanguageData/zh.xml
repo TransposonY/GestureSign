@@ -219,7 +219,7 @@ http://git.oschina.net/TransY/GestureSign
       <Name>发送快捷键</Name>
       <Category>键盘</Category>
       <Description>发送快捷键组合到程序</Description>
-      <SpecificDescription>发送快捷键 ({0}) 到程序</SpecificDescription>
+      <SpecificDescription>发送快捷键 ({0})</SpecificDescription>
       <Tip>快捷键（请用键盘录入快捷键）</Tip>
       <Reset>重置</Reset>
     </HotKey>
@@ -338,5 +338,23 @@ http://git.oschina.net/TransY/GestureSign
       <Name>临时禁用手势识别</Name>
       <Description>停止接收下一次触屏数据</Description>
     </TemporarilyDisable>
+    <SendMessage>
+      <Name>发送消息指令</Name>
+      <Category>消息</Category>
+      <DescriptionTemplate>{0}到{1}</DescriptionTemplate>
+      <TargetWindow>目标窗口</TargetWindow>
+      <SpecificWindow>指定窗口</SpecificWindow>
+      <CurrentWindow>当前窗口</CurrentWindow>
+      <WindowClass>窗口类</WindowClass>
+      <WindowTitle>标题</WindowTitle>
+      <RegEx>使用通配符</RegEx>
+      <MessageContent>消息内容</MessageContent>
+      <HotKey>发送快捷键</HotKey>
+      <Custom>自定义消息</Custom>
+      <Method>发送方式</Method>
+      <PostMessage>PostMessage</PostMessage>
+      <SendMessage>SendMessage</SendMessage>
+      <MessageID>消息标识符</MessageID>
+    </SendMessage>
   </CorePlugins>
 </Language>

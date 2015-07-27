@@ -149,6 +149,12 @@
     <Compile Include="MouseActions\MouseActionsUI.xaml.cs">
       <DependentUpon>MouseActionsUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SendMessage\Messages.cs" />
+    <Compile Include="SendMessage\SendMessagePlugin.cs" />
+    <Compile Include="SendMessage\SendMessageSetting.cs" />
+    <Compile Include="SendMessage\SendMessageView.xaml.cs">
+      <DependentUpon>SendMessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TemporarilyDisable.cs" />
     <Compile Include="DisableGestures.cs" />
     <Compile Include="HotKey\HotKey.xaml.cs">
@@ -244,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SendKeystrokes\SendKeystrokesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SendMessage\SendMessageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
