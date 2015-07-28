@@ -103,7 +103,7 @@ namespace GestureSign.Common.Plugins
         public IPluginInfo FindPluginByClassAndFilename(string PluginClass, string PluginFilename)
         {
             // Get reference to plugin using PluginClass and PluginFilename
-            return _Plugins.Where(p => p.Class == PluginClass && p.Filename == PluginFilename).FirstOrDefault();
+            return _Plugins.FirstOrDefault(p => p.Class == PluginClass && p.Filename == PluginFilename);
         }
 
         public bool PluginExists(string PluginClass, string PluginFilename)
@@ -115,12 +115,13 @@ namespace GestureSign.Common.Plugins
 
         #region Private Methods
 
-        private List<IPluginInfo> LoadPluginsFromAssembly(string AssemblyLocation, IHostControl hostControl)
+        private List<IPluginInfo> LoadPluginsFromAssembly(string assemblyLocation, IHostControl hostControl)
         {
             List<IPluginInfo> retPlugins = new List<IPluginInfo>();
 
-
-            Assembly aPlugin = Assembly.LoadFile(AssemblyLocation);
+            //To avoid exception System.NotSupportedException
+            byte[] file = File.ReadAllBytes(assemblyLocation);
+            Assembly aPlugin = Assembly.Load(file);
 
             Type[] tPluginTypes = aPlugin.GetTypes();
 
@@ -134,7 +135,7 @@ namespace GestureSign.Common.Plugins
                     {
                         plugin.HostControl = hostControl;
                         plugin.Initialize();
-                        retPlugins.Add(new PluginInfo(plugin, tPluginType.FullName, Path.GetFileName(AssemblyLocation)));
+                        retPlugins.Add(new PluginInfo(plugin, tPluginType.FullName, Path.GetFileName(assemblyLocation)));
                     }
                 }
 
