@@ -97,7 +97,7 @@ namespace GestureSign.Common.Localization
 
         private string GetLanguageFilePath(string languageFolderName)
         {
-            var culture = String.IsNullOrEmpty(AppConfig.CultureName) ? CultureInfo.InstalledUICulture : CultureInfo.CreateSpecificCulture(AppConfig.CultureName);
+            var culture = String.IsNullOrEmpty(AppConfig.CultureName) ? CultureInfo.CurrentUICulture : CultureInfo.CreateSpecificCulture(AppConfig.CultureName);
 
             var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", languageFolderName);
             if (!Directory.Exists(folderPath)) return null;
