@@ -27,46 +27,49 @@ namespace GestureSignDaemon
                 {
                     Application.EnableVisualStyles();
                     //Application.SetCompatibleTextRenderingDefault(false);
-
-                    if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("Daemon", Properties.Resources.en))
-                    {
-                        LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
-                    }
-
-                    TouchCapture.Instance.Load();
-                    surface = new Surface();
-                    TouchCapture.Instance.EnableTouchCapture();
-
-                    GestureManager.Instance.Load(TouchCapture.Instance);
-                    ApplicationManager.Instance.Load(TouchCapture.Instance);
-                    // Create host control class and pass to plugins
-                    HostControl hostControl = new HostControl()
-                    {
-                        _ApplicationManager = ApplicationManager.Instance,
-                        _GestureManager = GestureManager.Instance,
-                        _TouchCapture = TouchCapture.Instance,
-                        _PluginManager = PluginManager.Instance,
-                        _TrayManager = TrayManager.Instance
-                    };
-                    PluginManager.Instance.Load(hostControl);
-                    TrayManager.Instance.Load();
-
-                    AppConfig.ToggleWatcher();
                     try
                     {
+                        if ("Built-in".Equals(AppConfig.CultureName) ||
+                            !LocalizationProvider.Instance.LoadFromFile("Daemon", Properties.Resources.en))
+                        {
+                            LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
+                        }
+
+                        TouchCapture.Instance.Load();
+                        surface = new Surface();
+                        TouchCapture.Instance.EnableTouchCapture();
+
+                        GestureManager.Instance.Load(TouchCapture.Instance);
+                        ApplicationManager.Instance.Load(TouchCapture.Instance);
+                        // Create host control class and pass to plugins
+                        HostControl hostControl = new HostControl()
+                        {
+                            _ApplicationManager = ApplicationManager.Instance,
+                            _GestureManager = GestureManager.Instance,
+                            _TouchCapture = TouchCapture.Instance,
+                            _PluginManager = PluginManager.Instance,
+                            _TrayManager = TrayManager.Instance
+                        };
+                        PluginManager.Instance.Load(hostControl);
+                        TrayManager.Instance.Load();
+
+                        AppConfig.ToggleWatcher();
+
                         NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor());
+
+                        if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
+                        {
+                            MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFound"),
+                                LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            //return;
+                        }
                     }
                     catch (Exception e)
                     {
                         MessageBox.Show(e.ToString(), LocalizationProvider.Instance.GetTextValue("Messages.Error"),
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
-                    if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
-                    {
-                        MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFound"),
-                            LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        //return;
+                        Application.Exit();
                     }
                     Application.Run();
                 }
