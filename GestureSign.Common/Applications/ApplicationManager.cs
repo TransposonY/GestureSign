@@ -24,7 +24,7 @@ namespace GestureSign.Common.Applications
 
         // Create variable to hold the only allowed instance of this class
         static readonly ApplicationManager _Instance = new ApplicationManager();
-        List<IApplication> _Applications = new List<IApplication>();
+        private List<IApplication> _Applications;
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
         private Timer timer;
@@ -318,7 +318,11 @@ namespace GestureSign.Common.Applications
 
         public IApplication GetGlobalApplication()
         {
-            if (!_Applications.Exists(a => a is GlobalApplication))
+            if (_Applications == null)
+            {
+                _Applications = new List<IApplication> { new GlobalApplication { Group = String.Empty } };
+            }
+            else if (!_Applications.Exists(a => a is GlobalApplication))
                 _Applications.Add(new GlobalApplication() { Group = String.Empty });
 
             return _Applications.FirstOrDefault(a => a is GlobalApplication);
