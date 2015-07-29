@@ -344,17 +344,11 @@ namespace GestureSignDaemon.Input
                                 RECT touchScreenRect;
                                 RECT displayResolution;
                                 GetPointerDeviceRects(rid.hDevice, out touchScreenRect, out displayResolution);
-                                var screenOrientation = SystemInformation.ScreenOrientation;
-                                if (screenOrientation == ScreenOrientation.Angle0 ||
-                                    screenOrientation == ScreenOrientation.Angle180)
-                                {
-                                    _touchScreenPhysicalMax.Add(rid.hDevice, new Point(touchScreenRect.Right / 10, touchScreenRect.Bottom / 10));
-                                }
-                                else
-                                {
-                                    _touchScreenPhysicalMax.Add(rid.hDevice, new Point(touchScreenRect.Bottom / 10, touchScreenRect.Right / 10));
-                                }
-
+                                GetCurrentScreenOrientation();
+                                _touchScreenPhysicalMax.Add(rid.hDevice,
+                                    _isAxisCorresponds
+                                        ? new Point(touchScreenRect.Right / 10, touchScreenRect.Bottom / 10)
+                                        : new Point(touchScreenRect.Bottom / 10, touchScreenRect.Right / 10));
                             }
                         }
                         Marshal.FreeHGlobal(pData);
@@ -509,103 +503,79 @@ namespace GestureSignDaemon.Input
                 {
                     RAWINPUT raw = (RAWINPUT)Marshal.PtrToStructure(buffer, typeof(RAWINPUT));
 
-                    if (_touchScreenPhysicalMax.ContainsKey(raw.header.hDevice))
+                    if (!_touchScreenPhysicalMax.ContainsKey(raw.header.hDevice)) return;
+                    GetCurrentScreenOrientation();
+
+                    uint pcbSize = 0;
+                    GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
+                    pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
+                    GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
+                    int scanTime = 0;
+                    int contactCount = 0;
+
+                    IntPtr pRawData = IntPtr.Add(buffer, raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount);
+
+                    HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ContactCountId,
+                        ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                    HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ScanTimeId,
+                        ref scanTime, pPreparsedData, pRawData, raw.hid.dwSizHid);
+
+                    HidNativeApi.HIDP_CAPS capabilities = new HidNativeApi.HIDP_CAPS();
+                    HidNativeApi.HidP_GetCaps(pPreparsedData, ref capabilities);
+                    int linkCount = capabilities.NumberLinkCollectionNodes;
+                    HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
+                    HidNativeApi.HidP_GetLinkCollectionNodes(lcn, ref linkCount, pPreparsedData);
+
+                    if (contactCount != 0)
                     {
-                        switch (SystemInformation.ScreenOrientation)
+                        _requiringContactCount = contactCount;
+                        _outputTouchs = new List<RawTouchData>(contactCount);
+                    }
+                    if (_requiringContactCount == 0) return;
+                    int contactIdentifier = 0;
+                    int physicalX = 0;
+                    int physicalY = 0;
+                    int buttonCount = capabilities.NumberInputButtonCaps / lcn[0].NumberOfChildren;
+                    if (buttonCount == 0) buttonCount = 1;
+                    int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+                    int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+                    for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
+                    {
+                        for (short nodeIndex = 1; nodeIndex <= lcn[0].NumberOfChildren; nodeIndex++)
                         {
-                            case ScreenOrientation.Angle0:
-                                _xAxisDirection = _yAxisDirection = true;
-                                _isAxisCorresponds = true;
-                                break;
-                            case ScreenOrientation.Angle90:
-                                _isAxisCorresponds = false;
-                                _xAxisDirection = false;
-                                _yAxisDirection = true;
-                                break;
-                            case ScreenOrientation.Angle180:
-                                _xAxisDirection = _yAxisDirection = false;
-                                _isAxisCorresponds = true;
-                                break;
-                            case ScreenOrientation.Angle270:
-                                _isAxisCorresponds = false;
-                                _xAxisDirection = true;
-                                _yAxisDirection = false;
-                                break;
-                            default: break;
-                        }
+                            IntPtr pRawDataPacket = IntPtr.Add(pRawData, dwIndex * raw.hid.dwSizHid);
+                            HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, nodeIndex, ContactIdentifierId, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
+                            HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
+                            HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
-                        uint pcbSize = 0;
-                        GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
-                        pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-                        GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
-                        int scanTime = 0;
-                        int contactCount = 0;
-
-                        IntPtr pRawData = IntPtr.Add(buffer, raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount);
-
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ContactCountId,
-                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, 0, ScanTimeId,
-                            ref scanTime, pPreparsedData, pRawData, raw.hid.dwSizHid);
-
-                        HidNativeApi.HIDP_CAPS capabilities = new HidNativeApi.HIDP_CAPS();
-                        HidNativeApi.HidP_GetCaps(pPreparsedData, ref capabilities);
-                        int linkCount = capabilities.NumberLinkCollectionNodes;
-                        HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
-                        HidNativeApi.HidP_GetLinkCollectionNodes(lcn, ref linkCount, pPreparsedData);
-
-                        if (contactCount != 0)
-                        {
-                            _requiringContactCount = contactCount;
-                            _outputTouchs = new List<RawTouchData>(contactCount);
-                        }
-                        if (_requiringContactCount == 0) return;
-                        int contactIdentifier = 0;
-                        int physicalX = 0;
-                        int physicalY = 0;
-                        int buttonCount = capabilities.NumberInputButtonCaps / lcn[0].NumberOfChildren;
-                        if (buttonCount == 0) buttonCount = 1;
-                        int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-                        int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-                        for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
-                        {
-                            for (short nodeIndex = 1; nodeIndex <= lcn[0].NumberOfChildren; nodeIndex++)
+                            int usageLength = buttonCount;
+                            HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
+                            HidNativeApi.HidP_GetUsages(HidReportType.Input, TouchScreenUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                            int x, y;
+                            if (_isAxisCorresponds)
                             {
-                                IntPtr pRawDataPacket = IntPtr.Add(pRawData, dwIndex * raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetUsageValue(HidReportType.Input, TouchScreenUsagePage, nodeIndex, ContactIdentifierId, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, GenericDesktopPage, nodeIndex, YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-
-                                int usageLength = buttonCount;
-                                HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
-                                HidNativeApi.HidP_GetUsages(HidReportType.Input, TouchScreenUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                                int x, y;
-                                if (_isAxisCorresponds)
-                                {
-                                    x = physicalX * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].X;
-                                    y = physicalY * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].Y;
-                                }
-                                else
-                                {
-                                    x = physicalY * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].Y;
-                                    y = physicalX * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].X;
-                                }
-
-                                x = _xAxisDirection ? x : screenWidth - x;
-                                y = _yAxisDirection ? y : screenHeight - y;
-                                bool tip = hd.Length != 0 && hd[0].DataIndex == TipId;
-                                _outputTouchs.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
-
-                                if (--_requiringContactCount == 0) break;
+                                x = physicalX * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].X;
+                                y = physicalY * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].Y;
                             }
-                            if (_requiringContactCount == 0) break;
-                        }
+                            else
+                            {
+                                x = physicalY * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].Y;
+                                y = physicalX * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].X;
+                            }
 
-                        if (_requiringContactCount == 0 && PointsIntercepted != null)
-                        {
-                            PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs.OrderBy(rtd => rtd.ContactIdentifier).ToArray(), scanTime));
-                        }
+                            x = _xAxisDirection ? x : screenWidth - x;
+                            y = _yAxisDirection ? y : screenHeight - y;
+                            bool tip = hd.Length != 0 && hd[0].DataIndex == TipId;
+                            _outputTouchs.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
 
+                            if (--_requiringContactCount == 0) break;
+                        }
+                        if (_requiringContactCount == 0) break;
+                    }
+
+                    if (_requiringContactCount == 0 && PointsIntercepted != null)
+                    {
+                        PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs.OrderBy(rtd => rtd.ContactIdentifier).ToArray(), scanTime));
                     }
                 }
                 else throw new ApplicationException("GetRawInputData does not return correct size !\n.");
@@ -614,6 +584,31 @@ namespace GestureSignDaemon.Input
             {
                 Marshal.FreeHGlobal(pPreparsedData);
                 Marshal.FreeHGlobal(buffer);
+            }
+        }
+
+        private void GetCurrentScreenOrientation()
+        {
+            switch (SystemInformation.ScreenOrientation)
+            {
+                case ScreenOrientation.Angle0:
+                    _xAxisDirection = _yAxisDirection = true;
+                    _isAxisCorresponds = true;
+                    break;
+                case ScreenOrientation.Angle90:
+                    _isAxisCorresponds = false;
+                    _xAxisDirection = false;
+                    _yAxisDirection = true;
+                    break;
+                case ScreenOrientation.Angle180:
+                    _xAxisDirection = _yAxisDirection = false;
+                    _isAxisCorresponds = true;
+                    break;
+                case ScreenOrientation.Angle270:
+                    _isAxisCorresponds = false;
+                    _xAxisDirection = true;
+                    _yAxisDirection = false;
+                    break;
             }
         }
 
