@@ -151,7 +151,8 @@ namespace GestureSignDaemon.Input
                 return;
             var systemWindow = new SystemWindow(e);
             var userApp = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
-            bool flag = userApp != null && (userApp.Any(app => ((UserApplication)app).InterceptTouchInput));
+            bool flag = userApp != null &&
+                        (userApp.Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput));
 
             if (OnInterceptTouchInputChange != null)
                 OnInterceptTouchInputChange(this, flag);
