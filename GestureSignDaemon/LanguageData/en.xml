@@ -9,9 +9,9 @@
     <Text>GestureSign Tray Menu</Text>
     <TrainingMode>Training Mode</TrainingMode>
     <Disable>Disable GestureSign</Disable>
-    <ControlPanel>GestureSign Control Panel</ControlPanel>
+    <ControlPanel>Control Panel</ControlPanel>
     <Exit>Exit</Exit>
-    <BalloonTipTitle>Tip</BalloonTipTitle>
+    <BalloonTipTitle>GestureSign</BalloonTipTitle>
     <BalloonTip>GestureSign has started.</BalloonTip>
   </TrayMenu>
 </Language>

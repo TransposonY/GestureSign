@@ -177,7 +177,7 @@ Click New Action or Save to replace existing gesture,or enter different name
       <OffLabel>Hide</OffLabel>
     </ShowTrayIconSwitch>
     <ShowBalloonTipSwitch>
-      <Header>Show Balloon Tip on Startup</Header>
+      <Header>Show Tip on Startup</Header>
       <OnLabel>On</OnLabel>
       <OffLabel>Off</OffLabel>
     </ShowBalloonTipSwitch>

@@ -11,7 +11,7 @@
     <Disable>关闭手势识别</Disable>
     <ControlPanel>设置</ControlPanel>
     <Exit>退出</Exit>
-    <BalloonTipTitle>提示</BalloonTipTitle>
+    <BalloonTipTitle>GestureSign</BalloonTipTitle>
     <BalloonTip>GestureSign已启动</BalloonTip>
   </TrayMenu>
 </Language>

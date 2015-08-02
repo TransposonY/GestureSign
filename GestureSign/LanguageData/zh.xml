@@ -181,7 +181,7 @@ http://git.oschina.net/TransY/GestureSign
       <OffLabel>隐藏</OffLabel>
     </ShowTrayIconSwitch>
     <ShowBalloonTipSwitch>
-      <Header>启动时气泡提示</Header>
+      <Header>启动时提示</Header>
       <OnLabel>开</OnLabel>
       <OffLabel>关</OffLabel>
     </ShowBalloonTipSwitch>
