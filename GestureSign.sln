@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign", "GestureSign\GestureSign.csproj", "{B9A2BC20-B457-4B39-AE1B-274FA961E346}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -37,35 +37,30 @@ Global
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
-		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.uiAccessRelease|Any CPU.Build.2 = uiAccessRelease|x86
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Debug|Any CPU.Build.0 = Debug|x86
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
-		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.uiAccessRelease|Any CPU.Build.2 = uiAccessRelease|x86
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Debug|Any CPU.Build.0 = Debug|x86
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
-		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.uiAccessRelease|Any CPU.Build.2 = uiAccessRelease|x86
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Debug|Any CPU.Build.0 = Debug|x86
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
-		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.uiAccessRelease|Any CPU.Build.2 = uiAccessRelease|x86
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Debug|Any CPU.Build.0 = Debug|x86
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.Build.0 = Release|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
-		{038047A4-E3F8-4B49-9762-7F63971B8319}.uiAccessRelease|Any CPU.Build.2 = uiAccessRelease|x86
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
