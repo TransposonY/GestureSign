@@ -130,7 +130,6 @@ namespace GestureSign.UI
                             addcount++;
                         }
                     }
-            End:
                 if (addcount != 0)
                 {
                     BindIgnoredApplications();
