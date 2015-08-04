@@ -64,6 +64,7 @@ namespace GestureSignDaemon
                                 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             //return;
                         }
+                        Application.Run();
                     }
                     catch (Exception e)
                     {
@@ -71,7 +72,6 @@ namespace GestureSignDaemon
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         Application.Exit();
                     }
-                    Application.Run();
                 }
                 else
                 {
