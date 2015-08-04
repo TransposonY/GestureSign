@@ -95,7 +95,7 @@ namespace GestureSign.UI
                     NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel")
                 }) == MessageDialogResult.Affirmative)
             {
-                NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
+                await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
         }
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
