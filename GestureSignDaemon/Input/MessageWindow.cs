@@ -152,8 +152,6 @@ namespace GestureSignDaemon.Input
         [DllImport("user32.dll")]
         static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
-        [DllImport("user32.dll")]
-        static extern bool GetPointerDeviceRects(IntPtr device, out RECT pointerDeviceRect, out RECT displayRect);
         #endregion DllImports
 
         #region  Windows.h structure declarations
@@ -341,14 +339,7 @@ namespace GestureSignDaemon.Input
                             {
                                 NumberOfDevices++;
 
-                                RECT touchScreenRect;
-                                RECT displayResolution;
-                                GetPointerDeviceRects(rid.hDevice, out touchScreenRect, out displayResolution);
-                                GetCurrentScreenOrientation();
-                                _touchScreenPhysicalMax.Add(rid.hDevice,
-                                    _isAxisCorresponds
-                                        ? new Point(touchScreenRect.Right / 10, touchScreenRect.Bottom / 10)
-                                        : new Point(touchScreenRect.Bottom / 10, touchScreenRect.Right / 10));
+                                _touchScreenPhysicalMax.Add(rid.hDevice, Point.Empty);
                             }
                         }
                         Marshal.FreeHGlobal(pData);
@@ -510,6 +501,10 @@ namespace GestureSignDaemon.Input
                     GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
                     pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
                     GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
+
+                    if (_touchScreenPhysicalMax[raw.header.hDevice].Equals(Point.Empty))
+                        GetPhysicalMax(raw, pPreparsedData);
+
                     int scanTime = 0;
                     int contactCount = 0;
 
@@ -610,6 +605,23 @@ namespace GestureSignDaemon.Input
                     _yAxisDirection = false;
                     break;
             }
+        }
+
+        void GetPhysicalMax(RAWINPUT rawInput, IntPtr pPreparsedData)
+        {
+            short valueCapsLength = 1;
+            Point p = new Point();
+            HidNativeApi.HidP_Value_Caps[] hvc = new HidNativeApi.HidP_Value_Caps[valueCapsLength];
+
+            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, GenericDesktopPage, 1, XCoordinateId, hvc,
+                ref valueCapsLength, pPreparsedData);
+            p.X = hvc[0].PhysicalMax;
+
+            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, GenericDesktopPage, 1, YCoordinateId, hvc,
+                ref valueCapsLength, pPreparsedData);
+            p.Y = hvc[0].PhysicalMax;
+
+            _touchScreenPhysicalMax[rawInput.header.hDevice] = p;
         }
 
         #endregion ProcessInput

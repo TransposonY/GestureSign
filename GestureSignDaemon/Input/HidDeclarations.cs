@@ -586,7 +586,7 @@ namespace GestureSignDaemon.Input
         /// <param name="PreparsedData">The preparsed data returned from HIDCLASS.</param>
         /// <returns>HIDP_STATUS_SUCCESS, HIDP_STATUS_INVALID_REPORT_TYPE, HIDP_STATUS_INVALID_PREPARSED_DATA, HIDP_STATUS_BUFFER_TOO_SMALL (all given entries however have been filled in), HIDP_STATUS_USAGE_NOT_FOUND</returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetSpecificValueCaps([MarshalAs(UnmanagedType.U2)]HidReportType ReportType, short UsagePage, short LinkCollection, short Usage, [In, Out] HidP_Value_Caps[] ValueCaps, ref short ValueCapsLength, IntPtr PreparsedData);
+        static public extern int HidP_GetSpecificValueCaps(HidReportType ReportType, ushort UsagePage, ushort LinkCollection, ushort Usage, [In, Out] HidP_Value_Caps[] ValueCaps, ref short ValueCapsLength, IntPtr PreparsedData);
 
         /// <summary>
         /// HidP_GetButtonCaps returns all the buttons (binary values) that are a part of the given report type for the Hid device represented by the given preparsed data.
