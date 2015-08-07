@@ -67,6 +67,10 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="Windows">
+      <HintPath>C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsInput">
       <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
@@ -86,6 +90,10 @@
     <Compile Include="KeyDownKeyUp\KeyDownKeyUpSettings.cs" />
     <Compile Include="KeyDownKeyUp\KeyDownKeyUpUI.xaml.cs">
       <DependentUpon>KeyDownKeyUpUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LaunchApp\LaunchApp.cs" />
+    <Compile Include="LaunchApp\LaunchAppView.xaml.cs">
+      <DependentUpon>LaunchAppView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MouseActions\MouseActionsPlugin.cs" />
     <Compile Include="MouseActions\MouseActionsSettings.cs" />
@@ -177,6 +185,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="KeyDownKeyUp\KeyDownKeyUpUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LaunchApp\LaunchAppView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

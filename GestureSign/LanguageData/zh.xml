@@ -356,5 +356,11 @@ http://git.oschina.net/TransY/GestureSign
       <SendMessage>SendMessage</SendMessage>
       <MessageID>消息标识符</MessageID>
     </SendMessage>
+    <LaunchApp>
+      <Name>打开Windows商店应用程序</Name>
+      <Description>打开{0}应用</Description>
+      <Category>运行</Category>
+      <Tip>请选择要运行的商店应用</Tip>
+    </LaunchApp>
   </CorePlugins>
 </Language>

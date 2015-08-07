@@ -351,5 +351,11 @@ Click New Action or Save to replace existing gesture,or enter different name
       <SendMessage>SendMessage</SendMessage>
       <MessageID>Message ID</MessageID>
     </SendMessage>
+    <LaunchApp>
+      <Name>Launch Windows Store App</Name>
+      <Description>Launch {0}</Description>
+      <Category>Run</Category>
+      <Tip>Please select a Store App.</Tip>
+    </LaunchApp>
   </CorePlugins>
 </Language>
