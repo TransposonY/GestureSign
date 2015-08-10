@@ -84,7 +84,9 @@ namespace GestureSign.Common.Applications
             using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
                 IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-                if (SystemWindow.FromPointEx((int)(SystemParameters.VirtualScreenWidth * graphics.DpiX / 96 - 1), 1, true, true).HWnd.Equals(hwndCharmBar))
+                var window = SystemWindow.FromPointEx((int)(SystemParameters.VirtualScreenWidth * graphics.DpiX / 96 - 1), 1,
+                    true, true);
+                if (window != null && window.HWnd.Equals(hwndCharmBar))
                 {
                     e.Cancel = e.InterceptTouchInput = false;
                     return;
