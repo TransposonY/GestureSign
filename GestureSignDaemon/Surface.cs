@@ -59,6 +59,7 @@ namespace GestureSignDaemon
             TouchCapture.Instance.PointCaptured += MouseCapture_PointCaptured;
             TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
             TouchCapture.Instance.CaptureCanceled += MouseCapture_CaptureCanceled;
+            TouchCapture.Instance.CaptureStarted += Instance_CaptureStarted;
             AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             // Respond to system event changes by reinitializing the form
             SystemEvents.DisplaySettingsChanged += (o, e) => { InitializeForm(); };
@@ -67,7 +68,6 @@ namespace GestureSignDaemon
             //this.UpdateStyles();
             //+= (o, se) => { InitializeForm(); };
         }
-
 
 
         #endregion
@@ -92,6 +92,11 @@ namespace GestureSignDaemon
                 this.EndDraw();
         }
 
+        private void Instance_CaptureStarted(object sender, PointsCapturedEventArgs e)
+        {
+            ClearSurfaces();
+        }
+
         void AppConfig_ConfigChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(InitializeForm));
@@ -114,7 +119,7 @@ namespace GestureSignDaemon
                 if (!this.Visible)
                 {
                     this.TopMost = true;
-                    this.Show();
+                    this.ShowDialog();
                 }
                 if (LastStroke == null) { LastStroke = Points.Select(p => p.Count).ToArray(); return; }
                 if (LastStroke.Length != Points.Count) return;
@@ -218,10 +223,10 @@ namespace GestureSignDaemon
             {
                 // Create graphics for each display using compatibility mode
                 CompatibilitySurfaces = Screen.AllScreens.Select(s => new CompatibilitySurface()
-                    {
-                        SurfaceGraphics = Graphics.FromHdc(CreateDC(null, s.DeviceName, null, IntPtr.Zero)),
-                        Offset = new Size(s.Bounds.Location)
-                    }).ToArray();
+                {
+                    SurfaceGraphics = Graphics.FromHdc(CreateDC(null, s.DeviceName, null, IntPtr.Zero)),
+                    Offset = new Size(s.Bounds.Location)
+                }).ToArray();
             }
 
             // Create pens using settings from configuration

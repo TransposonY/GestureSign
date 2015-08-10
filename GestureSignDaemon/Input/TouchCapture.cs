@@ -167,11 +167,7 @@ namespace GestureSignDaemon.Input
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                //clear surface
-                OnCaptureEnded();
-
                 // Try to begin capture process, if capture started then don't notify other applications of a Touch event, otherwise do
-
                 if (!TryBeginCapture(e.Points))
                 {
                     Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
