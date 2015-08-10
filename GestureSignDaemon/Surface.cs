@@ -123,20 +123,27 @@ namespace GestureSignDaemon
                 }
                 if (LastStroke == null) { LastStroke = Points.Select(p => p.Count).ToArray(); return; }
                 if (LastStroke.Length != Points.Count) return;
-                for (int i = 0; i < LastStroke.Length; i++)
+                try
                 {
-                    // Create list of points that are new this draw
-                    List<Point> NewPoints = new List<Point>();
-                    int iDelta = 0;
-                    // Get number of points added since last draw including last point of last stroke and add new points to new points list
+                    for (int i = 0; i < LastStroke.Length; i++)
+                    {
+                        // Create list of points that are new this draw
+                        List<Point> NewPoints = new List<Point>();
+                        int iDelta = 0;
+                        // Get number of points added since last draw including last point of last stroke and add new points to new points list
 
-                    iDelta = Points[i].Count - LastStroke[i] + 1;
+                        iDelta = Points[i].Count - LastStroke[i] + 1;
 
 
-                    NewPoints.AddRange(Points[i].Skip(Points[i].Count() - iDelta).Take(iDelta));
-                    if (NewPoints.Count < 2) continue;
-                    // Draw new line segments to main drawing surface
-                    SurfaceGraphics.DrawLines(DrawingPen, NewPoints.Select(p => TranslatePoint(p)).ToArray());
+                        NewPoints.AddRange(Points[i].Skip(Points[i].Count() - iDelta).Take(iDelta));
+                        if (NewPoints.Count < 2) continue;
+                        // Draw new line segments to main drawing surface
+                        SurfaceGraphics.DrawLines(DrawingPen, NewPoints.Select(p => TranslatePoint(p)).ToArray());
+                    }
+                }
+                catch
+                {
+                    ClearSurfaces();
                 }
                 // this.CreateGraphics().DrawImage(bmp, 0, 0);
 
