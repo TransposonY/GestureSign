@@ -74,9 +74,15 @@ namespace GestureSign.CorePlugins.LaunchApp
         {
             if (AppInfo.Key == null) return false;
             ApplicationActivationManager appActiveManager = new ApplicationActivationManager();
-            uint pid;
-            appActiveManager.ActivateApplication(AppInfo.Key, null, ActivateOptions.None, out pid);
-
+            try
+            {
+                uint pid;
+                appActiveManager.ActivateApplication(AppInfo.Key, null, ActivateOptions.None, out pid);
+            }
+            catch
+            {
+                // ignored
+            }
             //IShellItemArray array = GetShellItemArray(@"C:\temp\somefile.xyz");
             //appActiveManager.ActivateForFile("2c123c17-8b21-4eb8-8b7f-fdc35c8b7718_n2533ggrncqjt!App", array, "Open",
             //    out pid);
