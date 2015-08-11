@@ -17,6 +17,7 @@ namespace GestureSign.CorePlugins.LaunchApp
 {
     /// <summary>
     ///     Interaction logic for LaunchAppView.xaml
+    /// Modify base https://github.com/luisrigoni/metro-apps-list
     /// </summary>
     public partial class LaunchAppView : UserControl
     {
@@ -72,24 +73,66 @@ namespace GestureSign.CorePlugins.LaunchApp
                 foreach (var package in packages)
                 {
                     if (package.IsFramework) continue;
-                    if (appXInfos.ContainsKey(package.Id.FamilyName))
+
+                    using (
+                        var key =
+                            Registry.ClassesRoot.OpenSubKey(
+                                $@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\{
+                                    package.Id.FamilyName}\SplashScreen\"))
                     {
-                        var appXInfo = appXInfos[package.Id.FamilyName];
-                        string backgroundColor;
-                        var displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
-                        var logo = ExtractDisplayIconFromReg(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
-                        var model = new Model
+                        var appUserModelIds =
+                            key?.GetSubKeyNames().Where(k => k.StartsWith(package.Id.FamilyName));
+                        if (appUserModelIds == null) continue;
+
+                        foreach (string appUserModelId in appUserModelIds)
                         {
-                            Logo = logo,
-                            AppInfo = new KeyValuePair<string, string>(appXInfo.AppUserModelId, displayName)
-                        };
-                        if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo,
-                            out backgroundColor))
-                            continue;
-                        var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                        if (convertFromString != null)
-                            model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
-                        apps.Add(model);
+                            Model model = new Model();
+                            if (appXInfos.ContainsKey(appUserModelId))
+                            {
+                                var appXInfo = appXInfos[appUserModelId];
+
+                                var displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
+                                var logo = ExtractDisplayIconFromReg(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
+
+                                if (string.IsNullOrEmpty(displayName)) continue;
+
+                                model.Logo = logo;
+                                model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
+
+                                string backgroundColor;
+                                if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
+                                    continue;
+
+                                var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
+                                if (convertFromString != null)
+                                    model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
+
+                            }
+                            else
+                            {
+                                using (var subKey = key.OpenSubKey(appUserModelId))
+                                {
+                                    if (subKey == null) continue;
+
+                                    string appName = subKey.GetValue("AppName").ToString();
+                                    var displayName = ExtractDisplayName(package, appName);
+                                    if (string.IsNullOrEmpty(displayName)) continue;
+                                    model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
+
+                                    string logo, backgroundColor;
+                                    if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
+                                        continue;
+
+                                    logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
+                                    model.Logo = logo;
+
+                                    var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
+                                    if (convertFromString != null)
+                                        model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
+                                }
+                            }
+                            apps.Add(model);
+                        }
                     }
                 }
             }
@@ -249,14 +292,12 @@ namespace GestureSign.CorePlugins.LaunchApp
                             var appUserModelId = applicationKey.GetValue("AppUserModelId").ToString();
                             var applicationIcon = applicationKey.GetValue("ApplicationIcon").ToString();
                             var applicationName = applicationKey.GetValue("ApplicationName").ToString();
-                            var familyName = GetFamilyName(appUserModelId);
 
-                            if (familyName != null && !dic.ContainsKey(familyName))
-                                dic.Add(familyName, new AppXInfo
+                            if (!dic.ContainsKey(appUserModelId))
+                                dic.Add(appUserModelId, new AppXInfo
                                 {
                                     ApplicationIcon = applicationIcon,
-                                    ApplicationName = applicationName,
-                                    AppUserModelId = appUserModelId
+                                    ApplicationName = applicationName
                                 });
                             applicationKey.Close();
                         }
@@ -293,18 +334,10 @@ namespace GestureSign.CorePlugins.LaunchApp
             return str;
         }
 
-        private string GetFamilyName(string appUserModelId)
-        {
-            if (appUserModelId == null) return null;
-            var str = appUserModelId.Split('!');
-            return str.Length != 0 ? str[0] : null;
-        }
-
         private class AppXInfo
         {
             public string ApplicationIcon { get; set; }
             public string ApplicationName { get; set; }
-            public string AppUserModelId { get; set; }
         }
 
         private class Model
