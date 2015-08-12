@@ -255,7 +255,7 @@ namespace GestureSignDaemon.Input
 
             if (!pointsInformation.Cancel)
             {
-                if (AppConfig.Teaching && _PointsCaptured.Count != 0 && _PointsCaptured.Values.First().Count > 1)
+                if (AppConfig.Teaching && !(_PointsCaptured.Count == 1 && _PointsCaptured.Values.First().Count == 1))
                 {
                     try
                     {
