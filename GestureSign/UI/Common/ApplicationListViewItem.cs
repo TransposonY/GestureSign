@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
 using GestureSign.Common.Applications;
 
-namespace GestureSign.UI.Common
+namespace GestureSign.ControlPanel.UI.Common
 {
 
     public class ApplicationListViewItem 

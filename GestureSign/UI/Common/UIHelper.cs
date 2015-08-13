@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using MahApps.Metro.Controls;
 
-namespace GestureSign.UI.Common
+namespace GestureSign.ControlPanel.UI.Common
 {
     class UIHelper
     {

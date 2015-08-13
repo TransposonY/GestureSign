@@ -18,7 +18,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     /// <summary>
     /// AvailableApplications.xaml 的交互逻辑

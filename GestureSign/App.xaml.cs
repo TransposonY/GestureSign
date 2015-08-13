@@ -10,10 +10,10 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using GestureSign.UI.Common;
+using GestureSign.ControlPanel.UI.Common;
 using MahApps.Metro;
 
-namespace GestureSign
+namespace GestureSign.ControlPanel
 {
     /// <summary>
     /// App.xaml 的交互逻辑
@@ -125,9 +125,9 @@ namespace GestureSign
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", GestureSign.Properties.Resources.en))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", GestureSign.ControlPanel.Properties.Resources.en))
             {
-                LocalizationProvider.Instance.LoadFromResource(GestureSign.Properties.Resources.en);
+                LocalizationProvider.Instance.LoadFromResource(GestureSign.ControlPanel.Properties.Resources.en);
             }
 
             Application.Current.Resources.Remove("DefaultFlowDirection");

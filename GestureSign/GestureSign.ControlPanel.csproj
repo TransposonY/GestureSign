@@ -7,7 +7,7 @@
     <ProjectGuid>{B9A2BC20-B457-4B39-AE1B-274FA961E346}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GestureSign</RootNamespace>
+    <RootNamespace>GestureSign.ControlPanel</RootNamespace>
     <AssemblyName>GestureSign</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

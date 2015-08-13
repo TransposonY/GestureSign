@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace GestureSign.UI.Common
+namespace GestureSign.ControlPanel.UI.Common
 {
     public class GestureImage
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestureSign.UI.Common
+namespace GestureSign.ControlPanel.UI.Common
 {
     public class GestureItem
     {

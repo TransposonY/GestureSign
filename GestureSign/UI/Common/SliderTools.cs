@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace GestureSign.UI.Common
+namespace GestureSign.ControlPanel.UI.Common
 {
     public class SliderTools : DependencyObject
     {

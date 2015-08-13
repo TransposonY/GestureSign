@@ -25,11 +25,11 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
-using GestureSign.UI.Common;
+using GestureSign.ControlPanel.UI.Common;
 using MahApps.Metro.Controls.Dialogs;
 
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     /// <summary>
     /// AvailableAction.xaml 的交互逻辑

@@ -24,7 +24,7 @@ using GestureSign.Common;
 using GestureSign.Common.Input;
 using GestureSign.Common.Localization;
 
-namespace GestureSign
+namespace GestureSign.ControlPanel
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑

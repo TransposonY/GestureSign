@@ -1,22 +1,21 @@
 ﻿using System;
-using System.ComponentModel;
-using System.IO;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
-using GestureSign.Common;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.UI.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
-using System.Linq;
-using System.Windows.Data;
-using GestureSign.Common.Localization;
-using GestureSign.UI.Common;
 using ManagedWinapi.Windows;
+using Microsoft.Win32;
 using Point = System.Drawing.Point;
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     public partial class EditApplicationFlyout : Flyout
     {
@@ -71,7 +70,7 @@ namespace GestureSign.UI
                 GroupComboBox.Text = _currentApplication.Group;
                 chkAllowSingleStroke.IsChecked = ((UserApplication)_currentApplication).AllowSingleStroke;
                 chkInterceptTouchInput.IsChecked = ((UserApplication)_currentApplication).InterceptTouchInput;
-                chkInterceptTouchInput.IsEnabled = GestureSign.Common.Configuration.AppConfig.UiAccess;
+                chkInterceptTouchInput.IsEnabled = AppConfig.UiAccess;
             }
 
             chkAllowSingleStroke.Visibility = chkInterceptTouchInput.Visibility = ApplicationNameTextBlock.Visibility =
@@ -269,7 +268,7 @@ namespace GestureSign.UI
     }
     public class MatchStringConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             ApplicationListViewItem applicationListViewItem = values[0] as ApplicationListViewItem;
             MatchUsing matchUsing = (MatchUsing)values[1];
@@ -280,7 +279,7 @@ namespace GestureSign.UI
                     ? applicationListViewItem.WindowTitle
                     : applicationListViewItem.WindowClass;
         }
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing };
         }

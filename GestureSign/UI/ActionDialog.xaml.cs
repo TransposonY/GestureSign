@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,13 +19,13 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using GestureSign.UI.Common;
+using GestureSign.ControlPanel.UI.Common;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
 using Point = System.Drawing.Point;
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     public partial class ActionDialog : MetroWindow
     {

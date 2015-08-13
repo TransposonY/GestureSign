@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 using System.IO;
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     /// <summary>
     /// Crosshair.xaml 的交互逻辑

@@ -1,28 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using GestureSign.Common.Applications;
 using System.Windows.Interop;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using GestureSign.UI.Common;
+using System.Windows.Media.Imaging;
+using GestureSign.ControlPanel.UI.Common;
+using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
 
-using MahApps.Metro.Controls;
-
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     /// <summary>
     /// RuningApplicationsFlyout.xaml 的交互逻辑
@@ -62,7 +51,7 @@ namespace GestureSign.UI
         {
             this.lstRunningApplications.Items.Clear();
             //    this.lstRunningApplications.ItemsSource = await GetValidWindows();
-            System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(GetValidWindows));
+            ThreadPool.QueueUserWorkItem(new WaitCallback(GetValidWindows));
             //await GetValidWindows();
         }
 
@@ -74,20 +63,20 @@ namespace GestureSign.UI
                          w => w.Visible &&	// Must be a visible windows
                          w.Title != "" &&	// Must have a window title
                          IsProcessAccessible(w.Process) &&
-                        System.IO.Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
+                        Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
 
-            System.Threading.Thread.Sleep(550);
+            Thread.Sleep(550);
             foreach (SystemWindow sWind in Windows)
             {
-                this.lstRunningApplications.Dispatcher.BeginInvoke(new System.Action(() =>
+                this.lstRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
 
                    //    lItem.WindowClass = sWind.ClassName;
                    lItem.WindowTitle = sWind.Title;
-                   lItem.WindowFilename = System.IO.Path.GetFileName(sWind.Process.MainModule.FileName);
+                   lItem.WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName);
                    //     lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
                    lItem.ApplicationIcon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 

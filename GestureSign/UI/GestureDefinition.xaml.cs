@@ -7,12 +7,12 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Gestures;
-using GestureSign.UI.Common;
+using GestureSign.ControlPanel.UI.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Point = System.Drawing.Point;
 
-namespace GestureSign.UI
+namespace GestureSign.ControlPanel.UI
 {
     /// <summary>
     /// GestureDefinition.xaml 的交互逻辑
