@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using GestureSign.Common.Input;
 
-namespace GestureSignDaemon.Input
+namespace GestureSign.Daemon.Input
 {
     public class TouchEventTranslator
     {

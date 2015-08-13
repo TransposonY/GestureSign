@@ -7,9 +7,9 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using GestureSignDaemon.Input;
+using GestureSign.Daemon.Input;
 
-namespace GestureSignDaemon
+namespace GestureSign.Daemon
 {
     static class Program
     {

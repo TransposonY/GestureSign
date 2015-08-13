@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
-using GestureSignDaemon.Input;
+using GestureSign.Daemon.Input;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
 
-namespace GestureSignDaemon
+namespace GestureSign.Daemon
 {
     public class Surface : Form
     {

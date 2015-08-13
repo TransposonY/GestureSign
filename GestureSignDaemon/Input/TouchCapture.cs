@@ -15,7 +15,7 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Windows;
 
-namespace GestureSignDaemon.Input
+namespace GestureSign.Daemon.Input
 {
     public class TouchCapture : ILoadable, ITouchCapture
     {

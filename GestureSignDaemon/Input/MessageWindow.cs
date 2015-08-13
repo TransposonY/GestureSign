@@ -10,7 +10,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using Microsoft.Win32;
 
-namespace GestureSignDaemon.Input
+namespace GestureSign.Daemon.Input
 {
     public class MessageWindow : Form
     {

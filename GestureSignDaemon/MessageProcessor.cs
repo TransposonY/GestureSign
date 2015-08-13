@@ -8,10 +8,10 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
-using GestureSignDaemon.Input;
+using GestureSign.Daemon.Input;
 using GestureSign.Common.InterProcessCommunication;
 
-namespace GestureSignDaemon
+namespace GestureSign.Daemon
 {
     class MessageProcessor : IMessageProcessor
     {

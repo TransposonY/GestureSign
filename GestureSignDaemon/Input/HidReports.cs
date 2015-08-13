@@ -21,7 +21,7 @@
 
 using System;
 
-namespace GestureSignDaemon.Input
+namespace GestureSign.Daemon.Input
 {
     /// <summary>
     /// Type of a Hid Report

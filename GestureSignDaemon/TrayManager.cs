@@ -13,7 +13,7 @@ using System.Threading;
 using System.Diagnostics;
 using GestureSign.Common.Localization;
 
-namespace GestureSignDaemon
+namespace GestureSign.Daemon
 {
     public class TrayManager : ILoadable, ITrayManager
     {
