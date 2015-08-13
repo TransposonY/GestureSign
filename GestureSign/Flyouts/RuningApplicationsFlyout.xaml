@@ -1,0 +1,47 @@
+﻿<controls:Flyout x:Class="GestureSign.ControlPanel.Flyouts.RuningApplicationsFlyout"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                 mc:Ignorable="d"
+                 d:DesignHeight="400"
+                 d:DesignWidth="280"
+                 Width="280"
+                 Theme="Adapt"
+                 Header="{localization:LocalisedText RuningApplicationsFlyout.Title}"
+                 Position="Left"
+                 IsPinned="False">
+    <ListView x:Name="lstRunningApplications"
+              Margin="5,0,5,10"
+              BorderThickness="0"
+              SelectionChanged="lstRunningApplications_SelectionChanged">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}"
+                                Width="55">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Path=ApplicationIcon}"
+                                   Height="35" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}"
+                                Width="300">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock  Text="{Binding Path=WindowFilename}"
+                                            Margin="0,5,0,2" />
+                                <TextBlock  Text="{Binding Path=WindowTitle}"
+                                            Foreground="{StaticResource AccentColorBrush}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+            </GridView>
+        </ListView.View>
+    </ListView>
+</controls:Flyout>

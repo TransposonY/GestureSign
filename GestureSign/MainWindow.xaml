@@ -2,8 +2,9 @@
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                      xmlns:local="clr-namespace:GestureSign.ControlPanel.UI"
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                      xmlns:flyouts="clr-namespace:GestureSign.ControlPanel.Flyouts"
+                      xmlns:mainWindowControl="clr-namespace:GestureSign.ControlPanel.MainWindowControl"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       Title="{localization:LocalisedText Title}"
                       Height="500"
@@ -51,27 +52,27 @@
 
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
-            <local:RuningApplicationsFlyout x:Name="RuningAppFlyout"></local:RuningApplicationsFlyout>
-            <local:EditApplicationFlyout x:Name="EditAppFlyout"></local:EditApplicationFlyout>
+            <flyouts:RuningApplicationsFlyout x:Name="RuningAppFlyout"></flyouts:RuningApplicationsFlyout>
+            <flyouts:EditApplicationFlyout x:Name="EditAppFlyout"></flyouts:EditApplicationFlyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Grid>
         <TabControl>
             <TabItem Header="{localization:LocalisedText Action.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
-                <local:AvailableAction x:Name="availableAction"></local:AvailableAction>
+                <mainWindowControl:AvailableAction x:Name="availableAction"></mainWindowControl:AvailableAction>
             </TabItem>
             <TabItem Header="{localization:LocalisedText Gesture.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
-                <local:AvailableGestures x:Name="availableGestures"></local:AvailableGestures>
+                <mainWindowControl:AvailableGestures x:Name="availableGestures"></mainWindowControl:AvailableGestures>
             </TabItem>
             <TabItem Header="{localization:LocalisedText Ignored.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
-                <local:IgnoredApplications x:Name="ignoredApplications" />
+                <mainWindowControl:IgnoredApplications x:Name="ignoredApplications" />
             </TabItem>
             <TabItem Header="{localization:LocalisedText Options.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
-                <local:Options Width="Auto"
+                <mainWindowControl:Options Width="Auto"
                                Height="Auto" />
             </TabItem>
             <TabItem Header="{localization:LocalisedText About.Header}"
