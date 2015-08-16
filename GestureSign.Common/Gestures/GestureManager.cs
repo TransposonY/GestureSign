@@ -30,10 +30,6 @@ namespace GestureSign.Common.Gestures
 
         #endregion
 
-        #region Public Variables
-        public event EventHandler OnLoadGesturesCompleted;
-        #endregion
-
         #region Public Instance Properties
 
         public bool FinishedLoading { get; set; }
@@ -96,11 +92,13 @@ namespace GestureSign.Common.Gestures
 
         #region Custom Events
 
+        public event EventHandler OnLoadGesturesCompleted;
         // Define events to allow other classes to subscribe to
         public event RecognitionEventHandler GestureRecognized;
         public event RecognitionEventHandler GestureNotRecognized;
 
         public event GestureEventHandler GestureEdited;
+        public event EventHandler GestureSaved;
         // Define protected method to notifiy subscribers of events
         protected virtual void OnGestureRecognized(RecognitionEventArgs e)
         {
@@ -195,7 +193,12 @@ namespace GestureSign.Common.Gestures
             {
                 // Save gestures to file
                 bool flag = Configuration.FileManager.SaveObject(Gestures, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.gest"));
-                if (flag && notice) { InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon"); }
+                if (flag)
+                {
+                    GestureSaved?.Invoke(this, EventArgs.Empty);
+                    if (notice)
+                        InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
+                }
                 return flag;
             }
             catch

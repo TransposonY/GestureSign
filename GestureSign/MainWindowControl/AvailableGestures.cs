@@ -31,16 +31,6 @@ namespace GestureSign.ControlPanel.MainWindowControl
         public AvailableGestures()
         {
             InitializeComponent();
-            GestureDefinition.GesturesChanged += GestureDefinition_GesturesChanged;
-
-            if (GestureManager.Instance.FinishedLoading) BindGestures();
-            GestureManager.Instance.OnLoadGesturesCompleted += (o, e) => { this.Dispatcher.Invoke(BindGestures); };
-        }
-
-
-        void GestureDefinition_GesturesChanged(object sender, EventArgs e)
-        {
-            BindGestures();
         }
 
         private void lstAvailableGestures_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -69,7 +59,6 @@ namespace GestureSign.ControlPanel.MainWindowControl
                 if (GestureChanged != null)
                     GestureChanged(this, new EventArgs());
 
-                BindGestures();
                 GestureManager.Instance.SaveGestures();
             }
         }
@@ -146,11 +135,10 @@ namespace GestureSign.ControlPanel.MainWindowControl
                             addcount++;
                         }
                     }
-            End:
+                End:
                 if (addcount != 0)
                 {
                     GestureManager.Instance.SaveGestures();
-                    BindGestures();
                 }
                 MessageBox.Show(
                     String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
@@ -173,45 +161,6 @@ namespace GestureSign.ControlPanel.MainWindowControl
                 FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
         }
-
-        #region Private Methods
-
-        private void BindGestures()
-        {
-            // Clear existing gestures in list
-            lstAvailableGestures.Items.Clear();
-            Task task = new Task(AddAvailableGesturesItems);
-            task.Start();
-        }
-
-        private void AddAvailableGesturesItems()
-        {
-            // Get all available gestures from gesture manager
-            IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
-            Thread.Sleep(300);
-            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
-
-            foreach (IGesture gesture in results)
-            {
-                lstAvailableGestures.Dispatcher.BeginInvoke(new Action(() =>
-                 {  // Create new listviewitem to represent gestures, create a thumbnail of the latest version of each gesture
-                     // and add it to image list, then to the output list      gestureName
-                     GestureItem newItem = new GestureItem()
-                     {
-                         Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
-                         Name = gesture.Name
-                     };
-                     lstAvailableGestures.Items.Add(newItem);
-                 }));
-            }
-        }
-
-        #endregion
-
-
-
-
-
 
     }
 }

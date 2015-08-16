@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Controls.Primitives;
@@ -91,57 +90,6 @@ namespace GestureSign.ControlPanel.MainWindowControl
         CancellationTokenSource _cancelTokenSource;
         private bool _selecteNewestItem;
 
-        public class ActionInfo : INotifyPropertyChanged
-        {
-
-            public ActionInfo(string actionName, string description, string gestureName, bool isEnabled)
-            {
-                IsEnabled = isEnabled;
-                ActionName = actionName;
-                Description = description;
-                GestureName = gestureName;
-            }
-            private bool isEnabled;
-            private string _gestureName;
-
-            public bool IsEnabled
-            {
-                get
-                {
-                    return isEnabled;
-                }
-
-                set { SetProperty(ref isEnabled, value); }
-            }
-
-            public string GestureName
-            {
-                get { return _gestureName; }
-                set { SetProperty(ref _gestureName, value); }
-            }
-
-            public string ActionName { get; set; }
-
-            public string Description { get; set; }
-
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected void OnPropertyChanged(string propertyName)
-            {
-                if (this.PropertyChanged != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                }
-            }
-            protected void SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
-            {
-                if (object.Equals(storage, value)) return;
-
-                storage = value;
-                this.OnPropertyChanged(propertyName);
-            }
-        }
         private void cmdEditAction_Click(object sender, RoutedEventArgs e)
         {
             // Make sure at least one item is selected
@@ -169,7 +117,7 @@ namespace GestureSign.ControlPanel.MainWindowControl
             ApplicationManager.Instance.CurrentApplication = selectedApplication;
             GestureManager.Instance.GestureName = selectedGesture;
 
-            ActionDialog actionDialog = new ActionDialog(this, selectedAction, selectedApplication);
+            ActionDialog actionDialog = new ActionDialog(selectedAction, selectedApplication);
             actionDialog.ShowDialog();
         }
 
@@ -188,7 +136,8 @@ namespace GestureSign.ControlPanel.MainWindowControl
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented
-                        }) != MessageDialogResult.Affirmative) return;
+                        }) != MessageDialogResult.Affirmative)
+                return;
 
 
             // Loop through selected actions
@@ -243,7 +192,10 @@ namespace GestureSign.ControlPanel.MainWindowControl
                         });
                 return;
             }
-            ActionDialog actionDialog = new ActionDialog(this, lstAvailableApplication.SelectedItem as IApplication);
+
+            var ai = lstAvailableActions.SelectedItem as ActionInfo;
+            string gestureName = ai?.GestureName;
+            ActionDialog actionDialog = new ActionDialog(gestureName, lstAvailableApplication.SelectedItem as IApplication);
             actionDialog.Show();
         }
 
@@ -408,24 +360,17 @@ namespace GestureSign.ControlPanel.MainWindowControl
         private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
         {
             ComboBox comboBox = sender as ComboBox;
-            Binding bind = new Binding
-            {
-                Source =
-                    ((UIHelper.GetParentDependencyObject<TabControl>(this)).FindName(
-                        "availableGestures") as AvailableGestures).lstAvailableGestures,
-                Mode = BindingMode.OneWay,
-                Path = new PropertyPath("Items")
-            };
-            comboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
 
-            dynamic dataContext = comboBox.DataContext;
-
-            foreach (GestureItem item in comboBox.Items)
+            if (comboBox != null)
             {
-                if (item.Name == dataContext.Name)
-                    comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
+                dynamic dataContext = comboBox.DataContext;
+
+                foreach (GestureItem item in comboBox.Items)
+                {
+                    if (item.Name == dataContext.Name)
+                        comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
+                }
             }
-
         }
 
 
@@ -564,7 +509,7 @@ namespace GestureSign.ControlPanel.MainWindowControl
                         }
                     }
                 }
-            End:
+                End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();

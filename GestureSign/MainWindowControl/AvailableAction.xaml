@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:GestureSign.ControlPanel.MainWindowControl"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+             xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540">
@@ -131,6 +131,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
+                                x:Key="GestureItemProvider">
+            </ObjectDataProvider>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -476,6 +479,7 @@
                                             <Expander.Header>
                                                 <StackPanel>
                                                     <ComboBox x:Name="availableGesturesComboBox"
+                                                              ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
                                                               IsEnabled="{Binding  ElementName=GestureExpander,Path=IsExpanded}"
                                                               HorizontalContentAlignment="Left"
                                                               HorizontalAlignment="Center"
@@ -491,7 +495,6 @@
                                                               IsDropDownOpen="False"
                                                               ScrollViewer.IsDeferredScrollingEnabled="True"
                                                               MaxDropDownHeight="265"
-                                                              Canvas.Left="30"
                                                               MaxWidth="280"
                                                               MinWidth="210"
                                                               Loaded="availableGesturesComboBox_Loaded"

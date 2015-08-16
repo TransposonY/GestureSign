@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+             xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="450">
@@ -101,6 +102,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
+                            x:Key="GestureItemProvider"
+                            IsAsynchronous="True">
+        </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -108,6 +113,7 @@
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
         <ListBox x:Name="lstAvailableGestures"
+                 ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableGestures_SelectionChanged"
                  Margin="0">

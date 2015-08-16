@@ -34,24 +34,27 @@ namespace GestureSign.ControlPanel.Dialog
         }
 
         //Add action by new gesture
-        public ActionDialog(string newGestureName)
-            : this()
+        public ActionDialog(string currentGestureName) : this()
         {
-            _gestureName = newGestureName;
+            _gestureName = currentGestureName;
         }
+
         //Add action by existing gesture
-        public ActionDialog(AvailableAction source, IApplication selectedApplication)
-            : this()
+        public ActionDialog(string currentGestureName, IApplication selectedApplication) : this(currentGestureName)
         {
             _selectedApplication = selectedApplication;
-            _availableAction = source;
         }
+
         //Edit action
-        public ActionDialog(AvailableAction source, IAction selectedAction, IApplication selectedApplication)
-            : this(source, selectedApplication)
+        public ActionDialog(IAction selectedAction, IApplication selectedApplication) : this()
         {
             Title = LocalizationProvider.Instance.GetTextValue("ActionDialog.EditActionTitle");
+            _selectedApplication = selectedApplication;
             _currentAction = selectedAction;
+            if (_currentAction != null)
+            {
+                _gestureName = _currentAction.GestureName;
+            }
         }
 
         #region Private Instance Fields
@@ -62,7 +65,6 @@ namespace GestureSign.ControlPanel.Dialog
 
         private readonly IApplication _selectedApplication;
         IApplication _newApplication;
-        readonly AvailableAction _availableAction;
         // Create variable to hold current selected plugin
         IPluginInfo _pluginInfo;
         IAction _currentAction;
@@ -79,10 +81,8 @@ namespace GestureSign.ControlPanel.Dialog
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
             BindGroupComboBox();
             BindExistingApplications();
-            BindExistingGestures();
 
             chCrosshair.CrosshairDragging += chCrosshair_CrosshairDragging;
             BindPlugins();
@@ -102,6 +102,11 @@ namespace GestureSign.ControlPanel.Dialog
             }
 
             NamedPipe.SendMessageAsync("DisableTouchCapture", "GestureSignDaemon");
+        }
+
+        private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            SelectCurrentGesture(_gestureName);
         }
 
         protected void chCrosshair_CrosshairDragging(object sender, MouseEventArgs e)
@@ -284,47 +289,18 @@ namespace GestureSign.ControlPanel.Dialog
             // Select new applications
             cmbExistingApplication.SelectedItem = _selectedApplication ?? allApplicationsItem;
         }
-        private void BindExistingGestures()
+
+        private void SelectCurrentGesture(string currentGesture)
         {
+            if (currentGesture == null) return;
 
-            Binding bind = new Binding();
-            //no GestureItem source
-            if (_availableAction == null)
+            foreach (GestureItem item in availableGesturesComboBox.Items)
             {
-                IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);//.GroupBy(g => g.Name).Select(g => g.First().Name);
-                List<GestureItem> gestureItems = new List<GestureItem>(results.Count());
-                var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
-                gestureItems.AddRange(results.Select(gesture => new GestureItem
-                {
-                    Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
-                    Name = gesture.Name
-                }));
-                bind.Source = gestureItems;
-            }
-            else
-            {
-                bind.Source = ((UIHelper.GetParentDependencyObject<TabControl>(_availableAction)).FindName("availableGestures") as AvailableGestures).lstAvailableGestures;
-                bind.Path = new PropertyPath("Items");
-
-                var ai = _availableAction.lstAvailableActions.SelectedItem as AvailableAction.ActionInfo;
-                if (ai != null)
-                    _gestureName = ai.GestureName;
-            }
-            bind.Mode = BindingMode.OneWay;
-            availableGesturesComboBox.SetBinding(ComboBox.ItemsSourceProperty, bind);
-            if (_currentAction != null)
-            {
-                _gestureName = _currentAction.GestureName;
-            }
-            if (_gestureName != null)
-            {
-                foreach (GestureItem item in availableGesturesComboBox.Items)
-                {
-                    if (item.Name == _gestureName)
-                        availableGesturesComboBox.SelectedIndex = availableGesturesComboBox.Items.IndexOf(item);
-                }
+                if (item.Name == currentGesture)
+                    availableGesturesComboBox.SelectedIndex = availableGesturesComboBox.Items.IndexOf(item);
             }
         }
+
         private void BindGroupComboBox()
         {
             GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
