@@ -295,9 +295,11 @@ namespace GestureSign.Daemon
         {
             get
             {
+                //To ignore input?
+                const int WS_EX_TRANSPARENT = 0x00000020;
                 const int WS_EX_NOACTIVATE = 0x08000000;
                 CreateParams myParams = base.CreateParams;
-                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE;
+                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
                 return myParams;
             }
         }
