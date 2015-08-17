@@ -376,8 +376,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void availableGesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count == 0) return;
-            Expander expander = UIHelper.GetParentDependencyObject<Expander>(sender as ComboBox);
+            ComboBox availableGesturesComboBox = sender as ComboBox;
+            if (availableGesturesComboBox != null &&
+                (!availableGesturesComboBox.IsDropDownOpen || e.AddedItems.Count == 0))
+                return;
+
+            Expander expander = UIHelper.GetParentDependencyObject<Expander>(availableGesturesComboBox);
             if (expander == null) return;
 
             var firstListBoxItem = UIHelper.FindVisualChild<ListBoxItem>(expander);
