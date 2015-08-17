@@ -19,7 +19,7 @@ namespace GestureSign.ControlPanel.Flyouts
     public partial class RuningApplicationsFlyout : Flyout
     {
         public static event EventHandler<ApplicationListViewItem> RuningAppSelectionChanged;
-       
+
         public RuningApplicationsFlyout()
         {
             InitializeComponent();
@@ -74,7 +74,7 @@ namespace GestureSign.ControlPanel.Flyouts
                {
                    ApplicationListViewItem lItem = new ApplicationListViewItem();
 
-                   //    lItem.WindowClass = sWind.ClassName;
+                   lItem.WindowClass = sWind.ClassName;
                    lItem.WindowTitle = sWind.Title;
                    lItem.WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName);
                    //     lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
