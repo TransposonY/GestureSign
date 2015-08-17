@@ -7,7 +7,7 @@ using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.MainWindowControl;
+using GestureSign.ControlPanel.MainWindowControls;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Windows;
@@ -46,7 +46,7 @@ namespace GestureSign.ControlPanel.Flyouts
             InitializeComponent();
             crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
             IgnoredApplications.ShowIgnoredCustomFlyout += ShowEditApplicationFlyout;
-            AvailableAction.ShowEditApplicationFlyout += ShowEditApplicationFlyout;
+            AvailableActions.ShowEditApplicationFlyout += ShowEditApplicationFlyout;
             RuningApplicationsFlyout.RuningAppSelectionChanged += RuningApplicationsFlyout_RuningAppSelectionChanged;
 
         }

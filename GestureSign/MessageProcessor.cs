@@ -5,7 +5,7 @@ using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 using GestureSign.Common.InterProcessCommunication;
-using GestureSign.ControlPanel.Dialog;
+using GestureSign.ControlPanel.Dialogs;
 using Point = System.Drawing.Point;
 
 namespace GestureSign.ControlPanel

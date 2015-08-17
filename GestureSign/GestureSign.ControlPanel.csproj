@@ -137,12 +137,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Dialog\ActionDialog.cs">
+    <Compile Include="Dialogs\ActionDialog.cs">
       <DependentUpon>ActionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\ApplicationListViewItem.cs" />
-    <Compile Include="MainWindowControl\AvailableAction.cs">
-      <DependentUpon>AvailableAction.xaml</DependentUpon>
+    <Compile Include="MainWindowControls\AvailableActions.cs">
+      <DependentUpon>AvailableActions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\GestureImage.cs" />
     <Compile Include="Common\GestureItem.cs" />
@@ -153,19 +153,19 @@
       <DependentUpon>EditApplicationFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\UIHelper.cs" />
-    <Compile Include="MainWindowControl\IgnoredApplications.cs">
+    <Compile Include="MainWindowControls\IgnoredApplications.cs">
       <DependentUpon>IgnoredApplications.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowControl\AvailableGestures.cs">
+    <Compile Include="MainWindowControls\AvailableGestures.cs">
       <DependentUpon>AvailableGestures.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialog\GestureDefinition.cs">
+    <Compile Include="Dialogs\GestureDefinition.cs">
       <DependentUpon>GestureDefinition.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowControl\Options.cs">
+    <Compile Include="MainWindowControls\Options.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
     <Compile Include="Flyouts\RuningApplicationsFlyout.cs">
@@ -185,11 +185,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Dialog\ActionDialog.xaml">
+    <Page Include="Dialogs\ActionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindowControl\AvailableAction.xaml">
+    <Page Include="MainWindowControls\AvailableActions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -201,11 +201,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindowControl\IgnoredApplications.xaml">
+    <Page Include="MainWindowControls\IgnoredApplications.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindowControl\AvailableGestures.xaml">
+    <Page Include="MainWindowControls\AvailableGestures.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -213,11 +213,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialog\GestureDefinition.xaml">
+    <Page Include="Dialogs\GestureDefinition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindowControl\Options.xaml">
+    <Page Include="MainWindowControls\Options.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

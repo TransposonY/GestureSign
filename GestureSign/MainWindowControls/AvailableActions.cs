@@ -24,20 +24,20 @@ using GestureSign.Common.Plugins;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.Dialog;
+using GestureSign.ControlPanel.Dialogs;
 using GestureSign.ControlPanel.Flyouts;
 using MahApps.Metro.Controls.Dialogs;
 
 
-namespace GestureSign.ControlPanel.MainWindowControl
+namespace GestureSign.ControlPanel.MainWindowControls
 {
     /// <summary>
-    /// AvailableAction.xaml 的交互逻辑
+    /// AvailableActions.xaml 的交互逻辑
     /// </summary>
-    public partial class AvailableAction : UserControl
+    public partial class AvailableActions : UserControl
     {
         // public static event EventHandler StartCapture;
-        public AvailableAction()
+        public AvailableActions()
         {
             InitializeComponent();
 

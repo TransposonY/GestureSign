@@ -12,7 +12,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Point = System.Drawing.Point;
 
-namespace GestureSign.ControlPanel.Dialog
+namespace GestureSign.ControlPanel.Dialogs
 {
     /// <summary>
     /// GestureDefinition.xaml 的交互逻辑

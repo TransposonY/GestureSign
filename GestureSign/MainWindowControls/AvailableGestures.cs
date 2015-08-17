@@ -12,12 +12,12 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.Dialog;
+using GestureSign.ControlPanel.Dialogs;
 using GestureSign.Gestures;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 
-namespace GestureSign.ControlPanel.MainWindowControl
+namespace GestureSign.ControlPanel.MainWindowControls
 {
     /// <summary>
     /// AvailableGestures.xaml 的交互逻辑

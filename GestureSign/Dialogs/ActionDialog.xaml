@@ -8,7 +8,7 @@
                       xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
                       xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
                       mc:Ignorable="d"
-                      x:Class="GestureSign.ControlPanel.Dialog.ActionDialog"
+                      x:Class="GestureSign.ControlPanel.Dialogs.ActionDialog"
                       Title="{localization:LocalisedText ActionDialog.AddActionTitle}"
                       Width="700"
                       WindowStyle="ToolWindow"

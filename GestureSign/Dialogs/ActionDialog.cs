@@ -7,24 +7,20 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GestureSign.Common.Applications;
-using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.MainWindowControl;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
 using Point = System.Drawing.Point;
 
-namespace GestureSign.ControlPanel.Dialog
+namespace GestureSign.ControlPanel.Dialogs
 {
     public partial class ActionDialog : MetroWindow
     {

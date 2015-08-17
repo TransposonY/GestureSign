@@ -18,7 +18,7 @@ using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
-namespace GestureSign.ControlPanel.MainWindowControl
+namespace GestureSign.ControlPanel.MainWindowControls
 {
     /// <summary>
     /// Options.xaml 的交互逻辑

@@ -4,7 +4,7 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       xmlns:flyouts="clr-namespace:GestureSign.ControlPanel.Flyouts"
-                      xmlns:mainWindowControl="clr-namespace:GestureSign.ControlPanel.MainWindowControl"
+                      xmlns:mainWindowControl="clr-namespace:GestureSign.ControlPanel.MainWindowControls"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       Title="{localization:LocalisedText Title}"
                       Height="500"
@@ -60,7 +60,7 @@
         <TabControl>
             <TabItem Header="{localization:LocalisedText Action.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
-                <mainWindowControl:AvailableAction x:Name="availableAction"></mainWindowControl:AvailableAction>
+                <mainWindowControl:AvailableActions x:Name="AvailableActions"></mainWindowControl:AvailableActions>
             </TabItem>
             <TabItem Header="{localization:LocalisedText Gesture.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
