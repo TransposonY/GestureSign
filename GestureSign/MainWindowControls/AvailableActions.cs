@@ -323,18 +323,25 @@ namespace GestureSign.ControlPanel.MainWindowControls
             // Ensure this action has a plugin
             if (PluginManager.Instance.PluginExists(action.PluginClass, action.PluginFilename))
             {
+                try
+                {
+                    // Get plugin for this action
+                    IPluginInfo pluginInfo =
+                        PluginManager.Instance.FindPluginByClassAndFilename(action.PluginClass,
+                            action.PluginFilename);
 
-                // Get plugin for this action
-                IPluginInfo pluginInfo =
-                    PluginManager.Instance.FindPluginByClassAndFilename(action.PluginClass,
-                        action.PluginFilename);
+                    // Feed settings to plugin
+                    if (!pluginInfo.Plugin.Deserialize(action.ActionSettings))
+                        action.ActionSettings = pluginInfo.Plugin.Serialize();
 
-                // Feed settings to plugin
-                if (!pluginInfo.Plugin.Deserialize(action.ActionSettings))
-                    action.ActionSettings = pluginInfo.Plugin.Serialize();
-
-                pluginName = pluginInfo.Plugin.Name;
-                description = pluginInfo.Plugin.Description;
+                    pluginName = pluginInfo.Plugin.Name;
+                    description = pluginInfo.Plugin.Description;
+                }
+                catch
+                {
+                    pluginName = string.Empty;
+                    description = LocalizationProvider.Instance.GetTextValue("Action.Messages.NoAssociationAction");
+                }
             }
             else
             {
