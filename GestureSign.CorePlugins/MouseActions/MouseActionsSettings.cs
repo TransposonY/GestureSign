@@ -14,6 +14,10 @@ namespace GestureSign.CorePlugins.MouseActions
         LeftButtonDoubleClick,
         LeftButtonDown,
         LeftButtonUp,
+        MiddleButtonClick,
+        MiddleButtonDoubleClick,
+        MiddleButtonDown,
+        MiddleButtonUp,
         RightButtonClick,
         RightButtonUp,
         RightButtonDown,
@@ -38,7 +42,7 @@ namespace GestureSign.CorePlugins.MouseActions
     {
         static MouseActionDescription()
         {
-            DescriptionDict = new Dictionary<MouseActions, String>(12);
+            DescriptionDict = new Dictionary<MouseActions, String>(16);
             foreach (MouseActions mouseAction in Enum.GetValues(typeof(MouseActions)))
             {
                 DescriptionDict.Add(mouseAction,

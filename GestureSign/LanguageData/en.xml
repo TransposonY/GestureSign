@@ -239,6 +239,10 @@ Click New Action or Save to replace existing gesture,or enter different name
         <LeftButtonDoubleClick>Left Button Double Click</LeftButtonDoubleClick>
         <LeftButtonDown>Left Button Down</LeftButtonDown>
         <LeftButtonUp>Left Button Up</LeftButtonUp>
+        <MiddleButtonClick>Middle Button Click</MiddleButtonClick>
+        <MiddleButtonDoubleClick>Middle Button Double Click</MiddleButtonDoubleClick>
+        <MiddleButtonDown>Middle Button Down</MiddleButtonDown>
+        <MiddleButtonUp>Middle Button Up</MiddleButtonUp>
         <RightButtonClick>Right Button Click</RightButtonClick>
         <RightButtonDoubleClick>Right Button Double Click</RightButtonDoubleClick>
         <RightButtonDown>Right Button Down</RightButtonDown>

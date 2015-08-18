@@ -243,6 +243,10 @@ http://git.oschina.net/TransY/GestureSign
         <LeftButtonDoubleClick>双击左键</LeftButtonDoubleClick>
         <LeftButtonDown>按住左键</LeftButtonDown>
         <LeftButtonUp>释放左键</LeftButtonUp>
+        <MiddleButtonClick>单击中键</MiddleButtonClick>
+        <MiddleButtonDoubleClick>双击中键</MiddleButtonDoubleClick>
+        <MiddleButtonDown>按住中键</MiddleButtonDown>
+        <MiddleButtonUp>释放中键</MiddleButtonUp>
         <RightButtonClick>单击右键</RightButtonClick>
         <RightButtonDoubleClick>双击右键</RightButtonDoubleClick>
         <RightButtonDown>按住右键</RightButtonDown>
