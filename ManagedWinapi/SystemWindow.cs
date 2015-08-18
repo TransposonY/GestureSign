@@ -343,8 +343,9 @@ namespace ManagedWinapi.Windows
             }
             set
             {
-                if (value.WindowState == FormWindowState.Minimized)
-                    ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_RESTORE);
+                if (value.WindowState != FormWindowState.Minimized)
+                    value.WindowState = FormWindowState.Minimized;
+                ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_RESTORE);
                 SetForegroundWindow(value.HWnd);
                 SwitchToThisWindow(value.HWnd, true);
                 /*
@@ -408,7 +409,7 @@ namespace ManagedWinapi.Windows
         public static SystemWindow[] FilterToplevelWindows(Predicate<SystemWindow> predicate)
         {
             List<SystemWindow> wnds = new List<SystemWindow>();
-            EnumWindows(new EnumWindowsProc(delegate(IntPtr hwnd, IntPtr lParam)
+            EnumWindows(new EnumWindowsProc(delegate (IntPtr hwnd, IntPtr lParam)
             {
                 SystemWindow tmp = new SystemWindow(hwnd);
                 if (predicate(tmp))
@@ -533,7 +534,7 @@ namespace ManagedWinapi.Windows
         public SystemWindow[] FilterDescendantWindows(bool directOnly, Predicate<SystemWindow> predicate)
         {
             List<SystemWindow> wnds = new List<SystemWindow>();
-            EnumChildWindows(_hwnd, delegate(IntPtr hwnd, IntPtr lParam)
+            EnumChildWindows(_hwnd, delegate (IntPtr hwnd, IntPtr lParam)
             {
                 SystemWindow tmp = new SystemWindow(hwnd);
                 bool add = true;
