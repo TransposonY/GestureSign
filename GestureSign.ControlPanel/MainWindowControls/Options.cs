@@ -220,13 +220,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             {
                                 // Create a new task definition and assign properties
                                 TaskDefinition td = ts.NewTask();
+                                td.Settings.MultipleInstances = TaskInstancesPolicy.StopExisting;
                                 td.Settings.DisallowStartIfOnBatteries = false;
                                 td.RegistrationInfo.Description = "Launch GestureSign when user login";
 
                                 td.Principal.RunLevel = TaskRunLevel.Highest;
 
-                                LogonTrigger lt = new LogonTrigger();
-                                lt.Enabled = true;
+                                LogonTrigger lt = new LogonTrigger {Enabled = true};
                                 td.Triggers.Add(lt);
                                 // Create an action that will launch Notepad whenever the trigger fires
                                 td.Actions.Add(new ExecAction(
