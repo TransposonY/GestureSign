@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.ControlPanel", "GestureSign\GestureSign.ControlPanel.csproj", "{B9A2BC20-B457-4B39-AE1B-274FA961E346}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.ControlPanel", "GestureSign.ControlPanel\GestureSign.ControlPanel.csproj", "{B9A2BC20-B457-4B39-AE1B-274FA961E346}"
 	ProjectSection(ProjectDependencies) = postProject
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C} = {60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}
 	EndProjectSection
@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.CorePlugins", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.Common", "GestureSign.Common\GestureSign.Common.csproj", "{038047A4-E3F8-4B49-9762-7F63971B8319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.Daemon", "GestureSignDaemon\GestureSign.Daemon.csproj", "{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.Daemon", "GestureSign.Daemon\GestureSign.Daemon.csproj", "{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A} = {FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}
 		{038047A4-E3F8-4B49-9762-7F63971B8319} = {038047A4-E3F8-4B49-9762-7F63971B8319}
