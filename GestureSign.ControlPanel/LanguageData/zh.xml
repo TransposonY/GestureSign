@@ -139,8 +139,9 @@ http://git.oschina.net/TransY/GestureSign
     <Title>保存手势</Title>
     <Rename>重命名</Rename>
     <ExistingGesture>
-      已存在以下相似手势：
-      点击“新建动作”或“保存”覆盖同名旧手势或输入其他手势名称，另存新手势
+      已存在以下相似手势
+      点击“保存”覆盖旧手势
+      点击“新建动作”覆盖旧手势并用此手势添加动作
     </ExistingGesture>
     <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
     <NewAction>新建动作</NewAction>

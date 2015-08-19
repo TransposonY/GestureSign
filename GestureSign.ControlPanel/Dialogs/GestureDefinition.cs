@@ -72,12 +72,13 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                if (!reName)
-                {
-                    this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
-                }
                 this.txtGestureName.Text = GestureManager.Instance.GestureName;//this.txtGestureName.Text
                 this.txtGestureName.SelectAll();
+                if (!reName)
+                {
+                    txtGestureName.IsEnabled = false;
+                    this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
+                }
             }
             this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
         }
@@ -143,7 +144,6 @@ namespace GestureSign.ControlPanel.Dialogs
                     return false;
                 }
                 GestureManager.Instance.RenameGesture(_existingGestureName, newGestureName);
-                GestureManager.Instance.SaveGestures();
             }
             else
             {
@@ -164,27 +164,26 @@ namespace GestureSign.ControlPanel.Dialogs
                     // Add new gesture to gesture manager
                     GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
                     GestureManager.Instance.GestureName = newGestureName;
-                    GestureManager.Instance.SaveGestures();
                 }
                 else
                 {
-                    if (newGestureName != GestureManager.Instance.GestureName)
-                    {
-                        // Add new gesture to gesture manager
-                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
-                        GestureManager.Instance.GestureName = newGestureName;
-                    }
-                    else
+                    if (newGestureName == GestureManager.Instance.GestureName)
                     {
                         GestureManager.Instance.DeleteGesture(newGestureName);
                         GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
                     }
-                    GestureManager.Instance.SaveGestures();
+                    else
+                    {
+                        GestureManager.Instance.DeleteGesture(GestureManager.Instance.GestureName);
+                        // Add new gesture to gesture manager
+                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.GestureName = newGestureName;
+                    }
                 }
             }
+            GestureManager.Instance.SaveGestures();
 
-            if (GesturesChanged != null)
-                GesturesChanged(this, new EventArgs());
+            GesturesChanged?.Invoke(this, new EventArgs());
             return true;
         }
 

@@ -135,8 +135,10 @@ Page:https://github.com/TransposonY
   <GestureDefinition>
     <Title>Save</Title>
     <Rename>Rename</Rename>
-    <ExistingGesture>Exist similar gesture:
-Click New Action or Save to replace existing gesture,or enter different name
+    <ExistingGesture>
+      Exist similar gesture
+      Click Save to replace existing gesture
+      Click New Action to replace existing gesture and add new action
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
     <NewAction>New Action</NewAction>
