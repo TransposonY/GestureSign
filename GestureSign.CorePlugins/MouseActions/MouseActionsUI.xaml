@@ -6,57 +6,51 @@
              xmlns:local="clr-namespace:GestureSign.CorePlugins.MouseActions"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="140"
+             d:DesignHeight="340"
              d:DesignWidth="320">
-    <Canvas Height="140">
-        <Canvas.Resources>
+    <StackPanel>
+        <StackPanel.Resources>
             <ObjectDataProvider ObjectType="{x:Type local:MouseActionDescription}"
                                 x:Key="ActionDescription">
             </ObjectDataProvider>
             <ObjectDataProvider ObjectType="{x:Type local:ClickPositionDescription}"
                                 x:Key="PositionDescription">
             </ObjectDataProvider>
-        </Canvas.Resources>
+        </StackPanel.Resources>
 
-        <TextBlock Canvas.Left="10"
-                   TextWrapping="Wrap"
+        <TextBlock TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.MouseActions.SelectAction}"
-                   Canvas.Top="10"
-                   FontSize="14" />
+                   FontSize="14"
+                   Margin="0,0,0,5" />
         <ComboBox x:Name="ActionComboBox"
                   ItemsSource="{Binding Source={StaticResource ActionDescription},Path=DescriptionDict}"
                   DisplayMemberPath="Value"
                   SelectedValuePath="Key"
                   Width="300"
-                  Canvas.Left="10"
-                  Canvas.Top="33"
                   FontSize="14"
-                  SelectionChanged="ActionComboBox_SelectionChanged" />
+                  SelectionChanged="ActionComboBox_SelectionChanged"
+                  Margin="0,5" />
 
-
-        <Canvas x:Name="ClickCanvas"
-                Height="76"
-                Canvas.Top="64"
-                Width="320">
-            <TextBlock Canvas.Left="10"
-                       TextWrapping="Wrap"
-                       Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
-                       Canvas.Top="10"
-                       FontSize="14" />
-            <ComboBox x:Name="PositionComboBox"
-                      ItemsSource="{Binding Source={StaticResource  PositionDescription},Path=DescriptionDict}"
-                      DisplayMemberPath="Value"
-                      SelectedValuePath="Key"
-                      Width="300"
-                      Canvas.Left="10"
-                      Canvas.Top="33"
-                      FontSize="14" />
-        </Canvas>
+        <TextBlock x:Name="ClickPositionText"
+                   TextWrapping="Wrap"
+                   Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
+                   FontSize="14"
+                   Margin="0,5" />
+        <TextBlock x:Name="ReferencePositionText"
+                   Text="{localization:LocalisedText CorePlugins.MouseActions.ReferencePosition}"
+                   FontSize="14"
+                   Margin="0,5" />
+        <ComboBox x:Name="PositionComboBox"
+                  ItemsSource="{Binding Source={StaticResource PositionDescription},Path=DescriptionDict}"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"
+                  Width="300"
+                  FontSize="14" />
 
         <Canvas x:Name="MoveMouseCanvas"
-                Height="86"
-                Canvas.Top="64"
-                Width="300">
+                Height="55"
+                Width="300"
+                Margin="10,0">
             <TextBlock TextWrapping="Wrap"
                        Text="X"
                        Canvas.Left="10"
@@ -88,8 +82,7 @@
         </Canvas>
         <Canvas x:Name="ScrollCanvas"
                 Height="86"
-                Width="320"
-                Canvas.Top="64">
+                Width="320">
             <TextBox x:Name="ScrollAmountTextBox"
                      KeyDown="TextBox_KeyDown"
                      TextChanged="TextBox_TextChanged"
@@ -107,5 +100,5 @@
                        Canvas.Left="10" />
         </Canvas>
 
-    </Canvas>
+    </StackPanel>
 </UserControl>

@@ -279,6 +279,7 @@ Page:https://github.com/TransposonY
       </Description>
       <SelectAction>Select Mouse Action</SelectAction>
       <ClickPosition>Click Position</ClickPosition>
+      <ReferencePosition>Reference Position</ReferencePosition>
       <ScrollAmountTip>A Positive value to the Right/Up.A Negative value to the Left/Down.</ScrollAmountTip>
     </MouseActions>
     <RunCommand>

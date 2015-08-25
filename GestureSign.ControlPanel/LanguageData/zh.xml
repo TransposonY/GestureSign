@@ -281,6 +281,7 @@ http://git.oschina.net/TransY/GestureSign
       </Description>
       <SelectAction>选择鼠标动作</SelectAction>
       <ClickPosition>鼠标点击位置</ClickPosition>
+      <ReferencePosition>相对位置</ReferencePosition>
       <ScrollAmountTip>输入滚动数  正数向右/上滚动 负数向左/下滚动</ScrollAmountTip>
     </MouseActions>
     <RunCommand>

@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using WindowsInput;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.MouseActions
 {
@@ -16,17 +16,6 @@ namespace GestureSign.CorePlugins.MouseActions
 
         private MouseActionsUI _gui = null;
         private MouseActionsSettings _settings = null;
-
-        #endregion
-
-        #region PInvoke Declarations
-
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int x, int y);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out Point lpPoint);
 
         #endregion
 
@@ -79,6 +68,7 @@ namespace GestureSign.CorePlugins.MouseActions
             InputSimulator simulator = new InputSimulator();
             try
             {
+                var referencePoint = GetReferencePoint(_settings.ClickPosition, actionPoint);
                 switch (_settings.MouseAction)
                 {
                     case MouseActions.HorizontalScroll:
@@ -87,44 +77,22 @@ namespace GestureSign.CorePlugins.MouseActions
                     case MouseActions.VerticalScroll:
                         simulator.Mouse.VerticalScroll(_settings.ScrollAmount);
                         return true;
-                    case MouseActions.MoveMouseBy:
-                        {
-                            Point p;
-                            if (GetCursorPos(out p))
-                            {
-                                if (SetCursorPos(_settings.MovePoint.X + p.X, _settings.MovePoint.Y + p.Y))
-                                {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
                     case MouseActions.MoveMouseTo:
-                        return SetCursorPos(_settings.MovePoint.X, _settings.MovePoint.Y);
-                }
+                        MoveMouse(simulator, _settings.MovePoint);
+                        return true;
+                    case MouseActions.MoveMouseBy:
+                        referencePoint.Offset(_settings.MovePoint);
+                        MoveMouse(simulator, referencePoint);
+                        break;
+                    default:
+                        {
+                            MoveMouse(simulator, referencePoint);
 
-                switch (_settings.ClickPosition)
-                {
-                    case ClickPositions.LastUp:
-                        var lastUpPoint = actionPoint.Points.Last().Last();
-                        SetCursorPos(lastUpPoint.X, lastUpPoint.Y);
-                        break;
-                    case ClickPositions.LastDown:
-                        var lastDownPoint = actionPoint.Points.Last().First();
-                        SetCursorPos(lastDownPoint.X, lastDownPoint.Y);
-                        break;
-                    case ClickPositions.FirstUp:
-                        var firstUpPoint = actionPoint.Points.First().Last();
-                        SetCursorPos(firstUpPoint.X, firstUpPoint.Y);
-                        break;
-                    case ClickPositions.FirstDown:
-                        var firstDownPoint = actionPoint.Points.First().First();
-                        SetCursorPos(firstDownPoint.X, firstDownPoint.Y);
-                        break;
+                            MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
+                            clickMethod.Invoke(simulator.Mouse, null);
+                            break;
+                        }
                 }
-
-                MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
-                clickMethod.Invoke(simulator.Mouse, null);
             }
             catch
             {
@@ -152,6 +120,42 @@ namespace GestureSign.CorePlugins.MouseActions
         #endregion
 
         #region Private Methods
+
+        private void MoveMouse(InputSimulator simulator, Point point)
+        {
+            int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+            int realX = 0xffff * point.X / screenWidth;
+            int realY = 0xffff * point.Y / screenHeight;
+
+            simulator.Mouse.MoveMouseTo(realX, realY);
+        }
+
+        private Point GetReferencePoint(ClickPositions position, PointInfo actionPoint)
+        {
+            Point referencePoint;
+            switch (position)
+            {
+                case ClickPositions.LastUp:
+                    referencePoint = actionPoint.Points.Last().Last();
+                    break;
+                case ClickPositions.LastDown:
+                    referencePoint = actionPoint.Points.Last().First();
+                    break;
+                case ClickPositions.FirstUp:
+                    referencePoint = actionPoint.Points.First().Last();
+                    break;
+                case ClickPositions.FirstDown:
+                    referencePoint = actionPoint.Points.First().First();
+                    break;
+                default:
+                    referencePoint = Point.Empty;
+                    break;
+            }
+            return referencePoint;
+
+        }
 
         private MouseActionsUI CreateGUI()
         {

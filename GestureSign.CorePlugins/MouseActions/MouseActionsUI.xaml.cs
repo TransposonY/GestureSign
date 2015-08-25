@@ -125,16 +125,19 @@ namespace GestureSign.CorePlugins.MouseActions
                 case MouseActions.HorizontalScroll:
                 case MouseActions.VerticalScroll:
                     ScrollCanvas.Visibility = Visibility.Visible;
-                    ClickCanvas.Visibility = MoveMouseCanvas.Visibility = Visibility.Hidden;
+                    ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
                     break;
                 case MouseActions.MoveMouseBy:
+                    ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = PositionComboBox.Visibility = Visibility.Visible;
+                    ClickPositionText.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
+                    break;
                 case MouseActions.MoveMouseTo:
                     MoveMouseCanvas.Visibility = Visibility.Visible;
-                    ClickCanvas.Visibility = ScrollCanvas.Visibility = Visibility.Hidden;
+                    ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
                     break;
                 default:
-                    ClickCanvas.Visibility = Visibility.Visible;
-                    MoveMouseCanvas.Visibility = ScrollCanvas.Visibility = Visibility.Hidden;
+                    ClickPositionText.Visibility = PositionComboBox.Visibility = Visibility.Visible;
+                    ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
                     break;
             }
         }
