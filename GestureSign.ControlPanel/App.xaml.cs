@@ -12,6 +12,7 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro;
+using Microsoft.Win32;
 
 namespace GestureSign.ControlPanel
 {
@@ -25,7 +26,7 @@ namespace GestureSign.ControlPanel
         private static readonly Timer Timer = new Timer(o =>
         {
             Current.Dispatcher.Invoke(
-                () => { if (Current.Windows.Count == 0) Current.Shutdown(); else  Timer.Change(300000, Timeout.Infinite); });
+                () => { if (Current.Windows.Count == 0) Current.Shutdown(); else Timer.Change(300000, Timeout.Infinite); });
         }, Timer, Timeout.Infinite, Timeout.Infinite);
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -41,6 +42,19 @@ namespace GestureSign.ControlPanel
                         LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                     Current.Shutdown();
                     return;
+                }
+
+                if (CheckIfApplicationRunAsAdmin())
+                {
+                    var result = MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CompatWarning"),
+                     LocalizationProvider.Instance.GetTextValue("Messages.CompatWarningTitle"), MessageBoxButton.YesNo,
+                     MessageBoxImage.Warning);
+
+                    if (result == MessageBoxResult.No)
+                    {
+                        Current.Shutdown();
+                        return;
+                    }
                 }
 
                 bool createdNewDaemon;
@@ -138,6 +152,23 @@ namespace GestureSign.ControlPanel
             Current.Resources.Add("HeaderFontFamily", LocalizationProvider.Instance.Font);
             Current.Resources.Remove("ContentFontFamily");
             Current.Resources.Add("ContentFontFamily", LocalizationProvider.Instance.Font);
+        }
+
+        private bool CheckIfApplicationRunAsAdmin()
+        {
+            string controlPanelRecord;
+            string daemonRecord;
+            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
+            {
+                string controlPanelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+
+                controlPanelRecord = layers?.GetValue(controlPanelPath) as string;
+                daemonRecord = layers?.GetValue(daemonPath) as string;
+            }
+
+            return controlPanelRecord != null && controlPanelRecord.ToUpper().Contains("RUNASADMIN") ||
+                   daemonRecord != null && daemonRecord.ToUpper().Contains("RUNASADMIN");
         }
     }
 }
