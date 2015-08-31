@@ -8,12 +8,13 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.Daemon.Input;
+using GestureSign.Daemon.Surface;
 
 namespace GestureSign.Daemon
 {
     static class Program
     {
-        private static Surface surface;
+        private static SurfaceForm _surfaceForm;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -36,7 +37,7 @@ namespace GestureSign.Daemon
                         }
 
                         TouchCapture.Instance.Load();
-                        surface = new Surface();
+                        _surfaceForm = new SurfaceForm();
                         TouchCapture.Instance.EnableTouchCapture();
 
                         GestureManager.Instance.Load(TouchCapture.Instance);
