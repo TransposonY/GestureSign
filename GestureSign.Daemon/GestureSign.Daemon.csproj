@@ -113,12 +113,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\add.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\stop.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GestureSign.Common\GestureSign.Common.csproj">
       <Project>{038047a4-e3f8-4b49-9762-7f63971b8319}</Project>
       <Name>GestureSign.Common</Name>
@@ -131,9 +125,6 @@
       <Project>{fbd3ec1e-47e2-4d2d-81c9-d6506125a09a}</Project>
       <Name>ManagedWinapi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\normal.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -155,6 +146,9 @@
   <ItemGroup>
     <Content Include="LanguageData\en.xml" />
     <Content Include="LanguageData\zh.xml" />
+    <None Include="Resources\normal_daemon.ico" />
+    <None Include="Resources\add.ico" />
+    <None Include="Resources\stop.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

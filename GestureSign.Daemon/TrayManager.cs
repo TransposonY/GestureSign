@@ -56,7 +56,7 @@ namespace GestureSign.Daemon
             TrayIcon.Text = "GestureSign";
             TrayIcon.DoubleClick += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             TrayIcon.Click += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
-            TrayIcon.Icon = Properties.Resources.normal;
+            TrayIcon.Icon = Properties.Resources.normal_daemon;
 
             // Tray Menu
             TrayMenu.Items.AddRange(new ToolStripItem[] { miTrainingMode, miDisableGestures, miSeperator1, _controlPanelMenuItem, miSeperator2, miExitGestureSign });
@@ -219,7 +219,7 @@ namespace GestureSign.Daemon
                 if (miTrainingMode.Checked)
                     TrayIcon.Icon = Properties.Resources.add;
                 else
-                    TrayIcon.Icon = Properties.Resources.normal;
+                    TrayIcon.Icon = Properties.Resources.normal_daemon;
             }
         }
 
@@ -257,7 +257,7 @@ namespace GestureSign.Daemon
             GestureSign.Common.Configuration.AppConfig.Teaching = miTrainingMode.Checked = false;
 
             // Assign resource icon as tray icon
-            TrayIcon.Icon = Properties.Resources.normal;
+            TrayIcon.Icon = Properties.Resources.normal_daemon;
         }
 
         #endregion

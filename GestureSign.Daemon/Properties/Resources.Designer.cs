@@ -94,9 +94,9 @@ namespace GestureSign.Daemon.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon normal {
+        internal static System.Drawing.Icon normal_daemon {
             get {
-                object obj = ResourceManager.GetObject("normal", resourceCulture);
+                object obj = ResourceManager.GetObject("normal_daemon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
