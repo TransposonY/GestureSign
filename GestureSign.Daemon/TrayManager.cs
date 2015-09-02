@@ -113,6 +113,7 @@ namespace GestureSign.Daemon
                             }
                             catch (Exception exception)
                             {
+                                Logging.LogException(exception);
                                 MessageBox.Show(exception.ToString(),
                                     LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);

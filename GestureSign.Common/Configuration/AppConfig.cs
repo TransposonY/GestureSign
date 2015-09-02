@@ -188,7 +188,7 @@ namespace GestureSign.Common.Configuration
                 if (ConfigChanged != null)
                     ConfigChanged(new object(), EventArgs.Empty);
             }
-            catch (Exception) { }
+            catch (Exception e) { Logging.LogException(e); }
         }
 
 
@@ -212,8 +212,9 @@ namespace GestureSign.Common.Configuration
             {
                 Reload();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logging.LogException(e);
             }
             Fsw.EnableRaisingEvents = flag;
             // Force a reload of the changed section.    

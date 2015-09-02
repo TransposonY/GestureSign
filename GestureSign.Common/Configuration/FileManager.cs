@@ -45,7 +45,8 @@ namespace GestureSign.Common.Configuration
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message, "Save Failed");
+                Logging.LogException(ex);
+                System.Windows.MessageBox.Show(ex.ToString(), "Save Failed");
                 return false;
             }
         }
@@ -63,8 +64,9 @@ namespace GestureSign.Common.Configuration
                         ? new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects }
                         : new JsonSerializerSettings());
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logging.LogException(e);
                 if (backup)
                     BackupFile(filePath);
                 return default(T);
@@ -103,8 +105,9 @@ namespace GestureSign.Common.Configuration
                     BackupFile(filePath);
                 return default(T);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logging.LogException(e);
                 return default(T);
             }
         }
@@ -129,7 +132,10 @@ namespace GestureSign.Common.Configuration
             Path.GetExtension(filePath));
                 File.Copy(filePath, backupFileName, true);
             }
-            catch { }
+            catch (Exception e)
+            {
+                Logging.LogException(e);
+            }
         }
 
         private static bool IsFileLocked(string file)

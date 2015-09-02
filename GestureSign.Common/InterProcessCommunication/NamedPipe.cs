@@ -84,13 +84,9 @@ namespace GestureSign.Common.InterProcessCommunication
                        }
                        return true;
                    }
-                   catch (InvalidOperationException)
+                   catch (Exception e)
                    {
-                       //System.Windows.Forms.MessageBox.Show("可能缺失另一程序文件，或无法启动另一程序。", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                       return false;
-                   }
-                   catch (Exception)
-                   {
+                       Logging.LogException(e);
                        return false;
                    }
                }));

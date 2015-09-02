@@ -276,7 +276,11 @@ namespace GestureSign.Daemon.Input
                                 }
                         }
                     }
-                    catch (Exception exception) { MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+                    catch (Exception exception)
+                    {
+                        Logging.LogException(exception);
+                        MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
 
                     Tuple<string, List<List<Point>>> message =
                         new Tuple<string, List<List<Point>>>(GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));

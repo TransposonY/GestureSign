@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Daemon.Input;
@@ -130,8 +131,9 @@ namespace GestureSign.Daemon.Surface
                 _bitmap.EndDraw();
                 UpdateDraw();
             }
-            catch
+            catch (Exception e)
             {
+                Logging.LogException(e);
                 ClearSurfaces();
             }
             // this.CreateGraphics().DrawImage(bmp, 0, 0);

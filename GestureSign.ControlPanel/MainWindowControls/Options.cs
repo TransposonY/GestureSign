@@ -226,7 +226,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                                 td.Principal.RunLevel = TaskRunLevel.Highest;
 
-                                LogonTrigger lt = new LogonTrigger {Enabled = true};
+                                LogonTrigger lt = new LogonTrigger { Enabled = true };
                                 td.Triggers.Add(lt);
                                 // Create an action that will launch Notepad whenever the trigger fires
                                 td.Actions.Add(new ExecAction(
@@ -345,6 +345,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AppConfig.Save();
         }
 
-
+        private void ShowLogButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("notepad.exe", Path.Combine(Path.GetTempPath(), "GestureSign.log"));
+        }
     }
 }

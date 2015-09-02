@@ -26,8 +26,9 @@ namespace GestureSign.Common.Plugins
                     settings = Activator.CreateInstance<T>();
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Logging.LogException(e);
                 settings = Activator.CreateInstance<T>();
                 return false;
             }

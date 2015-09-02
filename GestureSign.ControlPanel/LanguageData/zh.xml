@@ -176,6 +176,7 @@ http://git.oschina.net/TransY/GestureSign
     <PickColor>选择颜色..</PickColor>
     <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
     <OpenConfigFolder>打开设置文件文件夹</OpenConfigFolder>
+    <ShowLogButton>打开日志...</ShowLogButton>
     <WindowsStartup>
       <Header>开机启动</Header>
       <OnLabel>开</OnLabel>

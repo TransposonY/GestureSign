@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
+using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -30,6 +31,9 @@ namespace GestureSign.Daemon
                     //Application.SetCompatibleTextRenderingDefault(false);
                     try
                     {
+                        Application.ThreadException += Application_ThreadException;
+                        Logging.OpenLogFile();
+
                         if ("Built-in".Equals(AppConfig.CultureName) ||
                             !LocalizationProvider.Instance.LoadFromFile("Daemon", Properties.Resources.en))
                         {
@@ -69,6 +73,7 @@ namespace GestureSign.Daemon
                     }
                     catch (Exception e)
                     {
+                        Logging.LogException(e);
                         MessageBox.Show(e.ToString(), LocalizationProvider.Instance.GetTextValue("Messages.Error"),
                             MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         Application.Exit();
@@ -83,6 +88,32 @@ namespace GestureSign.Daemon
 
         }
 
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            DialogResult result = DialogResult.Abort;
+            try
+            {
+                Logging.LogException(e.Exception);
+                string errorMsg = "An application error occurred. Please contact the author with the following information:\n\n";
+                errorMsg = errorMsg + e.Exception;
+                result = MessageBox.Show(errorMsg, "Error", MessageBoxButtons.AbortRetryIgnore,
+                   MessageBoxIcon.Stop);
+            }
+            catch (Exception fe)
+            {
+                try
+                {
+                    MessageBox.Show(fe.ToString(), "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                finally
+                {
+                    Application.Exit();
+                }
+            }
 
+            // Exits the program when the user clicks Abort.
+            if (result == DialogResult.Abort)
+                Application.Exit();
+        }
     }
 }
