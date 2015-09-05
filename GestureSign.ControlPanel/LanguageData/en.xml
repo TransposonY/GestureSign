@@ -323,9 +323,9 @@ Page:https://github.com/TransposonY
     <TouchKeyboard>
       <Name>Touch Keyboard</Name>
       <Category>Keyboard</Category>
-      <Show>Show</Show>
-      <Hide>Hide</Hide>
-      <Tip>Tip:To show the Touch Keyboard Button in taskbar can accelerate the pop-up speed.</Tip>
+      <Show>Show Keyboard</Show>
+      <Hide>Hide Keyboard</Hide>
+      <Tip>Tip:To show the Touch Keyboard Button in taskbar can accelerate the pop-up speed in windows 8.</Tip>
     </TouchKeyboard>
     <Volume>
       <Name>Adjust Volume</Name>
