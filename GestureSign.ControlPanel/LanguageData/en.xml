@@ -227,6 +227,22 @@ Page:https://github.com/TransposonY
       <SpecificDescription>Send the hot key ({0})</SpecificDescription>
       <Tip>Hot Key(Use keyboard to enter)</Tip>
       <Reset>Reset</Reset>
+      <AddExtraKey>(Click to add a extra key)</AddExtraKey>
+      <ExtraKeys>
+        <BrowserBack>Browser Back key</BrowserBack>
+        <BrowserForward>Browser Forward key</BrowserForward>
+        <BrowserHome>Browser Start and Home key</BrowserHome>
+        <BrowserRefresh>Browser Refresh key</BrowserRefresh>
+        <BrowserSearch>Browser Search key</BrowserSearch>
+        <BrowserStop>Browser Stop key</BrowserStop>
+        <MediaNextTrack>Next Track key</MediaNextTrack>
+        <MediaPlayPause>Play/Pause Media key</MediaPlayPause>
+        <MediaPreviousTrack>Previous Track key</MediaPreviousTrack>
+        <MediaStop>Stop Media key</MediaStop>
+        <VolumeDown>Volume Down key</VolumeDown>
+        <VolumeMute>Volume Mute key</VolumeMute>
+        <VolumeUp>Volume Up key</VolumeUp>
+      </ExtraKeys>
     </HotKey>
     <KeyDownKeyUp>
       <Name>Key Down/Up</Name>

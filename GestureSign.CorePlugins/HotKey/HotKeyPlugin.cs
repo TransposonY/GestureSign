@@ -75,6 +75,20 @@ namespace GestureSign.CorePlugins.HotKey
             bool extended;
             switch (key)
             {
+                case Keys.VolumeDown:
+                case Keys.VolumeMute:
+                case Keys.VolumeUp:
+                case Keys.MediaNextTrack:
+                case Keys.MediaPlayPause:
+                case Keys.MediaPreviousTrack:
+                case Keys.MediaStop:
+                case Keys.BrowserBack:
+                case Keys.BrowserForward:
+                case Keys.BrowserHome:
+                case Keys.BrowserRefresh:
+                case Keys.BrowserSearch:
+                case Keys.BrowserStop:
+                    return key.ToString();
                 case Keys.Insert:
                 case Keys.Delete:
                 case Keys.PageUp:

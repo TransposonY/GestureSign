@@ -229,6 +229,22 @@ http://git.oschina.net/TransY/GestureSign
       <SpecificDescription>发送快捷键 ({0})</SpecificDescription>
       <Tip>快捷键（请用键盘录入快捷键）</Tip>
       <Reset>重置</Reset>
+      <AddExtraKey>(点击添加一个多媒体键)</AddExtraKey>
+      <ExtraKeys>
+        <BrowserBack>浏览器-后退键</BrowserBack>
+        <BrowserForward>浏览器-前进键</BrowserForward>
+        <BrowserHome>浏览器-主页键</BrowserHome>
+        <BrowserRefresh>浏览器-更新键</BrowserRefresh>
+        <BrowserSearch>浏览器-搜索键</BrowserSearch>
+        <BrowserStop>浏览器-停止键</BrowserStop>
+        <MediaNextTrack>下一首 键</MediaNextTrack>
+        <MediaPlayPause>暂停/播放 键</MediaPlayPause>
+        <MediaPreviousTrack>上一首 键</MediaPreviousTrack>
+        <MediaStop>停止播放 键</MediaStop>
+        <VolumeDown>音量减小键</VolumeDown>
+        <VolumeMute>静音键</VolumeMute>
+        <VolumeUp>音量增加键</VolumeUp>
+      </ExtraKeys>
     </HotKey>
     <KeyDownKeyUp>
       <Name>按下或松开按键</Name>

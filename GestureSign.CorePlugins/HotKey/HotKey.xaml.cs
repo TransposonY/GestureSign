@@ -28,30 +28,50 @@ namespace GestureSign.CorePlugins.HotKey
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             _KeyCode.Clear();
             txtKey.Text = String.Empty;
+            chkControl.IsChecked = chkAlt.IsChecked = chkShift.IsChecked = chkWin.IsChecked = false;
         }
 
 
-        private void Canvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            //    chkControl.IsChecked = true;
-            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
-            //    chkAlt.IsChecked = true;
-            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            //    chkShift.IsChecked = true;
-            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
-            //    chkWin.IsChecked = true;
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                chkControl.IsChecked = true;
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+                chkAlt.IsChecked = true;
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                chkShift.IsChecked = true;
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Windows) == ModifierKeys.Windows)
+                chkWin.IsChecked = true;
         }
 
-        private void Canvas_PreviewKeyUp(object sender, KeyEventArgs e)
+        private void Grid_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-            
+
+            switch (e.Key)
+            {
+                case Key.System:
+                    {
+                        if (e.SystemKey == Key.LeftAlt || e.SystemKey == Key.RightAlt)
+                            return;
+                        break;
+                    }
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                case Key.LeftShift:
+                case Key.RightShift:
+                case Key.LWin:
+                case Key.RWin:
+                    return;
+            }
+
             var keyCode = (e.Key == Key.System) ? (Keys)KeyInterop.VirtualKeyFromKey(e.SystemKey) :
                 (Keys)KeyInterop.VirtualKeyFromKey(e.Key);
 
@@ -60,7 +80,18 @@ namespace GestureSign.CorePlugins.HotKey
             txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
         }
 
+        private void ExtraKeysComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if ((!ExtraKeysComboBox.IsDropDownOpen || e.AddedItems.Count == 0)) return;
 
+            _KeyCode.Add((Keys)ExtraKeysComboBox.SelectedValue);
+
+            string keyCodes = _KeyCode.Aggregate(string.Empty, (current, k) => current + (HotKeyPlugin.GetKeyName(k) + " + "));
+            txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
+
+            ExtraKeysComboBox.IsDropDownOpen = false;
+            ExtraKeysComboBox.SelectedIndex = 0;
+        }
 
         #region Public Properties
 
@@ -98,6 +129,8 @@ namespace GestureSign.CorePlugins.HotKey
                     txtKey.Text = keyCodes.Substring(0, keyCodes.Length - 2);
                 }
                 else txtKey.Text = "";
+
+                ExtraKeysComboBox.SelectedIndex = 0;
             }
         }
 
@@ -111,9 +144,8 @@ namespace GestureSign.CorePlugins.HotKey
             }
         }
 
+
+
         #endregion
-
-
-
     }
 }
