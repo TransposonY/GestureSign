@@ -86,15 +86,27 @@ namespace GestureSign.Common.Plugins
             // Clear any existing plugins
             _Plugins = new List<IPluginInfo>();
             //_Plugins.Clear();
-            string path = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
-            if (path == null) return true;
-            foreach (string sFilePath in Directory.GetFiles(path, "*Plugins.dll"))
+            string directoryPath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            if (directoryPath == null) return true;
+
+            // Load core plugins.
+            string corePluginsPath = Path.Combine(directoryPath, "GestureSign.CorePlugins.dll");
+            if (File.Exists(corePluginsPath))
             {
-
-                _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
+                _Plugins.AddRange(LoadPluginsFromAssembly(corePluginsPath, host));
                 bFailed = false;
-
             }
+
+            // Load extra plugins.
+            string extraPlugins = Path.Combine(directoryPath, "Plugins");
+            if (Directory.Exists(extraPlugins))
+                foreach (string sFilePath in Directory.GetFiles(extraPlugins, "*.dll"))
+                {
+
+                    _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
+                    bFailed = false;
+
+                }
 
 
             return bFailed;
