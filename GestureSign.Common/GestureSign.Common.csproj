@@ -85,7 +85,6 @@
     <Compile Include="Applications\UserApplication.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\FileManager.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureEventArgs.cs" />
     <Compile Include="Gestures\GestureEventHandler.cs" />
