@@ -46,7 +46,6 @@ namespace GestureSign.Common.Configuration
             catch (Exception ex)
             {
                 Logging.LogException(ex);
-                System.Windows.MessageBox.Show(ex.ToString(), "Save Failed");
                 return false;
             }
         }

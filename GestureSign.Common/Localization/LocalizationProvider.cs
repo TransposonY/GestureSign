@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Windows;
-using System.Windows.Media;
 using System.Xml;
 using GestureSign.Common.Configuration;
 
@@ -11,23 +9,17 @@ namespace GestureSign.Common.Localization
 {
     public class LocalizationProvider
     {
-        private string _resource;
-        private Dictionary<string, string> _texts = new Dictionary<string, string>(10);
-        private FlowDirection _flowDirection;
-        private FontFamily _font;
+        protected static string Resource;
+        protected static Dictionary<string, string> Texts = new Dictionary<string, string>(10);
         private static LocalizationProvider _instance;
-        internal LocalizationProvider()
+
+        protected LocalizationProvider()
         {
         }
 
         public bool HasData
         {
-            get { return _texts.Count != 0; }
-        }
-
-        public FlowDirection FlowDirection
-        {
-            get { return _flowDirection; }
+            get { return Texts.Count != 0; }
         }
 
         public static LocalizationProvider Instance
@@ -35,10 +27,6 @@ namespace GestureSign.Common.Localization
             get { return _instance ?? (_instance = new LocalizationProvider()); }
         }
 
-        public FontFamily Font
-        {
-            get { return _font; }
-        }
 
         public Dictionary<string, string> GetLanguageList(string languageFolderName)
         {
@@ -66,15 +54,15 @@ namespace GestureSign.Common.Localization
 
         public string GetTextValue(string key)
         {
-            if (_texts.ContainsKey(key)) return _texts[key];
-            if (_resource != null)
-                LoadFromResource(_resource);
-            return _texts.ContainsKey(key) ? _texts[key] : "";
+            if (Texts.ContainsKey(key)) return Texts[key];
+            if (Resource != null)
+                LoadFromResource(Resource);
+            return Texts.ContainsKey(key) ? Texts[key] : "";
         }
 
         public bool LoadFromFile(string languageFolderName, string resource)
         {
-            _resource = resource;
+            Resource = resource;
             string languageFile = GetLanguageFilePath(languageFolderName);
             if (languageFile == null) return false;
             using (XmlTextReader xtr = new XmlTextReader(languageFile) { WhitespaceHandling = WhitespaceHandling.None })
@@ -87,9 +75,9 @@ namespace GestureSign.Common.Localization
         public void LoadFromResource(string languageResource)
         {
             using (XmlTextReader xtr = new XmlTextReader(languageResource, XmlNodeType.Document, null)
-                {
-                    WhitespaceHandling = WhitespaceHandling.None
-                })
+            {
+                WhitespaceHandling = WhitespaceHandling.None
+            })
             {
                 LoadLanguageData(xtr);
             }
@@ -141,17 +129,12 @@ namespace GestureSign.Common.Localization
                     else if (xmlTextReader.NodeType == XmlNodeType.Text)
                     {
                         var key = String.Join(".", nodes);
-                        if (!_texts.ContainsKey(key))
-                            _texts.Add(key, xmlTextReader.Value);
+                        if (!Texts.ContainsKey(key))
+                            Texts.Add(key, xmlTextReader.Value);
                     }
                 }
                 break;
             }
-
-            if (_texts.ContainsKey("Font"))
-                _font = new FontFamily(_texts["Font"]);
-            if (_texts.ContainsKey("IsRightToLeft"))
-                _flowDirection = Boolean.Parse(_texts["IsRightToLeft"]) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         }
 
 

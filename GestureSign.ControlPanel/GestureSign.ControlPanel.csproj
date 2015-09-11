@@ -131,6 +131,7 @@
     <Compile Include="Converters\HeaderConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Common\ActionInfo.cs" />
+    <Compile Include="Localization\LocalizationProviderEx.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

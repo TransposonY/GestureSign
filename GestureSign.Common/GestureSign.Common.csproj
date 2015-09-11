@@ -106,14 +106,16 @@
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
     <Compile Include="InterProcessCommunication\IMessageProcessor.cs" />
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
-    <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Localization\LocalisedTextExtension.cs" />
+    <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="Plugins\HostControl.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />
     <Compile Include="Plugins\PluginHelper.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\PointInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -122,8 +124,6 @@
     <Compile Include="UI\ITrayManager.cs" />
     <Compile Include="Gestures\IGestureManager.cs" />
     <Compile Include="Plugins\IHostControl.cs" />
-    <Compile Include="Plugins\IPlugin.cs" />
-    <Compile Include="Plugins\PointInfo.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Input\StateChangedEventArgs.cs" />

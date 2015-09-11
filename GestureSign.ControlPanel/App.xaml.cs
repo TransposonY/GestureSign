@@ -11,6 +11,7 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.ControlPanel.Common;
+using GestureSign.ControlPanel.Localization;
 using MahApps.Metro;
 using Microsoft.Win32;
 
@@ -139,19 +140,19 @@ namespace GestureSign.ControlPanel
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", ControlPanel.Properties.Resources.en))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProviderEx.Instance.LoadFromFile("ControlPanel", ControlPanel.Properties.Resources.en))
             {
-                LocalizationProvider.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
+                LocalizationProviderEx.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
             }
 
             Current.Resources.Remove("DefaultFlowDirection");
-            Current.Resources.Add("DefaultFlowDirection", LocalizationProvider.Instance.FlowDirection);
+            Current.Resources.Add("DefaultFlowDirection", LocalizationProviderEx.Instance.FlowDirection);
             Current.Resources.Remove("DefaultFont");
-            Current.Resources.Add("DefaultFont", LocalizationProvider.Instance.Font);
+            Current.Resources.Add("DefaultFont", LocalizationProviderEx.Instance.Font);
             Current.Resources.Remove("HeaderFontFamily");
-            Current.Resources.Add("HeaderFontFamily", LocalizationProvider.Instance.Font);
+            Current.Resources.Add("HeaderFontFamily", LocalizationProviderEx.Instance.Font);
             Current.Resources.Remove("ContentFontFamily");
-            Current.Resources.Add("ContentFontFamily", LocalizationProvider.Instance.Font);
+            Current.Resources.Add("ContentFontFamily", LocalizationProviderEx.Instance.Font);
         }
 
         private bool CheckIfApplicationRunAsAdmin()

@@ -6,15 +6,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Windows;
 using Action = GestureSign.Applications.Action;
-using Point = System.Drawing.Point;
-using Timer = System.Threading.Timer;
+using RECT = ManagedWinapi.Windows.RECT;
 
 namespace GestureSign.Common.Applications
 {
@@ -81,17 +79,19 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            IntPtr hwnd = GetDesktopWindow();
+            RECT rect;
+            GetWindowRect(hwnd, out rect);
+
+            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
+            var window = SystemWindow.FromPointEx(rect.Right - 1, 1, true, true);
+
+            if (window != null && window.HWnd.Equals(hwndCharmBar))
             {
-                IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-                var window = SystemWindow.FromPointEx((int)(SystemParameters.VirtualScreenWidth * graphics.DpiX / 96 - 1), 1,
-                    true, true);
-                if (window != null && window.HWnd.Equals(hwndCharmBar))
-                {
-                    e.Cancel = e.InterceptTouchInput = false;
-                    return;
-                }
+                e.Cancel = e.InterceptTouchInput = false;
+                return;
             }
+
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
@@ -366,6 +366,13 @@ namespace GestureSign.Common.Applications
         #region P/Invoke
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
         #endregion
     }
 }
