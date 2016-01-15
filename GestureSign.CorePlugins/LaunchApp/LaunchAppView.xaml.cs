@@ -55,6 +55,8 @@ namespace GestureSign.CorePlugins.LaunchApp
 
         private void comboBox_Loaded(object sender, RoutedEventArgs e)
         {
+            if (comboBox.ItemsSource != null) return;
+
             var apps = new List<Model>(10);
 
             var currentUser = WindowsIdentity.GetCurrent();
@@ -92,9 +94,9 @@ namespace GestureSign.CorePlugins.LaunchApp
                                 var appXInfo = appXInfos[appUserModelId];
 
                                 var displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
-                                var logo = ExtractDisplayIconFromReg(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
-
                                 if (string.IsNullOrEmpty(displayName)) continue;
+
+                                var logo = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
 
                                 model.Logo = logo;
                                 model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
@@ -213,16 +215,27 @@ namespace GestureSign.CorePlugins.LaunchApp
             if (File.Exists(logoPath))
                 return logoPath;
 
-            logoPath = Path.Combine(dir, Path.ChangeExtension(logoPath, "scale-100.png"));
-            if (File.Exists(logoPath))
-                return logoPath;
+            var scale100LogoPath = Path.Combine(dir, Path.ChangeExtension(logoPath, "scale-100.png"));
+            if (File.Exists(scale100LogoPath))
+                return scale100LogoPath;
+
+            var directory = Path.GetDirectoryName(logoPath);
+            var pattern = Path.GetFileNameWithoutExtension(logoPath) + ".*" + Path.GetExtension(logoPath);
+            if (directory != null && Directory.Exists(directory))
+            {
+                var logoPaths = Directory.GetFiles(directory, pattern);
+                if (logoPaths.Length != 0)
+                {
+                    return logoPaths[0];
+                }
+            }
 
             var localized = Path.Combine(dir, "en-us", logo); //TODO: How determine if culture parameter is necessary?
             localized = Path.Combine(dir, Path.ChangeExtension(localized, "scale-100.png"));
             return localized;
         }
 
-        private string ExtractDisplayIconFromReg(string dir, string logo)
+        private string GetDisplayIconPath(string dir, string logo)
         {
             logo = logo.TrimEnd('}').Split('?')[1];
 
