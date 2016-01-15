@@ -142,7 +142,7 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="34" />
+            <RowDefinition Height="29" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
@@ -222,7 +222,7 @@
         <DockPanel Grid.Row="0"
                    Grid.Column="1"
                    Background="{StaticResource AccentColorBrush}"
-                   Margin="0,5,0,0">
+                   Margin="5,0,0,0">
             <TextBlock FontWeight="Bold"
                        Margin="5,0,0,0"
                        HorizontalAlignment="Center"
@@ -239,7 +239,7 @@
         <ListBox x:Name="lstAvailableActions"
                  ContextMenuOpening="ActionContextMenu_Opening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Margin="0"
+                 Margin="5,0,0,0"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
                  Grid.Column="1"

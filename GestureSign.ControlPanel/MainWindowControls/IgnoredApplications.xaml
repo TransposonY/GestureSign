@@ -109,8 +109,7 @@
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Click="EnabledIgnoredAppCheckBoxs_Click"
-                                              Margin="10,0,0,0" />
+                                    <CheckBox Click="EnabledIgnoredAppCheckBoxs_Click" />
                                     <TextBlock FontWeight="Bold"
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"

@@ -8,7 +8,7 @@
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       Title="{localization:LocalisedText Title}"
                       Height="500"
-                      Width="650"
+                      Width="660"
                       ShowIconOnTitleBar="False"
                       ShowTitleBar="True"
                       Icon="Resources/normal.ico"
@@ -57,7 +57,7 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Grid>
-        <TabControl>
+        <TabControl Margin="5,0">
             <TabItem Header="{localization:LocalisedText Action.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
                 <mainWindowControl:AvailableActions x:Name="AvailableActions"></mainWindowControl:AvailableActions>
