@@ -123,14 +123,14 @@
                     FontSize="12"
                     FontWeight="Bold"
                     Click="btnOpenApplicationData_Click" />
-            <Button x:Name="ShowLogButton"
-                    Content="{localization:LocalisedText Options.ShowLogButton}"
+            <Button x:Name="ExportLogButton"
+                    Content="{localization:LocalisedText Options.ExportLogButton}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Margin="0,10,0,15"
                     FontSize="12"
                     FontWeight="Bold"
-                    Click="ShowLogButton_Click" />
+                    Click="ExportLogButton_Click" />
 
             <controls:ToggleSwitch x:Name="chkWindowsStartup"
                                    Header="{localization:LocalisedText Options.WindowsStartup.Header}"
@@ -182,7 +182,16 @@
                                    Unchecked="chkInterceptTouchInput_Unchecked"
                                    FontSize="14"
                                    FontWeight="Bold"></controls:ToggleSwitch>
-
+            <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
+                                   Header="{localization:LocalisedText Options.SendLogTitle}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Width="300"
+                                   Margin="0,10,0,9"
+                                   Checked="SendLogToggleSwitch_Checked"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Unchecked="SendLogToggleSwitch_Unchecked" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

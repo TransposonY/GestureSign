@@ -13,6 +13,11 @@
 
 是否继续运行本程序？</CompatWarning>
     <CompatWarningTitle>注意</CompatWarningTitle>
+    <ShowLog>显示日志...</ShowLog>
+    <FindNewErrorLog>有新的错误日志生成。
+日志包含程序崩溃的信息，你可以发送这些信息给我，以便定位并尽快解决问题。
+您可以在“选项”中关闭此提示。
+    </FindNewErrorLog>
   </Messages>
   <Common>
     <AllApplications>所有程序</AllApplications>
@@ -176,7 +181,20 @@ http://git.oschina.net/TransY/GestureSign
     <PickColor>选择颜色..</PickColor>
     <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
     <OpenConfigFolder>打开设置文件文件夹</OpenConfigFolder>
-    <ShowLogButton>打开日志...</ShowLogButton>
+    <ExportLogButton>导出日志</ExportLogButton>
+    <Waiting>请稍候...</Waiting>
+    <Exporting>正在导出日志...</Exporting>
+    <Sending>发送日志中...</Sending>
+    <SendLogTitle>发送日志</SendLogTitle>
+    <SendLog>日志包含程序崩溃的信息，你可以发送这些信息给我，以便定位并尽快解决问题。</SendLog>
+    <SendButton>发送</SendButton>
+    <DontSendButton>不发送</DontSendButton>
+    <SendSuccessTitle>发送成功</SendSuccessTitle>
+    <SendSuccess>错误日志发送成功！</SendSuccess>
+    <SendFailed>发送失败</SendFailed>
+    <Retry>重试</Retry>
+    <OnLabel>开</OnLabel>
+    <OffLabel>关</OffLabel>
     <WindowsStartup>
       <Header>开机启动</Header>
       <OnLabel>开</OnLabel>

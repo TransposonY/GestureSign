@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Security.Principal;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
 using ManagedWinapi.Windows;
 using Microsoft.Win32.TaskScheduler;
+using MahApps.Metro.Controls.Dialogs;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using File = System.IO.File;
@@ -49,6 +54,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 chkOrderByLocation.IsChecked = AppConfig.IsOrderByLocation;
                 ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
+                SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 if (AppConfig.UiAccess)
                 {
                     chkInterceptTouchInput.IsChecked = AppConfig.InterceptTouchInput;
@@ -338,6 +344,18 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AppConfig.Save();
         }
 
+        private void SendLogToggleSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            AppConfig.SendErrorReport = true;
+            AppConfig.Save();
+        }
+
+        private void SendLogToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AppConfig.SendErrorReport = false;
+            AppConfig.Save();
+        }
+
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
         {
             if (LanguageComboBox.SelectedValue == null) return;
@@ -345,9 +363,85 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AppConfig.Save();
         }
 
-        private void ShowLogButton_Click(object sender, RoutedEventArgs e)
+        private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("notepad.exe", Path.Combine(Path.GetTempPath(), "GestureSign.log"));
+            string logPath = Path.Combine(Path.GetTempPath(), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+
+            StringBuilder result = new StringBuilder();
+
+            var controller =
+                await
+                    UIHelper.GetParentWindow(this)
+                        .ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
+                            LocalizationProvider.Instance.GetTextValue("Options.Exporting"));
+            controller.SetIndeterminate();
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+
+                if (File.Exists(Logging.LogFilePath))
+                {
+                    result.Append(File.ReadAllText(Logging.LogFilePath));
+                }
+
+                EventLog logs = new EventLog { Log = "Application" };
+
+                foreach (EventLogEntry entry in logs.Entries)
+                {
+                    if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source))
+                    {
+                        result.AppendLine(entry.TimeWritten.ToString(CultureInfo.InvariantCulture));
+                        result.AppendLine(entry.Message.Replace("\n", "\r\n"));
+                    }
+                }
+                File.WriteAllText(logPath, result.ToString());
+
+            });
+            await controller.CloseAsync();
+
+            Process.Start("notepad.exe", logPath);
+
+            var dialogResult =
+                await
+                    UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
+                            LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
+                            MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
+                                NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton")
+                            });
+
+            while (dialogResult == MessageDialogResult.Affirmative)
+            {
+                controller = await UIHelper.GetParentWindow(this)
+                    .ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
+                        LocalizationProvider.Instance.GetTextValue("Options.Sending"));
+                controller.SetIndeterminate();
+
+                string exceptionMessage = await System.Threading.Tasks.Task.Run(() => Net.SendMail("Error Log", result.ToString()));
+
+                await controller.CloseAsync();
+
+                if (exceptionMessage == null)
+                {
+                    await UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
+                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
+                    break;
+                }
+                else
+                {
+                    dialogResult = await
+                    UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
+                            LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" + exceptionMessage,
+                            MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
+                            });
+                }
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
-
+using System.Globalization;
 using System.Threading;
 using System.IO;
 
@@ -139,6 +139,30 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool SendErrorReport
+        {
+            get
+            {
+                return (bool)GetValue("SendErrorReport", true);
+            }
+            set
+            {
+                SetValue("SendErrorReport", value);
+            }
+        }
+
+        public static DateTime LastErrorTime
+        {
+            get
+            {
+                return GetValue("LastErrorTime", DateTime.MinValue);
+            }
+            set
+            {
+                SetValue("LastErrorTime", value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess
@@ -244,6 +268,25 @@ namespace GestureSign.Common.Configuration
             }
             else return defaultValue;
         }
+
+        private static DateTime GetValue(string key, DateTime defaultValue)
+        {
+            var setting = _config.AppSettings.Settings[key];
+            if (setting != null)
+            {
+                try
+                {
+                    return DateTime.Parse(setting.Value);
+                }
+                catch
+                {
+                    SetValue(key, defaultValue);
+                    return defaultValue;
+                }
+            }
+            else return defaultValue;
+        }
+
         private static void SetValue(string key, object value)
         {
             if (_config.AppSettings.Settings[key] != null)
@@ -264,6 +307,18 @@ namespace GestureSign.Common.Configuration
             else
             {
                 _config.AppSettings.Settings.Add(key, System.Drawing.ColorTranslator.ToHtml(value));
+            }
+        }
+
+        private static void SetValue(string key, DateTime value)
+        {
+            if (_config.AppSettings.Settings[key] != null)
+            {
+                _config.AppSettings.Settings[key].Value = value.ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                _config.AppSettings.Settings.Add(key, value.ToString(CultureInfo.InvariantCulture));
             }
         }
     }

@@ -118,6 +118,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\Net.cs" />
     <Compile Include="Converters\AllowSingleBoolConverter.cs" />
     <Compile Include="Converters\Bool2VisibilityConverter.cs" />
     <Compile Include="Converters\InterceptTouchInputBoolConverter.cs" />
@@ -305,7 +306,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="LanguageData\zh.xml" />
+    <Resource Include="LanguageData\zh.xml">
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="LanguageData\en.xml">

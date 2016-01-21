@@ -14,6 +14,8 @@ This may lead to function failure(e.g. Start application at Windows startup).
 Continue to run?
     </CompatWarning>
     <CompatWarningTitle>Warning</CompatWarningTitle>
+    <ShowLog>Show Log...</ShowLog>
+    <FindNewErrorLog>Find new error log.You can help me track and fix problems by sending these error logs.</FindNewErrorLog>
   </Messages>
   <Common>
     <AllApplications>All Applications</AllApplications>
@@ -174,7 +176,20 @@ Page:https://github.com/TransposonY
     <PickColor>Pick Color...</PickColor>
     <MinimumPointDistance>Minimum Point Distance {0:F0} px</MinimumPointDistance>
     <OpenConfigFolder>Open Configuration Folder</OpenConfigFolder>
-    <ShowLogButton>Show Log...</ShowLogButton>
+    <ExportLogButton>Export Error Log...</ExportLogButton>
+    <Waiting>Please wait...</Waiting>
+    <Exporting>Exporting error log file...</Exporting>
+    <Sending>Sending error log...</Sending>
+    <SendLogTitle>Send Error Log</SendLogTitle>
+    <SendLog>You can help me track and fix problems by sending these error logs.</SendLog>
+    <SendButton>Send</SendButton>
+    <DontSendButton>Don't Send</DontSendButton>
+    <SendSuccessTitle>Log Send Success</SendSuccessTitle>
+    <SendSuccess>Thank you!The logs were sent successfully!</SendSuccess>
+    <SendFailed>Send Failed</SendFailed>
+    <Retry>Retry</Retry>
+    <OnLabel>On</OnLabel>
+    <OffLabel>Off</OffLabel>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
       <OnLabel>On</OnLabel>
