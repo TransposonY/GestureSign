@@ -192,8 +192,6 @@ Page:https://github.com/TransposonY
     <OffLabel>Off</OffLabel>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
-      <OnLabel>On</OnLabel>
-      <OffLabel>Off</OffLabel>
     </WindowsStartup>
     <ShowTrayIconSwitch>
       <Header>Show Tray Icon</Header>
@@ -202,8 +200,6 @@ Page:https://github.com/TransposonY
     </ShowTrayIconSwitch>
     <ShowBalloonTipSwitch>
       <Header>Show Tip on Startup</Header>
-      <OnLabel>On</OnLabel>
-      <OffLabel>Off</OffLabel>
     </ShowBalloonTipSwitch>
     <OrderByLocation>
       <Header>Stroke Order</Header>
@@ -212,8 +208,6 @@ Page:https://github.com/TransposonY
     </OrderByLocation>
     <InterceptTouchInput>
       <Header>Intercept Touch Input (Installation Version)</Header>
-      <OnLabel>On</OnLabel>
-      <OffLabel>Off</OffLabel>
     </InterceptTouchInput>
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>

@@ -197,8 +197,6 @@ http://git.oschina.net/TransY/GestureSign
     <OffLabel>关</OffLabel>
     <WindowsStartup>
       <Header>开机启动</Header>
-      <OnLabel>开</OnLabel>
-      <OffLabel>关</OffLabel>
     </WindowsStartup>
     <ShowTrayIconSwitch>
       <Header>任务栏图标</Header>
@@ -207,8 +205,6 @@ http://git.oschina.net/TransY/GestureSign
     </ShowTrayIconSwitch>
     <ShowBalloonTipSwitch>
       <Header>启动时提示</Header>
-      <OnLabel>开</OnLabel>
-      <OffLabel>关</OffLabel>
     </ShowBalloonTipSwitch>
     <OrderByLocation>
       <Header>手指识别顺序</Header>
@@ -217,8 +213,6 @@ http://git.oschina.net/TransY/GestureSign
     </OrderByLocation>
     <InterceptTouchInput>
       <Header>屏蔽触摸输入功能（安装版适用）</Header>
-      <OnLabel>开</OnLabel>
-      <OffLabel>关</OffLabel>
     </InterceptTouchInput>
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
