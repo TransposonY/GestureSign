@@ -394,6 +394,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void availableGesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            e.Handled = true;
             ComboBox availableGesturesComboBox = sender as ComboBox;
             if (availableGesturesComboBox != null &&
                 (!availableGesturesComboBox.IsDropDownOpen || e.AddedItems.Count == 0))
