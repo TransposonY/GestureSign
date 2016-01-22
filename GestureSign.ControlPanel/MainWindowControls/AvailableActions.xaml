@@ -665,7 +665,7 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 Click="MoveUpButton_Click"
-                Visibility="Hidden">
+                IsEnabled="False">
             <Rectangle Width="18"
                        Height="20"
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
@@ -684,7 +684,7 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 Click="MoveDownButton_Click"
-                Visibility="Hidden">
+                IsEnabled="False">
             <Rectangle Width="18"
                        Height="20"
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">

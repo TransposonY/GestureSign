@@ -300,6 +300,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         void RefreshGroup(string gestureName)
         {
+            lstAvailableActions.SelectedItem = null;
             var temp = ActionInfos.Where(ai => ai.GestureName.Equals(gestureName, StringComparison.Ordinal)).ToList();
             foreach (ActionInfo ai in temp)
             {
@@ -308,6 +309,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ActionInfos.Insert(i, ai);
             }
         }
+
         void SelectAction(ActionInfo actionInfo)
         {
             lstAvailableActions.SelectedItem = actionInfo;
@@ -358,10 +360,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void EnableRelevantButtons()
         {
-            bool flag = lstAvailableActions.SelectedItems.Count == 1;
-            cmdEdit.IsEnabled = flag;
-            MoveDownButton.Visibility = MoveUpButton.Visibility = flag ? Visibility.Visible : Visibility.Hidden;
-            cmdDelete.IsEnabled = (lstAvailableActions.SelectedItems.Count > 0);
+            cmdDelete.IsEnabled = cmdEdit.IsEnabled = lstAvailableActions.SelectedItems.Count == 1;
+
+            var selectedActionInfo = (lstAvailableActions.SelectedItem as ActionInfo);
+            if (selectedActionInfo == null)
+                MoveUpButton.IsEnabled = MoveDownButton.IsEnabled = false;
+            else
+            {
+                var actionInfoGroup = ActionInfos.Where(ai => ai.GestureName.Equals(selectedActionInfo.GestureName, StringComparison.Ordinal)).ToList();
+                int index = actionInfoGroup.IndexOf(selectedActionInfo);
+
+                MoveUpButton.IsEnabled = index != 0;
+                MoveDownButton.IsEnabled = index != actionInfoGroup.Count - 1;
+            }
         }
 
         private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
