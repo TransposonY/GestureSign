@@ -90,7 +90,7 @@ http://git.oschina.net/TransY/GestureSign
     <ActionFile>动作文件</ActionFile>
     <ActionCount>{0}  ( {1}个动作 )</ActionCount>
     <AppCount>{0} {1}程序</AppCount>
-    <NotGroupedAppCount>未分组 {0}程序</NotGroupedAppCount>
+    <DefaultGroupAppCount>未分组 ({0}程序)</DefaultGroupAppCount>
     <ImportActions>导入动作文件</ImportActions>
     <ExportActions>导出动作文件</ExportActions>
     <ExportSpecificActions>导出当前程序中已启用的动作</ExportSpecificActions>

@@ -84,8 +84,8 @@ Page:https://github.com/TransposonY
     <Header>Action</Header>
     <ActionFile>Action File</ActionFile>
     <ActionCount>{0}  ( {1} Actions )</ActionCount>
-    <AppCount>{0} {1} </AppCount>
-    <NotGroupedAppCount>Ungrouped {0} </NotGroupedAppCount>
+    <AppCount>{0} ({1})</AppCount>
+    <DefaultGroupAppCount>(Default) ({0}) </DefaultGroupAppCount>
     <ImportActions>Import Actions...</ImportActions>
     <ExportActions>Export Actions</ExportActions>
     <ExportSpecificActions>Export Enabled Actions in Current Application...</ExportSpecificActions>

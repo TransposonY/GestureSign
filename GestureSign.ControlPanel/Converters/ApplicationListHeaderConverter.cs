@@ -12,7 +12,7 @@ namespace GestureSign.ControlPanel.Converters
             string name = values[0] as string;
             int count = (int)values[1];
             return String.IsNullOrEmpty(name)
-                ? String.Format(LocalizationProvider.Instance.GetTextValue("Action.NotGroupedAppCount"), count)
+                ? String.Format(LocalizationProvider.Instance.GetTextValue("Action.DefaultGroupAppCount"), count)
                 : String.Format(LocalizationProvider.Instance.GetTextValue("Action.AppCount"), name, count);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
