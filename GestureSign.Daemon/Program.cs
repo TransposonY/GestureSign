@@ -23,7 +23,7 @@ namespace GestureSign.Daemon
         static void Main()
         {
             bool createdNew;
-            using (Mutex mutex = new Mutex(true, "GestureSignDaemon", out createdNew))
+            using (new Mutex(true, "GestureSignDaemon", out createdNew))
             {
                 if (createdNew)
                 {
@@ -42,7 +42,6 @@ namespace GestureSign.Daemon
 
                         TouchCapture.Instance.Load();
                         _surfaceForm = new SurfaceForm();
-                        TouchCapture.Instance.EnableTouchCapture();
 
                         GestureManager.Instance.Load(TouchCapture.Instance);
                         ApplicationManager.Instance.Load(TouchCapture.Instance);
@@ -84,8 +83,6 @@ namespace GestureSign.Daemon
                     Application.Exit();
                 }
             }
-
-
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
