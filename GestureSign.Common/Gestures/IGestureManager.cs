@@ -9,8 +9,6 @@ namespace GestureSign.Common.Gestures
 		void DeleteGesture(string gestureName);
 		bool GestureExists(string gestureName);
 		string GestureName { get; set; }
-		event RecognitionEventHandler GestureNotRecognized;
-		event RecognitionEventHandler GestureRecognized;
 		IGesture[] Gestures { get; }
 		string[] GetAvailableGestures();
         string GetGestureName(List<List<System.Drawing.Point>> Points);

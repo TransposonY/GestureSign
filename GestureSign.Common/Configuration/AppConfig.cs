@@ -79,8 +79,6 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        public static bool Teaching { get; set; }
-
         public static bool IsOrderByLocation
         {
             get
@@ -180,7 +178,7 @@ namespace GestureSign.Common.Configuration
                 RoamingUserConfigFilename = Path,
                 LocalUserConfigFilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GestureSign\GestureSign.config")
             };
-            Teaching = false;
+
             _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
             Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
 

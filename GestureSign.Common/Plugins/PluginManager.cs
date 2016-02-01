@@ -36,20 +36,17 @@ namespace GestureSign.Common.Plugins
 
         protected PluginManager()
         {
-            // Bind to mouse capture class to execute plugin
-            Gestures.GestureManager.Instance.GestureRecognized += new RecognitionEventHandler(GestureManager_GestureRecognized);
 
-            // Reload plugins if options were saved
         }
 
         #endregion
 
         #region Events
 
-        protected void GestureManager_GestureRecognized(object sender, RecognitionEventArgs e)
+        protected void TouchCapture_GestureRecognized(object sender, Input.RecognitionEventArgs e)
         {
             // Exit if we're teaching
-            if (Configuration.AppConfig.Teaching)
+            if (e.Mode == Input.CaptureMode.Training)
                 return;
 
             // Get action to be executed
@@ -162,6 +159,9 @@ namespace GestureSign.Common.Plugins
         {
             // Create empty list of plugins, then load as many as possible from plugin directory
             LoadPlugins(host);
+
+            if (host == null) return;
+            host.TouchCapture.GestureRecognized += TouchCapture_GestureRecognized;
         }
 
         #endregion

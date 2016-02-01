@@ -53,6 +53,8 @@ namespace GestureSign.Common.Input
         public bool Cancel { get; set; }
         public CaptureState State { get; set; }
         public bool InterceptTouchInput { get; set; }
+        public string GestureName { get; set; }
+
         #endregion
     }
 }

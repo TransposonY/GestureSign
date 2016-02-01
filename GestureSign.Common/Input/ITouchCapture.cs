@@ -8,6 +8,8 @@ namespace GestureSign.Common.Input
         event PointsCapturedEventHandler BeforePointsCaptured;
         event PointsCapturedEventHandler CaptureStarted;
         event EventHandler CaptureEnded;
+        event RecognitionEventHandler GestureRecognized;
+        event RecognitionEventHandler GestureNotRecognized;
         void DisableTouchCapture();
         void EnableTouchCapture();
         event PointsCapturedEventHandler PointCaptured;

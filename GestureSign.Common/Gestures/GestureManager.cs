@@ -80,12 +80,7 @@ namespace GestureSign.Common.Gestures
 
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
-            this.GestureName = GetGestureName(e.Points);
-        }
-
-        protected void TouchCapture_AfterPointsCaptured(object sender, PointsCapturedEventArgs e)
-        {
-            RecognizeGesture(e.Points, e.CapturePoint);
+            e.GestureName = this.GestureName = GetGestureName(e.Points);
         }
 
         #endregion
@@ -94,21 +89,9 @@ namespace GestureSign.Common.Gestures
 
         public event EventHandler OnLoadGesturesCompleted;
         // Define events to allow other classes to subscribe to
-        public event RecognitionEventHandler GestureRecognized;
-        public event RecognitionEventHandler GestureNotRecognized;
-
         public event GestureEventHandler GestureEdited;
         public event EventHandler GestureSaved;
         // Define protected method to notifiy subscribers of events
-        protected virtual void OnGestureRecognized(RecognitionEventArgs e)
-        {
-            if (GestureRecognized != null) GestureRecognized(this, e);
-        }
-
-        protected virtual void OnGestureNotRecognized(RecognitionEventArgs e)
-        {
-            if (GestureNotRecognized != null) GestureNotRecognized(this, e);
-        }
 
         protected virtual void OnGestureEdited(GestureEventArgs e)
         {
@@ -118,14 +101,6 @@ namespace GestureSign.Common.Gestures
 
         #region Private Methods
 
-        private void RecognizeGesture(List<List<Point>> Points, Point[] CapturePoint)
-        {
-            // Fire recognized event if we found a gesture match, otherwise throw not recognized event
-            if (GestureName != null)
-                OnGestureRecognized(new RecognitionEventArgs(GestureName, Points, CapturePoint));
-            else
-                OnGestureNotRecognized(new RecognitionEventArgs(Points, CapturePoint));
-        }
 
         #endregion
 
@@ -139,7 +114,6 @@ namespace GestureSign.Common.Gestures
             if (touchCapture != null)
             {
                 touchCapture.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
-                touchCapture.AfterPointsCaptured += new PointsCapturedEventHandler(TouchCapture_AfterPointsCaptured);
             }
         }
 

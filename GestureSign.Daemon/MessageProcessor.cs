@@ -36,10 +36,7 @@ namespace GestureSign.Daemon
                             //    break;
                             case "StartTeaching":
                                 {
-                                    if (TouchCapture.Instance.State == CaptureState.UserDisabled)
-                                        TrayManager.Instance.ToggleDisableGestures();
-                                    if (!AppConfig.Teaching)
-                                        TrayManager.Instance.StartTeaching();
+                                    TouchCapture.Instance.Mode = CaptureMode.Training;
                                     break;
                                 }
                             case "EnableTouchCapture":

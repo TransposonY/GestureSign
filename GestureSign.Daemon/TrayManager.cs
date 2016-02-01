@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common;
-using GestureSign.Common.UI;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
-
-using System.Threading;
-using System.Diagnostics;
+using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.Common.UI;
+using GestureSign.Daemon.Input;
+using GestureSign.Daemon.Properties;
 
 namespace GestureSign.Daemon
 {
@@ -56,7 +56,7 @@ namespace GestureSign.Daemon
             TrayIcon.Text = "GestureSign";
             TrayIcon.DoubleClick += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             TrayIcon.Click += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
-            TrayIcon.Icon = Properties.Resources.normal_daemon;
+            TrayIcon.Icon = Resources.normal_daemon;
 
             // Tray Menu
             TrayMenu.Items.AddRange(new ToolStripItem[] { miTrainingMode, miDisableGestures, miSeperator1, _controlPanelMenuItem, miSeperator2, miExitGestureSign });
@@ -71,7 +71,12 @@ namespace GestureSign.Daemon
             miTrainingMode.Name = "TrainingModeMenuItem";
             miTrainingMode.Size = new Size(193, 22);
             miTrainingMode.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.TrainingMode");
-            miTrainingMode.Click += (o, e) => { ToggleTeaching(); };
+            miTrainingMode.Click += (o, e) =>
+            {
+                TouchCapture.Instance.Mode = TouchCapture.Instance.Mode != CaptureMode.Training
+                    ? CaptureMode.Training
+                    : CaptureMode.Normal;
+            };
 
             // Disable Gestures Menu Item
             miDisableGestures.Checked = false;
@@ -100,7 +105,7 @@ namespace GestureSign.Daemon
                 if (createdSetting)
                 {
                     string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                    if (System.IO.File.Exists(path))
+                    if (File.Exists(path))
                         using (Process daemon = new Process())
                         {
                             try
@@ -121,7 +126,7 @@ namespace GestureSign.Daemon
 
                         }
                 }
-                GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel");
+                NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel");
             };
 
             // Second Seperator Menu Item
@@ -134,7 +139,7 @@ namespace GestureSign.Daemon
             miExitGestureSign.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Exit");
             miExitGestureSign.Click += async (o, e) =>
             {
-                await GestureSign.Common.InterProcessCommunication.NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel");
+                await NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel");
                 Application.Exit();
             };
         }
@@ -145,7 +150,10 @@ namespace GestureSign.Daemon
             {
                 case MouseButtons.Left:
                     if (e.Clicks == 2)
-                        if (miTrainingMode.Checked) StopTeaching();
+                        if (Input.TouchCapture.Instance.Mode == CaptureMode.Training)
+                        {
+                            Input.TouchCapture.Instance.Mode = CaptureMode.Normal;
+                        }
                         else ToggleDisableGestures();
                     break;
                 case MouseButtons.Right:
@@ -162,7 +170,7 @@ namespace GestureSign.Daemon
 
         protected TrayManager()
         {
-            Input.TouchCapture.Instance.StateChanged += new StateChangedEventHandler(CaptureState_Changed);
+            TouchCapture.Instance.ModeChanged += CaptureMode_Changed;
             Application.ApplicationExit += Application_ApplicationExit;
         }
         #endregion
@@ -184,9 +192,9 @@ namespace GestureSign.Daemon
         public void Load()
         {
             SetupTrayIconAndTrayMenu();
-            TrayIcon.Visible = GestureSign.Common.Configuration.AppConfig.ShowTrayIcon;
-            if (GestureSign.Common.Configuration.AppConfig.ShowBalloonTip)
-                this.TrayIcon.ShowBalloonTip(1000, LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTipTitle"),
+            TrayIcon.Visible = AppConfig.ShowTrayIcon;
+            if (AppConfig.ShowBalloonTip)
+                TrayIcon.ShowBalloonTip(1000, LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTipTitle"),
                     LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTip"), ToolTipIcon.Info);
 
         }
@@ -202,24 +210,30 @@ namespace GestureSign.Daemon
         }
 
 
-        protected void CaptureState_Changed(object sender, StateChangedEventArgs e)
+        protected void CaptureMode_Changed(object sender, ModeChangedEventArgs e)
         {
             // Update tray icon based on new state
-            if (e.State == CaptureState.UserDisabled)
+            if (e.Mode == CaptureMode.UserDisabled)
             {
                 miTrainingMode.Enabled = false;
                 miDisableGestures.Checked = true;
-                TrayIcon.Icon = Properties.Resources.stop;
+                TrayIcon.Icon = Resources.stop;
             }
             else
             {
                 miTrainingMode.Enabled = true;
                 miDisableGestures.Checked = false;
                 // Consider state of Training Mode and load according icon
-                if (miTrainingMode.Checked)
-                    TrayIcon.Icon = Properties.Resources.add;
+                if (e.Mode== CaptureMode.Training)
+                {
+                    TrayIcon.Icon = Resources.add;
+                    miTrainingMode.Checked = true;
+                }
                 else
-                    TrayIcon.Icon = Properties.Resources.normal_daemon;
+                {
+                    TrayIcon.Icon = Resources.normal_daemon;
+                    miTrainingMode.Checked = false;
+                }
             }
         }
 
@@ -227,37 +241,9 @@ namespace GestureSign.Daemon
 
         #region Public Methods
 
-
-        public void ToggleTeaching()
-        {
-            // Toggle teaching mode, unless is UserDisable gestures mode
-            if (Input.TouchCapture.Instance.State != CaptureState.UserDisabled)
-                if (GestureSign.Common.Configuration.AppConfig.Teaching)
-                    StopTeaching();
-                else
-                    StartTeaching();
-            else ToggleDisableGestures();
-        }
-
         public void ToggleDisableGestures()
         {
-            Input.TouchCapture.Instance.ToggleUserDisableTouchCapture();
-        }
-
-        public void StartTeaching()
-        {
-            GestureSign.Common.Configuration.AppConfig.Teaching = miTrainingMode.Checked = true;
-
-            // Assign resource icon as tray icon	
-            TrayIcon.Icon = Properties.Resources.add;
-        }
-
-        public void StopTeaching()
-        {
-            GestureSign.Common.Configuration.AppConfig.Teaching = miTrainingMode.Checked = false;
-
-            // Assign resource icon as tray icon
-            TrayIcon.Icon = Properties.Resources.normal_daemon;
+            TouchCapture.Instance.ToggleUserDisableTouchCapture();
         }
 
         #endregion

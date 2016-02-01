@@ -6,20 +6,20 @@ using GestureSign.Common.Input;
 
 namespace GestureSign.Common.Input
 {
-    public class StateChangedEventArgs : EventArgs
+    public class ModeChangedEventArgs : EventArgs
     {
         #region Constructors
 
-        public StateChangedEventArgs(CaptureState State)
+        public ModeChangedEventArgs(CaptureMode newMode)
         {
-            this.State = State;
+            this.Mode = newMode;
         }
 
         #endregion
 
         #region Public Properties
 
-        public CaptureState State { get; set; }
+        public CaptureMode Mode { get; set; }
 
         #endregion
     }

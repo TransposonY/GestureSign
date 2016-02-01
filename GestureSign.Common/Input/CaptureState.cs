@@ -1,10 +1,9 @@
 ﻿namespace GestureSign.Common.Input
 {
-	public enum CaptureState
-	{
-		Ready,
-		Disabled,
-		UserDisabled,
-		Capturing
-	}
+    public enum CaptureState
+    {
+        Ready,
+        Disabled,
+        Capturing
+    }
 }

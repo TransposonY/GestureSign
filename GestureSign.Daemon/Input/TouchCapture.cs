@@ -29,14 +29,16 @@ namespace GestureSign.Daemon.Input
         // Create variable to hold the only allowed instance of this class
         static readonly TouchCapture _Instance = new TouchCapture();
 
-        // Create enumeration to identify Touch buttons
-        public IntPtr MessageWindowHandle { get { return messageWindow.Handle; } }
-        public MessageWindow MessageWindow { get { return messageWindow; } }
-        public bool TemporarilyDisableCapture { get; set; }
+        private CaptureMode _mode = CaptureMode.Normal;
 
         #endregion
 
         #region Public Instance Properties
+
+        // Create enumeration to identify Touch buttons
+        public IntPtr MessageWindowHandle { get { return messageWindow.Handle; } }
+        public MessageWindow MessageWindow { get { return messageWindow; } }
+        public bool TemporarilyDisableCapture { get; set; }
 
         public Point[] CapturePoint
         {
@@ -55,16 +57,27 @@ namespace GestureSign.Daemon.Input
 
         public CaptureState State { get; private set; }
 
+        public CaptureMode Mode
+        {
+            get { return _mode; }
+            set
+            {
+                if (value == _mode) return;
+                _mode = value;
+                OnModeChanged(new ModeChangedEventArgs(value));
+            }
+        }
+
         #endregion
 
         #region Custom Events
 
         // Create an event to notify subscribers that CaptureState has been changed
-        public event StateChangedEventHandler StateChanged;
+        public event ModeChangedEventHandler ModeChanged;
 
-        protected virtual void OnStateChanged(StateChangedEventArgs e)
+        protected virtual void OnModeChanged(ModeChangedEventArgs e)
         {
-            if (StateChanged != null) StateChanged(this, e);
+            if (ModeChanged != null) ModeChanged(this, e);
         }
 
         // Create event to notify subscribers that the capture process has started
@@ -78,6 +91,8 @@ namespace GestureSign.Daemon.Input
         // Create event to notify subscribers that a point set has been captured
         public event PointsCapturedEventHandler AfterPointsCaptured;
         public event PointsCapturedEventHandler BeforePointsCaptured;
+        public event RecognitionEventHandler GestureRecognized;
+        public event RecognitionEventHandler GestureNotRecognized;
 
         protected virtual void OnAfterPointsCaptured(PointsCapturedEventArgs e)
         {
@@ -87,6 +102,16 @@ namespace GestureSign.Daemon.Input
         protected virtual void OnBeforePointsCaptured(PointsCapturedEventArgs e)
         {
             if (BeforePointsCaptured != null) BeforePointsCaptured(this, e);
+        }
+
+        protected virtual void OnGestureRecognized(RecognitionEventArgs e)
+        {
+            if (GestureRecognized != null) GestureRecognized(this, e);
+        }
+
+        protected virtual void OnGestureNotRecognized(RecognitionEventArgs e)
+        {
+            if (GestureNotRecognized != null) GestureNotRecognized(this, e);
         }
 
         // Create event to notify subscribers that a single point has been captured
@@ -186,7 +211,7 @@ namespace GestureSign.Daemon.Input
 
         protected void TouchEventTranslator_TouchUp(object sender, PointEventArgs e)
         {
-            if (TemporarilyDisableCapture && State == CaptureState.UserDisabled)
+            if (TemporarilyDisableCapture && Mode == CaptureMode.UserDisabled)
             {
                 TemporarilyDisableCapture = false;
                 ToggleUserDisableTouchCapture();
@@ -213,7 +238,7 @@ namespace GestureSign.Daemon.Input
             OnCaptureStarted(captureStartedArgs);
             if (OnInterceptTouchInputChange != null)
                 OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
-            if (captureStartedArgs.Cancel && !AppConfig.Teaching)
+            if (captureStartedArgs.Cancel && Mode != CaptureMode.Training)
                 return false;
 
             State = CaptureState.Capturing;
@@ -255,7 +280,7 @@ namespace GestureSign.Daemon.Input
 
             if (!pointsInformation.Cancel)
             {
-                if (AppConfig.Teaching && !(_PointsCaptured.Count == 1 && _PointsCaptured.Values.First().Count == 1))
+                if (Mode == CaptureMode.Training && !(_PointsCaptured.Count == 1 && _PointsCaptured.Values.First().Count == 1))
                 {
                     try
                     {
@@ -288,7 +313,14 @@ namespace GestureSign.Daemon.Input
                         Instance.DisableTouchCapture();
 
                 }
+                // Fire recognized event if we found a gesture match, otherwise throw not recognized event
+                if (pointsInformation.GestureName != null)
+                    OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points, pointsInformation.CapturePoint));
+                else
+                    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.CapturePoint));
+
                 OnAfterPointsCaptured(pointsInformation);
+
             }
 
         }
@@ -335,15 +367,12 @@ namespace GestureSign.Daemon.Input
 
         public void EnableTouchCapture()
         {
-            // Ensure that the Touch hook is enabled, unless the user has selected to disable gestures
-            if (State != CaptureState.UserDisabled)
-                State = CaptureState.Ready;
+            State = CaptureState.Ready;
         }
 
         public void DisableTouchCapture()
         {
-            if (State != CaptureState.UserDisabled)
-                State = CaptureState.Disabled;
+            State = CaptureState.Disabled;
         }
 
         public void ToggleUserDisableTouchCapture()
@@ -355,18 +384,16 @@ namespace GestureSign.Daemon.Input
             // I originally had to set to Disable since if you're in the popup it's disabled, however, the popup onclose
             // fires before the menu item's code, so it was back to Ready before this block was executed.  Although, it probably 
             // makes more sense to set it to Ready in the event this is called from another location.
-            if (State == CaptureState.UserDisabled)
+            if (Mode == CaptureMode.UserDisabled)
             {
-                State = CaptureState.Ready;
+                Mode = CaptureMode.Normal;
             }
             else
             {
-                State = CaptureState.UserDisabled;
+                Mode = CaptureMode.UserDisabled;
                 if (OnInterceptTouchInputChange != null)
                     OnInterceptTouchInputChange(this, false);
             }
-            OnStateChanged(new StateChangedEventArgs(State));
-
         }
 
 
