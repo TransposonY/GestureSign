@@ -138,7 +138,6 @@ namespace GestureSign.Daemon.Input
             if (CaptureCanceled != null) CaptureCanceled(this, e);
         }
 
-        public event EventHandler<bool> OnInterceptTouchInputChange;
         #endregion
 
         #region Public Properties
@@ -159,9 +158,9 @@ namespace GestureSign.Daemon.Input
             TouchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
             TouchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
 
-            this.OnInterceptTouchInputChange += messageWindow.ToggleRegister;
-
             messageWindow.OnForegroundChange += messageWindow_OnForegroundChange;
+
+            ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) messageWindow.InterceptTouchInput(false); };
         }
 
 
@@ -172,15 +171,15 @@ namespace GestureSign.Daemon.Input
 
         void messageWindow_OnForegroundChange(object sender, IntPtr e)
         {
-            if (State != CaptureState.Ready || e.Equals(IntPtr.Zero) || Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
+            if (State != CaptureState.Ready || Mode != CaptureMode.Normal || e.Equals(IntPtr.Zero) ||
+                Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
                 return;
             var systemWindow = new SystemWindow(e);
             var userApp = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
             bool flag = userApp != null &&
                         (userApp.Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput));
 
-            if (OnInterceptTouchInputChange != null)
-                OnInterceptTouchInputChange(this, flag);
+            messageWindow.InterceptTouchInput(flag);
 
         }
 
@@ -236,8 +235,9 @@ namespace GestureSign.Daemon.Input
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray()) { Mode = Mode };
             OnCaptureStarted(captureStartedArgs);
-            if (OnInterceptTouchInputChange != null)
-                OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
+
+            messageWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
+
             if (captureStartedArgs.Cancel && Mode != CaptureMode.Training)
                 return false;
 
@@ -386,18 +386,8 @@ namespace GestureSign.Daemon.Input
             // I originally had to set to Disable since if you're in the popup it's disabled, however, the popup onclose
             // fires before the menu item's code, so it was back to Ready before this block was executed.  Although, it probably 
             // makes more sense to set it to Ready in the event this is called from another location.
-            if (Mode == CaptureMode.UserDisabled)
-            {
-                Mode = CaptureMode.Normal;
-            }
-            else
-            {
-                Mode = CaptureMode.UserDisabled;
-                if (OnInterceptTouchInputChange != null)
-                    OnInterceptTouchInputChange(this, false);
-            }
+            Mode = Mode == CaptureMode.UserDisabled ? CaptureMode.Normal : CaptureMode.UserDisabled;
         }
-
 
         #endregion
     }

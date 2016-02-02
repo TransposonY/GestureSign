@@ -231,19 +231,16 @@ namespace GestureSign.Daemon.Input
                 UnhookWinEvent(_hWinEventHook);
         }
 
+        public void InterceptTouchInput(bool intercept)
+        {
+            if (intercept && !AppConfig.InterceptTouchInput) return;
+            Invoke(new Action(() => IsRegistered = intercept));
+        }
+
+
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             if (OnForegroundChange != null) OnForegroundChange(this, hwnd);
-        }
-        public void Unregister()
-        {
-            if (IsRegistered)
-                Invoke(new Action(() => IsRegistered = false));
-        }
-        public void ToggleRegister(object sender, bool e)
-        {
-            if (e && !AppConfig.InterceptTouchInput) return;
-            Invoke(new Action(() => IsRegistered = e));
         }
 
         private void RegisterDevices()
