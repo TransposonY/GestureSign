@@ -234,7 +234,7 @@ namespace GestureSign.Daemon.Input
         {
 
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
-            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray());
+            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray()) { Mode = Mode };
             OnCaptureStarted(captureStartedArgs);
             if (OnInterceptTouchInputChange != null)
                 OnInterceptTouchInputChange(this, captureStartedArgs.InterceptTouchInput);
@@ -316,7 +316,8 @@ namespace GestureSign.Daemon.Input
                 // Fire recognized event if we found a gesture match, otherwise throw not recognized event
                 if (pointsInformation.GestureName != null)
                     OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points,
-                        pointsInformation.CapturePoint) {Mode = Mode});
+                        pointsInformation.CapturePoint)
+                    { Mode = Mode });
                 else
                     OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.CapturePoint));
 

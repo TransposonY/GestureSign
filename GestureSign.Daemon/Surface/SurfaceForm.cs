@@ -80,6 +80,8 @@ namespace GestureSign.Daemon.Surface
 
         private void Instance_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
+            if (AppConfig.VisualFeedbackWidth <= 0 || e.Mode == CaptureMode.UserDisabled) return;
+
             ClearSurfaces();
             _bitmap = new DiBitmap(Screen.PrimaryScreen.Bounds.Size);
         }
