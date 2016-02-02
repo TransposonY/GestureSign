@@ -9,7 +9,7 @@ using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
-	public class DisableGestures : IPlugin
+	public class ToggleDisableGestures : IPlugin
 	{
 		#region Private Variables
 
@@ -21,12 +21,12 @@ namespace GestureSign.CorePlugins
 
 		public string Name
 		{
-            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DisableGestures.Name"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ToggleDisableGestures.Name"); }
 		}
 
 		public string Description
 		{
-            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DisableGestures.Description"); }
+            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ToggleDisableGestures.Description"); }
 		}
 
 		public UserControl GUI

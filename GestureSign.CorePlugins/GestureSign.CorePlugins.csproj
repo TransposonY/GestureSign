@@ -104,7 +104,7 @@
       <DependentUpon>SendMessageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TemporarilyDisable.cs" />
-    <Compile Include="DisableGestures.cs" />
+    <Compile Include="ToggleDisableGestures.cs" />
     <Compile Include="HotKey\HotKey.xaml.cs">
       <DependentUpon>HotKey.xaml</DependentUpon>
     </Compile>

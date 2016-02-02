@@ -52,6 +52,7 @@ namespace GestureSign.Common.Input
         public Point[] CapturePoint { get; set; }
         public bool Cancel { get; set; }
         public CaptureState State { get; set; }
+        public CaptureMode Mode { get; set; }
         public bool InterceptTouchInput { get; set; }
         public string GestureName { get; set; }
 

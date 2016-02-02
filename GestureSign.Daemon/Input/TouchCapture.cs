@@ -315,7 +315,8 @@ namespace GestureSign.Daemon.Input
                 }
                 // Fire recognized event if we found a gesture match, otherwise throw not recognized event
                 if (pointsInformation.GestureName != null)
-                    OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points, pointsInformation.CapturePoint));
+                    OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points,
+                        pointsInformation.CapturePoint) {Mode = Mode});
                 else
                     OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.CapturePoint));
 
@@ -350,7 +351,7 @@ namespace GestureSign.Daemon.Input
             {
 
                 // Notify subscribers that point has been captured
-                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), Point.Select(p => p.Value).ToArray(), State));
+                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), Point.Select(p => p.Value).ToArray(), State) { Mode = Mode });
             }
         }
 

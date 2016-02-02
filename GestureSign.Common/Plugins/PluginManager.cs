@@ -54,7 +54,9 @@ namespace GestureSign.Common.Plugins
             foreach (IAction executableAction in executableActions)
             {
                 // Exit if there is no action configured
-                if (executableAction == null || !executableAction.IsEnabled)
+                if (executableAction == null || !executableAction.IsEnabled ||
+                    (e.Mode == Input.CaptureMode.UserDisabled &&
+                    !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)))
                     continue;
 
                 // Locate the plugin associated with this action

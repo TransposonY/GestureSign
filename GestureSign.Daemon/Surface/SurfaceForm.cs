@@ -61,6 +61,7 @@ namespace GestureSign.Daemon.Surface
         protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
             if (AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing &&
+                e.Mode != CaptureMode.UserDisabled &&
                 !(e.Points.Count == 1 && e.Points.First().Count == 1))
                 DrawSegments(e.Points);
         }

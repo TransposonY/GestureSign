@@ -348,10 +348,10 @@ Page:https://github.com/TransposonY
       <Description>Open the default web browser</Description>
       <Category>Internet</Category>
     </DefaultBrowser>
-    <DisableGestures>
-      <Name>Disable GestureSign</Name>
-      <Description>Disables GestureSign from capturing gestures</Description>
-    </DisableGestures>
+    <ToggleDisableGestures>
+      <Name>Disable/Enable GestureSign</Name>
+      <Description>Disables or enable GestureSign from capturing gestures</Description>
+    </ToggleDisableGestures>
     <MaximizeRestore>
       <Name>Maximize or Restore</Name>
       <Description>Maximize or restore current window</Description>
