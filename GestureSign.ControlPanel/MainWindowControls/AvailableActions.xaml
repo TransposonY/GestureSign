@@ -702,6 +702,7 @@
                 Margin="10,0,0,10"
                 Grid.Row="2"
                 Grid.Column="0"
+                IsEnabled="False"
                 Click="EditAppButton_Click">
             <Rectangle Width="20"
                        Height="20"
@@ -721,6 +722,7 @@
                 Margin="65,0,0,10"
                 Grid.Row="2"
                 Grid.Column="0"
+                IsEnabled="False"
                 Click="DeleteAppButton_Click">
             <Rectangle Width="18"
                        Height="20"
@@ -737,6 +739,7 @@
                       Width="50"
                       Margin="10,0,0,10"
                       Grid.Row="2"
+                      IsEnabled="False"
                       Click="EnableAllButton_Click"
                       Grid.Column="1">
             <ToggleButton.Resources>

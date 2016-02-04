@@ -660,8 +660,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (e.AddedItems.Count == 0) return;
             RefreshActions(true);
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
-            if (selectedApp == null) return;
-            EditAppButton.IsEnabled = selectedApp is UserApplication;
+            if (selectedApp == null)
+            {
+                EnableAllButton.IsEnabled = false;
+                return;
+            }
+            EnableAllButton.IsEnabled = true;
+
+            DeleteAppButton.IsEnabled = EditAppButton.IsEnabled = selectedApp is UserApplication;
             EnableAllButton.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
         }
 
