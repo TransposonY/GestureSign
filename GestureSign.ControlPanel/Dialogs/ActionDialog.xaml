@@ -21,7 +21,10 @@
                       WindowStartupLocation="CenterScreen"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       BorderBrush="{StaticResource AccentColorBrush}"
-                      ResizeMode="CanMinimize">
+                      ResizeMode="CanMinimize"
+                      TouchDown="Window_TouchDown"
+                      TouchMove="Window_TouchMove"
+                      TouchUp="Window_TouchUp">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

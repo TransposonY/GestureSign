@@ -15,7 +15,10 @@
                       Topmost="True"
                       ShowIconOnTitleBar="False"
                       Icon="/GestureSign;component/Resources/normal.ico"
-                      WindowStartupLocation="CenterScreen">
+                      WindowStartupLocation="CenterScreen"
+                      TouchDown="Window_TouchDown"
+                      TouchMove="Window_TouchMove"
+                      TouchUp="Window_TouchUp">
     <controls:MetroWindow.Resources>
     </controls:MetroWindow.Resources>
     <StackPanel>

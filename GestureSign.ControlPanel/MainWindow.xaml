@@ -15,7 +15,10 @@
                       BorderThickness="1"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       MinWidth="586"
-                      MinHeight="420">
+                      MinHeight="420"
+                      TouchDown="Window_TouchDown"
+                      TouchMove="Window_TouchMove"
+                      TouchUp="Window_TouchUp">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -73,7 +76,7 @@
             <TabItem Header="{localization:LocalisedText Options.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
                 <mainWindowControl:Options Width="Auto"
-                               Height="Auto" />
+                                           Height="Auto" />
             </TabItem>
             <TabItem Header="{localization:LocalisedText About.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
