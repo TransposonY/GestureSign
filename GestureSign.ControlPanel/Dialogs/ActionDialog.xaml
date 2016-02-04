@@ -89,10 +89,14 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="350" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="70" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
         <Popup x:Name="RunningApplicationsPopup"
                Width="349"
@@ -105,7 +109,8 @@
                Placement="RelativePoint"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
-               Grid.RowSpan="3">
+               Grid.RowSpan="3"
+               Grid.ColumnSpan="2">
             <ListView x:Name="alvRunningApplications"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       BorderThickness="3">
@@ -379,7 +384,8 @@
                     Width="328"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Margin="0,0,10,0">
+                    Margin="0,0,10,0"
+                    Grid.Column="1">
             <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
                        FontSize="24" />
             <ComboBox x:Name="availableGesturesComboBox"
@@ -602,31 +608,22 @@
         </StackPanel>
         <Button x:Name="cmdCancel"
                 Content="{localization:LocalisedText Common.Cancel}"
-                Style="{DynamicResource SquareButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Width="95"
                 Click="cmdCancel_Click"
                 FontSize="14"
-                Margin="220,0,0,0"
                 Grid.Row="2"
-                Height="31" />
+                Grid.Column="0" />
         <Button x:Name="cmdDone"
                 Content="{localization:LocalisedText Common.Save}"
-                Style="{DynamicResource SquareButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
                 Click="cmdDone_Click"
-                Width="95"
                 IsDefault="True"
                 FontSize="14"
-                Margin="390,0,0,0"
                 Grid.Row="2"
-                Height="31" />
+                Grid.Column="1" />
         <Canvas Height="58"
                 VerticalAlignment="Top"
                 Margin="10,0"
-                Grid.Row="1">
+                Grid.Row="1"
+                Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left"
                        TextWrapping="Wrap"
                        Text="{localization:LocalisedText ActionDialog.AppName}"

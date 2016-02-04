@@ -54,7 +54,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 if (value)
                 {
                     Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
-                    this.cmdNext.Visibility = Visibility.Hidden;
+                    this.cmdNext.Visibility = Visibility.Collapsed;
                     this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
                     this.txtGestureName.Visibility = Visibility.Visible;
                     this.txtGestureName.Focus();

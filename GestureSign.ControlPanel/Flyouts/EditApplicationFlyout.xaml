@@ -23,7 +23,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="100" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
         <StackPanel Margin="0">
             <TextBlock x:Name="GroupNameTextBlock"
@@ -120,21 +120,16 @@
         <Button x:Name="ShowRunningButton"
                 Content="{localization:LocalisedText EditApplicationFlyout.ShowRunningApplications}"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
                 Click="ShowRunningButton_Click"
-                Margin="10,0,0,10"
                 Grid.Row="2"
                 FontSize="12"
                 FontWeight="Bold"
-                Height="25"
-                Width="123" />
+                Width="140" />
         <Button x:Name="btnAddCustom"
                 Content="{localization:LocalisedText Common.Save}"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Width="80"
+                Width="140"
                 Click="btnAddCustom_Click"
-                Margin="0,0,10,10"
                 Grid.Row="2"
                 FontSize="12"
                 FontWeight="Bold" />
