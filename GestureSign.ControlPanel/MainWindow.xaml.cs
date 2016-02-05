@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
@@ -20,9 +19,6 @@ namespace GestureSign.ControlPanel
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        TouchDevice _ellipseControlTouchDevice;
-        Point _lastPoint;
-
         public MainWindow()
         {
             Loaded += (e, o) => { if (AppConfig.SendErrorReport) CheckAndSendLog(); };
@@ -151,64 +147,6 @@ namespace GestureSign.ControlPanel
                         });
                 }
             }
-        }
-
-
-        private void Window_TouchDown(object sender, TouchEventArgs e)
-        {
-            // Capture to the ellipse.  
-            e.TouchDevice.Capture(this);
-
-            // Remember this contact if a contact has not been remembered already.  
-            // This contact is then used to move the ellipse around.
-            if (_ellipseControlTouchDevice == null)
-            {
-                _ellipseControlTouchDevice = e.TouchDevice;
-
-                // Remember where this contact took place.  
-                _lastPoint = PointToScreen(_ellipseControlTouchDevice.GetTouchPoint(this).Position);
-            }
-
-            // Mark this event as handled.  
-            e.Handled = true;
-        }
-
-        private void Window_TouchMove(object sender, TouchEventArgs e)
-        {
-            PresentationSource source = PresentationSource.FromVisual(this);
-            if (source != null && e.TouchDevice == _ellipseControlTouchDevice)
-            {
-                // Get the current position of the contact.  
-                var currentTouchPoint = PointToScreen(_ellipseControlTouchDevice.GetTouchPoint(this).Position);
-                // Get the change between the controlling contact point and
-                // the changed contact point.  
-                double deltaX = currentTouchPoint.X - _lastPoint.X;
-                double deltaY = currentTouchPoint.Y - _lastPoint.Y;
-
-                // Get and then set a new top position and a new left position for the ellipse.  
-
-                Top = Top + deltaY / source.CompositionTarget.TransformToDevice.M11;
-                Left = Left + deltaX / source.CompositionTarget.TransformToDevice.M22;
-
-                // Forget the old contact point, and remember the new contact point.  
-                _lastPoint = currentTouchPoint;
-
-                // Mark this event as handled.  
-                e.Handled = true;
-            }
-        }
-
-        private void Window_TouchUp(object sender, TouchEventArgs e)
-        {
-            // If this contact is the one that was remembered  
-            if (e.TouchDevice == _ellipseControlTouchDevice)
-            {
-                // Forget about this contact.
-                _ellipseControlTouchDevice = null;
-            }
-
-            // Mark this event as handled.  
-            e.Handled = true;
         }
     }
 }

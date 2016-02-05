@@ -15,10 +15,7 @@
                       BorderThickness="1"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       MinWidth="586"
-                      MinHeight="420"
-                      TouchDown="Window_TouchDown"
-                      TouchMove="Window_TouchMove"
-                      TouchUp="Window_TouchUp">
+                      MinHeight="420">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
