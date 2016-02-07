@@ -69,6 +69,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
         #region Public Instance Properties
 
+        public bool IsUsingExistingApplication { get { return cmbExistingApplication.SelectedIndex != 0; } }
+
         public static event EventHandler<ActionChangedEventArgs> ActionsChanged;
         #endregion
 
@@ -196,7 +198,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private bool SaveApplication()
         {
 
-            if (ExistingApplicationRadioButton.IsChecked.Value)
+            if (IsUsingExistingApplication)
             {
                 if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
                 {
@@ -212,7 +214,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
                 return true;
             }
-            if (NewApplicationRadioButton.IsChecked.Value)
+            else
             {
                 string appName = txtApplicationName.Text.Trim();
 
@@ -251,7 +253,6 @@ namespace GestureSign.ControlPanel.Dialogs
                 ApplicationManager.Instance.CurrentApplication = _newApplication;
                 return true;
             }
-            return false;
         }
 
 
@@ -274,7 +275,13 @@ namespace GestureSign.ControlPanel.Dialogs
 
             IApplication[] existingApplications = ApplicationManager.Instance.GetAvailableUserApplications();
 
+            var addNewApplicationItem = new UserApplication()
+            {
+                Name = LocalizationProvider.Instance.GetTextValue("ActionDialog.NewApplication")
+            };
+
             // Add application items to the combobox
+            cmbExistingApplication.Items.Add(addNewApplicationItem);
             cmbExistingApplication.Items.Add(allApplicationsItem);
             foreach (IApplication app in existingApplications)
                 cmbExistingApplication.Items.Add(app);
@@ -494,7 +501,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                if (ExistingApplicationRadioButton.IsChecked.Value)
+                if (IsUsingExistingApplication)
                 {
                     if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
                     {
@@ -502,7 +509,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
                     }
                 }
-                if (NewApplicationRadioButton.IsChecked.Value)
+                else
                 {
                     _selectedApplication.RemoveAction(_currentAction);
                     _newApplication.AddAction(_currentAction);
@@ -560,7 +567,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
             var selectedItem = cmbExistingApplication.SelectedItem;
-            if (selectedItem != null && (ExistingApplicationRadioButton.IsChecked.Value && ((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
+            if (selectedItem != null && (IsUsingExistingApplication && ((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
                 return GetNextActionName(name, ++i);
             return actionName;
         }

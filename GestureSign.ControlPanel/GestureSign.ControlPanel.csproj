@@ -120,7 +120,8 @@
     </ApplicationDefinition>
     <Compile Include="Common\Net.cs" />
     <Compile Include="Converters\AllowSingleBoolConverter.cs" />
-    <Compile Include="Converters\Bool2VisibilityConverter.cs" />
+    <Compile Include="Converters\SelectedIndex2BoolConverter.cs" />
+    <Compile Include="Converters\SelectedIndex2VisibilityConverter.cs" />
     <Compile Include="Converters\InterceptTouchInputBoolConverter.cs" />
     <Compile Include="Converters\InterceptTouchInputCheckBoxConverter.cs" />
     <Compile Include="Converters\ListviewItem2TextBoxConverter.cs" />

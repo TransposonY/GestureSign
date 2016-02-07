@@ -57,14 +57,13 @@
                       Fill="#FF000000"
                       Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z " />
             </Canvas>
-            <converters:SelectedItemConverter x:Key="selectedItemConverter" />
-            <converters:MatchUsing2StringConverter x:Key="matchUsingToStringConverter" />
-            <converters:InterceptTouchInputBoolConverter x:Key="interceptTouchInputBoolConverter" />
+            <converters:SelectedItemConverter x:Key="SelectedItemConverter" />
+            <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
             <converters:ListviewItem2TextBoxConverter x:Key="ListviewItem2TextBoxConverter" />
-            <converters:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter" />
-            <converters:AllowSingleBoolConverter x:Key="AllowSingleBoolConverter" />
+            <converters:SelectedIndex2VisibilityConverter x:Key="SelectedIndex2VisibilityConverter" />
             <converters:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter" />
             <converters:InterceptTouchInputCheckBoxConverter x:Key="InterceptTouchInputCheckBoxConverter" />
+            <converters:SelectedIndex2BoolConverter x:Key="SelectedIndex2BoolConverter" />
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
@@ -97,7 +96,7 @@
         </Grid.RowDefinitions>
         <Popup x:Name="RunningApplicationsPopup"
                Width="349"
-               Height="495"
+               Height="492"
                Opened="RunningApplicationsPopup_Opened"
                StaysOpen="False"
                IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"
@@ -147,79 +146,51 @@
             <TextBlock TextWrapping="Wrap"
                        Text="{localization:LocalisedText ActionDialog.SelectApp}"
                        FontSize="24" />
-
-            <RadioButton Margin="10,10,0,0"
-                         Content="{localization:LocalisedText ActionDialog.ExistingApplications}"
-                         x:Name="ExistingApplicationRadioButton"
-                         GroupName="1"
-                         FontSize="18"
-                         IsTabStop="False"
-                         Focusable="False"
-                         IsChecked="True" />
-            <RadioButton x:Name="NewApplicationRadioButton"
-                         Margin="0,-23,10,0"
-                         Content="{localization:LocalisedText ActionDialog.NewApp}"
-                         GroupName="1"
-                         FontSize="18"
-                         HorizontalAlignment="Right"
-                         IsTabStop="False"
-                         Focusable="False" />
+            <ComboBox x:Name="cmbExistingApplication"
+                      DisplayMemberPath="Name"
+                      Width="310"
+                      FontSize="14"
+                      Margin="0,10,0,0" />
             <Canvas x:Name="ExistingApplicationCanvas"
                     Style="{StaticResource ShowCanvasStyle}"
-                    Height="205"
-                    Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=ExistingApplicationRadioButton, Mode=OneWay}">
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.SelectExistingApp}"
-                           VerticalAlignment="Top"
-                           Canvas.Left="10"
-                           Canvas.Top="10"
-                           FontSize="14"
-                           FontWeight="Bold" />
-                <ComboBox x:Name="cmbExistingApplication"
-                          DisplayMemberPath="Name"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
-                          Width="310"
-                          Canvas.Left="10"
-                          Canvas.Top="33"
-                          FontSize="14" />
+                    Height="161"
+                    Visibility="{Binding SelectedIndex, Converter={StaticResource SelectedIndex2VisibilityConverter}, ElementName=cmbExistingApplication, Mode=OneWay,ConverterParameter=ExistingApplicationCanvas}">
                 <TextBlock Canvas.Left="10"
                            TextWrapping="Wrap"
                            Text="{localization:LocalisedText ActionDialog.Group}"
-                           Canvas.Top="64"
+                           Canvas.Top="10"
                            FontSize="14"
                            FontWeight="Bold" />
                 <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}"
                            Canvas.Left="10"
                            TextWrapping="Wrap"
-                           Canvas.Top="87"
+                           Canvas.Top="33"
                            FontSize="14" />
                 <TextBlock Canvas.Left="10"
                            Text="{localization:LocalisedText ActionDialog.MatchUsing}"
-                           Canvas.Top="110"
+                           Canvas.Top="56"
                            FontSize="14"
                            FontWeight="Bold" />
-                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource matchUsingToStringConverter}, ElementName=cmbExistingApplication}"
+                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource MatchUsingToStringConverter}, ElementName=cmbExistingApplication}"
                            Canvas.Left="10"
-                           Canvas.Top="133"
+                           Canvas.Top="79"
                            FontSize="14" />
                 <TextBlock Canvas.Left="10"
                            Text="{localization:LocalisedText ActionDialog.MatchString}"
-                           Canvas.Top="156"
+                           Canvas.Top="102"
                            FontSize="14"
                            FontWeight="Bold" />
                 <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}"
                            Canvas.Left="10"
                            TextWrapping="Wrap"
-                           Canvas.Top="179"
+                           Canvas.Top="125"
                            FontSize="14"
                            Width="310"
                            MaxHeight="40" />
             </Canvas>
             <Canvas x:Name="NewApplicationCanvas"
                     Style="{StaticResource ShowCanvasStyle}"
-                    Visibility="{Binding IsChecked, Converter={StaticResource Bool2VisibilityConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}"
+                    Visibility="{Binding SelectedIndex, Converter={StaticResource SelectedIndex2VisibilityConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
                     Height="320">
                 <TextBlock HorizontalAlignment="Left"
                            TextWrapping="Wrap"
@@ -308,23 +279,11 @@
                           Canvas.Top="184"
                           FontSize="14" />
                 <CheckBox x:Name="InterceptTouchInputCheckBox"
-                          IsEnabled="{Binding IsChecked, Converter={StaticResource InterceptTouchInputCheckBoxConverter}, ElementName=NewApplicationRadioButton, Mode=OneWay}"
+                          IsEnabled="{Binding SelectedIndex, Converter={StaticResource InterceptTouchInputCheckBoxConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
                           Content="{localization:LocalisedText ActionDialog.InterceptTouchInput}"
                           Canvas.Left="10"
                           Canvas.Top="208"
-                          FontSize="14">
-                    <CheckBox.IsChecked>
-                        <MultiBinding Converter="{StaticResource interceptTouchInputBoolConverter}"
-                                      Mode="OneWay">
-                            <Binding Path="SelectedItem"
-                                     ElementName="cmbExistingApplication"
-                                     Mode="OneWay" />
-                            <Binding Path="IsChecked"
-                                     ElementName="ExistingApplicationRadioButton"
-                                     Mode="OneWay" />
-                        </MultiBinding>
-                    </CheckBox.IsChecked>
-                </CheckBox>
+                          FontSize="14" />
                 <TextBlock TextWrapping="Wrap"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
@@ -361,20 +320,7 @@
                           Content="{localization:LocalisedText ActionDialog.AllowSingleFinger}"
                           Canvas.Left="10"
                           Canvas.Top="232"
-                          IsEnabled="{Binding IsChecked, ElementName=NewApplicationRadioButton, Mode=OneWay}"
-                          FontSize="14">
-                    <CheckBox.IsChecked>
-                        <MultiBinding Converter="{StaticResource AllowSingleBoolConverter}"
-                                      Mode="OneWay">
-                            <Binding Path="SelectedItem"
-                                     ElementName="cmbExistingApplication"
-                                     Mode="OneWay" />
-                            <Binding Path="IsChecked"
-                                     ElementName="ExistingApplicationRadioButton"
-                                     Mode="OneWay" />
-                        </MultiBinding>
-                    </CheckBox.IsChecked>
-                </CheckBox>
+                          FontSize="14" />
             </Canvas>
         </StackPanel>
         <StackPanel Grid.Row="0"
@@ -631,7 +577,7 @@
                        FontWeight="Bold" />
             <TextBox x:Name="txtApplicationName"
                      TextWrapping="Wrap"
-                     IsEnabled="{Binding ElementName=NewApplicationRadioButton,Path=IsChecked}"
+                     IsEnabled="{Binding ElementName=cmbExistingApplication,Path=SelectedIndex,Converter={StaticResource SelectedIndex2BoolConverter}}"
                      controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.AppNameWatermark}"
                      Canvas.Left="10"
                      Canvas.Top="33"
@@ -639,10 +585,10 @@
                      FontSize="14"
                      MaxLines="3"
                      MaxLength="80">
-                <MultiBinding Converter="{StaticResource selectedItemConverter}"
+                <MultiBinding Converter="{StaticResource SelectedItemConverter}"
                               Mode="TwoWay">
-                    <Binding ElementName="ExistingApplicationRadioButton"
-                             Path="IsChecked"
+                    <Binding ElementName="cmbExistingApplication"
+                             Path="SelectedIndex"
                              Mode="TwoWay" />
                     <Binding ElementName="cmbExistingApplication"
                              Path="SelectedItem"

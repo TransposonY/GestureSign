@@ -5,14 +5,16 @@ using System.Windows.Data;
 
 namespace GestureSign.ControlPanel.Converters
 {
-    [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class Bool2VisibilityConverter : IValueConverter
+    [ValueConversion(typeof(int), typeof(Visibility))]
+    public class SelectedIndex2VisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
-                return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+                if ((string)parameter == "ExistingApplicationCanvas")
+                    return (int)value == 0 ? Visibility.Collapsed : Visibility.Visible;
+                return (int)value == 0 ? Visibility.Visible : Visibility.Collapsed;
             }
             return DependencyProperty.UnsetValue;
         }

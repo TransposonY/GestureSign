@@ -20,7 +20,7 @@
     </FindNewErrorLog>
   </Messages>
   <Common>
-    <AllApplications>所有程序</AllApplications>
+    <AllApplications>(所有程序)</AllApplications>
     <Cancel>取消</Cancel>
     <FileName>文件名</FileName>
     <No>否</No>
@@ -57,16 +57,14 @@ http://git.oschina.net/TransY/GestureSign
     <Browse>浏览..</Browse>
     <EditActionTitle>编辑动作</EditActionTitle>
     <ExecutableFile>可执行文件</ExecutableFile>
-    <ExistingApplications>保存的程序</ExistingApplications>
     <Group>分组</Group>
     <Icon>图标</Icon>
     <InterceptTouchInput>屏蔽此程序触屏输入</InterceptTouchInput>
     <MatchUsing>匹配类型</MatchUsing>
     <MatchString>匹配文本</MatchString>
-    <NewApp>添加新程序</NewApp>
+    <NewApplication>(添加新程序)</NewApplication>
     <SelectApp>选择要控制的程序</SelectApp>
     <SelectCommand>选择想执行的命令</SelectCommand>
-    <SelectExistingApp>选择已有程序</SelectExistingApp>
     <SelectGesture>选择手势</SelectGesture>
     <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
     <Messages>

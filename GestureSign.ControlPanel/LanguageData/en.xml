@@ -18,7 +18,7 @@ Continue to run?
     <FindNewErrorLog>Find new error log.You can help me track and fix problems by sending these error logs.</FindNewErrorLog>
   </Messages>
   <Common>
-    <AllApplications>All Applications</AllApplications>
+    <AllApplications>(All Applications)</AllApplications>
     <Cancel>Cancel</Cancel>
     <FileName>File Name</FileName>
     <No>No</No>
@@ -52,16 +52,14 @@ Page:https://github.com/TransposonY
     <AppNameWatermark>Please enter application name</AppNameWatermark>
     <Browse>Browse...</Browse>
     <ExecutableFile>Executable File</ExecutableFile>
-    <ExistingApplications>Existing App</ExistingApplications>
     <Group>Group</Group>
     <Icon>Icon</Icon>
     <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
     <MatchUsing>Match Using</MatchUsing>
     <MatchString>Match String</MatchString>
-    <NewApp>New App</NewApp>
+    <NewApplication>(Add New Application)</NewApplication>
     <SelectApp>Select Application</SelectApp>
     <SelectCommand>Select Command</SelectCommand>
-    <SelectExistingApp>Select Existing Application</SelectExistingApp>
     <SelectGesture>Select Gesture</SelectGesture>
     <UsingRegularExpression>Match as pattern</UsingRegularExpression>
     <Messages>
