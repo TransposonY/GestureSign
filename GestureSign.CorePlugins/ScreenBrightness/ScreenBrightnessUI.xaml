@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="70"
              d:DesignWidth="320">
-    <Canvas>
+    <Canvas Height="50">
         <ComboBox x:Name="cboMethod"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
