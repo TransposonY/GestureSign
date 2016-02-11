@@ -210,14 +210,14 @@ namespace GestureSign.Daemon.Input
 
         protected void TouchEventTranslator_TouchUp(object sender, PointEventArgs e)
         {
-            if (TemporarilyDisableCapture && Mode == CaptureMode.UserDisabled)
-            {
-                TemporarilyDisableCapture = false;
-                ToggleUserDisableTouchCapture();
-            }
-
             if (State == CaptureState.Capturing)
             {
+                if (TemporarilyDisableCapture && Mode == CaptureMode.UserDisabled)
+                {
+                    TemporarilyDisableCapture = false;
+                    ToggleUserDisableTouchCapture();
+                }
+
                 EndCapture();
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
                 _PointsCaptured = null;
