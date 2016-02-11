@@ -27,6 +27,7 @@ Continue to run?
     <WindowClass>Class</WindowClass>
     <WindowTitle>Title</WindowTitle>
     <Yes>Yes</Yes>
+    <Overwrite>Overwrite</Overwrite>
   </Common>
   <About>
     <Header>About</Header>
@@ -143,7 +144,7 @@ Page:https://github.com/TransposonY
     <Rename>Rename</Rename>
     <ExistingGesture>
       Exist similar gesture
-      Click Save to replace existing gesture
+      Click Overwrite to replace existing gesture
       Click New Action to replace existing gesture and add new action
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>

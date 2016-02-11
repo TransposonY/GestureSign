@@ -29,6 +29,7 @@
     <WindowClass>窗口类</WindowClass>
     <WindowTitle>窗口标题</WindowTitle>
     <Yes>是</Yes>
+    <Overwrite>覆盖</Overwrite>
   </Common>
   <About>
     <Header>关于</Header>
@@ -148,7 +149,7 @@ http://git.oschina.net/TransY/GestureSign
     <Rename>重命名</Rename>
     <ExistingGesture>
       已存在以下相似手势
-      点击“保存”覆盖旧手势
+      点击“覆盖”覆盖旧手势
       点击“新建动作”覆盖旧手势并用此手势添加动作
     </ExistingGesture>
     <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>

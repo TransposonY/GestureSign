@@ -48,15 +48,7 @@ namespace GestureSign.ControlPanel.Dialogs
             get { return reName; }
             set
             {
-                if (value)
-                {
-                    Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
-                    this.cmdNext.Visibility = Visibility.Collapsed;
-                    this.ExistingTextBlock.Visibility = this.ExistingGestureImage.Visibility = Visibility.Collapsed;
-                    this.txtGestureName.Visibility = Visibility.Visible;
-                    this.txtGestureName.Focus();
-                }
-                else Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Title");
+                Title = LocalizationProvider.Instance.GetTextValue(value ? "GestureDefinition.Rename" : "GestureDefinition.Title");
                 reName = value;
             }
         }
@@ -64,6 +56,8 @@ namespace GestureSign.ControlPanel.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
+
+            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
 
             if (String.IsNullOrEmpty(GestureManager.Instance.GestureName))
             {
@@ -73,14 +67,20 @@ namespace GestureSign.ControlPanel.Dialogs
             else
             {
                 this.txtGestureName.Text = GestureManager.Instance.GestureName;//this.txtGestureName.Text
-                this.txtGestureName.SelectAll();
                 if (!reName)
                 {
+                    cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Overwrite");
                     txtGestureName.IsEnabled = false;
                     this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
+                    return;
                 }
+
+                cmdNext.Visibility = ExistingTextBlock.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
+
+                this.txtGestureName.Focus();
+                this.txtGestureName.SelectAll();
             }
-            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
+            cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Save");
         }
 
 
@@ -115,7 +115,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else txtGestureName.Focus();
         }
-        
+
         #region Private Methods
 
 

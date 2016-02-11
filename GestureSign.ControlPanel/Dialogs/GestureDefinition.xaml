@@ -52,7 +52,6 @@
                     Focusable="False"
                     FontSize="14" />
             <Button x:Name="cmdDone"
-                    Content="{localization:LocalisedText Common.Save}"
                     Click="cmdDone_Click"
                     Focusable="False"
                     FontSize="14"
