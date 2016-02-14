@@ -2,6 +2,7 @@
 using GestureSign.Common.Plugins;
 
 using System.Windows.Controls;
+using WindowsInput;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.SendKeystrokes
@@ -71,7 +72,8 @@ namespace GestureSign.CorePlugins.SendKeystrokes
                 if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
                     ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
 
-                System.Windows.Forms.SendKeys.SendWait(_keystrokes);
+                InputSimulator simulator = new InputSimulator();
+                simulator.Keyboard.TextEntry(_keystrokes);
 
                 return true;
             }

@@ -25,7 +25,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             InitializeComponent();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
 
             // Escape existing text in textbox

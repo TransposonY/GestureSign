@@ -15,18 +15,16 @@
                  VerticalAlignment="Top"
                  Width="300"
                  Margin="10,30,0,0">
-            <TextBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="{localization:LocalisedText CorePlugins.SendKeystrokes.EscapesString}"
-                              Click="MenuItem_Click" />
-                </ContextMenu>
-            </TextBox.ContextMenu>
         </TextBox>
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.SendKeystrokes.Tip}"
                    VerticalAlignment="Top"
                    Margin="10,10,0,0" />
-
+        <Button HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Content="{localization:LocalisedText CorePlugins.SendKeystrokes.EscapesString}"
+                Click="Button_Click"
+                Margin="0,0,10,0" />
     </Grid>
 </UserControl>
