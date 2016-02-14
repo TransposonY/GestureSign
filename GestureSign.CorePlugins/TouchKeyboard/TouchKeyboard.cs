@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using GestureSign.Common.Localization;
+using ManagedWinapi.Windows;
 
 namespace GestureSign.CorePlugins.TouchKeyboard
 {
@@ -102,6 +103,30 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         #endregion
 
+        #region   Private Methods
+
+        private bool StartProcess()
+        {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) + @"\Microsoft Shared\ink\TabTip.exe";
+
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                {
+                    // older windows versions
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\osk.exe";
+                }
+                Process Process = new Process();
+                // Expand environment variable to support %SYSTEMROOT%, etc.
+                Process.StartInfo.FileName = path;
+                Process.Start();
+                return true;
+            }
+            catch { return false; }
+        }
+
+        #endregion
+
         #region Public Methods
 
         public void Initialize()
@@ -115,31 +140,27 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             {
                 //find taskbar 
                 IntPtr hwndTaskbar = FindWindow("Shell_TrayWnd", null);
-                IntPtr hwndReBar = FindWindowEx(hwndTaskbar, 0, "ReBarWindow32", null);
-                IntPtr hwndTIPBand = FindWindowEx(hwndReBar, 0, "TIPBand", null);
-                if (hwndTIPBand != IntPtr.Zero)
+                //Win 10
+                IntPtr hwndTrayNotifyWnd = FindWindowEx(hwndTaskbar, 0, "TrayNotifyWnd", null);
+                IntPtr hwndTIPBand = FindWindowEx(hwndTrayNotifyWnd, 0, "TIPBand", null);
+                if (hwndTIPBand == IntPtr.Zero)
                 {
-                    SendMessage(hwndTIPBand, WM_LBUTTONDOWN, (IntPtr)1, 0x160010);
-                    SendMessage(hwndTIPBand, WM_LBUTTONUP, (IntPtr)0, 0x160010);
+                    //Win 8
+                    IntPtr hwndReBar = FindWindowEx(hwndTaskbar, 0, "ReBarWindow32", null);
+                    hwndTIPBand = FindWindowEx(hwndReBar, 0, "TIPBand", null);
+                    if (hwndTIPBand == IntPtr.Zero) return StartProcess();
                 }
                 else
                 {
-                    var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) + @"\Microsoft Shared\ink\TabTip.exe";
-
-                    try
+                    SystemWindow ww = new SystemWindow(hwndTIPBand);
+                    if (ww.Size.Height == 0 || ww.Size.Width == 0)
                     {
-                        if (!System.IO.File.Exists(path))
-                        {
-                            // older windows versions
-                            path = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\osk.exe";
-                        }
-                        Process Process = new Process();
-                        // Expand environment variable to support %SYSTEMROOT%, etc.
-                        Process.StartInfo.FileName = path;
-                        Process.Start();
+                        return StartProcess();
                     }
-                    catch { return false; }
                 }
+
+                SendMessage(hwndTIPBand, WM_LBUTTONDOWN, (IntPtr)1, 0x160010);
+                SendMessage(hwndTIPBand, WM_LBUTTONUP, (IntPtr)0, 0x160010);
             }
             else
             {
