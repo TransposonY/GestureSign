@@ -460,7 +460,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 PluginClass = selectedAction.PluginClass,
                 PluginFilename = selectedAction.PluginFilename
             };
-            targetApplication.AddAction(selectedAction);
+            targetApplication.AddAction(newAction);
 
             if (targetApplication != currentApp)
             {
