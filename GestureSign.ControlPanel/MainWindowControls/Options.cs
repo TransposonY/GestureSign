@@ -55,14 +55,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
-                if (AppConfig.UiAccess)
-                {
-                    chkInterceptTouchInput.IsChecked = AppConfig.InterceptTouchInput;
-                }
-                else
-                {
-                    chkInterceptTouchInput.IsChecked = chkInterceptTouchInput.IsEnabled = false;
-                }
 
                 LanguageComboBox.ItemsSource = LocalizationProvider.Instance.GetLanguageList("ControlPanel");
                 LanguageComboBox.SelectedValue = AppConfig.CultureName;
@@ -298,18 +290,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.IsOrderByLocation = false;
-            AppConfig.Save();
-        }
-
-        private void chkInterceptTouchInput_Checked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.InterceptTouchInput = true;
-            AppConfig.Save();
-        }
-
-        private void chkInterceptTouchInput_Unchecked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.InterceptTouchInput = false;
             AppConfig.Save();
         }
 

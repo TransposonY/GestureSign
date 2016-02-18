@@ -60,7 +60,7 @@ http://git.oschina.net/TransY/GestureSign
     <ExecutableFile>可执行文件</ExecutableFile>
     <Group>分组</Group>
     <Icon>图标</Icon>
-    <InterceptTouchInput>屏蔽此程序触屏输入</InterceptTouchInput>
+    <InterceptTouchInput>屏蔽此程序触摸输入</InterceptTouchInput>
     <MatchUsing>匹配类型</MatchUsing>
     <MatchString>匹配文本</MatchString>
     <NewApplication>(添加新程序)</NewApplication>
@@ -132,7 +132,7 @@ http://git.oschina.net/TransY/GestureSign
     <LocateWindow>定位窗口</LocateWindow>
     <LocateWindowTip>将右侧图标拖至目标程序窗口上，然后释放鼠标按键</LocateWindowTip>
     <UsingRegularExpression>正则表达式</UsingRegularExpression>
-    <InterceptTouchInput>屏蔽触屏</InterceptTouchInput>
+    <InterceptTouchInput>屏蔽触摸输入</InterceptTouchInput>
     <AllowSingleFinger>允许单指</AllowSingleFinger>
     <Messages>
       <EmptyStringTitle>字段为空</EmptyStringTitle>
@@ -210,9 +210,6 @@ http://git.oschina.net/TransY/GestureSign
       <OnLabel>按左右位置顺序</OnLabel>
       <OffLabel>按接触先后顺序</OffLabel>
     </OrderByLocation>
-    <InterceptTouchInput>
-      <Header>屏蔽触摸输入功能（安装版适用）</Header>
-    </InterceptTouchInput>
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>

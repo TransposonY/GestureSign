@@ -56,17 +56,7 @@ namespace GestureSign.Common.Configuration
                 SetValue("MinimumPointDistance", value);
             }
         }
-        public static int ReversalAngleThreshold
-        {
-            get
-            {
-                return (int)GetValue("ReversalAngleThreshold", 160);
-            }
-            set
-            {
-                SetValue("ReversalAngleThreshold", value);
-            }
-        }
+
         public static double Opacity
         {
             get
@@ -88,17 +78,6 @@ namespace GestureSign.Common.Configuration
             set
             {
                 SetValue("IsOrderByLocation", value);
-            }
-        }
-        public static bool InterceptTouchInput
-        {
-            get
-            {
-                return (bool)GetValue("InterceptTouchInput", true);
-            }
-            set
-            {
-                SetValue("InterceptTouchInput", value);
             }
         }
 

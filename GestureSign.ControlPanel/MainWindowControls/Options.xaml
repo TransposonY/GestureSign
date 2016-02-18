@@ -172,16 +172,6 @@
                                    Unchecked="chkOrderByLocation_Unchecked"
                                    FontSize="14"
                                    FontWeight="Bold" />
-            <controls:ToggleSwitch x:Name="chkInterceptTouchInput"
-                                   Header="{localization:LocalisedText Options.InterceptTouchInput.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Width="300"
-                                   Margin="0,10,0,9"
-                                   Checked="chkInterceptTouchInput_Checked"
-                                   Unchecked="chkInterceptTouchInput_Unchecked"
-                                   FontSize="14"
-                                   FontWeight="Bold"></controls:ToggleSwitch>
             <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
                                    Header="{localization:LocalisedText Options.SendLogTitle}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

@@ -127,7 +127,7 @@ Page:https://github.com/TransposonY
     <LocateWindow>Locate Window</LocateWindow>
     <LocateWindowTip>Drag and drop the crosshair on the target window you would like to control.</LocateWindowTip>
     <UsingRegularExpression>Match as pattern</UsingRegularExpression>
-    <InterceptTouchInput>Intercept Touch</InterceptTouchInput>
+    <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
     <AllowSingleFinger>Allow Single</AllowSingleFinger>
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
@@ -205,9 +205,6 @@ Page:https://github.com/TransposonY
       <OnLabel>Left to Right</OnLabel>
       <OffLabel>In Contact Chronological Order</OffLabel>
     </OrderByLocation>
-    <InterceptTouchInput>
-      <Header>Intercept Touch Input (Installation Version)</Header>
-    </InterceptTouchInput>
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>
