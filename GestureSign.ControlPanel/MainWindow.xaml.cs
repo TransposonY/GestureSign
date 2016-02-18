@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
@@ -86,21 +84,7 @@ namespace GestureSign.ControlPanel
             StringBuilder result = new StringBuilder();
             await Task.Run(() =>
             {
-                if (File.Exists(Logging.LogFilePath))
-                {
-                    result.Append(File.ReadAllText(Logging.LogFilePath));
-                }
-
-                EventLog logs = new EventLog { Log = "Application" };
-
-                foreach (EventLogEntry entry in logs.Entries)
-                {
-                    if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source))
-                    {
-                        result.AppendLine(entry.TimeWritten.ToString(CultureInfo.InvariantCulture));
-                        result.AppendLine(entry.Message.Replace("\n", "\r\n"));
-                    }
-                }
+                ErrorReport.OutputLog(ref result);
             });
             await controller.CloseAsync();
 
@@ -126,7 +110,7 @@ namespace GestureSign.ControlPanel
                     LocalizationProvider.Instance.GetTextValue("Options.Sending"));
                 controller.SetIndeterminate();
 
-                string exceptionMessage = await Task.Run(() => Net.SendMail("Error Log", result.ToString()));
+                string exceptionMessage = await Task.Run(() => ErrorReport.SendMail("Error Log", result.ToString()));
 
                 await controller.CloseAsync();
 
