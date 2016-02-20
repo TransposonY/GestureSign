@@ -22,7 +22,7 @@ namespace GestureSign.ControlPanel.Common
 
         public static string SendMail(string subject, string content)
         {
-            MailMessage mail = new MailMessage(Address, "553078206@qq.com")
+            MailMessage mail = new MailMessage(Address, Address)
             {
                 Subject = subject,
                 Body = content,
