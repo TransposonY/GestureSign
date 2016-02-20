@@ -90,6 +90,28 @@ namespace GestureSign.ControlPanel.Common
                 catch { }
             }
 
+            searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+            foreach (ManagementObject mo in searcher.Get())
+            {
+                try
+                {
+                    result.AppendLine("Free Virtual Memory " + mo["FreeVirtualMemory"]);
+                    result.AppendLine("Free Physical Memory " + mo["FreePhysicalMemory"]);
+                }
+                catch { }
+            }
+
+            try
+            {
+                DriveInfo[] drives = DriveInfo.GetDrives();
+                foreach (DriveInfo drive in drives)
+                {
+                    if (drive.IsReady) result.AppendLine(drive.Name + drive.TotalFreeSpace / 1048576);
+                }
+            }
+            catch { }
+
+
             result.AppendLine();
             result.AppendLine();
 
