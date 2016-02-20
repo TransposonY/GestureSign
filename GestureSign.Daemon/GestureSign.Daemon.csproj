@@ -101,6 +101,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Properties\app.common.manifest" />
+    <None Include="Properties\app.uiAccessRelease.manifest" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -155,7 +157,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF "$(ConfigurationName)"=="uiAccessRelease" "$(SolutionDir)signtool.exe" sign /v /f "$(SolutionDir)TransposonYSPC.pfx" /t "http://timestamp.verisign.com/scripts/timstamp.dll" $(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del "$(ProjectDir)\Properties\app.manifest"
+
+if "$(ConfigurationName)"=="uiAccessRelease" (
+  copy "$(ProjectDir)\Properties\app.uiAccessRelease.manifest" "$(ProjectDir)\Properties\app.manifest"
+) else (
+  copy "$(ProjectDir)\Properties\app.common.manifest" "$(ProjectDir)\Properties\app.manifest"
+)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
