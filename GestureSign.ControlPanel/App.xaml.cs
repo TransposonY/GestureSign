@@ -130,6 +130,7 @@ namespace GestureSign.ControlPanel
         private bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            if (identity == null) return false;
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
