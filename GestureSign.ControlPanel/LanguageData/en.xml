@@ -4,8 +4,6 @@
   <IsRightToLeft>False</IsRightToLeft>
   <Title>GestureSign Control Panel</Title>
   <Messages>
-    <AlreadyRunning>GestureSign Control Panel is already running.</AlreadyRunning>
-    <AlreadyRunningTitle>Reminder</AlreadyRunningTitle>
     <CannotFindDaemonMessage>Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.</CannotFindDaemonMessage>
     <Error>Error</Error>
     <CompatWarning>Application detect that it is set the compatibility to run as administrator(right click/properties/compatibility/Run this program as an administrator).

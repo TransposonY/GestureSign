@@ -4,8 +4,6 @@
   <IsRightToLeft>False</IsRightToLeft>
   <Title>设置</Title>
   <Messages>
-    <AlreadyRunning>本程序已经运行</AlreadyRunning>
-    <AlreadyRunningTitle>提示</AlreadyRunningTitle>
     <CannotFindDaemonMessage>未找到组件GestureSignDaemon.exe，请重新下载或安装本软件。</CannotFindDaemonMessage>
     <Error>错误</Error>
     <CompatWarning>检测到您在本程序的文件属性中勾选了“以管理员身份运行此程序”，这将导致开机启动、屏蔽等功能失效。

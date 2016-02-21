@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
+using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -30,7 +31,7 @@ namespace GestureSign.ControlPanel
                 () => { if (Current.Windows.Count == 0) Current.Shutdown(); else Timer.Change(300000, Timeout.Infinite); });
         }, Timer, Timeout.Infinite, Timeout.Infinite);
 
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
             try
             {
@@ -74,29 +75,52 @@ namespace GestureSign.ControlPanel
                         daemon.StartInfo.CreateNoWindow = false;
                         daemon.Start();
                     }
+                    Current.Shutdown();
                 }
-
-                if (createdNewDaemon) Current.Shutdown();
                 else
                 {
-                    Initialization();
-
-                    if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                    bool createdNew;
+                    mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
+                    if (createdNew)
                     {
-                        Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                        Timer.Change(300000, Timeout.Infinite);
+
+                        GestureManager.Instance.Load(null);
+                        ApplicationManager.Instance.Load(null);
+                        PluginManager.Instance.Load(null);
+
+                        var systemAccent = UIHelper.GetSystemAccent();
+                        if (systemAccent != null)
+                        {
+                            var accent = ThemeManager.GetAccent(systemAccent);
+                            ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
+                        }
+
+                        NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
+
+                        if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
+                        {
+                            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                            Timer.Change(300000, Timeout.Infinite);
+                        }
+                        else
+                        {
+                            MainWindow mainWindow = new MainWindow();
+                            mainWindow.Show();
+                            mainWindow.Activate();
+                        }
                     }
                     else
                     {
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Show();
-                        mainWindow.Activate();
+                        await NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel");
+                        Current.Shutdown();
                     }
+
                 }
 
             }
             catch (Exception exception)
             {
+                Logging.LogException(exception);
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown();
             }
@@ -108,34 +132,6 @@ namespace GestureSign.ControlPanel
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
-        private void Initialization()
-        {
-            bool createdNew;
-            mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
-            if (createdNew)
-            {
-
-                GestureManager.Instance.Load(null);
-                ApplicationManager.Instance.Load(null);
-                PluginManager.Instance.Load(null);
-
-                var systemAccent = UIHelper.GetSystemAccent();
-                if (systemAccent != null)
-                {
-                    var accent = ThemeManager.GetAccent(systemAccent);
-                    ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
-                }
-
-                NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
-            }
-            else
-            {
-                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.AlreadyRunning"),
-                    LocalizationProvider.Instance.GetTextValue("Messages.AlreadyRunningTitle"));
-                Current.Shutdown();
-            }
         }
 
         private void LoadLanguageData()
