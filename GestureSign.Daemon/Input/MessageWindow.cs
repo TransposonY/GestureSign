@@ -233,7 +233,13 @@ namespace GestureSign.Daemon.Input
 
         public void InterceptTouchInput(bool intercept)
         {
-            Invoke(new Action(() => IsRegistered = intercept));
+            if (IsHandleCreated)
+            {
+                if (InvokeRequired)
+                    Invoke(new Action(() => IsRegistered = intercept));
+                else
+                    IsRegistered = intercept;
+            }
         }
 
 
