@@ -290,6 +290,8 @@ namespace GestureSign.Daemon.Input
 
                 ourKey = ourKey.OpenSubKey(findme, false);
 
+                if (ourKey == null) return false;
+
                 //Retrieve the desired information and set isKeyboard
                 string deviceDesc = (string)ourKey.GetValue("DeviceDesc");
 
