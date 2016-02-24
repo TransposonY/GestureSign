@@ -57,7 +57,7 @@ namespace GestureSign.ControlPanel.Common
 
         public static void OutputLog(ref StringBuilder result)
         {
-            if (result == null) result = new StringBuilder();
+            if (result == null) result = new StringBuilder(1000);
 
             var rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
             if (rk != null)
@@ -90,27 +90,11 @@ namespace GestureSign.ControlPanel.Common
                 catch { }
             }
 
-            searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
-            foreach (ManagementObject mo in searcher.Get())
-            {
-                try
-                {
-                    result.AppendLine("Free Virtual Memory " + mo["FreeVirtualMemory"]);
-                    result.AppendLine("Free Physical Memory " + mo["FreePhysicalMemory"]);
-                }
-                catch { }
-            }
+            result.AppendLine();
 
-            try
-            {
-                DriveInfo[] drives = DriveInfo.GetDrives();
-                foreach (DriveInfo drive in drives)
-                {
-                    if (drive.IsReady) result.AppendLine(drive.Name + drive.TotalFreeSpace / 1048576);
-                }
-            }
-            catch { }
-
+            var processes = Process.GetProcesses();
+            foreach (var p in processes)
+                result.AppendLine(p.ProcessName);
 
             result.AppendLine();
             result.AppendLine();
