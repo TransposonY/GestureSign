@@ -507,7 +507,10 @@ namespace GestureSign.Daemon.Input
                     GetRawInputDeviceInfo(raw.header.hDevice, RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
 
                     if (_touchScreenPhysicalMax[raw.header.hDevice].Equals(Point.Empty))
+                    {
                         GetPhysicalMax(raw, pPreparsedData);
+                        return;
+                    }
 
                     int scanTime = 0;
                     int contactCount = 0;
