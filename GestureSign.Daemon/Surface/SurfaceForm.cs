@@ -28,6 +28,7 @@ namespace GestureSign.Daemon.Surface
         private GraphicsPath _dirtyGraphicsPath = new GraphicsPath();
 
         private float _screenDpi;
+        private bool _settingsChanged;
 
         private const Int32 ULW_ALPHA = 0x00000002;
 
@@ -82,6 +83,11 @@ namespace GestureSign.Daemon.Surface
         {
             if (AppConfig.VisualFeedbackWidth <= 0 || e.Mode == CaptureMode.UserDisabled) return;
 
+            if (_settingsChanged)
+            {
+                _settingsChanged = false;
+                InitializeForm();
+            }
             ClearSurfaces();
             _bitmap = new DiBitmap(Screen.PrimaryScreen.Bounds.Size);
         }
@@ -152,8 +158,16 @@ namespace GestureSign.Daemon.Surface
 
         private void ResetSurface()
         {
-            if (InvokeRequired) Invoke(new Action(InitializeForm));
-            else InitializeForm();
+            if (_lastStroke == null)
+            {
+                if (InvokeRequired) Invoke(new Action(InitializeForm));
+                else InitializeForm();
+            }
+            else
+            {
+                if (InvokeRequired) Invoke(new Action(() => _settingsChanged = true));
+                else _settingsChanged = true;
+            }
         }
 
         private void InitializeForm()
