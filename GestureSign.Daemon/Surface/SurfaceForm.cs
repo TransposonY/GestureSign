@@ -45,10 +45,10 @@ namespace GestureSign.Daemon.Surface
             TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
             TouchCapture.Instance.CaptureCanceled += MouseCapture_CaptureCanceled;
             TouchCapture.Instance.CaptureStarted += Instance_CaptureStarted;
-            AppConfig.ConfigChanged += (o, e) => { InitializeForm(); };
+            AppConfig.ConfigChanged += (o, e) => { ResetSurface(); };
             // Respond to system event changes by reinitializing the form
-            SystemEvents.DisplaySettingsChanged += (o, e) => { InitializeForm(); };
-            SystemEvents.UserPreferenceChanged += (o, e) => { InitializeForm(); };
+            SystemEvents.DisplaySettingsChanged += (o, e) => { ResetSurface(); };
+            SystemEvents.UserPreferenceChanged += (o, e) => { ResetSurface(); };
             //this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             //this.UpdateStyles();
         }
@@ -149,6 +149,12 @@ namespace GestureSign.Daemon.Surface
         #endregion
 
         #region Private Methods
+
+        private void ResetSurface()
+        {
+            if (InvokeRequired) Invoke(new Action(InitializeForm));
+            else InitializeForm();
+        }
 
         private void InitializeForm()
         {
