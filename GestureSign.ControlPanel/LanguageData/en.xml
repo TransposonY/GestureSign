@@ -167,7 +167,7 @@ Page:https://github.com/TransposonY
   <Options>
     <Header>Options</Header>
     <Language>Language（Restart GestureSign to take effect）</Language>
-    <Opacity>Opacity {0}%</Opacity>
+    <Opacity>Opacity </Opacity>
     <VisualFeedbackWidth>Visual Feedback Width {0:0} px</VisualFeedbackWidth>
     <Off>Off</Off>
     <PickColor>Pick Color...</PickColor>

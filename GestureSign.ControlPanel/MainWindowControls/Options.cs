@@ -110,7 +110,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Change opacity display text with new value
-            OpacityText.Text = String.Format(LocalizationProvider.Instance.GetTextValue("Options.Opacity"), GetAlphaPercentage(OpacitySlider.Value));
+            OpacityText.Text = LocalizationProvider.Instance.GetTextValue("Options.Opacity") + GetAlphaPercentage(OpacitySlider.Value) + "%";
             AppConfig.Opacity = OpacitySlider.Value;
 
             AppConfig.Save();

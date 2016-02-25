@@ -172,7 +172,7 @@ http://git.oschina.net/TransY/GestureSign
   <Options>
     <Header>选项</Header>
     <Language>语言（重启生效）</Language>
-    <Opacity>不透明度 {0}%</Opacity>
+    <Opacity>不透明度 </Opacity>
     <VisualFeedbackWidth>轨迹宽度 {0:0} px</VisualFeedbackWidth>
     <Off>关闭</Off>
     <PickColor>选择颜色..</PickColor>

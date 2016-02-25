@@ -53,7 +53,8 @@
                        TextWrapping="Wrap"
                        VerticalAlignment="Top"
                        Margin="15,5,0,3"
-                       FontSize="14" />
+                       FontSize="14"
+                       Text="{localization:LocalisedText Options.Opacity}" />
             <Slider x:Name="OpacitySlider"
                     common:SliderTools.MoveToPointOnDrag="True"
                     VerticalAlignment="Bottom"
