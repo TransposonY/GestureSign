@@ -192,6 +192,7 @@ http://git.oschina.net/TransY/GestureSign
     <Retry>重试</Retry>
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
+    <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

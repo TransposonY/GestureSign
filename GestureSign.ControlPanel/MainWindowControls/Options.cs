@@ -399,13 +399,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 else
                 {
                     dialogResult = await
-                    UIHelper.GetParentWindow(this)
-                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" + exceptionMessage,
-                            MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                            {
-                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
-                            });
+                        UIHelper.GetParentWindow(this)
+                            .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
+                                LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" +
+                                exceptionMessage +
+                                ":\r\n" + LocalizationProvider.Instance.GetTextValue("Options.Mail"),
+                                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                                {
+                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
+                                });
                 }
             }
         }

@@ -187,6 +187,7 @@ Page:https://github.com/TransposonY
     <Retry>Retry</Retry>
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
+    <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>
