@@ -622,11 +622,11 @@ namespace GestureSign.Daemon.Input
 
             HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, GenericDesktopPage, 1, XCoordinateId, hvc,
                 ref valueCapsLength, pPreparsedData);
-            p.X = hvc[0].PhysicalMax;
+            p.X = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
 
             HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, GenericDesktopPage, 1, YCoordinateId, hvc,
                 ref valueCapsLength, pPreparsedData);
-            p.Y = hvc[0].PhysicalMax;
+            p.Y = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
 
             _touchScreenPhysicalMax[rawInput.header.hDevice] = p;
         }
