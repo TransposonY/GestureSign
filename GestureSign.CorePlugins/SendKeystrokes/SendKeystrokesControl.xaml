@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="120"
-             d:DesignWidth="320">
+             d:DesignWidth="320"
+             Height="145">
     <Grid>
         <TextBox x:Name="TxtSendKeys"
                  HorizontalAlignment="Left"
@@ -22,9 +22,14 @@
                    VerticalAlignment="Top"
                    Margin="10,10,0,0" />
         <Button HorizontalAlignment="Right"
-                VerticalAlignment="Top"
+                VerticalAlignment="Bottom"
                 Content="{localization:LocalisedText CorePlugins.SendKeystrokes.EscapesString}"
                 Click="Button_Click"
                 Margin="0,0,10,0" />
+        <CheckBox x:Name="UseSendInputCheckBox"
+                  Content="{localization:LocalisedText CorePlugins.SendKeystrokes.UseSendInput}"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="10,0,0,0" />
     </Grid>
 </UserControl>

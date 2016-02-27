@@ -323,6 +323,7 @@ Page:https://github.com/TransposonY
       <Description>Send keystrokes to application</Description>
       <EscapesString>Escapes the literal string</EscapesString>
       <Tip>Standard SendKeys syntax applies</Tip>
+      <UseSendInput>Use SendInput</UseSendInput>
     </SendKeystrokes>
     <TouchKeyboard>
       <Name>Touch Keyboard</Name>

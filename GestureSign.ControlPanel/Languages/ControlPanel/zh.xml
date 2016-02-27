@@ -329,6 +329,7 @@ http://git.oschina.net/TransY/GestureSign
       <!--Escapes a literal string-->
       <EscapesString>转义已输入的文本</EscapesString>
       <Tip>适用标准的SendKeys语法</Tip>
+      <UseSendInput>使用SendInput</UseSendInput>
     </SendKeystrokes>
     <TouchKeyboard>
       <Name>触摸键盘</Name>
