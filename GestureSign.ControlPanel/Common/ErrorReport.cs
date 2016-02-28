@@ -101,7 +101,11 @@ namespace GestureSign.ControlPanel.Common
 
             if (File.Exists(Logging.LogFilePath))
             {
-                result.Append(File.ReadAllText(Logging.LogFilePath));
+                using (FileStream fs = new FileStream(Logging.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (StreamReader streamReader = new StreamReader(fs))
+                        result.Append(streamReader.ReadToEnd());
+                }
             }
 
             EventLog logs = new EventLog { Log = "Application" };

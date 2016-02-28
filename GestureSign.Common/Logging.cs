@@ -37,7 +37,7 @@ namespace GestureSign.Common
             try
             {
                 _logFilePath = Path.Combine(Path.GetTempPath(), "GestureSign.log");
-                var sw = new StreamWriterWithTimestamp(new FileStream(_logFilePath, FileMode.Append)) { AutoFlush = true };
+                var sw = new StreamWriterWithTimestamp(new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) { AutoFlush = true };
                 Console.SetOut(sw);
                 Console.SetError(sw);
                 result = true;

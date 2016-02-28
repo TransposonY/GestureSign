@@ -83,6 +83,7 @@ namespace GestureSign.ControlPanel
                     mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                     if (createdNew)
                     {
+                        Logging.OpenLogFile();
 
                         GestureManager.Instance.Load(null);
                         ApplicationManager.Instance.Load(null);
