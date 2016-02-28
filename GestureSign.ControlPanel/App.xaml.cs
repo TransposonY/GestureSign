@@ -35,6 +35,7 @@ namespace GestureSign.ControlPanel
         {
             try
             {
+                Logging.OpenLogFile();
                 LoadLanguageData();
 
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
@@ -83,8 +84,6 @@ namespace GestureSign.ControlPanel
                     mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                     if (createdNew)
                     {
-                        Logging.OpenLogFile();
-
                         GestureManager.Instance.Load(null);
                         ApplicationManager.Instance.Load(null);
                         PluginManager.Instance.Load(null);
