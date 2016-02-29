@@ -21,12 +21,12 @@ namespace GestureSign.Common.Applications
         #region Private Variables
 
         // Create variable to hold the only allowed instance of this class
-        static readonly ApplicationManager _Instance = new ApplicationManager();
+        private static ApplicationManager _instance;
         private List<IApplication> _Applications;
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
         private Timer timer;
-        public event EventHandler OnLoadApplicationsCompleted;
+        public static event EventHandler OnLoadApplicationsCompleted;
         #endregion
 
         #region Public Instance Properties
@@ -42,13 +42,11 @@ namespace GestureSign.Common.Applications
             }
         }
 
-        public bool FinishedLoading { get; set; }
-
         public List<IApplication> Applications { get { return _Applications; } }
 
         public static ApplicationManager Instance
         {
-            get { return _Instance; }
+            get { return _instance ?? (_instance = new ApplicationManager()); }
         }
 
         #endregion
@@ -64,9 +62,8 @@ namespace GestureSign.Common.Applications
                         if (!LoadDefaults())
                             _Applications = new List<IApplication>();
                     if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
-                    FinishedLoading = true;
                 };
-            GestureManager.Instance.GestureEdited += GestureManager_GestureEdited;
+            GestureManager.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
             LoadApplications().ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }

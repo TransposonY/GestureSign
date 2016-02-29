@@ -14,10 +14,11 @@ namespace GestureSign.ControlPanel.ViewModel
 
         static GestureItemProvider()
         {
-            GestureManager.Instance.GestureSaved += (o, e) => { Update(); };
+            _gestureItems = new ObservableCollection<GestureItem>();
 
-            if (GestureManager.Instance.FinishedLoading) Update();
-            GestureManager.Instance.OnLoadGesturesCompleted += (o, e) => { Application.Current.Dispatcher.Invoke(Update); };
+            GestureManager.GestureSaved += (o, e) => { Update(); };
+
+            GestureManager.OnLoadGesturesCompleted += (o, e) => { Application.Current.Dispatcher.Invoke(Update); };
         }
 
         public static ObservableCollection<GestureItem> GestureItems

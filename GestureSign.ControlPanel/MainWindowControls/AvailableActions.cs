@@ -77,9 +77,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
             GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
             EditApplicationFlyout.ApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
-
-            if (ApplicationManager.Instance.FinishedLoading) { BindApplications(); }
-            ApplicationManager.Instance.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
+            
+            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
         }
 
 

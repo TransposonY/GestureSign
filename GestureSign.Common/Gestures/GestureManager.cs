@@ -20,7 +20,7 @@ namespace GestureSign.Common.Gestures
         #region Private Variables
 
         // Create variable to hold the only allowed instance of this class
-        static readonly GestureManager _Instance = new GestureManager();
+        private static GestureManager _instance;
 
         // Create read/write list of IGestures to hold system gestures
         List<IGesture> _Gestures = new List<IGesture>();
@@ -31,8 +31,7 @@ namespace GestureSign.Common.Gestures
         #endregion
 
         #region Public Instance Properties
-
-        public bool FinishedLoading { get; set; }
+        
         public string GestureName { get; set; }
         public IGesture[] Gestures
         {
@@ -58,7 +57,6 @@ namespace GestureSign.Common.Gestures
                            if (!LoadDefaults())
                                _Gestures = new List<IGesture>();
                        if (OnLoadGesturesCompleted != null) OnLoadGesturesCompleted(this, EventArgs.Empty);
-                       FinishedLoading = true;
                    };
             LoadGestures().ContinueWith(antecendent => loadCompleted(antecendent.Result));
             // Instantiate gesture analyzer using gestures loaded from file
@@ -71,7 +69,7 @@ namespace GestureSign.Common.Gestures
 
         public static GestureManager Instance
         {
-            get { return _Instance; }
+            get { return _instance ?? (_instance = new GestureManager()); }
         }
 
         #endregion
@@ -87,10 +85,10 @@ namespace GestureSign.Common.Gestures
 
         #region Custom Events
 
-        public event EventHandler OnLoadGesturesCompleted;
+        public static event EventHandler OnLoadGesturesCompleted;
         // Define events to allow other classes to subscribe to
-        public event GestureEventHandler GestureEdited;
-        public event EventHandler GestureSaved;
+        public static event GestureEventHandler GestureEdited;
+        public static event EventHandler GestureSaved;
         // Define protected method to notifiy subscribers of events
 
         protected virtual void OnGestureEdited(GestureEventArgs e)

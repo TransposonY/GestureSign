@@ -84,18 +84,12 @@ namespace GestureSign.ControlPanel
                     mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                     if (createdNew)
                     {
-                        GestureManager.Instance.Load(null);
-                        ApplicationManager.Instance.Load(null);
-                        PluginManager.Instance.Load(null);
-
                         var systemAccent = UIHelper.GetSystemAccent();
                         if (systemAccent != null)
                         {
                             var accent = ThemeManager.GetAccent(systemAccent);
                             ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
                         }
-
-                        NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
 
                         if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
                         {
@@ -106,8 +100,13 @@ namespace GestureSign.ControlPanel
                         {
                             MainWindow mainWindow = new MainWindow();
                             mainWindow.Show();
-                            mainWindow.Activate();
                         }
+
+                        GestureManager.Instance.Load(null);
+                        PluginManager.Instance.Load(null);
+                        ApplicationManager.Instance.Load(null);
+
+                        NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
                     }
                     else
                     {
