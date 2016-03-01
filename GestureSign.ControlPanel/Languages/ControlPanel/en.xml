@@ -391,6 +391,7 @@ Page:https://github.com/TransposonY
       <Description>Launch {0}</Description>
       <Category>Run</Category>
       <Tip>Please select a Store App.</Tip>
+      <Loading>Loading application list...</Loading>
     </LaunchApp>
   </CorePlugins>
 </Language>

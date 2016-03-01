@@ -13,6 +13,7 @@ using System.Xml;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;
 using GestureSign.Common;
+using GestureSign.Common.Localization;
 using Microsoft.Win32;
 
 namespace GestureSign.CorePlugins.LaunchApp
@@ -44,11 +45,12 @@ namespace GestureSign.CorePlugins.LaunchApp
 
         private void comboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            if (comboBox.ItemsSource != null) return;
             var apps = new List<Model>(10);
 
             var getAppsTask = Task.Run(() =>
             {
+                if (comboBox.ItemsSource != null) return;
+
                 var currentUser = WindowsIdentity.GetCurrent();
                 if (currentUser?.User == null) return;
                 var sid = currentUser.User.ToString();
@@ -163,13 +165,15 @@ namespace GestureSign.CorePlugins.LaunchApp
                             TipTextBlock.Text = message;
                             return;
                         }
-                        comboBox.ItemsSource = apps.OrderBy(app => app.AppInfo.Value).ToList();
+                        if (apps.Count != 0)
+                            comboBox.ItemsSource = apps.OrderBy(app => app.AppInfo.Value).ToList();
 
                         var launchApp = DataContext as LaunchApp;
                         if (launchApp != null)
                         {
-                            comboBox.SelectedItem = apps.Find(m => m.AppInfo.Equals(launchApp.AppInfo));
+                            comboBox.SelectedItem = (comboBox.ItemsSource as List<Model>)?.Find(m => m.AppInfo.Equals(launchApp.AppInfo));
                         }
+                        TipTextBlock.Text = LocalizationProvider.Instance.GetTextValue("CorePlugins.LaunchApp.Tip");
                         comboBox.Visibility = Visibility.Visible;
                     }));
             });

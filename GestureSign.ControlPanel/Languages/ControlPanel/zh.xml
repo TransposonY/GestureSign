@@ -397,6 +397,7 @@ http://git.oschina.net/TransY/GestureSign
       <Description>打开{0}应用</Description>
       <Category>运行</Category>
       <Tip>请选择要运行的商店应用</Tip>
+      <Loading>载入应用列表中...</Loading>
     </LaunchApp>
   </CorePlugins>
 </Language>
