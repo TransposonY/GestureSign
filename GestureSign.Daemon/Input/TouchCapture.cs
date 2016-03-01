@@ -169,12 +169,12 @@ namespace GestureSign.Daemon.Input
 
         #region Touch Events
 
-        void messageWindow_OnForegroundChange(object sender, IntPtr e)
+        void messageWindow_OnForegroundChange(object sender, ForegroundChangedEventArgs e)
         {
             if (State != CaptureState.Ready || Mode != CaptureMode.Normal || e.Equals(IntPtr.Zero) ||
                 Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
                 return;
-            var systemWindow = new SystemWindow(e);
+            var systemWindow = new SystemWindow(e.Hwnd);
             var userApp = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
             bool flag = userApp != null &&
                         (userApp.Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput));

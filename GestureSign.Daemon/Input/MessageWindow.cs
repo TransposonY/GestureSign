@@ -65,7 +65,7 @@ namespace GestureSign.Daemon.Input
         bool _yAxisDirection;
         bool _isAxisCorresponds;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
-        public event EventHandler<IntPtr> OnForegroundChange;
+        public event EventHandler<ForegroundChangedEventArgs> OnForegroundChange;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
         readonly WinEventDelegate _winEventDele;
@@ -245,7 +245,7 @@ namespace GestureSign.Daemon.Input
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (OnForegroundChange != null) OnForegroundChange(this, hwnd);
+            if (OnForegroundChange != null) OnForegroundChange(this, new ForegroundChangedEventArgs(hwnd));
         }
 
         private void RegisterDevices()
