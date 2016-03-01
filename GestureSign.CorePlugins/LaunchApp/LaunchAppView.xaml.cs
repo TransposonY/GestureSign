@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,110 +50,97 @@ namespace GestureSign.CorePlugins.LaunchApp
             var getAppsTask = Task.Run(() =>
             {
                 var currentUser = WindowsIdentity.GetCurrent();
-                if (currentUser?.User != null)
+                if (currentUser?.User == null) return;
+                var sid = currentUser.User.ToString();
+
+                var packageManager = new PackageManager();
+                var packages = packageManager.FindPackagesForUser(sid);
+
+                if (Environment.OSVersion.Version.Major == 10)
                 {
-                    var sid = currentUser.User.ToString();
+                    var appXInfos = GetAppXInfosFromReg();
+                    if (appXInfos == null || appXInfos.Count == 0) return;
 
-                    var packageManager = new PackageManager();
-                    var packages = packageManager.FindPackagesForUser(sid);
-
-                    if (Environment.OSVersion.Version.Major == 10)
+                    foreach (var package in packages.Where(package => !package.IsFramework))
                     {
-                        var appXInfos = GetAppXInfosFromReg();
-                        if (appXInfos == null || appXInfos.Count == 0) return;
-
-                        foreach (var package in packages.Where(package => !package.IsFramework))
+                        using (
+                            var key =
+                                Registry.ClassesRoot.OpenSubKey(
+                                    $@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\{
+                                        package.Id.FamilyName}\SplashScreen\"))
                         {
-                            using (
-                                var key =
-                                    Registry.ClassesRoot.OpenSubKey(
-                                        $@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\{
-                                            package.Id.FamilyName}\SplashScreen\"))
+                            var appUserModelIds =
+                                key?.GetSubKeyNames().Where(k => k.StartsWith(package.Id.FamilyName));
+                            if (appUserModelIds == null) continue;
+
+                            foreach (string appUserModelId in appUserModelIds)
                             {
-                                var appUserModelIds =
-                                    key?.GetSubKeyNames().Where(k => k.StartsWith(package.Id.FamilyName));
-                                if (appUserModelIds == null) continue;
+                                Model model = new Model();
+                                string backgroundColor, displayName, logo;
+                                if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
+                                    continue;
 
-                                foreach (string appUserModelId in appUserModelIds)
+                                var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
+                                if (convertFromString != null)
                                 {
-                                    Model model = new Model();
-                                    if (appXInfos.ContainsKey(appUserModelId))
+                                    model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
+                                    model.BackgroundColor.Freeze();
+                                }
+
+                                if (appXInfos.ContainsKey(appUserModelId))
+                                {
+                                    var appXInfo = appXInfos[appUserModelId];
+
+                                    displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
+                                    if (string.IsNullOrEmpty(displayName)) continue;
+
+                                    logo = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
+
+                                    model.Logo = logo;
+                                    model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
+                                }
+                                else
+                                {
+                                    using (var subKey = key.OpenSubKey(appUserModelId))
                                     {
-                                        var appXInfo = appXInfos[appUserModelId];
-
-                                        var displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
+                                        var appName = subKey?.GetValue("AppName");
+                                        if (appName == null) continue;
+                                        displayName = ExtractDisplayName(package, appName.ToString());
                                         if (string.IsNullOrEmpty(displayName)) continue;
-
-                                        var logo = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
-
-                                        model.Logo = logo;
                                         model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
 
-                                        string backgroundColor;
-                                        if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
-                                            continue;
-
-                                        var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                                        if (convertFromString != null)
-                                        {
-                                            model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
-                                            model.BackgroundColor.Freeze();
-                                        }
+                                        logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
+                                        model.Logo = logo;
                                     }
-                                    else
-                                    {
-                                        using (var subKey = key.OpenSubKey(appUserModelId))
-                                        {
-                                            var appName = subKey?.GetValue("AppName");
-                                            if (appName == null) continue;
-                                            var displayName = ExtractDisplayName(package, appName.ToString());
-                                            if (string.IsNullOrEmpty(displayName)) continue;
-                                            model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
-
-                                            string logo, backgroundColor;
-                                            if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
-                                                continue;
-
-                                            logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
-                                            model.Logo = logo;
-
-                                            var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                                            if (convertFromString != null)
-                                            {
-                                                model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
-                                                model.BackgroundColor.Freeze();
-                                            }
-                                        }
-                                    }
-                                    apps.Add(model);
                                 }
+                                apps.Add(model);
                             }
                         }
                     }
-                    else
+                }
+                else
+                {
+                    foreach (var package in packages.Where(package => !package.IsFramework))
                     {
-                        foreach (var package in packages.Where(package => !package.IsFramework))
+                        string displayName, logo, backgroundColor;
+                        if (
+                            !ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo,
+                                out backgroundColor))
+                            continue;
+
+                        displayName = ExtractDisplayName(package.InstalledLocation.Path, package.Id.Name, displayName);
+                        logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
+
+                        var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
+                        if (convertFromString == null) continue;
+                        var model = new Model
                         {
-                            string displayName, logo, backgroundColor;
-                            if (
-                                !ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo,
-                                    out backgroundColor))
-                                continue;
-
-                            displayName = ExtractDisplayName(package.InstalledLocation.Path, package.Id.Name, displayName);
-                            logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
-
-                            var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                            if (convertFromString == null) continue;
-                            var model = new Model
-                            {
-                                AppInfo = new KeyValuePair<string, string>(GetAppUserModelId(package.Id.FullName), displayName),
-                                BackgroundColor = new SolidColorBrush((Color)convertFromString),
-                                Logo = logo
-                            };
-                            model.BackgroundColor.Freeze();
-                            apps.Add(model);
-                        }
+                            AppInfo = new KeyValuePair<string, string>(GetAppUserModelId(package.Id.FullName), displayName),
+                            BackgroundColor = new SolidColorBrush((Color)convertFromString),
+                            Logo = logo
+                        };
+                        model.BackgroundColor.Freeze();
+                        apps.Add(model);
                     }
                 }
             });
