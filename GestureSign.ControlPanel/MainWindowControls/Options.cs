@@ -73,7 +73,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             //Input.MouseCapture.Instance.DisableMouseCapture();
 
             UpdateVisualFeedbackExample();
-            DisableIncompatibleControls();
         }
 
         private void btnPickColor_Click(object sender, RoutedEventArgs e)
@@ -176,11 +175,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private int GetAlphaPercentage(double Alpha)
         {
             return (int)Math.Round(Alpha * 100d);
-        }
-
-        private void DisableIncompatibleControls()
-        {
-            OpacitySlider.IsEnabled = DesktopWindowManager.IsCompositionEnabled();
         }
 
         private void CreateLnk(string lnkPath)

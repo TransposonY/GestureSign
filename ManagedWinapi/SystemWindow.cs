@@ -172,42 +172,10 @@ namespace ManagedWinapi.Windows
     }
 
     /// <summary>
-    /// Show Window Flags. .
-    /// </summary>
-    [Flags]
-    public enum ShowWindowFlags : int
-    {
-        SW_HIDE = 0,
-        SW_SHOWNORMAL = 1,
-        SW_NORMAL = 1,
-        SW_SHOWMINIMIZED = 2,
-        SW_SHOWMAXIMIZED = 3,
-        SW_MAXIMIZE = 3,
-        SW_SHOWNOACTIVATE = 4,
-        SW_SHOW = 5,
-        SW_MINIMIZE = 6,
-        SW_SHOWMINNOACTIVE = 7,
-        SW_SHOWNA = 8,
-        SW_RESTORE = 9,
-        SW_SHOWDEFAULT = 10,
-        SW_MAX = 10
-    }
-
-    /// <summary>
-    /// System Parameter Info Flags. .
-    /// </summary>
-    [Flags]
-    public enum SystemParameterInfoFlags
-    {
-        SPI_GETFOREGROUNDLOCKTIMEOUT = 0x2000,
-        SPI_SETFOREGROUNDLOCKTIMEOUT = 0x2001,
-        SPIF_SENDCHANGE = 0x2
-    }
-
-    /// <summary>
     /// Extended Window Style Flags. The original constants started with WS_EX_.
     /// </summary>
     /// <seealso cref="SystemWindow.ExtendedStyle"/>
+    [CLSCompliant(false)]
     [Flags]
     public enum WindowExStyleFlags : uint
     {
@@ -325,7 +293,7 @@ namespace ManagedWinapi.Windows
     /// <summary>
     /// Represents any window used by Windows, including those from other applications.
     /// </summary>
-    public class SystemWindow : IDisposable
+    public class SystemWindow
     {
 
         private static readonly Predicate<SystemWindow> ALL = delegate { return true; };
@@ -343,38 +311,7 @@ namespace ManagedWinapi.Windows
             }
             set
             {
-                if (value.WindowState != FormWindowState.Minimized)
-                    value.WindowState = FormWindowState.Minimized;
-                ShowWindowAsync(value.HWnd, (int)ShowWindowFlags.SW_RESTORE);
                 SetForegroundWindow(value.HWnd);
-                SwitchToThisWindow(value.HWnd, true);
-                /*
-                IntPtr foregroundWindow = GetForegroundWindow();
-                IntPtr Dummy = IntPtr.Zero;
-                int dummy;
-
-                int foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, out dummy);
-                int thisThreadId = GetWindowThreadProcessId(value.HWnd, out dummy);
-
-                if (AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, true))
-                {
-                    BringWindowToTop(value.HWnd); // IE 5.5 related hack
-                    SetForegroundWindow(value.HWnd);
-                    AttachThreadInput((uint)thisThreadId, (uint)foregroundThreadId, false);
-                }
-
-                if (GetForegroundWindow() != ForegroundWindow.HWnd)
-                {
-                    // Code by Daniel P. Stasinski
-                    // Converted to C# by Kevin Gale
-                    IntPtr Timeout = IntPtr.Zero;
-                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_GETFOREGROUNDLOCKTIMEOUT, 0, Timeout, 0);
-                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Dummy, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
-                    BringWindowToTop(value.HWnd); // IE 5.5 related hack
-                    SetForegroundWindow(value.HWnd);
-                    SystemParametersInfo((uint)SystemParameterInfoFlags.SPI_SETFOREGROUNDLOCKTIMEOUT, 0, Timeout, (uint)SystemParameterInfoFlags.SPIF_SENDCHANGE);
-                }
-                 * */
             }
         }
 
@@ -413,9 +350,7 @@ namespace ManagedWinapi.Windows
             {
                 SystemWindow tmp = new SystemWindow(hwnd);
                 if (predicate(tmp))
-                {
                     wnds.Add(tmp);
-                }
                 return 1;
             }), new IntPtr(0));
             return wnds.ToArray();
@@ -555,6 +490,17 @@ namespace ManagedWinapi.Windows
         public IntPtr HWnd { get { return _hwnd; } }
 
         /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return "HWND 0x" + _hwnd.ToString("X");
+        }
+
+        /// <summary>
         /// The title of this window (by the <c>GetWindowText</c> API function).
         /// </summary>
         public string Title
@@ -573,6 +519,22 @@ namespace ManagedWinapi.Windows
         }
 
         /// <summary>
+        /// The text inside of this window (by sending a <c>WM_GETTEXT</c> message).
+        /// For child windows of other applications, this is more reliable
+        /// than the <see cref="Title"/> function.
+        /// </summary>
+        public string Text
+        {
+            get
+            {
+                int length = SendGetMessage(WM_GETTEXTLENGTH);
+                StringBuilder sb = new StringBuilder(length + 1);
+                SendMessage(new HandleRef(this, HWnd), WM_GETTEXT, new IntPtr(sb.Capacity), sb);
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
         /// The name of the window class (by the <c>GetClassName</c> API function).
         /// This class has nothing to do with classes in C# or other .NET languages.
         /// </summary>
@@ -580,7 +542,7 @@ namespace ManagedWinapi.Windows
         {
             get
             {
-                int length = 256;
+                int length = 64;
                 while (true)
                 {
                     StringBuilder sb = new StringBuilder(length);
@@ -620,11 +582,11 @@ namespace ManagedWinapi.Windows
             {
                 if (value)
                 {
-                    SetWindowPos(_hwnd, new IntPtr(-1), 0, 0, 0, 0, 3);
+                    SetWindowPos(_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 }
                 else
                 {
-                    SetWindowPos(_hwnd, new IntPtr(-2), 0, 0, 0, 0, 3);
+                    SetWindowPos(_hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 }
             }
         }
@@ -674,7 +636,7 @@ namespace ManagedWinapi.Windows
         {
             get
             {
-                return (WindowStyleFlags)GetWindowLongPtr(_hwnd, (int)(GWL.GWL_STYLE));
+                return unchecked((WindowStyleFlags)GetWindowLongPtr(_hwnd, (int)(GWL.GWL_STYLE)).ToInt64());
             }
             set
             {
@@ -686,11 +648,12 @@ namespace ManagedWinapi.Windows
         /// <summary>
         /// This window's extended style flags.
         /// </summary>
+        [CLSCompliant(false)]
         public WindowExStyleFlags ExtendedStyle
         {
             get
             {
-                return (WindowExStyleFlags)GetWindowLongPtr(_hwnd, (int)(GWL.GWL_EXSTYLE));
+                return unchecked((WindowExStyleFlags)GetWindowLongPtr(_hwnd, (int)(GWL.GWL_EXSTYLE)).ToInt64());
             }
             set
             {
@@ -802,7 +765,42 @@ namespace ManagedWinapi.Windows
             {
                 RECT r = new RECT();
                 GetWindowRect(_hwnd, out r);
+
+                try
+                {
+                    // GetWindowRect returns wrong values for maximized windows when using Windows Aero Glass desktop
+                    // because there is negative padding of "glass" pixels for maximized windows.
+                    // see http://social.msdn.microsoft.com/Forums/en-US/windowsuidevelopment/thread/6c1c67a9-5548-4e9b-989f-c7dbac0b1375/
+                    // Limit miximized window size to working area of the corresponding desktop (supporting multi screen setups)
+                    if ((Style & WindowStyleFlags.MAXIMIZE) > 0)
+                    {
+                        foreach (var screen in Screen.AllScreens)
+                            if (((Rectangle)r).Contains(screen.WorkingArea))
+                                return screen.WorkingArea;
+                    }
+                }
+                catch { } // special handling should not cause failure
+
                 return r;
+            }
+        }
+
+        /// <summary>
+        /// The position of the window's contents in absolute screen coordinates. Use 
+        /// <see cref="Rectangle"/> if you want to include the title bar etc.
+        /// </summary>
+        public RECT ClientRectangle
+        {
+            get
+            {
+                RECT r = new RECT();
+                ApiHelper.FailIfZero(GetClientRect(_hwnd, out r));
+                Point p = new Point();
+                p.X = p.Y = 0;
+                ApiHelper.FailIfZero(ClientToScreen(_hwnd, ref p));
+                Rectangle result = r;
+                result.Location = p;
+                return result;
             }
         }
 
@@ -816,7 +814,8 @@ namespace ManagedWinapi.Windows
             return IsChild(ancestor._hwnd, _hwnd);
         }
 
-        private Process _process;
+        private Process _cachedProcess = null;
+
         /// <summary>
         /// The process which created this window.
         /// </summary>
@@ -824,44 +823,16 @@ namespace ManagedWinapi.Windows
         {
             get
             {
-                if (_process != null) return _process;
-                int pid;
-                GetWindowThreadProcessId(HWnd, out pid);
-                _process = Process.GetProcessById(pid);
-                return _process;
+                if (_cachedProcess == null)
+                {
+                    int pid;
+                    GetWindowThreadProcessId(HWnd, out pid);
+                    _cachedProcess = Process.GetProcessById(pid);
+                }
+                return _cachedProcess;
             }
         }
 
-        private string _mainModulePath;
-
-        public string MainModulePath
-        {
-            get { return _mainModulePath ?? (_mainModulePath = GetProcessPathFromWindowHandle(HWnd)); }
-        }
-        static string GetProcessPathFromWindowHandle(IntPtr hWnd)
-        {
-
-            string filename = string.Empty;
-            int pid = 0;
-            if (hWnd.Equals(IntPtr.Zero))
-            {
-                return filename;
-            }
-            GetWindowThreadProcessId(hWnd, out pid);
-
-            const int nChars = 1024;
-            StringBuilder filenameBuffer = new StringBuilder(nChars);
-            IntPtr hProcess = OpenProcess(ProcessAccessFlags.QueryInformation | ProcessAccessFlags.VirtualMemoryRead, false, (uint)pid);
-            if (hWnd.Equals(IntPtr.Zero))
-            {
-                return filename;
-            }
-            GetModuleFileNameEx(hProcess, IntPtr.Zero, filenameBuffer, nChars);
-            CloseHandle(hProcess);
-
-            filename = filenameBuffer.ToString();
-            return filename;
-        }
         /// <summary>
         ///  The Thread which created this window.
         /// </summary>
@@ -1074,18 +1045,6 @@ namespace ManagedWinapi.Windows
         }
 
         /// <summary>
-        /// The content of this window. Is only supported for some
-        /// kinds of controls (like text or list boxes).
-        /// </summary>
-        //public WindowContent Content
-        //{
-        //    get
-        //    {
-        //        return WindowContentParser.Parse(this);
-        //    }
-        //}
-
-        /// <summary>
         /// Whether this control, which is a check box or radio button, is checked.
         /// </summary>
         public CheckState CheckState
@@ -1120,12 +1079,22 @@ namespace ManagedWinapi.Windows
         }
 
         /// <summary>
+        /// Post a message to this window that it should close. This is equivalent
+        /// to clicking the "X" in the upper right corner or pressing Alt+F4.
+        /// It sometimes works in instances where the <see cref="SendClose"/> function does
+        /// not (for example, Windows Explorer windows.)
+        /// </summary>
+        public void PostClose()
+        {
+            PostMessage(HWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        /// <summary>
         /// Highlights the window with a red border.
         /// </summary>
         public void Highlight()
         {
-            RECT rect;
-            GetWindowRect(_hwnd, out rect);
+            RECT rect = Rectangle;
             using (WindowDeviceContext windowDC = GetDeviceContext(false))
             {
                 using (Graphics g = windowDC.CreateGraphics())
@@ -1169,17 +1138,21 @@ namespace ManagedWinapi.Windows
 
         private Icon GetAppIcon(IntPtr hwnd)
         {
-            IntPtr iconHandle = SendMessage(hwnd, WM_GETICON, ICON_BIG, 0);
+            IntPtr iconHandle = SendMessage(new HandleRef(this, hwnd), WM_GETICON, new IntPtr(ICON_BIG), new IntPtr(0));
             if (iconHandle == IntPtr.Zero)
-                iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL, 0);
+                iconHandle = SendMessage(new HandleRef(this, hwnd), WM_GETICON, new IntPtr(ICON_SMALL), new IntPtr(0));
             if (iconHandle == IntPtr.Zero)
-                iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL2, 0);
+                iconHandle = SendMessage(new HandleRef(this, hwnd), WM_GETICON, new IntPtr(ICON_SMALL2), new IntPtr(0));
             if (iconHandle == IntPtr.Zero)
                 iconHandle = GetClassLongPtr(hwnd, GCL_HICON);
             if (iconHandle == IntPtr.Zero)
                 iconHandle = GetClassLongPtr(hwnd, GCL_HICONSM);
             if (iconHandle == IntPtr.Zero)
-                iconHandle = Icon.ExtractAssociatedIcon(this.Process.MainModule.FileName).Handle;
+            {
+                var extractAssociatedIcon = Icon.ExtractAssociatedIcon(this.Process.MainModule.FileName);
+                if (extractAssociatedIcon != null)
+                    iconHandle = extractAssociatedIcon.Handle;
+            }
 
             if (iconHandle == IntPtr.Zero)
                 return null;
@@ -1218,31 +1191,7 @@ namespace ManagedWinapi.Windows
             // avoid exceptions
             return unchecked((int)_hwnd.ToInt64());
         }
-        private bool disposed = false;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-            {
-                return;
-            }
-            if (disposing)
-            {
-                if (_process != null)
-                    _process.Dispose();
-            }
-
-            disposed = true;
-        }
-        ~SystemWindow()
-        {
-            Dispose(false);
-        }
         /// <summary>
         /// Compare two instances of this class for equality.
         /// </summary>
@@ -1278,7 +1227,7 @@ namespace ManagedWinapi.Windows
         internal const int ICON_BIG = 1;
         internal const int ICON_SMALL2 = 2;
 
-        internal const int WM_GETICON = 0x7F;
+        internal const uint WM_GETICON = 0x7F;
 
         private static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
         {
@@ -1294,59 +1243,6 @@ namespace ManagedWinapi.Windows
                 return IntPtr.Zero;
             }
         }
-        /// <summary>
-        /// Retrieves the fully-qualified path for the file containing the specified module.
-        /// http://msdn.microsoft.com/en-us/library/ms683198(VS.85).aspx
-        /// </summary>
-        /// <param name="hProcess"></param>
-        /// <param name="hModule"></param>
-        /// <param name="lpBaseName"></param>
-        /// <param name="nSize"></param>
-        /// <returns></returns>
-        [DllImport("psapi.dll")] //Supported under Windows Vista and Windows Server 2008. 
-        private static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName,
-         [In] [MarshalAs(UnmanagedType.U4)] int nSize);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool CloseHandle(IntPtr hObject);
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr OpenProcess(
-             ProcessAccessFlags processAccess,
-             bool bInheritHandle,
-             uint processId
-        );
-        [Flags]
-        private enum ProcessAccessFlags : uint
-        {
-            All = 0x001F0FFF,
-            Terminate = 0x00000001,
-            CreateThread = 0x00000002,
-            VirtualMemoryOperation = 0x00000008,
-            VirtualMemoryRead = 0x00000010,
-            VirtualMemoryWrite = 0x00000020,
-            DuplicateHandle = 0x00000040,
-            CreateProcess = 0x000000080,
-            SetQuota = 0x00000100,
-            SetInformation = 0x00000200,
-            QueryInformation = 0x00000400,
-            QueryLimitedInformation = 0x00001000,
-            Synchronize = 0x00100000
-        }
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-        [DllImport("user32.dll")]
-        private static extern bool IsIconic(IntPtr hWnd);
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
-        //[DllImport("user32.dll", SetLastError = true)]
-        //private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
-        [DllImport("user32.dll")]
-        private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
-        [DllImport("user32.dll")]
-        static extern bool BringWindowToTop(IntPtr hWnd);
-        //[DllImport("user32.dll")]
-        //private static extern int GetWindowThreadProcessId(IntPtr hWnd, ref Int32 lpdwProcessId);
 
         [DllImport("user32.dll", EntryPoint = "GetClassLong")]
         private static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
@@ -1354,19 +1250,10 @@ namespace ManagedWinapi.Windows
         [DllImport("user32.dll", EntryPoint = "GetClassLongPtr")]
         private static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
-        /// <summary>
-        /// 切换到窗口并把窗口设入前台,类似 SetForegroundWindow方法的功能
-        /// </summary>
-        /// <param name="hWnd">窗口句柄</param>
-        /// <param name="fAltTab">True代表窗口正在通过Alt/Ctrl +Tab被切换</param>
-        [DllImport("user32.dll ", SetLastError = true)]
-        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -1405,39 +1292,6 @@ namespace ManagedWinapi.Windows
             else
                 return new IntPtr(GetWindowLong32(hWnd, nIndex));
         }
-
-        [Flags]
-        enum MessageBroadcastFlags : uint
-        {
-            BSF_QUERY = 0x00000001,
-            BSF_IGNORECURRENTTASK = 0x00000002,
-            BSF_FLUSHDISK = 0x00000004,
-            BSF_NOHANG = 0x00000008,
-            BSF_POSTMESSAGE = 0x00000010,
-            BSF_FORCEIFHUNG = 0x00000020,
-            BSF_NOTIMEOUTIFNOTHUNG = 0x00000040,
-            BSF_ALLOWSFW = 0x00000080,
-            BSF_SENDNOTIFYMESSAGE = 0x00000100,
-            BSF_RETURNHDESK = 0x00000200,
-            BSF_LUID = 0x00000400,
-        }
-
-        [Flags]
-        enum MessageBroadcastRecipients : uint
-        {
-            BSM_ALLCOMPONENTS = 0x00000000,
-            BSM_VXDS = 0x00000001,
-            BSM_NETDRIVER = 0x00000002,
-            BSM_INSTALLABLEDRIVERS = 0x00000004,
-            BSM_APPLICATIONS = 0x00000008,
-            BSM_ALLDESKTOPS = 0x00000010,
-        }
-
-        [DllImport("user32", SetLastError = true, EntryPoint = "BroadcastSystemMessage")]
-        private static extern int BroadcastSystemMessageRecipients(MessageBroadcastFlags dwFlags, ref MessageBroadcastRecipients lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32", SetLastError = true)]
-        private static extern int BroadcastSystemMessage(MessageBroadcastFlags dwFlags, IntPtr lpdwRecipients, uint uiMessage, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
         private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
@@ -1496,6 +1350,12 @@ namespace ManagedWinapi.Windows
 
         [DllImport("user32.dll")]
         static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        static extern int GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        static extern int ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -1572,8 +1432,26 @@ namespace ManagedWinapi.Windows
         internal static extern IntPtr SendMessage(HandleRef hWnd, uint Msg, IntPtr wParam, [Out] StringBuilder lParam);
 
         [DllImport("user32.dll")]
+        private static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
            int Y, int cx, int cy, uint uFlags);
+
+        // special values for hWndInsertAfter
+        static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+        static readonly IntPtr HWND_TOP = new IntPtr(0);
+        static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+
+        // window sizing and positioning flags
+        const uint SWP_NOSIZE = 0x0001;
+        const uint SWP_NOMOVE = 0x0002;
+        const uint SWP_NOACTIVATE = 0x0010;
+        const uint SWP_DRAWFRAME = 0x0020;
+        const uint SWP_SHOWWINDOW = 0x0040;
+        const uint SWP_NOOWNERZORDER = 0x0200;
+        const uint SWP_ASYNCWINDOWPOS = 0x4000;
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
@@ -1584,7 +1462,7 @@ namespace ManagedWinapi.Windows
         [DllImport("user32.dll")]
         static extern IntPtr GetDC(IntPtr hWnd);
 
-        private const int WM_CLOSE = 16;
+        private const int WM_CLOSE = 16, WM_GETTEXT = 13, WM_GETTEXTLENGTH = 14;
 
         private enum GetWindow_Cmd
         {
@@ -1613,7 +1491,7 @@ namespace ManagedWinapi.Windows
             RDW_NOCHILDREN = 0x0040,
             RDW_ALLCHILDREN = 0x0080,
 
-            RDW_UPDATENOW = 0x010,
+            RDW_UPDATENOW = 0x0100,
             RDW_ERASENOW = 0x0200,
 
             RDW_FRAME = 0x0400,
@@ -1669,34 +1547,4 @@ namespace ManagedWinapi.Windows
         private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
     }
 
-    /// <summary>
-    /// Allows querying and manipulated the DesktopWindowManager
-    /// </summary>
-    public class DesktopWindowManager
-    {
-        #region Type Methods
-
-        public static bool IsCompositionEnabled()
-        {
-            try
-            {
-                long enabled = 0;
-                DwmIsCompositionEnabled(ref enabled);
-                return enabled == 1;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
-        #region P/INVOKES
-
-        [DllImport("dwmapi.dll")]
-        private static extern long DwmIsCompositionEnabled(ref long pfEnabled);
-
-        #endregion
-    }
 }
