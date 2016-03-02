@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading;
 using System.IO;
+using GestureSign.Common.InterProcessCommunication;
 
 namespace GestureSign.Common.Configuration
 {
@@ -17,8 +18,6 @@ namespace GestureSign.Common.Configuration
         public static event EventHandler ConfigChanged;
 
         private static readonly string Path;
-
-        private static readonly FileSystemWatcher Fsw;
 
         private static readonly ExeConfigurationFileMap ExeMap;
 
@@ -161,22 +160,7 @@ namespace GestureSign.Common.Configuration
             _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
             Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
 
-            Fsw = new FileSystemWatcher(configFolder)
-            {
-                Filter = "*.config",
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime,
-                IncludeSubdirectories = false
-            };
-            Fsw.Created += fsw_Changed;
-            Fsw.Changed += fsw_Changed;
         }
-        static void fsw_Changed(object sender, FileSystemEventArgs e)
-        {
-            if (e.Name.Equals("gesturesign.config", StringComparison.CurrentCultureIgnoreCase))
-                Reload();
-        }
-        public static void ToggleWatcher()
-        { Fsw.EnableRaisingEvents = !Fsw.EnableRaisingEvents; }
 
         public static void Reload()
         {
@@ -200,8 +184,6 @@ namespace GestureSign.Common.Configuration
 
         private static void SaveFile(object state)
         {
-            bool flag = Fsw.EnableRaisingEvents;
-            if (flag) Fsw.EnableRaisingEvents = false;
             try
             {
                 FileManager.WaitFile(Path);
@@ -217,9 +199,10 @@ namespace GestureSign.Common.Configuration
             {
                 Logging.LogException(e);
             }
-            Fsw.EnableRaisingEvents = flag;
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
+
+            NamedPipe.SendMessageAsync("LoadConfiguration", "GestureSignDaemon");
         }
 
         private static object GetValue(string key, object defaultValue)

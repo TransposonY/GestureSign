@@ -51,6 +51,9 @@ namespace GestureSign.Daemon
                             case "LoadGestures":
                                 GestureManager.Instance.LoadGestures().Wait();
                                 break;
+                            case "LoadConfiguration":
+                                AppConfig.Reload();
+                                break;
                             case "ShowTrayIcon":
                                 TrayManager.Instance.TrayIconVisible = true;
                                 break;
