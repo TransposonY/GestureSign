@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Configuration;
@@ -243,9 +244,9 @@ namespace GestureSign.Common.Applications
             {
                 return new[] { GetGlobalApplication() };
             }
-            IApplication[] definedApplications = userApplicationOnly ?
-                Applications.Where(a => (a is UserApplication) && a.IsSystemWindowMatch(Window)).ToArray() :
-                Applications.Where(a => !(a is GlobalApplication) && a.IsSystemWindowMatch(Window)).ToArray();
+            IApplication[] definedApplications = userApplicationOnly
+                ? FindMatchApplications(Applications.Where(a => a is UserApplication), Window)
+                : FindMatchApplications(Applications.Where(a => !(a is GlobalApplication)), Window);
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
@@ -356,6 +357,79 @@ namespace GestureSign.Common.Applications
                 // Select applications where this action may exist and delete them
                 foreach (IApplication app in GetAvailableUserApplications().Where(a => a.Actions.Any(ac => ac.Name == ActionName)))
                     app.RemoveAllActions(a => a.Name.ToLower().Trim() == ActionName.ToLower().Trim());
+        }
+
+        private IApplication[] FindMatchApplications(IEnumerable<IApplication> applications, SystemWindow window)
+        {
+            var byFileName = new List<IApplication>();
+            var byTitle = new List<IApplication>();
+            var byClass = new List<IApplication>();
+            foreach (var app in applications)
+            {
+                switch (app.MatchUsing)
+                {
+                    case MatchUsing.WindowClass:
+                        byClass.Add(app);
+                        break;
+                    case MatchUsing.WindowTitle:
+                        byTitle.Add(app);
+                        break;
+                    case MatchUsing.ExecutableFilename:
+                        byFileName.Add(app);
+                        break;
+                    case MatchUsing.All:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            List<IApplication> result = new List<IApplication>();
+            string windowMatchString;
+            if (byClass.Count != 0)
+            {
+                try
+                {
+                    windowMatchString = window.ClassName;
+                    result.AddRange(byClass.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            if (byTitle.Count != 0)
+            {
+                try
+                {
+                    windowMatchString = window.Title;
+                    result.AddRange(byTitle.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            if (byFileName.Count != 0)
+            {
+                try
+                {
+                    windowMatchString = window.Process.MainModule.ModuleName;
+                    result.AddRange(byFileName.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            return result.ToArray();
+        }
+
+        private static bool CompareString(string compareMatchString, string windowMatchString, bool useRegEx)
+        {
+            if (string.IsNullOrEmpty(windowMatchString)) return false;
+            return useRegEx
+                ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase)
+                : string.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         #endregion

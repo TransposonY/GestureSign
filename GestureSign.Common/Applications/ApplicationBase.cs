@@ -69,7 +69,7 @@ namespace GestureSign.Common.Applications
                     case MatchUsing.All:
                         return true;
                 }
-
+                
                 return IsRegEx ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase) : String.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
             }
             catch
