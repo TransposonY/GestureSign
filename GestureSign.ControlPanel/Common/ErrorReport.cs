@@ -91,12 +91,6 @@ namespace GestureSign.ControlPanel.Common
             }
 
             result.AppendLine();
-
-            var processes = Process.GetProcesses();
-            foreach (var p in processes)
-                result.AppendLine(p.ProcessName);
-
-            result.AppendLine();
             result.AppendLine();
 
             if (File.Exists(Logging.LogFilePath))
