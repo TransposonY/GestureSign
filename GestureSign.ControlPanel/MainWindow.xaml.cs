@@ -9,6 +9,7 @@ using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 
 namespace GestureSign.ControlPanel
 {
@@ -19,7 +20,13 @@ namespace GestureSign.ControlPanel
     {
         public MainWindow()
         {
-            Loaded += (e, o) => { if (AppConfig.SendErrorReport) CheckAndSendLog(); };
+            Loaded += (e, o) =>
+            {
+                if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
+                {
+                    SendLog();
+                }
+            };
             InitializeComponent();
             SetAboutInfo();
         }
@@ -40,6 +47,28 @@ namespace GestureSign.ControlPanel
             Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
         }
 
+        private bool SetCompatibilityMode()
+        {
+            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers", true))
+            {
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                var daemonRecord = layers?.GetValue(daemonPath) as string;
+                if (daemonRecord != null)
+                {
+                    if (daemonRecord.Contains("WIN8RTM")) return false;
+                    else
+                    {
+                        daemonRecord += " WIN8RTM";
+                        layers.SetValue(daemonPath, daemonRecord);
+                    }
+                }
+                else
+                {
+                    layers?.SetValue(daemonPath, "~ WIN8RTM");
+                }
+                return true;
+            }
+        }
 
         private bool ExistsNewerErrorLog()
         {
@@ -57,23 +86,26 @@ namespace GestureSign.ControlPanel
                     DateTime lastTime = AppConfig.LastErrorTime;
                     AppConfig.LastErrorTime = entry.TimeWritten;
                     AppConfig.Save();
+
+                    if (entry.Message.Contains("80131506") && Environment.OSVersion.Version.Major == 10 &&
+                        SetCompatibilityMode()) return false;
+
                     return lastTime.CompareTo(entry.TimeWritten) < 0;
                 }
             }
             return false;
         }
 
-        private async void CheckAndSendLog()
+        private async void SendLog()
         {
-            if (!ExistsNewerErrorLog()) return;
             var dialogResult = await this.ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
-                LocalizationProvider.Instance.GetTextValue("Messages.FindNewErrorLog"),
-                MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
-                {
-                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
-                    NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
-                    FirstAuxiliaryButtonText = LocalizationProvider.Instance.GetTextValue("Messages.ShowLog"),
-                });
+            LocalizationProvider.Instance.GetTextValue("Messages.FindNewErrorLog"),
+            MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+            {
+                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
+                NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
+                FirstAuxiliaryButtonText = LocalizationProvider.Instance.GetTextValue("Messages.ShowLog"),
+            });
             if (dialogResult == MessageDialogResult.Negative) return;
 
             var controller =

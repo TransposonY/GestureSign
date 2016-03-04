@@ -67,6 +67,14 @@ namespace GestureSign.ControlPanel.Common
                            FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion +
                            (Environment.Is64BitProcess ? " X64" : " x86") +
                         (AppConfig.UiAccess ? " UIAccess" : "");
+
+            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
+            {
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                var daemonRecord = layers?.GetValue(daemonPath) as string;
+                if (daemonRecord != null && daemonRecord.Contains("WIN8RTM")) version += " CompatibilityMode";
+            }
+
             result.AppendLine(version);
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_computersystem");
