@@ -77,17 +77,16 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            IntPtr hwnd = GetDesktopWindow();
-            RECT rect;
-            GetWindowRect(hwnd, out rect);
-
-            IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
-            var window = SystemWindow.FromPointEx(rect.Right - 1, 1, true, true);
-
-            if (window != null && window.HWnd.Equals(hwndCharmBar))
+            if (Environment.OSVersion.Version.Major == 6)
             {
-                e.Cancel = e.InterceptTouchInput = false;
-                return;
+                IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
+                var window = SystemWindow.FromPointEx(SystemWindow.DesktopWindow.Rectangle.Right - 1, 1, true, true);
+
+                if (window != null && window.HWnd.Equals(hwndCharmBar))
+                {
+                    e.Cancel = e.InterceptTouchInput = false;
+                    return;
+                }
             }
 
             CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
@@ -438,12 +437,6 @@ namespace GestureSign.Common.Applications
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetDesktopWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
         #endregion
     }
 }
