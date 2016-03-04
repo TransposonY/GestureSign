@@ -114,6 +114,7 @@
     <Compile Include="HotKey\HotKeySettings.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ToggleWindowTopmost.cs" />
     <Compile Include="TouchKeyboard\TouchKeyboard.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

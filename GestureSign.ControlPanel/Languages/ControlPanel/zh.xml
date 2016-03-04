@@ -399,5 +399,9 @@ http://git.oschina.net/TransY/GestureSign
       <Tip>请选择要运行的商店应用</Tip>
       <Loading>载入应用列表中...</Loading>
     </LaunchApp>
+    <ToggleWindowTopmost>
+      <Name>切换顶置</Name>
+      <Description>切换窗口的顶置状态</Description>
+    </ToggleWindowTopmost>
   </CorePlugins>
 </Language>

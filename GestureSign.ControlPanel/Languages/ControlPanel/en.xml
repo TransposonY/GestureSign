@@ -393,5 +393,9 @@ Page:https://github.com/TransposonY
       <Tip>Please select a Store App.</Tip>
       <Loading>Loading application list...</Loading>
     </LaunchApp>
+    <ToggleWindowTopmost>
+      <Name>Toggle Topmost</Name>
+      <Description>Toggle the window topmost flag.</Description>
+    </ToggleWindowTopmost>
   </CorePlugins>
 </Language>
