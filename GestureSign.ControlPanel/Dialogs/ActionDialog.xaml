@@ -78,9 +78,9 @@
                              IsPinned="False"
                              Height="75">
                 <TextBlock x:Name="MessageFlyoutText"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           FontSize="16" />
+                           FontSize="16"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center" />
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
