@@ -343,6 +343,15 @@ namespace GestureSign.Common.Applications
             RemoveAction(ActionName, false);
         }
 
+        public IApplication[] FindMatchApplications<TApplication>(MatchUsing matchUsing, string matchString, string excludedApplication = null) where TApplication : IApplication
+        {
+            return _Applications.FindAll(
+                    a => a is TApplication &&
+                        matchString.Equals(a.MatchString, StringComparison.CurrentCultureIgnoreCase) &&
+                        matchUsing == a.MatchUsing &&
+                        excludedApplication != a.Name).ToArray();
+        }
+
         #endregion
 
         #region Private Methods

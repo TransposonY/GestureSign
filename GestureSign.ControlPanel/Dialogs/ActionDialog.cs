@@ -238,6 +238,14 @@ namespace GestureSign.ControlPanel.Dialogs
                             LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
                             LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
 
+                var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApplication>(matchUsingRadio.MatchUsing, matchString);
+                if (sameMatchApplications.Length != 0)
+                {
+                    string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
+                    return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflictTitle"),
+                            string.Format(LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflict"), matchString, sameApp));
+                }
+
                 _newApplication = new UserApplication
                 {
                     InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,

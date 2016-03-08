@@ -137,6 +137,8 @@ http://git.oschina.net/TransY/GestureSign
       <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
       <IgnoredAppExistsTitle>该忽略程序已存在</IgnoredAppExistsTitle>
       <IgnoredAppExists>该忽略程序已存在，请重新输入匹配字段</IgnoredAppExists>
+      <StringConflictTitle>匹配字段冲突</StringConflictTitle>
+      <StringConflict>匹配字段 "{0}" 已经存在于程序{1}中，请输入不同的匹配字段。</StringConflict>
     </Messages>
   </EditApplicationFlyout>
   <RuningApplicationsFlyout>

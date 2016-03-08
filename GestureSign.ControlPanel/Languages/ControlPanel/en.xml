@@ -132,6 +132,8 @@ Page:https://github.com/TransposonY
       <EmptyString>Please provide Match String for the application</EmptyString>
       <IgnoredAppExistsTitle>Ignored Application Conflict</IgnoredAppExistsTitle>
       <IgnoredAppExists>The Match String you provided already exists, please provide a different Match String</IgnoredAppExists>
+      <StringConflictTitle>Match String Conflict</StringConflictTitle>
+      <StringConflict>The Match String "{0}" already exists in {1}, please provide a different Match String.</StringConflict>
     </Messages>
   </EditApplicationFlyout>
   <RuningApplicationsFlyout>

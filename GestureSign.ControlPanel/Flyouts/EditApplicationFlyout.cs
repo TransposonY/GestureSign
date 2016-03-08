@@ -165,11 +165,27 @@ namespace GestureSign.ControlPanel.Flyouts
                             });
                 return;
             }
-
             string name;
             if (_isUserApp)
             {
                 name = ApplicationNameTextBox.Text.Trim();
+                var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApplication>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
+
+                if (sameMatchApplications.Length != 0)
+                {
+                    string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
+                    UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(
+                            LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflictTitle"),
+                            string.Format(LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflict"), matchString, sameApp),
+                            settings:
+                                new MetroDialogSettings
+                                {
+                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
+                                });
+                    return;
+                }
+
                 string groupName = GroupComboBox.Text ?? String.Empty;
                 groupName = groupName.Trim();
                 if (name.Length == 0)
