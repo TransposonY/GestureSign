@@ -6,7 +6,6 @@
     <TouchscreenNotFound>未检测到触摸屏设备，本软件或无法正常使用！</TouchscreenNotFound>
   </Messages>
   <TrayMenu>
-    <Text>GestureSign 托盘菜单</Text>
     <TrainingMode>学习模式</TrainingMode>
     <Disable>关闭手势识别</Disable>
     <ControlPanel>设置</ControlPanel>

@@ -6,7 +6,6 @@
     <TouchscreenNotFound>Can not find Touchscreen!</TouchscreenNotFound>
   </Messages>
   <TrayMenu>
-    <Text>GestureSign Tray Menu</Text>
     <TrainingMode>Training Mode</TrainingMode>
     <Disable>Disable GestureSign</Disable>
     <ControlPanel>Control Panel</ControlPanel>
