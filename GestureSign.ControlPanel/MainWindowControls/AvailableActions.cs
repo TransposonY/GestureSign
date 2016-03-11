@@ -77,7 +77,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
             GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
             EditApplicationFlyout.ApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
-            
+
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
         }
 
@@ -665,9 +665,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 return;
             }
             EnableAllButton.IsEnabled = true;
-
-            DeleteAppButton.IsEnabled = EditAppButton.IsEnabled = selectedApp is UserApplication;
             EnableAllButton.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
+
+            if (selectedApp is UserApplication)
+            {
+                var selectedListBoxItem = lstAvailableApplication.ItemContainerGenerator.ContainerFromItem(selectedApp) as ListBoxItem;
+                ModifyApplicationPopup.PlacementTarget = selectedListBoxItem;
+                ModifyApplicationPopup.SetBinding(Popup.IsOpenProperty, new Binding("IsFocused") { Source = selectedListBoxItem, Mode = BindingMode.OneWay });
+            }
         }
 
         private void EditAppButton_Click(object sender, RoutedEventArgs e)
