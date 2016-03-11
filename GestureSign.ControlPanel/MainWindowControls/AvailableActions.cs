@@ -661,11 +661,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApp == null)
             {
-                EnableAllButton.IsEnabled = false;
+                ToggleAllActionsCheckBox.IsEnabled = false;
                 return;
             }
-            EnableAllButton.IsEnabled = true;
-            EnableAllButton.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
+            ToggleAllActionsCheckBox.IsEnabled = true;
+            ToggleAllActionsCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
 
             if (selectedApp is UserApplication)
             {
@@ -760,7 +760,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private void EnableAllButton_Click(object sender, RoutedEventArgs e)
+        private void ToggleAllActionsCheckBox_Click(object sender, RoutedEventArgs e)
         {
             try
             {
