@@ -47,29 +47,6 @@ namespace GestureSign.ControlPanel
             Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
         }
 
-        private bool SetCompatibilityMode()
-        {
-            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers", true))
-            {
-                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
-                var daemonRecord = layers?.GetValue(daemonPath) as string;
-                if (daemonRecord != null)
-                {
-                    if (daemonRecord.Contains("WIN8RTM")) return false;
-                    else
-                    {
-                        daemonRecord += " WIN8RTM";
-                        layers.SetValue(daemonPath, daemonRecord);
-                    }
-                }
-                else
-                {
-                    layers?.SetValue(daemonPath, "~ WIN8RTM");
-                }
-                return true;
-            }
-        }
-
         private bool ExistsNewerErrorLog()
         {
             EventLog logs = new EventLog { Log = "Application" };
@@ -86,9 +63,6 @@ namespace GestureSign.ControlPanel
                     DateTime lastTime = AppConfig.LastErrorTime;
                     AppConfig.LastErrorTime = entry.TimeWritten;
                     AppConfig.Save();
-
-                    if (entry.Message.Contains("80131506") && Environment.OSVersion.Version.Major == 10 &&
-                        SetCompatibilityMode()) return false;
 
                     return lastTime.CompareTo(entry.TimeWritten) < 0;
                 }
