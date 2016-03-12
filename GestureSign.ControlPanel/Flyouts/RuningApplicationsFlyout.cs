@@ -24,7 +24,6 @@ namespace GestureSign.ControlPanel.Flyouts
         {
             InitializeComponent();
             this.IsOpenChanged += RuningApplicationsFlyout_IsOpenChanged;
-            EditApplicationFlyout.OpenIgnoredRuningFlyout += EditApplicationFlyout_OpenIgnoredRuningFlyout;
         }
 
         void EditApplicationFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)

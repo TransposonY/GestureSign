@@ -49,13 +49,6 @@
             </Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-
-    <controls:MetroWindow.Flyouts>
-        <controls:FlyoutsControl>
-            <flyouts:RuningApplicationsFlyout x:Name="RuningAppFlyout"></flyouts:RuningApplicationsFlyout>
-            <flyouts:EditApplicationFlyout x:Name="EditAppFlyout"></flyouts:EditApplicationFlyout>
-        </controls:FlyoutsControl>
-    </controls:MetroWindow.Flyouts>
     <Grid>
         <TabControl Margin="5,0">
             <TabItem Header="{localization:LocalisedText Action.Header}"
