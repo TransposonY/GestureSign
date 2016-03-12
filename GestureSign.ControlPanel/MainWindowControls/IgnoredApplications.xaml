@@ -128,7 +128,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{localization:LocalisedText ActionDialog.MatchString}">
+                    <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.MatchString}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=MatchString}"
@@ -136,7 +136,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{localization:LocalisedText ActionDialog.UsingRegularExpression}"
+                    <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.UsingRegularExpression}"
                                     DisplayMemberBinding="{Binding IsRegEx,Converter={StaticResource boolConverter}}"></GridViewColumn>
                 </GridView>
             </ListView.View>
