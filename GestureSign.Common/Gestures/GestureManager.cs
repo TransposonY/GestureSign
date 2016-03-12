@@ -31,7 +31,7 @@ namespace GestureSign.Common.Gestures
         #endregion
 
         #region Public Instance Properties
-        
+
         public string GestureName { get; set; }
         public IGesture[] Gestures
         {
@@ -57,6 +57,7 @@ namespace GestureSign.Common.Gestures
                            if (!LoadDefaults())
                                _Gestures = new List<IGesture>();
                        if (OnLoadGesturesCompleted != null) OnLoadGesturesCompleted(this, EventArgs.Empty);
+                       FinishedLoading = true;
                    };
             LoadGestures().ContinueWith(antecendent => loadCompleted(antecendent.Result));
             // Instantiate gesture analyzer using gestures loaded from file
@@ -71,6 +72,8 @@ namespace GestureSign.Common.Gestures
         {
             get { return _instance ?? (_instance = new GestureManager()); }
         }
+
+        public static bool FinishedLoading { get; set; }
 
         #endregion
 

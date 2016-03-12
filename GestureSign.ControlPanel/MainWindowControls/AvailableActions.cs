@@ -69,6 +69,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ApplicationDialog.UserApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
 
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
+
+            if (ApplicationManager.FinishedLoading) BindApplications();
         }
 
 

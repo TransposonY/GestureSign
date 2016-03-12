@@ -19,6 +19,8 @@ namespace GestureSign.ControlPanel.ViewModel
             GestureManager.GestureSaved += (o, e) => { Update(); };
 
             GestureManager.OnLoadGesturesCompleted += (o, e) => { Application.Current.Dispatcher.Invoke(Update); };
+            
+            if (GestureManager.FinishedLoading) Update();
         }
 
         public static ObservableCollection<GestureItem> GestureItems

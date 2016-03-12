@@ -50,6 +50,8 @@ namespace GestureSign.Common.Applications
             get { return _instance ?? (_instance = new ApplicationManager()); }
         }
 
+        public static bool FinishedLoading { get; set; }
+
         #endregion
 
         #region Constructors
@@ -63,6 +65,7 @@ namespace GestureSign.Common.Applications
                         if (!LoadDefaults())
                             _Applications = new List<IApplication>();
                     if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
+                    FinishedLoading = true;
                 };
             GestureManager.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
