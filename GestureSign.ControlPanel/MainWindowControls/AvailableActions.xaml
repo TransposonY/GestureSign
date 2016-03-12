@@ -137,9 +137,9 @@
             <Button.Style>
                 <Style  TargetType="Button">
                     <Setter Property="Foreground"
-                            Value="{StaticResource AccentColorBrush}" />
+                            Value="{StaticResource HighlightBrush}" />
                     <Setter Property="Background"
-                            Value="White" />
+                            Value="{StaticResource AccentColorBrush4}" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="Button">
@@ -154,9 +154,9 @@
                                     <Trigger Property="IsMouseOver"
                                              Value="True">
                                         <Setter Property="BorderBrush"
-                                                Value="{StaticResource AccentColorBrush4}" />
+                                                Value="{StaticResource AccentColorBrush3}" />
                                         <Setter Property="Background"
-                                                Value="{StaticResource AccentColorBrush4}" />
+                                                Value="{StaticResource AccentColorBrush3}" />
                                     </Trigger>
                                     <Trigger Property="IsPressed"
                                              Value="True">
