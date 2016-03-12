@@ -50,7 +50,7 @@
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
     <Grid>
-        <TabControl Margin="5,0">
+        <TabControl>
             <TabItem Header="{localization:LocalisedText Action.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
                 <mainWindowControl:AvailableActions x:Name="AvailableActions"></mainWindowControl:AvailableActions>

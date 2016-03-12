@@ -171,18 +171,65 @@
                 Click="NewApplicationButton_OnClick"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch">
-            <StackPanel Orientation="Horizontal">
-                <Rectangle Width="18"
-                           Height="18"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Left">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource Plus}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-                <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
-                           Margin="5,0,0,0" />
-            </StackPanel>
+            <Button.Style>
+                <Style  TargetType="Button">
+                    <Setter Property="Foreground"
+                            Value="{StaticResource AccentColorBrush}" />
+                    <Setter Property="Background"
+                            Value="White" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border SnapsToDevicePixels="True"
+                                        BorderThickness="0"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource AccentColorBrush4}" />
+                                        <Setter Property="Background"
+                                                Value="{StaticResource AccentColorBrush4}" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed"
+                                             Value="True">
+                                        <Setter Property="Background"
+                                                Value="{StaticResource AccentColorBrush}" />
+                                        <Setter Property="Foreground"
+                                                Value="{StaticResource IdealForegroundColorBrush}" />
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource AccentColorBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.Content>
+                <Grid>
+                    <Rectangle Width="18"
+                               Height="18"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               Margin="5,0,0,0"
+                               OpacityMask="{StaticResource HighlightBrush}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource Plus}"
+                                         Stretch="Uniform" />
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
+                               VerticalAlignment="Center"
+                               FontSize="14"
+                               HorizontalAlignment="Center"
+                               Margin="5,0,0,0" />
+                </Grid>
+            </Button.Content>
         </Button>
         <ListBox x:Name="lstAvailableApplication"
                  ScrollViewer.CanContentScroll="False"
@@ -190,6 +237,8 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableApplication_SelectionChanged"
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
+                 SnapsToDevicePixels="True"
+                 UseLayoutRounding="True"
                  Grid.Row="1"
                  Grid.Column="0">
             <ListBox.ContextMenu>
@@ -213,7 +262,9 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True">
+                                        <Expander IsExpanded="True"
+                                                  Padding="0"
+                                                  BorderThickness="0">
                                             <Expander.Header>
                                                 <DockPanel>
                                                     <TextBlock FontWeight="Bold"
@@ -260,8 +311,7 @@
         </ListBox>
         <Grid Grid.Row="0"
               Grid.Column="1"
-              Background="{StaticResource AccentColorBrush}"
-              Margin="5,0,0,0">
+              Background="{StaticResource AccentColorBrush}">
             <TextBlock FontWeight="Bold"
                        Margin="5,0,0,0"
                        HorizontalAlignment="Center"
@@ -283,9 +333,10 @@
         <ListBox x:Name="lstAvailableActions"
                  ContextMenuOpening="ActionContextMenu_Opening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Margin="5,0,0,0"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
+                 SnapsToDevicePixels="True"
+                 UseLayoutRounding="True"
                  Grid.Column="1"
                  Grid.Row="1"
                  BorderBrush="{StaticResource AccentColorBrush}">
@@ -484,7 +535,7 @@
                                                   IsExpanded="True"
                                                   ExpandDirection="Right"
                                                   Padding="0"
-                                                  Margin="0,5">
+                                                  Margin="0,0,0,5">
                                             <Expander.Template>
                                                 <ControlTemplate TargetType="{x:Type Expander}">
                                                     <DockPanel>
