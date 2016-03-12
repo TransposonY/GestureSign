@@ -520,7 +520,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-                End:
+            End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();
@@ -656,12 +656,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ToggleAllActionsCheckBox.IsEnabled = true;
             ToggleAllActionsCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
 
-            if (selectedApp is UserApplication)
-            {
-                var selectedListBoxItem = lstAvailableApplication.ItemContainerGenerator.ContainerFromItem(selectedApp) as ListBoxItem;
-                ModifyApplicationPopup.PlacementTarget = selectedListBoxItem;
-                ModifyApplicationPopup.SetBinding(Popup.IsOpenProperty, new Binding("IsFocused") { Source = selectedListBoxItem, Mode = BindingMode.OneWay });
-            }
+            EditAppButton.Visibility = DeleteAppButton.Visibility =
+                selectedApp is UserApplication ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)

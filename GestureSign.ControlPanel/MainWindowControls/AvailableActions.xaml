@@ -128,43 +128,6 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
-        <Popup x:Name="ModifyApplicationPopup"
-               Placement="Right"
-               AllowsTransparency="True"
-               PopupAnimation="Slide"
-               StaysOpen="False"
-               FocusManager.IsFocusScope="True">
-            <StackPanel Orientation="Horizontal"
-                        Background="{StaticResource IdealForegroundColorBrush}">
-                <Button x:Name="EditAppButton"
-                        Style="{DynamicResource MetroCircleButtonStyle}"
-                        Height="50"
-                        Width="50"
-                        Click="EditAppButton_Click">
-                    <Rectangle Width="20"
-                               Height="20"
-                               Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill"
-                                         Visual="{DynamicResource appbar_page_edit}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </Button>
-                <Button x:Name="DeleteAppButton"
-                        Style="{DynamicResource MetroCircleButtonStyle}"
-                        Height="50"
-                        Width="50"
-                        Click="DeleteAppButton_Click">
-                    <Rectangle Width="18"
-                               Height="20"
-                               Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{StaticResource appbar_delete}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </Button>
-            </StackPanel>
-        </Popup>
         <Button x:Name="NewApplicationButton"
                 Grid.Row="0"
                 Grid.Column="0"
@@ -775,6 +738,45 @@
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                 <Rectangle.OpacityMask>
                     <VisualBrush Visual="{StaticResource arrow-down-bold}" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
+        <Button Grid.Row="2"
+                Grid.Column="0"
+                x:Name="EditAppButton"
+                Style="{DynamicResource MetroCircleButtonStyle}"
+                Visibility="Hidden"
+                Height="50"
+                Width="50"
+                Click="EditAppButton_Click"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="10,0,0,0">
+            <Rectangle Width="20"
+                       Height="20"
+                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Fill"
+                                 Visual="{DynamicResource appbar_page_edit}" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
+        <Button x:Name="DeleteAppButton"
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{DynamicResource MetroCircleButtonStyle}"
+                Visibility="Hidden"
+                Height="50"
+                Width="50"
+                Click="DeleteAppButton_Click"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="65,0,0,0">
+            <Rectangle Width="18"
+                       Height="20"
+                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Visual="{StaticResource appbar_delete}" />
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
