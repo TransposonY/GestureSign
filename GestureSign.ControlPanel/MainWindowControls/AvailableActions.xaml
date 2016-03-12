@@ -626,16 +626,23 @@
                 <DataTemplate>
                     <Grid Height="85"
                           Margin="0">
-                        <CheckBox IsChecked="{Binding Path=IsEnabled}"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="30" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Column="1"
+                                  IsChecked="{Binding Path=IsEnabled}"
                                   Click="ActionCheckBox_Click"
                                   HorizontalAlignment="Right" />
-                        <TextBlock TextWrapping="NoWrap"
+                        <TextBlock Grid.Column="0"
+                                   TextWrapping="NoWrap"
                                    Text="{Binding ActionName}"
                                    Margin="5,25,0,0"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
                                    Width="Auto" />
-                        <TextBlock TextWrapping="Wrap"
+                        <TextBlock Grid.Column="0"
+                                   TextWrapping="Wrap"
                                    Text="{Binding Description}"
                                    DockPanel.Dock="Top"
                                    HorizontalAlignment="Left"
