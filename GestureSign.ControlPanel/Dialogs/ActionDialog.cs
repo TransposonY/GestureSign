@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using GestureSign.Common.Applications;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
-using ManagedWinapi.Windows;
-using Microsoft.Win32;
-using Point = System.Drawing.Point;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -55,23 +45,18 @@ namespace GestureSign.ControlPanel.Dialogs
 
         #region Private Instance Fields
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out Point lpPoint);
-
         private readonly IApplication _selectedApplication;
-        IApplication _newApplication;
         // Create variable to hold current selected plugin
         IPluginInfo _pluginInfo;
         IAction _currentAction;
         string _gestureName;
+
         #endregion
 
-        #region Public Instance Properties
-
-        public bool IsUsingExistingApplication { get { return cmbExistingApplication.SelectedIndex != 0; } }
+        #region Public Instance Fields
 
         public static event EventHandler<ActionChangedEventArgs> ActionsChanged;
+
         #endregion
 
 
@@ -79,11 +64,9 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            BindGroupComboBox();
             BindExistingApplications();
-
-            chCrosshair.CrosshairDragging += chCrosshair_CrosshairDragging;
             BindPlugins();
+
             if (_currentAction != null)
             {
                 //cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
@@ -107,67 +90,11 @@ namespace GestureSign.ControlPanel.Dialogs
             SelectCurrentGesture(_gestureName);
         }
 
-        protected void chCrosshair_CrosshairDragging(object sender, MouseEventArgs e)
-        {
-            Point cursorPosition;
-            GetCursorPos(out cursorPosition);
-            SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
-
-            // Set MatchUsings
-            MatchUsing muCustom = matchUsingRadio.MatchUsing;
-            // Which screen are we changing
-            try
-            {
-                switch (muCustom)
-                {
-                    case MatchUsing.WindowClass:
-                        txtMatchString.Text = window.ClassName;
-
-                        break;
-                    case MatchUsing.WindowTitle:
-                        txtMatchString.Text = window.Title;
-
-                        break;
-                    case MatchUsing.ExecutableFilename:
-                        txtMatchString.Text = window.Process.MainModule.ModuleName;//.FileName;
-                        txtMatchString.SelectionStart = txtMatchString.Text.Length;
-                        break;
-                }
-
-                // Set application name from filename
-                txtApplicationName.Text = window.Process.MainModule.FileVersionInfo.FileDescription;
-            }
-            catch (Exception ex) { txtApplicationName.Text = ex.Message; }
-
-        }
-
-
         private void cmdDone_Click(object sender, RoutedEventArgs e)
         {
-            if (SaveApplication())
+            if (SaveAction())
             {
-                if (SaveAction())
-                {
-                    Close();
-                }
-            }
-        }
-
-        private void cmdBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog ofdExecutable = new OpenFileDialog
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("ActionDialog.ExecutableFile") + "|*.exe"
-            };
-            if (ValidateFilepath(txtMatchString.Text.Trim()))
-            {
-                ofdExecutable.InitialDirectory = Path.GetDirectoryName(txtMatchString.Text);
-                ofdExecutable.FileName = Path.GetFileName(txtMatchString.Text);
-            }
-            if (ofdExecutable.ShowDialog().Value)
-            {
-                txtApplicationName.Text = txtMatchString.Text = Path.GetFileName(ofdExecutable.FileName);
-
+                Close();
             }
         }
 
@@ -195,75 +122,6 @@ namespace GestureSign.ControlPanel.Dialogs
 
         #region Private Instance Methods
 
-        private bool SaveApplication()
-        {
-
-            if (IsUsingExistingApplication)
-            {
-                if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
-                {
-                    if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
-                    {
-                        return
-                            ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                                    TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
-                    }
-                }
-                ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
-                return true;
-            }
-            else
-            {
-                string appName = txtApplicationName.Text.Trim();
-
-                // Make sure we have a valid application name
-                if (String.IsNullOrWhiteSpace(appName))
-                    return
-                        ShowErrorMessage(
-                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationNameTitle"),
-                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoApplicationName"));
-
-                if (_currentAction == null && ApplicationManager.Instance.ApplicationExists(appName))
-                    return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExistsTitle"),
-                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.AppExists"));
-
-
-                string matchString = txtMatchString.Text.Trim();
-                // Make sure the user entered a match string
-                if (String.IsNullOrEmpty(matchString))
-                    return
-                        ShowErrorMessage(
-                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchStringTitle"),
-                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoMatchString"));
-
-                var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApplication>(matchUsingRadio.MatchUsing, matchString);
-                if (sameMatchApplications.Length != 0)
-                {
-                    string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
-                    return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflictTitle"),
-                            string.Format(LocalizationProvider.Instance.GetTextValue("EditApplicationFlyout.Messages.StringConflict"), matchString, sameApp));
-                }
-
-                _newApplication = new UserApplication
-                {
-                    InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,
-                    AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value,
-                    Name = appName,
-                    Group = GroupComboBox.Text.Trim(),
-                    MatchString = matchString,
-                    MatchUsing = matchUsingRadio.MatchUsing,
-                    IsRegEx = chkRegex.IsChecked.Value
-                };
-
-
-                ApplicationManager.Instance.CurrentApplication = _newApplication;
-                return true;
-            }
-        }
-
-
         private bool ShowErrorMessage(string title, string message)
         {
             MessageFlyoutText.Text = message;
@@ -271,7 +129,6 @@ namespace GestureSign.ControlPanel.Dialogs
             MessageFlyout.IsOpen = true;
             return false;
         }
-
 
         private void BindExistingApplications()
         {
@@ -283,13 +140,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
             IApplication[] existingApplications = ApplicationManager.Instance.GetAvailableUserApplications();
 
-            var addNewApplicationItem = new UserApplication()
-            {
-                Name = LocalizationProvider.Instance.GetTextValue("ActionDialog.NewApplication")
-            };
-
             // Add application items to the combobox
-            cmbExistingApplication.Items.Add(addNewApplicationItem);
             cmbExistingApplication.Items.Add(allApplicationsItem);
             foreach (IApplication app in existingApplications)
                 cmbExistingApplication.Items.Add(app);
@@ -309,113 +160,23 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private void BindGroupComboBox()
-        {
-            GroupComboBox.ItemsSource = ApplicationManager.Instance.Applications.Select(app => app.Group).Distinct();
-        }
         #endregion
-
-        #region Type Methods
-
-        public static bool ValidateFilepath(string path)
-        {
-            if (path.Trim() == String.Empty)
-                return false;
-
-            string pathname;
-            string filename;
-
-            try
-            {
-                pathname = Path.GetPathRoot(path);
-                filename = Path.GetFileName(path);
-            }
-            catch (ArgumentException)
-            {
-                // GetPathRoot() and GetFileName() above will throw exceptions
-                // if pathname/filename could not be parsed.
-
-                return false;
-            }
-
-            // Make sure the filename part was actually specified
-            if (filename.Trim() == String.Empty)
-                return false;
-
-            // Not sure if additional checking below is needed, but no harm done
-            if (pathname.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
-                return false;
-
-            if (filename.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-                return false;
-
-            return true;
-        }
-
-        #endregion
-
-
-
-
-
-
-        public void RefreshApplications()
-        {
-            alvRunningApplications.Items.Clear();
-            ThreadPool.QueueUserWorkItem(GetValidWindows);
-            //  this.lstRunningApplications.Items.Clear();
-        }
-        private void GetValidWindows(object s)
-        {
-            // Get valid running windows
-            var windows = SystemWindow.AllToplevelWindows.Where
-                     (
-                         w => w.Visible &&	// Must be a visible windows
-                         w.Title != "" &&	// Must have a window title
-                         IsProcessAccessible(w.Process) &&
-                        Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
-                         (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
-                     );
-            //System.Threading.Thread.Sleep(500);
-            foreach (SystemWindow sWind in windows)
-            {
-                alvRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
-               {
-                   ApplicationListViewItem lItem = new ApplicationListViewItem();
-
-                   try
-                   {
-                       // Store identifying information
-                       lItem.WindowClass = sWind.ClassName;
-                       lItem.WindowTitle = sWind.Title;
-                       lItem.WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName);
-                       lItem.ApplicationIcon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                       alvRunningApplications.Items.Add(lItem);
-                   }
-                   catch
-                   {
-                   }
-               }));
-            }
-        }
-
-
-        private bool IsProcessAccessible(Process Process)
-        {
-            try
-            {
-                ProcessModule module = Process.MainModule;
-                return true;
-            }
-            catch { return false; }
-        }
-
-
-
 
         private bool SaveAction()
         {
+            if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
+            {
+                if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
+                {
+                    return
+                        ShowErrorMessage(
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                            String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
+                }
+            }
+            ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
+
             if (availableGesturesComboBox.SelectedItem == null)
                 return
                     ShowErrorMessage(
@@ -499,31 +260,16 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (isNew)
             {
-                if (_newApplication is UserApplication)
-                {
-                    ApplicationManager.Instance.AddApplication(_newApplication);
-                }
                 // Save new action to specific application
                 ApplicationManager.Instance.CurrentApplication.AddAction(_currentAction);
-
             }
             else
             {
-                if (IsUsingExistingApplication)
-                {
-                    if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
-                    {
-                        _selectedApplication.RemoveAction(_currentAction);
-                        ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
-                    }
-                }
-                else
+                if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
                 {
                     _selectedApplication.RemoveAction(_currentAction);
-                    _newApplication.AddAction(_currentAction);
-                    ApplicationManager.Instance.AddApplication(_newApplication);
+                    ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
                 }
-
             }
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
@@ -575,7 +321,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
             var selectedItem = cmbExistingApplication.SelectedItem;
-            if (selectedItem != null && (IsUsingExistingApplication && ((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
+            if (selectedItem != null && (((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
                 return GetNextActionName(name, ++i);
             return actionName;
         }
@@ -602,18 +348,6 @@ namespace GestureSign.ControlPanel.Dialogs
         private bool IsPluginMatch(IAction action, string PluginClass, string PluginFilename)
         {
             return (action != null && action.PluginClass == PluginClass && action.PluginFilename == PluginFilename);
-        }
-
-        private void RunningApplicationsPopup_Opened(object sender, EventArgs e)
-        {
-            RunningApplicationsPopup.PlacementRectangle = SystemParameters.MenuDropAlignment ? new Rect(Width, 0, 0, 0) : new Rect(Width / 2, 0, 0, 0);
-            RefreshApplications();
-        }
-
-        private void txtMatchString_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            MatchStringPopup.IsOpen = true;
-            MatchStringPopupTextBox.Focus();
         }
     }
 }

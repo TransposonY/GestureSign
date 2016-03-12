@@ -85,7 +85,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Icon>Icon</Icon>
     <MatchUsing>Match Using</MatchUsing>
     <MatchString>Match String</MatchString>
-    <NewApplication>(Add New Application)</NewApplication>
     <SelectApp>Select Application</SelectApp>
     <SelectCommand>Select Command</SelectCommand>
     <SelectGesture>Select Gesture</SelectGesture>

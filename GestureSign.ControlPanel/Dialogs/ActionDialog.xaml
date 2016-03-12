@@ -4,7 +4,6 @@
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
                       xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
                       xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
                       mc:Ignorable="d"
@@ -24,46 +23,7 @@
                       ResizeMode="CanMinimize">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="ShowPanelStyle"
-                   TargetType="{x:Type Panel}">
-                <Style.Triggers>
-                    <Trigger Property="Visibility"
-                             Value="Visible">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard Storyboard.TargetProperty="Opacity">
-                                    <DoubleAnimation From="0"
-                                                     To="1"
-                                                     Duration="00:00:00.2"
-                                                     BeginTime="00:00:00" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Canvas x:Key="appbar_chevron_right"
-                    Width="76"
-                    Height="76"
-                    Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
-                <Path Width="25.3333"
-                      Height="28.5"
-                      Canvas.Left="25.1849"
-                      Canvas.Top="23.3542"
-                      Stretch="Fill"
-                      Fill="#FF000000"
-                      Data="F1 M 39.8307,37.6042L 36.6641,34.4375L 25.1849,23.3542L 35.4766,23.3542L 50.5182,37.6042L 35.4766,51.8542L 25.1849,51.8542L 36.6641,40.7708L 39.8307,37.6042 Z " />
-            </Canvas>
-            <converters:SelectedItemConverter x:Key="SelectedItemConverter" />
             <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
-            <converters:ListviewItem2TextBoxConverter x:Key="ListviewItem2TextBoxConverter" />
-            <converters:SelectedIndex2VisibilityConverter x:Key="SelectedIndex2VisibilityConverter" />
-            <converters:MatchUsing2VisibilityConverter x:Key="MatchUsing2VisibilityConverter" />
-            <converters:InterceptTouchInputCheckBoxConverter x:Key="InterceptTouchInputCheckBoxConverter" />
-            <converters:SelectedIndex2BoolConverter x:Key="SelectedIndex2BoolConverter" />
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
@@ -91,250 +51,45 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="70" />
             <RowDefinition Height="35" />
         </Grid.RowDefinitions>
-        <Popup x:Name="RunningApplicationsPopup"
-               Width="349"
-               Height="492"
-               Opened="RunningApplicationsPopup_Opened"
-               StaysOpen="False"
-               IsOpen="{Binding IsChecked, ElementName=btnExistingApplication, Mode=TwoWay}"
-               AllowsTransparency="True"
-               PopupAnimation="Fade"
-               Placement="RelativePoint"
-               HorizontalAlignment="Left"
-               VerticalAlignment="Top"
-               Grid.RowSpan="3"
-               Grid.ColumnSpan="2">
-            <ListView x:Name="alvRunningApplications"
-                      BorderBrush="{StaticResource AccentColorBrush}"
-                      BorderThickness="3">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.Icon}"
-                                        Width="55">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Image Source="{Binding ApplicationIcon}"
-                                           Height="35" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="{localization:LocalisedText ActionDialog.ApplicationFileNameAndTitle}"
-                                        Width="300">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock  Text="{Binding WindowFilename}"
-                                                    Margin="0,5,0,2" />
-                                        <TextBlock  Text="{Binding WindowTitle}"
-                                                    Foreground="{StaticResource AccentColorBrush}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Popup>
-        <StackPanel Width="330"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="10,0,0,0">
-
+        <StackPanel Margin="10,0,0,0">
             <TextBlock TextWrapping="Wrap"
                        Text="{localization:LocalisedText ActionDialog.SelectApp}"
                        FontSize="24" />
             <ComboBox x:Name="cmbExistingApplication"
                       DisplayMemberPath="Name"
-                      Width="310"
                       FontSize="14"
-                      Margin="0,10,0,0" />
-            <StackPanel x:Name="ExistingApplicationStackPanel"
-                        Style="{StaticResource ShowPanelStyle}"
-                        Visibility="{Binding SelectedIndex, Converter={StaticResource SelectedIndex2VisibilityConverter}, ElementName=cmbExistingApplication, Mode=OneWay,ConverterParameter=ExistingApplicationCanvas}">
-                <TextBlock Canvas.Left="10"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.Group}"
-                           Canvas.Top="10"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Margin="10,5,0,0" />
-                <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}"
-                           Canvas.Left="10"
-                           TextWrapping="Wrap"
-                           Canvas.Top="33"
-                           FontSize="14"
-                           Margin="10,5,0,0" />
-                <TextBlock Canvas.Left="10"
-                           Text="{localization:LocalisedText ActionDialog.MatchUsing}"
-                           Canvas.Top="56"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Margin="10,5,0,0" />
-                <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource MatchUsingToStringConverter}, ElementName=cmbExistingApplication}"
-                           Canvas.Left="10"
-                           Canvas.Top="79"
-                           FontSize="14"
-                           Margin="10,5,0,0" />
-                <TextBlock Canvas.Left="10"
-                           Text="{localization:LocalisedText ActionDialog.MatchString}"
-                           Canvas.Top="102"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Margin="10,5,0,0" />
-                <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}"
-                           Canvas.Left="10"
-                           TextWrapping="Wrap"
-                           Canvas.Top="125"
-                           FontSize="14"
-                           Width="310"
-                           Margin="10,5,0,0" />
-            </StackPanel>
-            <Canvas x:Name="NewApplicationCanvas"
-                    Style="{StaticResource ShowPanelStyle}"
-                    Visibility="{Binding SelectedIndex, Converter={StaticResource SelectedIndex2VisibilityConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
-                    Height="320">
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.Group}"
-                           VerticalAlignment="Top"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Height="18"
-                           Canvas.Left="10"
-                           Canvas.Top="10"
-                           Width="310" />
-                <ComboBox x:Name="GroupComboBox"
-                          Canvas.Left="10"
-                          Canvas.Top="33"
-                          Width="310"
-                          IsEditable="True"
-                          FontSize="14" />
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchUsing}"
-                           VerticalAlignment="Top"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Height="18"
-                           Canvas.Left="10"
-                           Canvas.Top="65"
-                           Width="312" />
-                <common:MatchUsingRadio x:Name="matchUsingRadio"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
-                                        Width="310"
-                                        Height="26"
-                                        Canvas.Left="10"
-                                        Canvas.Top="88" />
-                <TextBlock HorizontalAlignment="Left"
-                           TextWrapping="Wrap"
-                           Text="{localization:LocalisedText ActionDialog.MatchString}"
-                           VerticalAlignment="Top"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Height="18"
-                           Canvas.Left="10"
-                           Canvas.Top="119"
-                           Width="310" />
-                <TextBox x:Name="txtMatchString"
-                         Width="310"
-                         FontSize="14"
-                         Canvas.Left="10"
-                         Canvas.Top="147"
-                         GotKeyboardFocus="txtMatchString_GotKeyboardFocus">
-                    <MultiBinding Converter="{StaticResource ListviewItem2TextBoxConverter}"
-                                  Mode="TwoWay">
-                        <Binding ElementName="matchUsingRadio"
-                                 Path="MatchUsing"
-                                 Mode="TwoWay" />
-                        <Binding ElementName="alvRunningApplications"
-                                 Path="SelectedItem"
-                                 Mode="TwoWay" />
-                    </MultiBinding>
-                </TextBox>
-                <Popup x:Name="MatchStringPopup"
-                       PlacementTarget="{Binding ElementName=txtMatchString}"
-                       Placement="Center"
-                       StaysOpen="{Binding ElementName=txtMatchString,Path=IsKeyboardFocused}">
-                    <TextBox x:Name="MatchStringPopupTextBox"
-                             Text="{Binding ElementName=txtMatchString,Path=Text,Mode=TwoWay}"
-                             MaxWidth="400"
-                             MinWidth="310"
-                             TextWrapping="Wrap"
-                             FontSize="14" />
-                </Popup>
-                <Button x:Name="cmdBrowse"
-                        Visibility="{Binding MatchUsing, Converter={StaticResource MatchUsing2VisibilityConverter}, ElementName=matchUsingRadio, Mode=OneWay}"
-                        Content="{localization:LocalisedText ActionDialog.Browse}"
-                        FontWeight="Bold"
-                        Click="cmdBrowse_Click"
-                        FontSize="14"
-                        Canvas.Left="235"
-                        Canvas.Top="184" />
-                <CheckBox x:Name="chkRegex"
-                          Content="{localization:LocalisedText ActionDialog.UsingRegularExpression}"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
-                          Grid.Row="1"
-                          Canvas.Left="10"
-                          Canvas.Top="184"
-                          FontSize="14" />
-                <CheckBox x:Name="InterceptTouchInputCheckBox"
-                          IsEnabled="{Binding SelectedIndex, Converter={StaticResource InterceptTouchInputCheckBoxConverter}, ElementName=cmbExistingApplication, Mode=OneWay}"
-                          Content="{localization:LocalisedText ActionDialog.InterceptTouchInput}"
-                          Canvas.Left="10"
-                          Canvas.Top="208"
-                          FontSize="14" />
-                <TextBlock TextWrapping="Wrap"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Bottom"
-                           FontSize="14"
-                           Width="216"
-                           Canvas.Left="51"
-                           Canvas.Top="255"
-                           Text="{localization:LocalisedText ActionDialog.ApplicationTools}" />
+                      Margin="10,10,10,0" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.Group}"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="10,10,0,0" />
+            <TextBlock Text="{Binding SelectedItem.Group, ElementName=cmbExistingApplication}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Margin="10,5,0,0" />
+            <TextBlock Text="{localization:LocalisedText ActionDialog.MatchUsing}"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="10,5,0,0" />
+            <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource MatchUsingToStringConverter}, ElementName=cmbExistingApplication}"
+                       FontSize="14"
+                       Margin="10,5,0,0" />
+            <TextBlock Text="{localization:LocalisedText ActionDialog.MatchString}"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="10,5,0,0" />
+            <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Margin="10,5,0,0" />
 
-                <common:Crosshair x:Name="chCrosshair"
-                                  HorizontalAlignment="Left"
-                                  VerticalAlignment="Bottom"
-                                  Height="36"
-                                  Width="36"
-                                  Canvas.Left="10"
-                                  Canvas.Top="265" />
-                <ToggleButton x:Name="btnExistingApplication"
-                              Style="{DynamicResource MetroCircleToggleButtonStyle}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom"
-                              Height="50"
-                              Width="50"
-                              Canvas.Left="272"
-                              Canvas.Top="252"
-                              IsTabStop="False">
-                    <Rectangle Width="20"
-                               Height="20">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_chevron_right}" />
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </ToggleButton>
-                <CheckBox x:Name="AllowSingleCheckBox"
-                          Content="{localization:LocalisedText ActionDialog.AllowSingleFinger}"
-                          Canvas.Left="10"
-                          Canvas.Top="232"
-                          FontSize="14" />
-            </Canvas>
-        </StackPanel>
-        <StackPanel Grid.Row="0"
-                    Width="328"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Margin="0,0,10,0"
-                    Grid.Column="1">
             <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
-                       FontSize="24" />
+                       FontSize="24"
+                       Margin="0,10,0,0"
+                       HorizontalAlignment="Left" />
             <ComboBox x:Name="availableGesturesComboBox"
                       ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
                       Loaded="availableGesturesComboBox_Loaded"
@@ -539,19 +294,32 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,0,10,0">
             <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}"
                        FontSize="24" />
-            <StackPanel Margin="0,5"
-                        Orientation="Vertical">
-                <ComboBox x:Name="cmbPlugins"
-                          Margin="10"
-                          DisplayMemberPath="DisplayText"
-                          SelectionChanged="cmbPlugins_SelectionChanged"
-                          FontSize="14"
-                          MaxDropDownHeight="300" />
-                <ContentControl x:Name="SettingsContent"
-                                Margin="5,10,5,5" />
-            </StackPanel>
+            <ComboBox x:Name="cmbPlugins"
+                      Margin="10"
+                      DisplayMemberPath="DisplayText"
+                      SelectionChanged="cmbPlugins_SelectionChanged"
+                      FontSize="14"
+                      MaxDropDownHeight="300" />
+            <ContentControl x:Name="SettingsContent"
+                            Margin="5,10,5,5" />
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText ActionDialog.ActionName}"
+                       FontWeight="Bold"
+                       FontSize="14"
+                       HorizontalAlignment="Left"
+                       Margin="10,20,0,0" />
+            <TextBox x:Name="TxtActionName"
+                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
+                     FontSize="14"
+                     MaxLines="3"
+                     MaxLength="80"
+                     Margin="10,5,10,10" />
         </StackPanel>
         <Button x:Name="cmdCancel"
                 Content="{localization:LocalisedText Common.Cancel}"
@@ -566,57 +334,6 @@
                 FontSize="14"
                 Grid.Row="2"
                 Grid.Column="1" />
-        <Canvas Height="58"
-                VerticalAlignment="Top"
-                Margin="10,0"
-                Grid.Row="1"
-                Grid.ColumnSpan="2">
-            <TextBlock HorizontalAlignment="Left"
-                       TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.AppName}"
-                       VerticalAlignment="Top"
-                       Canvas.Left="10"
-                       Canvas.Top="10"
-                       FontSize="14"
-                       FontWeight="Bold" />
-            <TextBox x:Name="txtApplicationName"
-                     TextWrapping="Wrap"
-                     IsEnabled="{Binding ElementName=cmbExistingApplication,Path=SelectedIndex,Converter={StaticResource SelectedIndex2BoolConverter}}"
-                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.AppNameWatermark}"
-                     Canvas.Left="10"
-                     Canvas.Top="33"
-                     Width="310"
-                     FontSize="14"
-                     MaxLines="3"
-                     MaxLength="80">
-                <MultiBinding Converter="{StaticResource SelectedItemConverter}"
-                              Mode="TwoWay">
-                    <Binding ElementName="cmbExistingApplication"
-                             Path="SelectedIndex"
-                             Mode="TwoWay" />
-                    <Binding ElementName="cmbExistingApplication"
-                             Path="SelectedItem"
-                             Mode="TwoWay" />
-                    <Binding ElementName="alvRunningApplications"
-                             Path="SelectedItem"
-                             Mode="TwoWay" />
-                </MultiBinding>
-            </TextBox>
-            <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.ActionName}"
-                       FontWeight="Bold"
-                       FontSize="14"
-                       Canvas.Left="355"
-                       Canvas.Top="10" />
-            <TextBox x:Name="TxtActionName"
-                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
-                     Canvas.Left="355"
-                     Canvas.Top="33"
-                     Width="309"
-                     FontSize="14"
-                     MaxLines="3"
-                     MaxLength="80" />
-        </Canvas>
         <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
     </Grid>
 </controls:MetroWindow>

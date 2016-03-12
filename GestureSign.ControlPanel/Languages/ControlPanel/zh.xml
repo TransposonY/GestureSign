@@ -91,7 +91,6 @@ http://git.oschina.net/TransY/GestureSign
     <Icon>图标</Icon>
     <MatchUsing>匹配类型</MatchUsing>
     <MatchString>匹配文本</MatchString>
-    <NewApplication>(添加新程序)</NewApplication>
     <SelectApp>选择要控制的程序</SelectApp>
     <SelectCommand>选择想执行的命令</SelectCommand>
     <SelectGesture>选择手势</SelectGesture>
