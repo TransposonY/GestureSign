@@ -45,8 +45,6 @@ namespace GestureSign.ControlPanel.Flyouts
         {
             InitializeComponent();
             crosshairMain.CrosshairDragging += crosshairMain_CrosshairDragging;
-            IgnoredApplications.ShowIgnoredCustomFlyout += ShowEditApplicationFlyout;
-            AvailableActions.ShowEditApplicationFlyout += ShowEditApplicationFlyout;
             RuningApplicationsFlyout.RuningAppSelectionChanged += RuningApplicationsFlyout_RuningAppSelectionChanged;
 
         }

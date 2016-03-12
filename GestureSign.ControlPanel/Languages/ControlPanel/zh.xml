@@ -44,38 +44,61 @@ OSC:
 http://git.oschina.net/TransY/GestureSign
     </Information>
   </About>
-  <ActionDialog>
-    <AddActionTitle>添加动作</AddActionTitle>
-    <ActionName>动作名称</ActionName>
-    <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
-    <AllowSingleFinger>允许单指手势</AllowSingleFinger>
-    <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
-    <ApplicationTools>将左侧图标拖至想控制的程序窗口或点击右侧按钮选择运行中的程序</ApplicationTools>
+  <ApplicationDialog>
+    <AddApplication>添加新程序</AddApplication>
+    <AddIgnoredAppTitle>添加忽略的程序</AddIgnoredAppTitle>
     <AppName>程序名称</AppName>
     <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
-    <Browse>浏览..</Browse>
-    <EditActionTitle>编辑动作</EditActionTitle>
-    <ExecutableFile>可执行文件</ExecutableFile>
+    <MatchStringWatermark>请输入匹配文本</MatchStringWatermark>
     <Group>分组</Group>
-    <Icon>图标</Icon>
-    <InterceptTouchInput>屏蔽此程序触摸输入</InterceptTouchInput>
-    <MatchUsing>匹配类型</MatchUsing>
     <MatchString>匹配文本</MatchString>
-    <NewApplication>(添加新程序)</NewApplication>
-    <SelectApp>选择要控制的程序</SelectApp>
-    <SelectCommand>选择想执行的命令</SelectCommand>
-    <SelectGesture>选择手势</SelectGesture>
+    <MatchUsing>匹配类型</MatchUsing>
+    <GetMatchString>获取匹配文本</GetMatchString>
+    <Browse>浏览..</Browse>
     <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
+    <GetMatchStringTip>将右侧图标拖至目标程序窗口上
+或点击下方按钮选择运行中的程序获取匹配文本</GetMatchStringTip>
+    <ShowRunningApplications>选择运行中的窗口..</ShowRunningApplications>
+    <AllowSingleFinger>允许单指手势</AllowSingleFinger>
+    <InterceptTouchInput>此程序上屏蔽触摸输入</InterceptTouchInput>
+    <EditApplication>修改程序</EditApplication>
+    <ExecutableFile>可执行文件</ExecutableFile>
     <Messages>
-      <ActionExistsTitle>此动作已存在</ActionExistsTitle>
-      <ActionExists>动作 “{0}”已经定义给 {1}</ActionExists>
-      <ActionExistsInGlobal>在全局动作中已存在 “{0}” </ActionExistsInGlobal>
+      <EmptyStringTitle>字段为空</EmptyStringTitle>
+      <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
+      <IgnoredAppExistsTitle>该忽略程序已存在</IgnoredAppExistsTitle>
+      <IgnoredAppExists>该忽略程序已存在，请重新输入匹配字段</IgnoredAppExists>
+      <StringConflictTitle>匹配字段冲突</StringConflictTitle>
+      <StringConflict>匹配字段 "{0}" 已经存在于程序{1}中，请输入不同的匹配字段。</StringConflict>
       <NoApplicationNameTitle>无程序名</NoApplicationNameTitle>
       <NoApplicationName>请定义程序名</NoApplicationName>
       <AppExistsTitle>该程序名已经存在</AppExistsTitle>
       <AppExists>程序名称已经存在，请输入其他名字</AppExists>
       <NoMatchStringTitle>无匹配字段</NoMatchStringTitle>
       <NoMatchString>请先定义一个匹配字段</NoMatchString>
+    </Messages>
+  </ApplicationDialog>
+  <ActionDialog>
+    <AddActionTitle>添加动作</AddActionTitle>
+    <ActionName>动作名称</ActionName>
+    <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
+    <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
+    <ApplicationTools>将左侧图标拖至想控制的程序窗口或点击右侧按钮选择运行中的程序</ApplicationTools>
+    <AppName>程序名称</AppName>
+    <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
+    <EditActionTitle>编辑动作</EditActionTitle>
+    <Group>分组</Group>
+    <Icon>图标</Icon>
+    <MatchUsing>匹配类型</MatchUsing>
+    <MatchString>匹配文本</MatchString>
+    <NewApplication>(添加新程序)</NewApplication>
+    <SelectApp>选择要控制的程序</SelectApp>
+    <SelectCommand>选择想执行的命令</SelectCommand>
+    <SelectGesture>选择手势</SelectGesture>
+    <Messages>
+      <ActionExistsTitle>此动作已存在</ActionExistsTitle>
+      <ActionExists>动作 “{0}”已经定义给 {1}</ActionExists>
+      <ActionExistsInGlobal>在全局动作中已存在 “{0}” </ActionExistsInGlobal>
       <NoSelectedGestureTitle>手势未定义</NoSelectedGestureTitle>
       <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
       <NoActionNameTitle>无动作名</NoActionNameTitle>
@@ -125,21 +148,12 @@ http://git.oschina.net/TransY/GestureSign
   <EditApplicationFlyout>
     <EditApplicationTitle>修改程序</EditApplicationTitle>
     <AddIgnoredAppTitle>添加忽略的程序</AddIgnoredAppTitle>
-    <ShowRunningApplications>选择运行中的窗口..</ShowRunningApplications>
-    <AppName>程序名称</AppName>
+   <AppName>程序名称</AppName>
     <LocateWindow>定位窗口</LocateWindow>
     <LocateWindowTip>将右侧图标拖至目标程序窗口上，然后释放鼠标按键</LocateWindowTip>
     <UsingRegularExpression>正则表达式</UsingRegularExpression>
     <InterceptTouchInput>屏蔽触摸输入</InterceptTouchInput>
     <AllowSingleFinger>允许单指</AllowSingleFinger>
-    <Messages>
-      <EmptyStringTitle>字段为空</EmptyStringTitle>
-      <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
-      <IgnoredAppExistsTitle>该忽略程序已存在</IgnoredAppExistsTitle>
-      <IgnoredAppExists>该忽略程序已存在，请重新输入匹配字段</IgnoredAppExists>
-      <StringConflictTitle>匹配字段冲突</StringConflictTitle>
-      <StringConflict>匹配字段 "{0}" 已经存在于程序{1}中，请输入不同的匹配字段。</StringConflict>
-    </Messages>
   </EditApplicationFlyout>
   <RuningApplicationsFlyout>
     <Title>选择运行中的窗口</Title>

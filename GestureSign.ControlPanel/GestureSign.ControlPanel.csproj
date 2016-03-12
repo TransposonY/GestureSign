@@ -134,6 +134,9 @@
     <Compile Include="Converters\HeaderConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Common\ActionInfo.cs" />
+    <Compile Include="Dialogs\ApplicationDialog.xaml.cs">
+      <DependentUpon>ApplicationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Localization\LocalizationProviderEx.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -177,6 +180,10 @@
     </Compile>
     <Compile Include="Common\SliderTools.cs" />
     <Compile Include="ViewModel\GestureItemProvider.cs" />
+    <Page Include="Dialogs\ApplicationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

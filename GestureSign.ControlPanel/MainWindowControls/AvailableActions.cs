@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Controls.Primitives;
-using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Plugins;
@@ -25,7 +16,6 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
-using GestureSign.ControlPanel.Flyouts;
 using MahApps.Metro.Controls.Dialogs;
 
 
@@ -76,7 +66,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
             AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
             GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
-            EditApplicationFlyout.ApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
+            ApplicationDialog.UserApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
 
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
         }
@@ -84,7 +74,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
         private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
-        public static event ApplicationChangedEventHandler ShowEditApplicationFlyout;
         private Task<ActionInfo> _task;
         CancellationTokenSource _cancelTokenSource;
         private bool _selecteNewestItem;
@@ -675,11 +664,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
+        private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationDialog applicationDialog = new ApplicationDialog(true);
+            applicationDialog.Show();
+        }
+
         private void EditAppButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ShowEditApplicationFlyout != null && lstAvailableApplication.SelectedItem != null)
-                ShowEditApplicationFlyout(this,
-                    new ApplicationChangedEventArgs(lstAvailableApplication.SelectedItem as IApplication));
+            if (lstAvailableApplication.SelectedItem != null)
+            {
+                ApplicationDialog applicationDialog = new ApplicationDialog(lstAvailableApplication.SelectedItem as IApplication);
+                applicationDialog.ShowDialog();
+            }
         }
 
         private async void DeleteAppButton_Click(object sender, RoutedEventArgs e)
@@ -779,7 +776,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
             catch { }
         }
-
 
     }
 }

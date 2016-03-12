@@ -39,38 +39,60 @@ Email:ccfyzh@gmail.com
 Page:https://github.com/TransposonY
     </Information>
   </About>
-  <ActionDialog>
-    <AddActionTitle>New Action</AddActionTitle>
-    <EditActionTitle>Edit Action</EditActionTitle>
-    <ActionName>Action Name</ActionName>
-    <ActionNameWatermark>Please enter action name</ActionNameWatermark>
-    <AllowSingleFinger>Allow Single Stroke</AllowSingleFinger>
-    <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
-    <ApplicationTools>Drag and drop the crosshair on the window.Or click the right button to select the running applications.</ApplicationTools>
+  <ApplicationDialog>
+    <AddApplication>New Application</AddApplication>
+    <AddIgnoredAppTitle>New Ignored Application</AddIgnoredAppTitle>
     <AppName>Application Name</AppName>
-    <AppNameWatermark>Please enter application name</AppNameWatermark>
-    <Browse>Browse...</Browse>
-    <ExecutableFile>Executable File</ExecutableFile>
+    <AppNameWatermark>Please Enter Application Name</AppNameWatermark>
+    <MatchStringWatermark>Please Enter Match String</MatchStringWatermark>
     <Group>Group</Group>
-    <Icon>Icon</Icon>
-    <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
-    <MatchUsing>Match Using</MatchUsing>
     <MatchString>Match String</MatchString>
-    <NewApplication>(Add New Application)</NewApplication>
-    <SelectApp>Select Application</SelectApp>
-    <SelectCommand>Select Command</SelectCommand>
-    <SelectGesture>Select Gesture</SelectGesture>
+    <MatchUsing>Match Using</MatchUsing>
+    <GetMatchString>Get Match String</GetMatchString>
+    <Browse>Browse..</Browse>
     <UsingRegularExpression>Match as pattern</UsingRegularExpression>
+    <GetMatchStringTip>Drag and drop the crosshair on the target window you would like to control.
+Or click the button below to select the running applications.</GetMatchStringTip>
+    <ShowRunningApplications>Select Running..</ShowRunningApplications>
+    <AllowSingleFinger>Allow Single Stroke</AllowSingleFinger>
+    <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
+    <EditApplication>Edit Application</EditApplication>
+    <ExecutableFile>Executable File</ExecutableFile>
     <Messages>
-      <ActionExistsTitle>Action Conflict</ActionExistsTitle>
-      <ActionExists>Action "{0}" is already defined for {1}</ActionExists>
-      <ActionExistsInGlobal>Action "{0}" is already defined as a global action</ActionExistsInGlobal>
+      <EmptyStringTitle>No Match String</EmptyStringTitle>
+      <EmptyString>Please provide Match String for the application</EmptyString>
+      <IgnoredAppExistsTitle>Ignored Application Conflict</IgnoredAppExistsTitle>
+      <IgnoredAppExists>The Match String you provided already exists, please provide a different Match String</IgnoredAppExists>
+      <StringConflictTitle>Match String Conflict</StringConflictTitle>
+      <StringConflict>The Match String "{0}" already exists in {1}, please provide a different Match String.</StringConflict>
       <NoApplicationNameTitle>No Application Name Specified</NoApplicationNameTitle>
       <NoApplicationName>Please provide a name for the application</NoApplicationName>
       <AppExistsTitle>Name Already Exists</AppExistsTitle>
       <AppExists>The application name you provided already exists, please provide a different name</AppExists>
       <NoMatchStringTitle>No Match String</NoMatchStringTitle>
       <NoMatchString>Please provide Match String for the application</NoMatchString>
+    </Messages>
+  </ApplicationDialog>
+  <ActionDialog>
+    <AddActionTitle>New Action</AddActionTitle>
+    <EditActionTitle>Edit Action</EditActionTitle>
+    <ActionName>Action Name</ActionName>
+    <ActionNameWatermark>Please enter action name</ActionNameWatermark>
+    <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
+    <ApplicationTools>Drag and drop the crosshair on the window.Or click the right button to select the running applications.</ApplicationTools>
+    <AppName>Application Name</AppName>
+    <Group>Group</Group>
+    <Icon>Icon</Icon>
+    <MatchUsing>Match Using</MatchUsing>
+    <MatchString>Match String</MatchString>
+    <NewApplication>(Add New Application)</NewApplication>
+    <SelectApp>Select Application</SelectApp>
+    <SelectCommand>Select Command</SelectCommand>
+    <SelectGesture>Select Gesture</SelectGesture>
+    <Messages>
+      <ActionExistsTitle>Action Conflict</ActionExistsTitle>
+      <ActionExists>Action "{0}" is already defined for {1}</ActionExists>
+      <ActionExistsInGlobal>Action "{0}" is already defined as a global action</ActionExistsInGlobal>
       <NoSelectedGestureTitle>No Gesture Specified</NoSelectedGestureTitle>
       <NoSelectedGesture>Please select a gesture</NoSelectedGesture>
       <NoActionNameTitle>No Action Name</NoActionNameTitle>
@@ -127,14 +149,6 @@ Page:https://github.com/TransposonY
     <UsingRegularExpression>Match as pattern</UsingRegularExpression>
     <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
     <AllowSingleFinger>Allow Single</AllowSingleFinger>
-    <Messages>
-      <EmptyStringTitle>No Match String</EmptyStringTitle>
-      <EmptyString>Please provide Match String for the application</EmptyString>
-      <IgnoredAppExistsTitle>Ignored Application Conflict</IgnoredAppExistsTitle>
-      <IgnoredAppExists>The Match String you provided already exists, please provide a different Match String</IgnoredAppExists>
-      <StringConflictTitle>Match String Conflict</StringConflictTitle>
-      <StringConflict>The Match String "{0}" already exists in {1}, please provide a different Match String.</StringConflict>
-    </Messages>
   </EditApplicationFlyout>
   <RuningApplicationsFlyout>
     <Title>Runing Applications</Title>

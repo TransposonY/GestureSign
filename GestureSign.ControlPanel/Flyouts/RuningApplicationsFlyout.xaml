@@ -8,10 +8,10 @@
                  mc:Ignorable="d"
                  d:DesignHeight="400"
                  d:DesignWidth="280"
-                 Width="280"
+                 Width="300"
                  Theme="Adapt"
                  Header="{localization:LocalisedText RuningApplicationsFlyout.Title}"
-                 Position="Left"
+                 Position="Right"
                  IsPinned="False">
     <ListView x:Name="lstRunningApplications"
               Margin="5,0,5,10"

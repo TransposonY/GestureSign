@@ -14,17 +14,11 @@
             <converters:HeaderConverter x:Key="headerConverter"></converters:HeaderConverter>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
             <converters:VisibilityConverter x:Key="VisibilityConverter"></converters:VisibilityConverter>
-            <Canvas x:Key="appbar_add"
-                    Width="76"
-                    Height="76"
-                    Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
-                <Path Width="38"
-                      Height="38"
-                      Canvas.Left="19"
-                      Canvas.Top="19"
-                      Stretch="Fill"
-                      Fill="#FF000000"
-                      Data="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z " />
+            <Canvas x:Key="Plus"
+                    Width="24"
+                    Height="24">
+                <Path Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+                      Fill="Black" />
             </Canvas>
             <Canvas x:Key="appbar_page_edit"
                     Width="76"
@@ -171,22 +165,42 @@
                 </Button>
             </StackPanel>
         </Popup>
+        <Button x:Name="NewApplicationButton"
+                Grid.Row="0"
+                Grid.Column="0"
+                Click="NewApplicationButton_OnClick"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch">
+            <StackPanel Orientation="Horizontal">
+                <Rectangle Width="18"
+                           Height="18"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Plus}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
+                           Margin="5,0,0,0" />
+            </StackPanel>
+        </Button>
         <ListBox x:Name="lstAvailableApplication"
                  ScrollViewer.CanContentScroll="False"
                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableApplication_SelectionChanged"
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
-                 Grid.RowSpan="2">
+                 Grid.Row="1"
+                 Grid.Column="0">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="InterceptTouchInputMenuItem"
-                              Header="{localization:LocalisedText ActionDialog.InterceptTouchInput}"
+                              Header="{localization:LocalisedText ApplicationDialog.InterceptTouchInput}"
                               IsCheckable="True"
                               FontSize="16"
                               Click="InterceptTouchInputMenuItem_Click" />
                     <MenuItem x:Name="AllowSingleMenuItem"
-                              Header="{localization:LocalisedText ActionDialog.AllowSingleFinger}"
+                              Header="{localization:LocalisedText ApplicationDialog.AllowSingleFinger}"
                               IsCheckable="True"
                               FontSize="16"
                               Click="AllowSingleMenuItem_Click" />
@@ -632,7 +646,7 @@
             <Rectangle Width="20"
                        Height="20">
                 <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_add}" />
+                    <VisualBrush Visual="{StaticResource Plus}" />
                 </Rectangle.Fill>
             </Rectangle>
         </Button>
@@ -715,4 +729,3 @@
         </Button>
     </Grid>
 </UserControl>
-

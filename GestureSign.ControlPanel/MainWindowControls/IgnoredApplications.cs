@@ -8,7 +8,7 @@ using System.Windows.Data;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
-using GestureSign.ControlPanel.Flyouts;
+using GestureSign.ControlPanel.Dialogs;
 
 namespace GestureSign.ControlPanel.MainWindowControls
 {
@@ -17,12 +17,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
     /// </summary>
     public partial class IgnoredApplications : UserControl
     {
-        public static event ApplicationChangedEventHandler ShowIgnoredCustomFlyout;
         public IgnoredApplications()
         {
             InitializeComponent();
-            EditApplicationFlyout.RefreshIgnoredApplications += ApplicationsFlyout_BindIgnoredApplications;
-            
+            ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
+
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindIgnoredApplications); };
         }
 
@@ -57,15 +56,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             IgnoredApplication ia = this.lstIgnoredApplications.SelectedItem as IgnoredApplication;
             if (ia == null) return;
-            if (ShowIgnoredCustomFlyout != null)
-                ShowIgnoredCustomFlyout(this, new ApplicationChangedEventArgs(ia));
+
+            ApplicationDialog applicationDialog = new ApplicationDialog(ia);
+            applicationDialog.ShowDialog();
         }
 
         private void btnAddIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             this.lstIgnoredApplications.SelectedIndex = -1;
-            if (ShowIgnoredCustomFlyout != null)
-                ShowIgnoredCustomFlyout(this, new ApplicationChangedEventArgs());
+
+            ApplicationDialog applicationDialog = new ApplicationDialog(false);
+            applicationDialog.ShowDialog();
         }
 
 
