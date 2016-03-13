@@ -61,10 +61,18 @@ namespace GestureSign.Daemon.Surface
 
         protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (AppConfig.VisualFeedbackWidth > 0 && e.State == CaptureState.Capturing &&
-                e.Mode != CaptureMode.UserDisabled &&
+            if (e.Mode != CaptureMode.UserDisabled &&
+                e.State == CaptureState.Capturing &&
+                AppConfig.VisualFeedbackWidth > 0 &&
                 !(e.Points.Count == 1 && e.Points.First().Count == 1))
+            {
+                if (_bitmap == null || _lastStroke == null)
+                {
+                    ClearSurfaces();
+                    _bitmap = new DiBitmap(Screen.PrimaryScreen.Bounds.Size);
+                }
                 DrawSegments(e.Points);
+            }
         }
 
         protected void MouseCapture_CaptureEnded(object sender, EventArgs e)
@@ -88,8 +96,8 @@ namespace GestureSign.Daemon.Surface
                 _settingsChanged = false;
                 InitializeForm();
             }
+
             ClearSurfaces();
-            _bitmap = new DiBitmap(Screen.PrimaryScreen.Bounds.Size);
         }
 
         #endregion
