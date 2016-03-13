@@ -124,7 +124,6 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="29" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
@@ -133,7 +132,10 @@
                 Grid.Column="0"
                 Click="NewApplicationButton_OnClick"
                 HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch">
+                VerticalContentAlignment="Stretch"
+                VerticalAlignment="Top"
+                Height="50"
+                Panel.ZIndex="1">
             <Button.Style>
                 <Style  TargetType="Button">
                     <Setter Property="Foreground"
@@ -174,13 +176,11 @@
                 </Style>
             </Button.Style>
             <Button.Content>
-                <Grid>
-                    <Rectangle Width="18"
-                               Height="18"
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20"
+                               Height="20"
                                VerticalAlignment="Center"
-                               HorizontalAlignment="Left"
-                               Margin="5,0,0,0"
-                               OpacityMask="{StaticResource HighlightBrush}">
+                               Margin="5,0,0,0">
                         <Rectangle.Fill>
                             <VisualBrush Visual="{StaticResource Plus}"
                                          Stretch="Uniform" />
@@ -188,10 +188,9 @@
                     </Rectangle>
                     <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
                                VerticalAlignment="Center"
-                               FontSize="14"
-                               HorizontalAlignment="Center"
+                               FontSize="15"
                                Margin="5,0,0,0" />
-                </Grid>
+                </StackPanel>
             </Button.Content>
         </Button>
         <ListBox x:Name="lstAvailableApplication"
@@ -202,8 +201,10 @@
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
                  SnapsToDevicePixels="True"
                  UseLayoutRounding="True"
-                 Grid.Row="1"
-                 Grid.Column="0">
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Margin="0,50,0,0"
+                 VerticalAlignment="Top">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="PasteActionMenuItem2"
@@ -288,7 +289,9 @@
         </ListBox>
         <Grid Grid.Row="0"
               Grid.Column="1"
-              Background="{StaticResource AccentColorBrush}">
+              Background="{StaticResource AccentColorBrush}"
+              Height="29"
+              VerticalAlignment="Top">
             <TextBlock FontWeight="Bold"
                        Margin="5,0,0,0"
                        HorizontalAlignment="Center"
@@ -314,9 +317,11 @@
                  ScrollViewer.CanContentScroll="False"
                  SnapsToDevicePixels="True"
                  UseLayoutRounding="True"
+                 Grid.Row="0"
                  Grid.Column="1"
-                 Grid.Row="1"
-                 BorderBrush="{StaticResource AccentColorBrush}">
+                 BorderBrush="{StaticResource AccentColorBrush}"
+                 Margin="0,29,0,0"
+                 VerticalAlignment="Top">
             <ListBox.Resources>
                 <ControlTemplate x:Key="ExpanderButton"
                                  TargetType="{x:Type ToggleButton}">
