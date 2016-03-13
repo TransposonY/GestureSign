@@ -206,6 +206,11 @@
                  Grid.Column="0">
             <ListBox.ContextMenu>
                 <ContextMenu>
+                    <MenuItem  x:Name="PasteActionMenuItem2"
+                               Header="{localization:LocalisedText Action.PasteAction}"
+                               FontSize="16"
+                               Click="PasteActionMenuItem_Click" />
+                    <Separator />
                     <MenuItem x:Name="InterceptTouchInputMenuItem"
                               Header="{localization:LocalisedText ApplicationDialog.InterceptTouchInput}"
                               IsCheckable="True"
@@ -294,7 +299,7 @@
                       Margin="0,0,1,0" />
         </Grid>
         <ListBox x:Name="lstAvailableActions"
-                 ContextMenuOpening="ActionContextMenu_Opening"
+                 ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
@@ -596,9 +601,18 @@
             </ListBox.GroupStyle>
             <ListBox.ContextMenu>
                 <ContextMenu>
+                    <MenuItem  x:Name="CutActionMenuItem"
+                               Header="{localization:LocalisedText Action.CutAction}"
+                               FontSize="16"
+                               Click="CutActionMenuItem_Click" />
                     <MenuItem  x:Name="CopyActionMenuItem"
                                Header="{localization:LocalisedText Action.CopyAction}"
-                               FontSize="16" />
+                               FontSize="16"
+                               Click="CopyActionMenuItem_Click" />
+                    <MenuItem  x:Name="PasteActionMenuItem"
+                               Header="{localization:LocalisedText Action.PasteAction}"
+                               FontSize="16"
+                               Click="PasteActionMenuItem_Click" />
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem"
                               Header="{localization:LocalisedText Action.ImportActions}"

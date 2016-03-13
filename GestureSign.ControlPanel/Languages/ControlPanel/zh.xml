@@ -113,7 +113,9 @@ http://git.oschina.net/TransY/GestureSign
     <ImportActions>导入动作文件</ImportActions>
     <ExportActions>导出动作文件</ExportActions>
     <ExportSpecificActions>导出当前程序中已启用的动作</ExportSpecificActions>
-    <CopyAction>复制动作到..</CopyAction>
+    <CutAction>剪切</CutAction>
+    <CopyAction>复制</CopyAction>
+    <PasteAction>粘贴</PasteAction>
     <ExportAllActions>导出所有动作</ExportAllActions>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>

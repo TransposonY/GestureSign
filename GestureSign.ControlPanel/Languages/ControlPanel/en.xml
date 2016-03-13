@@ -107,7 +107,9 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ImportActions>Import Actions...</ImportActions>
     <ExportActions>Export Actions</ExportActions>
     <ExportSpecificActions>Export Enabled Actions in Current Application...</ExportSpecificActions>
-    <CopyAction>Copy This Action to...</CopyAction>
+    <CutAction>Cut</CutAction>
+    <CopyAction>Copy</CopyAction>
+    <PasteAction>Paste</PasteAction>
     <ExportAllActions>Export All Actions...</ExportAllActions>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>

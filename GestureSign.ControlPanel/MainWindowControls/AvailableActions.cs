@@ -79,6 +79,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private Task<ActionInfo> _task;
         CancellationTokenSource _cancelTokenSource;
         private bool _selecteNewestItem;
+        private IApplication _cutActionSource;
+        private IAction _actionClipboard;
 
         private void cmdEditAction_Click(object sender, RoutedEventArgs e)
         {
@@ -193,7 +195,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void BindApplications()
         {
-            CopyActionMenuItem.Items.Clear();
             _applications.Clear();
 
             // Add global actions to global applications group
@@ -204,10 +205,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             foreach (var app in globalApplication.Union(userApplications))
             {
                 _applications.Add(app);
-
-                MenuItem menuItem = new MenuItem() { Header = app.Name };
-                menuItem.Click += CopyActionMenuItem_Click;
-                CopyActionMenuItem.Items.Add(menuItem);
             }
         }
 
@@ -365,6 +362,23 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
+        private bool SetClipboardAction()
+        {
+            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
+            if (selectedItem == null) return false;
+
+            IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
+
+            IAction selectedAction = currentApp?.Actions.Find(a => a.Name.Equals(selectedItem.ActionName, StringComparison.Ordinal));
+
+            if (selectedAction != null)
+            {
+                _actionClipboard = selectedAction;
+                return true;
+            }
+            return false;
+        }
+
         private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
         {
             ComboBox comboBox = sender as ComboBox;
@@ -414,50 +428,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
                 else return;
             }
-        }
-
-        private void CopyActionMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
-            if (selectedItem == null) return;
-            var menuItem = (MenuItem)sender;
-            var targetApplication = ApplicationManager.Instance.Applications.Find(
-                   a => !(a is IgnoredApplication) && a.Name == menuItem.Header.ToString().Trim());
-
-            if (targetApplication.Actions.Exists(a => a.Name == selectedItem.ActionName))
-            {
-                UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                        String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                            selectedItem.ActionName, menuItem.Header),
-                        MessageDialogStyle.Affirmative, new MetroDialogSettings()
-                        {
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            ColorScheme = MetroDialogColorScheme.Accented
-                        });
-                return;
-            }
-            IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
-            if (currentApp == null) return;
-            IAction selectedAction = ApplicationManager.Instance.GetAnyDefinedAction(selectedItem.ActionName, currentApp.Name);
-            if (selectedAction == null) return;
-            Applications.Action newAction = new Applications.Action()
-            {
-                ActionSettings = selectedAction.ActionSettings,
-                GestureName = selectedAction.GestureName,
-                IsEnabled = selectedAction.IsEnabled,
-                Name = selectedAction.Name,
-                PluginClass = selectedAction.PluginClass,
-                PluginFilename = selectedAction.PluginFilename
-            };
-            targetApplication.AddAction(newAction);
-
-            if (targetApplication != currentApp)
-            {
-                _selecteNewestItem = true;
-                lstAvailableApplication.SelectedItem = targetApplication;
-            }
-            ApplicationManager.Instance.SaveApplications();
         }
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -600,11 +570,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-
-        private void ActionContextMenu_Opening(object sender, RoutedEventArgs e)
-        {
-            CopyActionMenuItem.IsEnabled = lstAvailableActions.SelectedIndex != -1;
-        }
         private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             UserApplication userApplication = lstAvailableApplication.SelectedItem as UserApplication;
@@ -622,6 +587,72 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 InterceptTouchInputMenuItem.IsChecked = userApplication.InterceptTouchInput;
                 AllowSingleMenuItem.IsChecked = userApplication.AllowSingleStroke;
             }
+
+            PasteActionMenuItem2.IsEnabled = _actionClipboard != null;
+        }
+
+        private void LstAvailableActions_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            PasteActionMenuItem.IsEnabled = _actionClipboard != null;
+            CopyActionMenuItem.IsEnabled = CutActionMenuItem.IsEnabled = lstAvailableActions.SelectedIndex != -1;
+        }
+
+        private void CutActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (SetClipboardAction())
+                _cutActionSource = (IApplication)lstAvailableApplication.SelectedItem;
+        }
+
+        private void CopyActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SetClipboardAction();
+            _cutActionSource = null;
+        }
+
+        private void PasteActionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_actionClipboard == null) return;
+
+            var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (targetApplication == null) return;
+
+            if (targetApplication.Actions.Exists(a => a.Name.Equals(_actionClipboard.Name, StringComparison.Ordinal)))
+            {
+                UIHelper.GetParentWindow(this)
+                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                        string.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                            _actionClipboard.Name, targetApplication.Name),
+                        MessageDialogStyle.Affirmative, new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                            ColorScheme = MetroDialogColorScheme.Accented,
+                            AnimateShow = false,
+                            AnimateHide = false
+                        });
+                return;
+            }
+
+            Applications.Action newAction = new Applications.Action()
+            {
+                ActionSettings = _actionClipboard.ActionSettings,
+                GestureName = _actionClipboard.GestureName,
+                IsEnabled = _actionClipboard.IsEnabled,
+                Name = _actionClipboard.Name,
+                PluginClass = _actionClipboard.PluginClass,
+                PluginFilename = _actionClipboard.PluginFilename
+            };
+            targetApplication.AddAction(newAction);
+
+            if (_cutActionSource != null)
+            {
+                _cutActionSource.RemoveAction(_actionClipboard);
+                _cutActionSource = null;
+                _actionClipboard = null;
+            }
+
+            RefreshActions(false);
+
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void InterceptTouchInputMenuItem_Click(object sender, RoutedEventArgs e)
@@ -774,6 +805,5 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
             catch { }
         }
-
     }
 }
