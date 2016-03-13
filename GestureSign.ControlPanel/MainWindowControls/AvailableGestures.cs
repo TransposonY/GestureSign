@@ -51,7 +51,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
-                            AnimateHide = false
+                            AnimateHide = false,
+                            AnimateShow = false,
                         }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
@@ -81,6 +82,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 MessageDialogStyle.AffirmativeAndNegative,
                 new MetroDialogSettings()
                 {
+                    AnimateHide = false,
+                    AnimateShow = false,
                     AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                     NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel")
                 }) == MessageDialogResult.Affirmative)

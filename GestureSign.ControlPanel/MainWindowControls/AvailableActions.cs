@@ -127,7 +127,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
-                            ColorScheme = MetroDialogColorScheme.Accented
+                            ColorScheme = MetroDialogColorScheme.Accented,
+                            AnimateHide=false,
+                            AnimateShow=false
                         }) != MessageDialogResult.Affirmative)
                 return;
 
@@ -180,7 +182,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            ColorScheme = MetroDialogColorScheme.Accented
+                            ColorScheme = MetroDialogColorScheme.Accented,
+                            AnimateHide=false,
+                            AnimateShow=false
                         });
                 return;
             }
@@ -718,7 +722,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
-                            ColorScheme = MetroDialogColorScheme.Accented
+                            ColorScheme = MetroDialogColorScheme.Accented,
+                            AnimateHide=false,
+                            AnimateShow=false
                         }) == MessageDialogResult.Affirmative)
             {
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);

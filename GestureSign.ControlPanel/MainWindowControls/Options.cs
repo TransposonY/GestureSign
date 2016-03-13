@@ -368,6 +368,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
                             MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                             {
+                                AnimateHide = false,
+                                AnimateShow = false,
                                 AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
                                 NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton")
                             });
@@ -387,7 +389,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     await UIHelper.GetParentWindow(this)
                         .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
+                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"), settings: new MetroDialogSettings()
+                            {
+                                AnimateHide = false,
+                                AnimateShow = false,
+                            });
                     break;
                 }
                 else
@@ -400,6 +406,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 ":\r\n" + LocalizationProvider.Instance.GetTextValue("Options.Mail"),
                                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                                 {
+                                    AnimateHide = false,
+                                    AnimateShow = false,
                                     AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
                                 });
                 }

@@ -139,6 +139,8 @@ namespace GestureSign.ControlPanel.Dialogs
                         MessageDialogStyle.Affirmative,
                         new MetroDialogSettings()
                         {
+                            AnimateHide = false,
+                            AnimateShow = false,
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
                         });
                     return false;
@@ -157,6 +159,8 @@ namespace GestureSign.ControlPanel.Dialogs
                             MessageDialogStyle.Affirmative,
                             new MetroDialogSettings()
                             {
+                                AnimateHide = false,
+                                AnimateShow = false,
                                 AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             });
                         return false;

@@ -76,6 +76,8 @@ namespace GestureSign.ControlPanel
             LocalizationProvider.Instance.GetTextValue("Messages.FindNewErrorLog"),
             MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
             {
+                AnimateHide = false,
+                AnimateShow = false,
                 AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
                 NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
                 FirstAuxiliaryButtonText = LocalizationProvider.Instance.GetTextValue("Messages.ShowLog"),
@@ -105,6 +107,8 @@ namespace GestureSign.ControlPanel
                     LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
                     MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                     {
+                        AnimateHide = false,
+                        AnimateShow = false,
                         AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
                         NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
                     });
@@ -124,7 +128,11 @@ namespace GestureSign.ControlPanel
                 {
                     await (this)
                         .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
+                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"), settings: new MetroDialogSettings()
+                            {
+                                AnimateHide = false,
+                                AnimateShow = false,
+                            });
                     break;
                 }
                 else
@@ -133,6 +141,8 @@ namespace GestureSign.ControlPanel
                         LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" + exceptionMessage,
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
+                            AnimateHide = false,
+                            AnimateShow = false,
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
                         });
                 }
