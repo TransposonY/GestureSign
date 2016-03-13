@@ -700,7 +700,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
         {
             ApplicationDialog applicationDialog = new ApplicationDialog(true);
-            applicationDialog.Show();
+            applicationDialog.ShowDialog();
         }
 
         private void EditAppButton_Click(object sender, RoutedEventArgs e)
