@@ -80,6 +80,8 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
+            if (e.Mode == CaptureMode.Training) return;
+
             if (Environment.OSVersion.Version.Major == 6)
             {
                 IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");

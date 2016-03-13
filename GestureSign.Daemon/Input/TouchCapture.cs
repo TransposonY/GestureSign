@@ -238,7 +238,7 @@ namespace GestureSign.Daemon.Input
 
             messageWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
 
-            if (captureStartedArgs.Cancel && Mode != CaptureMode.Training)
+            if (captureStartedArgs.Cancel)
                 return false;
 
             State = CaptureState.Capturing;
