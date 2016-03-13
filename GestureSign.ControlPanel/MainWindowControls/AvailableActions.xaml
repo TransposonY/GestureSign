@@ -118,7 +118,8 @@
             </ObjectDataProvider>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid SnapsToDevicePixels="True"
+          UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
@@ -199,8 +200,6 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableApplication_SelectionChanged"
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
-                 SnapsToDevicePixels="True"
-                 UseLayoutRounding="True"
                  Grid.Row="0"
                  Grid.Column="0"
                  Margin="0,50,0,0"
@@ -315,8 +314,6 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
-                 SnapsToDevicePixels="True"
-                 UseLayoutRounding="True"
                  Grid.Row="0"
                  Grid.Column="1"
                  BorderBrush="{StaticResource AccentColorBrush}"
