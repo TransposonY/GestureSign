@@ -306,6 +306,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <SplashScreen Include="Resources\splash.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Languages\ControlPanel\en.xml">
