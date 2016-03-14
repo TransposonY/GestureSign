@@ -202,8 +202,7 @@
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
                  Grid.Row="0"
                  Grid.Column="0"
-                 Margin="0,50,0,0"
-                 VerticalAlignment="Top">
+                 Margin="0,50,0,0">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="PasteActionMenuItem2"
@@ -317,8 +316,7 @@
                  Grid.Row="0"
                  Grid.Column="1"
                  BorderBrush="{StaticResource AccentColorBrush}"
-                 Margin="0,29,0,0"
-                 VerticalAlignment="Top">
+                 Margin="0,29,0,0">
             <ListBox.Resources>
                 <ControlTemplate x:Key="ExpanderButton"
                                  TargetType="{x:Type ToggleButton}">

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Plugins;
@@ -62,11 +63,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     BindApplications();
                     _selecteNewestItem = true;
                     lstAvailableApplication.SelectedItem = e.Application;
+                    lstAvailableApplication.ScrollIntoView(e.Application);
                 }
             };
             AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
             GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
-            ApplicationDialog.UserApplicationChanged += (o, e) => { BindApplications(); lstAvailableApplication.SelectedItem = e.Application; };
+            ApplicationDialog.UserApplicationChanged += (o, e) =>
+            {
+                BindApplications();
+                lstAvailableApplication.SelectedItem = e.Application;
+                lstAvailableApplication.ScrollIntoView(e.Application);
+            };
 
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
 
@@ -128,8 +135,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide=false,
-                            AnimateShow=false
+                            AnimateHide = false,
+                            AnimateShow = false
                         }) != MessageDialogResult.Affirmative)
                 return;
 
@@ -183,8 +190,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide=false,
-                            AnimateShow=false
+                            AnimateHide = false,
+                            AnimateShow = false
                         });
                 return;
             }
@@ -260,7 +267,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             _task = new Task<ActionInfo>(() =>
             {
-                Thread.Sleep(20);
                 ActionInfo actionInfo = null;
                 foreach (Applications.Action currentAction in actions)
                 {
@@ -389,12 +395,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             if (comboBox != null)
             {
-                dynamic dataContext = comboBox.DataContext;
+                var stackPanel = VisualTreeHelper.GetParent(comboBox);
+                string groupName = (VisualTreeHelper.GetChild(stackPanel, 1) as TextBlock)?.Text;
+                if (groupName == null) return;
 
                 foreach (GestureItem item in comboBox.Items)
                 {
-                    if (item.Name == dataContext.Name)
+                    if (item.Name == groupName)
+                    {
                         comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
+                        return;
+                    }
                 }
             }
         }
@@ -496,7 +507,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-            End:
+                End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();
@@ -723,8 +734,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide=false,
-                            AnimateShow=false
+                            AnimateHide = false,
+                            AnimateShow = false
                         }) == MessageDialogResult.Affirmative)
             {
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
