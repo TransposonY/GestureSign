@@ -57,7 +57,7 @@ namespace GestureSign.ControlPanel.Flyouts
         private void GetValidWindows(object s)
         {
             // Get valid running windows
-            var Windows = SystemWindow.AllToplevelWindows.Where
+            var windows = SystemWindow.AllToplevelWindows.Where
                      (
                          w => w.Visible &&	// Must be a visible windows
                          w.Title != "" &&	// Must have a window title
@@ -66,19 +66,21 @@ namespace GestureSign.ControlPanel.Flyouts
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
 
-            Thread.Sleep(550);
-            foreach (SystemWindow sWind in Windows)
+            Thread.Sleep(400);
+            foreach (SystemWindow sWind in windows)
             {
+                var icon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                icon.Freeze();
+                ApplicationListViewItem lItem = new ApplicationListViewItem
+                {
+                    WindowClass = sWind.ClassName,
+                    WindowTitle = sWind.Title,
+                    WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName),
+                    ApplicationIcon = icon
+                };
+                //lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
                 this.lstRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
                {
-                   ApplicationListViewItem lItem = new ApplicationListViewItem();
-
-                   lItem.WindowClass = sWind.ClassName;
-                   lItem.WindowTitle = sWind.Title;
-                   lItem.WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName);
-                   //     lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
-                   lItem.ApplicationIcon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
                    this.lstRunningApplications.Items.Add(lItem);
                }));
             }
