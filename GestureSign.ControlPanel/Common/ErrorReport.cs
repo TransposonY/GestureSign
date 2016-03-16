@@ -18,7 +18,7 @@ namespace GestureSign.ControlPanel.Common
 {
     class ErrorReport
     {
-        private const string Address = "GestureSignfeedback00@outlook.com";
+        private const string Address = "gesturesignfeedback00@yahoo.com";
 
         public static string SendMail(string subject, string content)
         {
@@ -32,10 +32,10 @@ namespace GestureSign.ControlPanel.Common
             SmtpClient client = new SmtpClient
             {
                 // UseDefaultCredentials = false,
-                Credentials = new System.Net.NetworkCredential(Address, "GestureSign" + Int32.MaxValue),
+                Credentials = new System.Net.NetworkCredential(Address, Int32.MaxValue.ToString()),
                 // Port = 25,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
-                Host = "smtp.live.com",
+                Host = "smtp.mail.yahoo.com",
                 EnableSsl = true,
                 Timeout = 36000,
             };
