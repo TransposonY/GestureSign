@@ -126,7 +126,6 @@
     <Compile Include="Converters\MatchStringConverter.cs" />
     <Compile Include="Converters\ApplicationListHeaderConverter.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
-    <Compile Include="Converters\HeaderConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Common\ActionInfo.cs" />
     <Compile Include="Dialogs\ApplicationDialog.xaml.cs">

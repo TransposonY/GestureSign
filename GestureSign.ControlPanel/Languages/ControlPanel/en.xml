@@ -101,7 +101,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
   <Action>
     <Header>Action</Header>
     <ActionFile>Action File</ActionFile>
-    <ActionCount>{0}  ( {1} Actions )</ActionCount>
+    <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
     <DefaultGroupAppCount>(Default) ({0}) </DefaultGroupAppCount>
     <ImportActions>Import Actions...</ImportActions>

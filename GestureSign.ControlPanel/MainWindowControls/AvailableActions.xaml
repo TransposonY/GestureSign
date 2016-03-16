@@ -6,12 +6,12 @@
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
+             xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540">
     <UserControl.Resources>
         <ResourceDictionary>
-            <converters:HeaderConverter x:Key="headerConverter"></converters:HeaderConverter>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
             <converters:VisibilityConverter x:Key="VisibilityConverter"></converters:VisibilityConverter>
             <Canvas x:Key="Plus"
@@ -234,7 +234,7 @@
                                                   BorderThickness="0">
                                             <Expander.Header>
                                                 <DockPanel>
-                                                    <TextBlock FontWeight="Bold"
+                                                    <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
                                                                Margin="5,0,0,0"
                                                                HorizontalAlignment="Center"
                                                                DockPanel.Dock="Top">
@@ -290,16 +290,11 @@
               Background="{StaticResource AccentColorBrush}"
               Height="29"
               VerticalAlignment="Top">
-            <TextBlock FontWeight="Bold"
-                       Margin="5,0,0,0"
+            <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center">
-                <TextBlock.Text>
-                    <Binding Converter="{StaticResource headerConverter}"
-                             ElementName="lstAvailableApplication"
-                             Path="SelectedItem"
-                             Mode="OneWay" />
-                </TextBlock.Text>
+                <Run Text="{Binding ElementName=lstAvailableApplication,Path=SelectedItem.(applications:IApplication.Name),Mode=OneWay}" />
+                <Run Text="{Binding ElementName=lstAvailableActions,Path=Items.Count,Mode=OneWay,StringFormat={localization:LocalisedText Action.ActionCount}}" />
             </TextBlock>
             <CheckBox x:Name="ToggleAllActionsCheckBox"
                       IsEnabled="False"

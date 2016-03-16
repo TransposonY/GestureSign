@@ -107,7 +107,7 @@ http://git.oschina.net/TransY/GestureSign
   <Action>
     <Header>动作</Header>
     <ActionFile>动作文件</ActionFile>
-    <ActionCount>{0}  ( {1}个动作 )</ActionCount>
+    <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} {1}程序</AppCount>
     <DefaultGroupAppCount>未分组 ({0}程序)</DefaultGroupAppCount>
     <ImportActions>导入动作文件</ImportActions>
