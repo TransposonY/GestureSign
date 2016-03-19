@@ -104,12 +104,12 @@ namespace GestureSign.Common.InterProcessCommunication
                            using (MemoryStream ms = new MemoryStream())
                            {
                                int i = 0;
-                               for (; i != 10; i++)
+                               for (; i != 20; i++)
                                {
                                    if (!NamedPipeDoesNotExist(pipeName)) break;
-                                   Thread.Sleep(30);
+                                   Thread.Sleep(50);
                                }
-                               if (i == 10) return false;
+                               if (i == 20) return false;
 
                                pipeClient.Connect(10);
 
