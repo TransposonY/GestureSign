@@ -43,13 +43,16 @@ namespace GestureSign.Daemon
 
         public void InterceptTouchInput(bool intercept)
         {
-            if (IsHandleCreated)
+            if (!IsHandleCreated)
             {
-                if (InvokeRequired)
-                    Invoke(new Action(() => IsRegistered = intercept));
-                else
-                    IsRegistered = intercept;
+                CreateHandle();
             }
+
+            if (InvokeRequired)
+                Invoke(new Action(() => IsRegistered = intercept));
+            else
+                IsRegistered = intercept;
+
         }
 
         protected override void OnHandleCreated(EventArgs e)
