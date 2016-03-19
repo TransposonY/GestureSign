@@ -74,25 +74,6 @@ namespace GestureSign.Common.InterProcessCommunication
             _persistentPipeServerStream.BeginWaitForConnection(ac, _persistentPipeServerStream);
         }
 
-        public bool SendMessageFromServer(string message)
-        {
-            try
-            {
-                if (_persistentPipeServerStream.IsConnected)
-                    using (StreamWriter streamWriter = new StreamWriter(_persistentPipeServerStream))
-                    {
-                        streamWriter.WriteLine(message);
-                        streamWriter.Flush();
-                        _persistentPipeServerStream.WaitForPipeDrain();
-                    }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
-
         public static Task<bool> SendMessageAsync(object message, string pipeName)
         {
             return Task.Run<bool>(new Func<bool>(() =>

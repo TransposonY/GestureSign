@@ -35,7 +35,6 @@ namespace GestureSign.Daemon
                     //Application.SetCompatibleTextRenderingDefault(false);
                     try
                     {
-                        Application.ApplicationExit += Application_ApplicationExit;
                         Application.ThreadException += Application_ThreadException;
                         Logging.OpenLogFile();
 
@@ -89,11 +88,6 @@ namespace GestureSign.Daemon
                     Application.Exit();
                 }
             }
-        }
-
-        private static void Application_ApplicationExit(object sender, EventArgs e)
-        {
-            NamedPipe.Instance.SendMessageFromServer("Exit");
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

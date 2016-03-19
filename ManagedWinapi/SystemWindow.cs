@@ -175,7 +175,6 @@ namespace ManagedWinapi.Windows
     /// Extended Window Style Flags. The original constants started with WS_EX_.
     /// </summary>
     /// <seealso cref="SystemWindow.ExtendedStyle"/>
-    [CLSCompliant(false)]
     [Flags]
     public enum WindowExStyleFlags : uint
     {
@@ -648,7 +647,6 @@ namespace ManagedWinapi.Windows
         /// <summary>
         /// This window's extended style flags.
         /// </summary>
-        [CLSCompliant(false)]
         public WindowExStyleFlags ExtendedStyle
         {
             get
