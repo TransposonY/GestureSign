@@ -12,7 +12,7 @@ namespace GestureSign.ControlPanel
 {
     class MessageProcessor : IMessageProcessor
     {
-        public void ProcessMessages(NamedPipeServerStream server)
+        public bool ProcessMessages(NamedPipeServerStream server)
         {
             try
             {
@@ -62,10 +62,12 @@ namespace GestureSign.ControlPanel
                         }
                     });
                 }
+                return true;
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+                return false;
             }
 
         }

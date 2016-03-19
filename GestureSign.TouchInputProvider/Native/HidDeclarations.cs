@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Text;
 
-namespace GestureSign.Daemon.Input
+namespace GestureSign.TouchInputProvider.Native
 {
     // from hidpi.h
     // Typedef enum defines a set of integer constants for HidP_Report_Typ

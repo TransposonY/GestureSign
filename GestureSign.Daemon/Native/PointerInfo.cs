@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
-namespace GestureSign.Common.Input
+namespace GestureSign.Daemon.Native
 {
 
     #region POINTER_INFO
@@ -95,11 +95,14 @@ namespace GestureSign.Common.Input
     [StructLayout(LayoutKind.Sequential)]
     public struct POINTER_TOUCH_INFO
     {
-        [MarshalAs(UnmanagedType.Struct)] public POINTER_INFO PointerInfo;
+        [MarshalAs(UnmanagedType.Struct)]
+        public POINTER_INFO PointerInfo;
         public TOUCH_FLAGS TouchFlags;
         public TOUCH_MASK TouchMask;
-        [MarshalAs(UnmanagedType.Struct)] public RECT ContactArea;
-        [MarshalAs(UnmanagedType.Struct)] public RECT ContactAreaRaw;
+        [MarshalAs(UnmanagedType.Struct)]
+        public RECT ContactArea;
+        [MarshalAs(UnmanagedType.Struct)]
+        public RECT ContactAreaRaw;
         public uint Orientation;
         public uint Pressure;
     }

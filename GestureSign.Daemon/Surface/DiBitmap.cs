@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using GestureSign.Daemon.Native;
 
 namespace GestureSign.Daemon.Surface
 {
@@ -28,11 +29,11 @@ namespace GestureSign.Daemon.Surface
             Size = size;
             PixelFormat = pixelFormat;
 
-            var binfo = new Native.BITMAPINFO
+            var binfo = new NativeMethods.BITMAPINFO
             {
                 bmiHeader =
                 {
-                    biSize = Marshal.SizeOf(typeof (Native.BITMAPINFOHEADER)),
+                    biSize = Marshal.SizeOf(typeof (NativeMethods.BITMAPINFOHEADER)),
                     biWidth = Size.Width,
                     biHeight = Size.Height,
                     biBitCount = (short) Image.GetPixelFormatSize(PixelFormat),
@@ -44,27 +45,27 @@ namespace GestureSign.Daemon.Surface
             //var memDc = Native.CreateCompatibleDC(IntPtr.Zero);
             //if (memDc == IntPtr.Zero) throw new ApplicationException("初始化失败：创建MemDc失败(" + Native.GetLastError() + ")");
 
-            _memDc = Native.CreateCompatibleDC(IntPtr.Zero);
+            _memDc = NativeMethods.CreateCompatibleDC(IntPtr.Zero);
             if (_memDc == IntPtr.Zero)
                 throw new ApplicationException("CreateCompatibleDC(IntPtr.Zero)fail(" + Marshal.GetLastWin32Error() + ")");
 
             IntPtr ptrBits;
-            HBitmap = Native.CreateDIBSection(_memDc, ref binfo, 0, out ptrBits, IntPtr.Zero, 0);
+            HBitmap = NativeMethods.CreateDIBSection(_memDc, ref binfo, 0, out ptrBits, IntPtr.Zero, 0);
 
             //HBitmap = Native.CreateCompatibleBitmap(MemDc, size.Width, size.Height);
             if (HBitmap == IntPtr.Zero)
                 throw new ApplicationException("Initialization failure：CreateDIBSection(...)fail(" + Marshal.GetLastWin32Error() + ")");
 
-            _oldObject = Native.SelectObject(_memDc, HBitmap);
+            _oldObject = NativeMethods.SelectObject(_memDc, HBitmap);
             _graphics = Graphics.FromHdc(_memDc);
             _graphics.CompositingQuality = CompositingQuality.HighSpeed;
             _graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            Native.SelectObject(_memDc, _oldObject);
+            NativeMethods.SelectObject(_memDc, _oldObject);
         }
 
         public Graphics BeginDraw()
         {
-            _oldObject = Native.SelectObject(_memDc, HBitmap);
+            _oldObject = NativeMethods.SelectObject(_memDc, HBitmap);
 
             /*if (_graphics == null)
             {
@@ -79,7 +80,7 @@ namespace GestureSign.Daemon.Surface
 
         public void EndDraw()
         {
-            Native.SelectObject(_memDc, _oldObject);
+            NativeMethods.SelectObject(_memDc, _oldObject);
         }
 
         public void Dispose()
@@ -90,12 +91,12 @@ namespace GestureSign.Daemon.Surface
                 _graphics = null;
             }
 
-            Native.SelectObject(_memDc, _oldObject);
-            Native.DeleteDC(_memDc);
+            NativeMethods.SelectObject(_memDc, _oldObject);
+            NativeMethods.DeleteDC(_memDc);
 
             if (HBitmap != IntPtr.Zero)
             {
-                Native.DeleteObject(HBitmap);
+                NativeMethods.DeleteObject(HBitmap);
                 HBitmap = IntPtr.Zero;
             }
 
@@ -112,12 +113,12 @@ namespace GestureSign.Daemon.Surface
             {
                 if (HBitmap != IntPtr.Zero)
                 {
-                    Native.DeleteObject(HBitmap);
+                    NativeMethods.DeleteObject(HBitmap);
                     HBitmap = IntPtr.Zero;
                 }
 
-                Native.SelectObject(_memDc, _oldObject);
-                Native.DeleteDC(_memDc);
+                NativeMethods.SelectObject(_memDc, _oldObject);
+                NativeMethods.DeleteDC(_memDc);
 
             }
         }

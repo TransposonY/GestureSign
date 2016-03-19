@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsInput", "WindowsInpu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginTest", "PluginTest\PluginTest.csproj", "{01CD4188-E664-45C3-A7ED-2D0A4C5355B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureSign.TouchInputProvider", "GestureSign.TouchInputProvider\GestureSign.TouchInputProvider.csproj", "{35755801-CFBE-4148-9886-F63CEC10F9D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,12 @@ Global
 		{01CD4188-E664-45C3-A7ED-2D0A4C5355B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01CD4188-E664-45C3-A7ED-2D0A4C5355B0}.uiAccessRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{01CD4188-E664-45C3-A7ED-2D0A4C5355B0}.uiAccessRelease|Any CPU.Build.0 = Release|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
+		{35755801-CFBE-4148-9886-F63CEC10F9D5}.uiAccessRelease|Any CPU.Build.0 = uiAccessRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,6 +4,6 @@ namespace GestureSign.Common.InterProcessCommunication
 {
     public interface IMessageProcessor
     {
-        void ProcessMessages(NamedPipeServerStream server);
+        bool ProcessMessages(NamedPipeServerStream server);
     }
 }

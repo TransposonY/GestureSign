@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
@@ -15,7 +16,14 @@ namespace GestureSign.Daemon
 {
     class MessageProcessor : IMessageProcessor
     {
-        public void ProcessMessages(NamedPipeServerStream server)
+        private SynchronizationContext _synchronizationContext;
+
+        public MessageProcessor(SynchronizationContext synchronizationContext)
+        {
+            _synchronizationContext = synchronizationContext;
+        }
+
+        public bool ProcessMessages(NamedPipeServerStream server)
         {
             BinaryFormatter binForm = new BinaryFormatter();
 
@@ -27,7 +35,7 @@ namespace GestureSign.Daemon
                 string message = data as string;
                 if (message != null)
                 {
-                    TouchCapture.Instance.MessageWindow.Invoke(new Action(() =>
+                    _synchronizationContext.Post(state =>
                     {
                         switch (message)
                         {
@@ -61,9 +69,10 @@ namespace GestureSign.Daemon
                                 TrayManager.Instance.TrayIconVisible = false;
                                 break;
                         }
-                    }));
+                    }, null);
                 }
             }
+            return true;
         }
 
     }

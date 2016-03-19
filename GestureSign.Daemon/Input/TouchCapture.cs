@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common;
@@ -21,9 +22,11 @@ namespace GestureSign.Daemon.Input
     {
         #region Private Variables
 
+        private const uint WINEVENT_OUTOFCONTEXT = 0;
+        private const uint EVENT_SYSTEM_FOREGROUND = 3;
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
-        TouchEventTranslator TouchEventTranslator = new TouchEventTranslator();
-        readonly MessageWindow messageWindow = new MessageWindow();
+        private readonly TouchEventTranslator _touchEventTranslator = new TouchEventTranslator();
+        private readonly PointerInputTargetWindow _inputTargetWindow;
 
         Dictionary<int, List<Point>> _PointsCaptured = new Dictionary<int, List<Point>>(2);
         // Create variable to hold the only allowed instance of this class
@@ -31,13 +34,27 @@ namespace GestureSign.Daemon.Input
 
         private CaptureMode _mode = CaptureMode.Normal;
 
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+        readonly WinEventDelegate _winEventDele;
+        private readonly IntPtr _hWinEventHook;
+
+        #endregion
+
+        #region PInvoke 
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
         #endregion
 
         #region Public Instance Properties
 
         // Create enumeration to identify Touch buttons
-        public IntPtr MessageWindowHandle { get { return messageWindow.Handle; } }
-        public MessageWindow MessageWindow { get { return messageWindow; } }
+        public IntPtr MessageWindowHandle { get { return _inputTargetWindow.Handle; } }
         public bool TemporarilyDisableCapture { get; set; }
 
         public Point[] CapturePoint
@@ -153,35 +170,53 @@ namespace GestureSign.Daemon.Input
 
         protected TouchCapture()
         {
-            messageWindow.PointsIntercepted += new RawPointsDataMessageEventHandler(TouchEventTranslator.TranslateTouchEvent);
-            TouchEventTranslator.TouchDown += (PointEventTranslator_TouchDown);
-            TouchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
-            TouchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
+            _inputTargetWindow = new PointerInputTargetWindow();
+            var inputProvider = new InputProvider();
 
-            messageWindow.OnForegroundChange += messageWindow_OnForegroundChange;
+            inputProvider.TouchInputProcessor.PointsIntercepted += _touchEventTranslator.TranslateTouchEvent;
+            _touchEventTranslator.TouchDown += (PointEventTranslator_TouchDown);
+            _touchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
+            _touchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
 
-            ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) messageWindow.InterceptTouchInput(false); };
+            if (AppConfig.UiAccess)
+            {
+                _winEventDele = WinEventProc;
+                _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT);
+            }
+
+            ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) _inputTargetWindow.InterceptTouchInput(false); };
         }
-
-
 
         #endregion
 
-        #region Touch Events
+        #region Destructor
 
-        void messageWindow_OnForegroundChange(object sender, ForegroundChangedEventArgs e)
+        ~TouchCapture()
         {
-            if (State != CaptureState.Ready || Mode != CaptureMode.Normal || e.Equals(IntPtr.Zero) ||
-                Application.OpenForms.Count != 0 && e.Equals(Application.OpenForms[0].Handle))
+            if (_hWinEventHook != IntPtr.Zero)
+                UnhookWinEvent(_hWinEventHook);
+        }
+
+        #endregion
+
+        #region System Events
+
+        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            if (State != CaptureState.Ready || Mode != CaptureMode.Normal || hwnd.Equals(IntPtr.Zero) ||
+                Application.OpenForms.Count != 0 && hwnd.Equals(Application.OpenForms[0].Handle))
                 return;
-            var systemWindow = new SystemWindow(e.Hwnd);
+            var systemWindow = new SystemWindow(hwnd);
             var userApp = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
             bool flag = userApp != null &&
                         (userApp.Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput));
 
-            messageWindow.InterceptTouchInput(flag);
-
+            _inputTargetWindow.InterceptTouchInput(flag);
         }
+
+        #endregion
+
+        #region Touch Events
 
         protected void PointEventTranslator_TouchDown(object sender, PointEventArgs e)
         {
@@ -236,7 +271,7 @@ namespace GestureSign.Daemon.Input
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray()) { Mode = Mode };
             OnCaptureStarted(captureStartedArgs);
 
-            messageWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
+            _inputTargetWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
 
             if (captureStartedArgs.Cancel)
                 return false;

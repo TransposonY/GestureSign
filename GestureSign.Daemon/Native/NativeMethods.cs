@@ -1,14 +1,95 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GestureSign.Daemon
+namespace GestureSign.Daemon.Native
 {
-    internal class Native
+    internal static class NativeMethods
     {
+        #region const definitions
+
+        internal const int
+
+            WM_PARENTNOTIFY = 0x0210;
+
+        internal const int
+
+            WM_NCPOINTERUPDATE = 0x0241;
+
+        internal const int
+
+            WM_NCPOINTERDOWN = 0x0242;
+
+        internal const int
+
+            WM_NCPOINTERUP = 0x0243;
+
+        internal const int
+
+            WM_POINTERUPDATE = 0x0245;
+
+        internal const int
+
+            WM_POINTERDOWN = 0x0246;
+
+        internal const int
+
+            WM_POINTERUP = 0x0247;
+
+        internal const int
+
+            WM_POINTERENTER = 0x0249;
+
+        internal const int
+
+            WM_POINTERLEAVE = 0x024A;
+
+        internal const int
+
+            WM_POINTERACTIVATE = 0x024B;
+
+        internal const int
+
+            WM_POINTERCAPTURECHANGED = 0x024C;
+
+        internal const int
+
+            WM_POINTERWHEEL = 0x024E;
+
+        internal const int
+
+            WM_POINTERHWHEEL = 0x024F;
+
+        internal const uint ANRUS_TOUCH_MODIFICATION_ACTIVE = 0x0000002;
+
+        #endregion const definitions
+
+        #region DllImports
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        [DllImport("User32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool RegisterPointerInputTarget(IntPtr handle, POINTER_INPUT_TYPE pointerType);
+
+        [DllImport("User32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool UnregisterPointerInputTarget(IntPtr hwnd, POINTER_INPUT_TYPE pointerType);
+
+        [DllImport("Oleacc.dll")]
+        internal static extern int AccSetRunningUtilityState(IntPtr hWnd, uint dwUtilityStateMask, uint dwUtilityState);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool GetPointerFrameInfo(int pointerID, ref int pointerCount, [MarshalAs(UnmanagedType.LPArray), In, Out] POINTER_INFO[] pointerInfo);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool InitializeTouchInjection(int maxCount, TOUCH_FEEDBACK feedbackMode);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool InjectTouchInput(int count, [MarshalAs(UnmanagedType.LPArray), In] POINTER_TOUCH_INFO[] contacts);
+
+        #endregion DllImports
+
         private const string User32Dll = "user32.dll";
 
         [Flags]
@@ -72,7 +153,7 @@ namespace GestureSign.Daemon
             public Int32 biClrImportant;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         public struct BITMAPINFO
         {
             /// <summary>
@@ -83,7 +164,7 @@ namespace GestureSign.Daemon
             /// <summary>
             /// An array of RGBQUAD. The elements of the array that make up the color table.
             /// </summary>
-            [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 1, ArraySubType = UnmanagedType.Struct)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1, ArraySubType = UnmanagedType.Struct)]
             public
                 RGBQUAD[] bmiColors;
         }
@@ -220,7 +301,7 @@ namespace GestureSign.Daemon
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct UPDATELAYEREDWINDOWINFO
+        public unsafe struct UPDATELAYEREDWINDOWINFO
         {
             public uint cbSize;
             public IntPtr hdcDst;

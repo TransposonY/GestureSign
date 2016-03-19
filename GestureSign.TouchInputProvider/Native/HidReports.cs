@@ -21,7 +21,7 @@
 
 using System;
 
-namespace GestureSign.Daemon.Input
+namespace GestureSign.TouchInputProvider.Native
 {
     /// <summary>
     /// Type of a Hid Report
