@@ -51,7 +51,7 @@ namespace GestureSign.Daemon.Input
 
                 _synchronizationContext.Post(o =>
                 {
-                    PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(rawTouchDatas.ToArray()));
+                    PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(rawTouchDatas));
                 }, null);
             }
             catch (Exception exception)

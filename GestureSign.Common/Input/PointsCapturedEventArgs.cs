@@ -10,36 +10,36 @@ namespace GestureSign.Common.Input
     {
         #region Constructors
 
-        public PointsCapturedEventArgs(Point[] capturePoint)
+        public PointsCapturedEventArgs(List<Point> capturePoint)
         {
-            this.CapturePoint = capturePoint;
-            this.Points = new List<List<Point>>(capturePoint.Length);
-            for (int i = 0; i < capturePoint.Length; i++)
+            this.LastCapturedPoints = capturePoint;
+            this.Points = new List<List<Point>>(capturePoint.Count);
+            for (int i = 0; i < capturePoint.Count; i++)
             {
                 this.Points.Add(new List<Point>(1));
                 this.Points[i].Add(capturePoint[i]);
             }
         }
-        public PointsCapturedEventArgs(List<List<Point>> Points)
+        public PointsCapturedEventArgs(List<List<Point>> points)
         {
-            this.Points = Points;
-            this.CapturePoint = Points.Select(p => p.FirstOrDefault()).ToArray();
+            this.Points = points;
+            this.LastCapturedPoints = points.Select(p => p.FirstOrDefault()).ToList();
         }
 
-        public PointsCapturedEventArgs(List<List<Point>> Points, Point[] CapturePoint)
-            : this(Points)
+        public PointsCapturedEventArgs(List<List<Point>> points, List<Point> capturePoint)
+            : this(points)
         {
-            this.CapturePoint = CapturePoint;
+            this.LastCapturedPoints = capturePoint;
         }
 
-        public PointsCapturedEventArgs(List<List<Point>> Points, CaptureState State)
-            : this(Points)
+        public PointsCapturedEventArgs(List<List<Point>> points, CaptureState state)
+            : this(points)
         {
-            this.State = State;
+            this.State = state;
         }
 
-        public PointsCapturedEventArgs(List<List<Point>> Points, Point[] CapturePoint, CaptureState State)
-            : this(Points, CapturePoint)
+        public PointsCapturedEventArgs(List<List<Point>> points, List<Point> capturePoint, CaptureState State)
+            : this(points, capturePoint)
         {
             this.State = State;
         }
@@ -49,7 +49,7 @@ namespace GestureSign.Common.Input
         #region Public Properties
 
         public List<List<Point>> Points { get; set; }
-        public Point[] CapturePoint { get; set; }
+        public List<Point> LastCapturedPoints { get; set; }
         public bool Cancel { get; set; }
         public CaptureState State { get; set; }
         public CaptureMode Mode { get; set; }

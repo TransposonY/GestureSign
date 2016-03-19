@@ -298,7 +298,7 @@ namespace GestureSign.TouchInputProvider
 
                     if (_requiringContactCount == 0 && PointsIntercepted != null)
                     {
-                        PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs.OrderBy(rtd => rtd.ContactIdentifier).ToArray()));
+                        PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs));
                     }
                 }
                 else throw new ApplicationException("GetRawInputData does not return correct size !\n.");

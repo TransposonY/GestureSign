@@ -9,7 +9,7 @@ namespace GestureSign.Common.Plugins
     {
         #region Private Variables
 
-        private Point[] _touchLocation;
+        private List<Point> _touchLocation;
         private IntPtr _windowHandle;
         private SystemWindow _window;
 
@@ -17,7 +17,7 @@ namespace GestureSign.Common.Plugins
 
         #region Constructors
 
-        public PointInfo(Point[] touchLocation, List<List<Point>> points)
+        public PointInfo(List<Point> touchLocation, List<List<Point>> points)
         {
             _touchLocation = touchLocation;
             _window = SystemWindow.FromPointEx(_touchLocation[0].X, _touchLocation[0].Y, true, false);
@@ -29,7 +29,7 @@ namespace GestureSign.Common.Plugins
 
         #region Public Properties
 
-        public Point[] TouchLocation
+        public List<Point> TouchLocation
         {
             get { return _touchLocation; }
             set

@@ -17,23 +17,23 @@ namespace GestureSign.Daemon.Input
 
         #region Custom Events
 
-        public event EventHandler<PointEventArgs> TouchDown;
+        public event EventHandler<RawPointsDataMessageEventArgs> TouchDown;
 
-        protected virtual void OnTouchDown(PointEventArgs args)
+        protected virtual void OnTouchDown(RawPointsDataMessageEventArgs args)
         {
             if (TouchDown != null) TouchDown(this, args);
         }
 
-        public event EventHandler<PointEventArgs> TouchUp;
+        public event EventHandler<RawPointsDataMessageEventArgs> TouchUp;
 
-        protected virtual void OnTouchUp(PointEventArgs args)
+        protected virtual void OnTouchUp(RawPointsDataMessageEventArgs args)
         {
             if (TouchUp != null) TouchUp(this, args);
         }
 
-        public event EventHandler<PointEventArgs> TouchMove;
+        public event EventHandler<RawPointsDataMessageEventArgs> TouchMove;
 
-        protected virtual void OnTouchMove(PointEventArgs args)
+        protected virtual void OnTouchMove(RawPointsDataMessageEventArgs args)
         {
             if (TouchMove != null) TouchMove(this, args);
         }
@@ -42,40 +42,35 @@ namespace GestureSign.Daemon.Input
 
         #region Public Methods
 
-        int lastPointsCount = 0;
+        int _lastPointsCount;
 
         public void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
-            var pointEventArgs = new PointEventArgs(e.RawTouchsData.Select(r => (new KeyValuePair<int, Point>(r.ContactIdentifier, r.RawPoints))));
-            foreach (RawTouchData rtd in e.RawTouchsData)
+            if (e.RawTouchsData.Any(rtd => !rtd.Tip))
             {
-                if (!rtd.Tip)
+                if (e.RawTouchsData.Count <= _lastPointsCount)
                 {
-                    if (e.RawTouchsData.Length <= lastPointsCount)
-                    {
-                        OnTouchUp(pointEventArgs);
-                        lastPointsCount = 0;
-                    }
-                    return;
+                    OnTouchUp(e);
+                    _lastPointsCount = 0;
                 }
+                return;
             }
-            if (e.RawTouchsData.Length > lastPointsCount)
+            if (e.RawTouchsData.Count > _lastPointsCount)
             {
                 if (TouchCapture.Instance.InputPoints.Any(p => p.Count > 10))
                 {
-                    OnTouchMove(pointEventArgs);
+                    OnTouchMove(e);
                     return;
                 }
-                lastPointsCount = e.RawTouchsData.Length;
-                OnTouchDown(pointEventArgs);
+                _lastPointsCount = e.RawTouchsData.Count;
+                OnTouchDown(e);
             }
-            else if (e.RawTouchsData.Length == lastPointsCount)
+            else if (e.RawTouchsData.Count == _lastPointsCount)
             {
-                OnTouchMove(pointEventArgs);
+                OnTouchMove(e);
             }
-
         }
-        
+
         #endregion
     }
 }

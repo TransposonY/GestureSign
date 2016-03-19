@@ -94,7 +94,7 @@ namespace GestureSign.Common.Applications
                 }
             }
 
-            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
+            CaptureWindow = GetWindowFromPoint(e.LastCapturedPoints.FirstOrDefault());
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
             {
@@ -122,7 +122,7 @@ namespace GestureSign.Common.Applications
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             // Derive capture window from capture point
-            CaptureWindow = GetWindowFromPoint(e.CapturePoint.FirstOrDefault());
+            CaptureWindow = GetWindowFromPoint(e.LastCapturedPoints.FirstOrDefault());
             RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
 

@@ -69,7 +69,7 @@ namespace GestureSign.Common.Plugins
                 // Load action settings into plugin
                 pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
                 // Execute plugin process
-                pluginInfo.Plugin.Gestured(new PointInfo(e.CapturePoints, e.Points));
+                pluginInfo.Plugin.Gestured(new PointInfo(e.LastCapturedPoints, e.Points));
             }
         }
 

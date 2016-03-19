@@ -72,7 +72,7 @@ namespace GestureSign.TouchInputProvider
             if (!_pipeClient.IsConnected) return;
             try
             {
-                _binaryWriter.Write(e.RawTouchsData.Length);
+                _binaryWriter.Write(e.RawTouchsData.Count);
                 foreach (var touchData in e.RawTouchsData)
                 {
                     _binaryWriter.Write(touchData.Tip);

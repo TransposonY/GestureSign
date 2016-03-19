@@ -217,7 +217,7 @@ namespace GestureSign.Daemon.Input
 
         #region Touch Events
 
-        protected void PointEventTranslator_TouchDown(object sender, PointEventArgs e)
+        protected void PointEventTranslator_TouchDown(object sender, RawPointsDataMessageEventArgs e)
         {
             // Can we begin a new gesture capture
 
@@ -226,23 +226,23 @@ namespace GestureSign.Daemon.Input
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
                 // Try to begin capture process, if capture started then don't notify other applications of a Touch event, otherwise do
-                if (!TryBeginCapture(e.Points))
+                if (!TryBeginCapture(e.RawTouchsData))
                 {
                     Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
                 }
             }
         }
-        protected void TouchEventTranslator_TouchMove(object sender, PointEventArgs e)
+        protected void TouchEventTranslator_TouchMove(object sender, RawPointsDataMessageEventArgs e)
         {
 
             // Only add point if we're capturing
             if (State == CaptureState.Capturing)
             {
-                AddPoint(e.Points);
+                AddPoint(e.RawTouchsData);
             }
         }
 
-        protected void TouchEventTranslator_TouchUp(object sender, PointEventArgs e)
+        protected void TouchEventTranslator_TouchUp(object sender, RawPointsDataMessageEventArgs e)
         {
             if (State == CaptureState.Capturing)
             {
@@ -263,11 +263,11 @@ namespace GestureSign.Daemon.Input
 
         #region Private Methods
 
-        private bool TryBeginCapture(IEnumerable<KeyValuePair<int, Point>> firstTouch)
+        private bool TryBeginCapture(List<RawTouchData> firstTouch)
         {
 
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
-            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.Value).ToArray()) { Mode = Mode };
+            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.RawPoints).ToList()) { Mode = Mode };
             OnCaptureStarted(captureStartedArgs);
 
             _inputTargetWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
@@ -278,21 +278,21 @@ namespace GestureSign.Daemon.Input
             State = CaptureState.Capturing;
 
             // Clear old gesture from point list so we can start adding the new captures points to the list 
-            _PointsCaptured = new Dictionary<int, List<Point>>(firstTouch.Count());
+            _PointsCaptured = new Dictionary<int, List<Point>>(firstTouch.Count);
             if (AppConfig.IsOrderByLocation)
             {
-                foreach (KeyValuePair<int, Point> rawTouchData in firstTouch.OrderBy(p => p.Value.X))
+                foreach (var rawTouchData in firstTouch.OrderBy(p => p.RawPoints.X))
                 {
-                    if (!_PointsCaptured.ContainsKey(rawTouchData.Key))
-                        _PointsCaptured.Add(rawTouchData.Key, new List<Point>(30));
+                    if (!_PointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
+                        _PointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
                 }
             }
             else
             {
-                foreach (KeyValuePair<int, Point> rawTouchData in firstTouch)
+                foreach (var rawTouchData in firstTouch.OrderBy(p => p.ContactIdentifier))
                 {
-                    if (!_PointsCaptured.ContainsKey(rawTouchData.Key))
-                        _PointsCaptured.Add(rawTouchData.Key, new List<Point>(30));
+                    if (!_PointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
+                        _PointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
                 }
             }
             AddPoint(firstTouch);
@@ -350,10 +350,10 @@ namespace GestureSign.Daemon.Input
                 // Fire recognized event if we found a gesture match, otherwise throw not recognized event
                 if (pointsInformation.GestureName != null)
                     OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points,
-                        pointsInformation.CapturePoint)
+                        pointsInformation.LastCapturedPoints)
                     { Mode = Mode });
                 else
-                    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.CapturePoint));
+                    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
 
                 OnAfterPointsCaptured(pointsInformation);
 
@@ -367,26 +367,26 @@ namespace GestureSign.Daemon.Input
             OnCaptureCanceled(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), State));
         }
 
-        private void AddPoint(IEnumerable<KeyValuePair<int, Point>> Point)
+        private void AddPoint(List<RawTouchData> point)
         {
             bool getNewPoint = false;
-            foreach (KeyValuePair<int, Point> p in Point)
+            foreach (RawTouchData p in point)
             {                // Don't accept point if it's within specified distance of last point unless it's the first point
-                if (_PointsCaptured.ContainsKey(p.Key))
+                if (_PointsCaptured.ContainsKey(p.ContactIdentifier))
                 {
-                    if (_PointsCaptured[p.Key].Any() &&
-                   PointPatternMath.GetDistance(_PointsCaptured[p.Key].Last(), p.Value) < AppConfig.MinimumPointDistance)
+                    var stroke = _PointsCaptured[p.ContactIdentifier];
+                    if (stroke.Count != 0 && PointPatternMath.GetDistance(stroke.Last(), p.RawPoints) < AppConfig.MinimumPointDistance)
                         continue;
                     getNewPoint = true;
                     // Add point to captured points list
-                    _PointsCaptured[p.Key].Add(p.Value);
+                    stroke.Add(p.RawPoints);
                 }
             }
             if (getNewPoint)
             {
 
                 // Notify subscribers that point has been captured
-                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), Point.Select(p => p.Value).ToArray(), State) { Mode = Mode });
+                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), point.Select(p => p.RawPoints).ToList(), State) { Mode = Mode });
             }
         }
 
