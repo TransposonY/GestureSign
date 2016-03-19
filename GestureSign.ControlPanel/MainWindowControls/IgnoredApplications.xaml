@@ -84,13 +84,10 @@
                                                   BorderBrush="#FFA4B97F"
                                                   BorderThickness="0,0,0,1">
                                             <Expander.Header>
-                                                <DockPanel>
-                                                    <TextBlock FontWeight="Bold"
-                                                               Text="{Binding Path=Name, Converter={StaticResource MatchUsingToStringConverter}}"
-                                                               Margin="0,0,0,0" />
-                                                    <TextBlock FontWeight="Bold"
-                                                               Text="{Binding Path=ItemCount, StringFormat={localization:LocalisedText Ignored.Count}}" />
-                                                </DockPanel>
+                                                <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}">
+                                                        <Run Text="{Binding Path=Name, Converter={StaticResource MatchUsingToStringConverter},Mode=OneWay}" />
+                                                        <Run Text="{Binding Path=ItemCount, StringFormat={localization:LocalisedText Ignored.Count},Mode=OneWay}" />
+                                                </TextBlock>
                                             </Expander.Header>
                                             <Expander.Content>
                                                 <ItemsPresenter />

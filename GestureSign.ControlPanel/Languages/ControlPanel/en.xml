@@ -174,7 +174,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <IgnoredAppFile>Ignored Application File</IgnoredAppFile>
     <ImportIgnoredApps>Import Ignored Application...</ImportIgnoredApps>
     <ExportIgnoredApps>Export Ignored Application...</ExportIgnoredApps>
-    <Count>  ( {0} Ignored Applications )</Count>
+    <Count>  ( {0} )</Count>
     <Enable>Enable</Enable>
     <Messages>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
