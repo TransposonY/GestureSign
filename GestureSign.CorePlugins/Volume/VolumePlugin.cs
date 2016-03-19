@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
+using WindowsInput;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
@@ -133,24 +134,32 @@ namespace GestureSign.CorePlugins.Volume
             return strOutput;
         }
 
-        private bool AdjustVolume(VolumeSettings Settings)
+        private bool AdjustVolume(VolumeSettings settings)
         {
-            if (Settings == null)
+            if (settings == null)
                 return false;
-
 
             try
             {
-                switch ((Method)_settings.Method)
+                InputSimulator simulator = new InputSimulator();
+                int t = settings.Percent / 2;
+
+                switch ((Method)settings.Method)
                 {
                     case Method.VolumeUp:
-                        ChangeVolume(Method.VolumeUp);
+                        for (int i = 0; i < t; i++)
+                        {
+                            simulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.VOLUME_UP);
+                        }
                         break;
                     case Method.VolumeDown:
-                        ChangeVolume(Method.VolumeDown);
+                        for (int i = 0; i < t; i++)
+                        {
+                            simulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.VOLUME_DOWN);
+                        }
                         break;
                     case Method.Mute:
-                        SetMute();
+                        simulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.VOLUME_MUTE);
                         break;
                 }
 
@@ -161,41 +170,6 @@ namespace GestureSign.CorePlugins.Volume
                 //MessageBox.Show("Could not change volume settings.", "Volume Change Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-        }
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
-        const uint WM_APPCOMMAND = 0x319;
-        const uint APPCOMMAND_VOLUME_UP = 0x0a;
-        const uint APPCOMMAND_VOLUME_DOWN = 0x09;
-        const uint APPCOMMAND_VOLUME_MUTE = 0x08;
-        private void ChangeVolume(Method ChangeMethod)
-        {
-            Process p = Process.GetCurrentProcess();
-            int t = _settings.Percent / 2;
-            if (ChangeMethod == Method.VolumeUp)
-            {
-                for (int i = 0; i < t; i++)
-                {
-                    //加音量               
-                    SendMessage(HostControl.TouchCapture.MessageWindowHandle, WM_APPCOMMAND, 0x30292, APPCOMMAND_VOLUME_UP * 0x10000);
-                }
-
-            }
-            else
-            {
-                for (int i = 0; i < t; i++)
-                {
-                    SendMessage(HostControl.TouchCapture.MessageWindowHandle, WM_APPCOMMAND, 0x30292, APPCOMMAND_VOLUME_DOWN * 0x10000);
-                }
-            }
-        }
-
-        private void SetMute()
-        {
-            // System.Diagnostics.Process p = System.Diagnostics.Process.GetCurrentProcess();
-            //  if (p.MainWindowHandle == IntPtr.Zero)
-            SendMessage(HostControl.TouchCapture.MessageWindowHandle, WM_APPCOMMAND, 0x200eb0, APPCOMMAND_VOLUME_MUTE * 0x10000);
-            //else SendMessage(p.MainWindowHandle, WM_APPCOMMAND, 0x200eb0, APPCOMMAND_VOLUME_MUTE * 0x10000);
         }
 
         #endregion

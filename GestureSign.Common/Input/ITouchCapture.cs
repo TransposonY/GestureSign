@@ -13,7 +13,6 @@ namespace GestureSign.Common.Input
         void DisableTouchCapture();
         void EnableTouchCapture();
         event PointsCapturedEventHandler PointCaptured;
-        IntPtr MessageWindowHandle { get; }
         bool TemporarilyDisableCapture { get; set; }
     }
 }

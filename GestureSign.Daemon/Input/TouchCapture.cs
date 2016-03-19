@@ -54,7 +54,6 @@ namespace GestureSign.Daemon.Input
         #region Public Instance Properties
 
         // Create enumeration to identify Touch buttons
-        public IntPtr MessageWindowHandle { get { return _inputTargetWindow.Handle; } }
         public bool TemporarilyDisableCapture { get; set; }
 
         public Point[] CapturePoint

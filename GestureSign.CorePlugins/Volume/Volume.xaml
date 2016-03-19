@@ -12,19 +12,23 @@
                   HorizontalAlignment="Left"
                   Margin="10,10,0,0"
                   VerticalAlignment="Top"
-                  Width="204"
+                  Width="210"
                   SelectionChanged="cboMethod_SelectionChanged"
                   FontSize="14">
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Increase}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Decrease}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.Volume.Mute}" />
         </ComboBox>
-        <ComboBox x:Name="cboPercent"
+        <ComboBox x:Name="PercentComboBox"
                   HorizontalAlignment="Right"
                   Margin="0,10,10,0"
                   VerticalAlignment="Top"
                   Width="81"
-                  FontSize="14" />
+                  FontSize="14"
+                  TextBoxBase.TextChanged="PercentComboBox_OnTextChanged"
+                  KeyDown="PercentComboBox_OnKeyDown"
+                  InputMethod.IsInputMethodEnabled="False"
+                  IsEditable="True" />
 
     </Grid>
 </UserControl>
