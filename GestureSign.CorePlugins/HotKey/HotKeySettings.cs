@@ -18,6 +18,8 @@ namespace GestureSign.CorePlugins.HotKey
 
         public List<Keys> KeyCode { get; set; }
 
+        public bool SendByKeybdEvent { get; set; }
+
         #endregion
     }
 

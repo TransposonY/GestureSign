@@ -6,6 +6,8 @@ using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using ManagedWinapi;
+using ManagedWinapi.Windows;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.HotKey
@@ -14,8 +16,8 @@ namespace GestureSign.CorePlugins.HotKey
     {
         #region Private Variables
 
-        private HotKey _GUI = null;
-        private HotKeySettings _Settings = null;
+        private HotKey _GUI;
+        private HotKeySettings _Settings;
         private const string User32 = "user32.dll";
 
         #endregion
@@ -144,12 +146,17 @@ namespace GestureSign.CorePlugins.HotKey
 
         public bool Gestured(PointInfo ActionPoint)
         {
-            if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
+            if (ActionPoint.WindowHandle.ToInt64() != SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
                 ActionPoint.Window != null)
-                ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
-
-            SendShortcutKeys(_Settings);
-
+                SystemWindow.ForegroundWindow = ActionPoint.Window;
+            try
+            {
+                SendShortcutKeys(_Settings);
+            }
+            catch (Exception exception)
+            {
+                throw new UnauthorizedAccessException(LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.UnauthorizedAccessException"), exception);
+            }
             return true;
         }
 
@@ -228,49 +235,104 @@ namespace GestureSign.CorePlugins.HotKey
                 LockWorkStation();
                 return;
             }
-            InputSimulator simulator = new InputSimulator();
 
-            // Deceide which keys to press
-            // Windows
-            if (settings.Windows)
-                simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+            if (settings.SendByKeybdEvent)
+            {
 
-            // Control
-            if (settings.Control)
-                simulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
+                // Create keyboard keys to represent hot key combinations
+                KeyboardKey winKey = new KeyboardKey(Keys.LWin);
+                KeyboardKey controlKey = new KeyboardKey(Keys.LControlKey);
+                KeyboardKey altKey = new KeyboardKey(Keys.LMenu);
+                KeyboardKey shiftKey = new KeyboardKey(Keys.LShiftKey);
 
-            // Alt
-            if (settings.Alt)
-                simulator.Keyboard.KeyDown(VirtualKeyCode.MENU);
+                // Deceide which keys to press
+                // Windows
+                if (settings.Windows)
+                    winKey.Press();
 
-            // Shift
-            if (settings.Shift)
-                simulator.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
+                // Control
+                if (settings.Control)
+                    controlKey.Press();
 
-            // Modifier
-            if (settings.KeyCode != null)
-                foreach (var k in settings.KeyCode)
-                {
-                    if (!Enum.IsDefined(typeof(VirtualKeyCode), k.GetHashCode())) continue;
+                // Alt
+                if (settings.Alt)
+                    altKey.Press();
 
-                    var key = (VirtualKeyCode)k;
-                    simulator.Keyboard.KeyPress(key).Sleep(30);
-                }
-            // Release Shift
-            if (settings.Shift)
-                simulator.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
+                // Shift
+                if (settings.Shift)
+                    shiftKey.Press();
 
-            // Release Alt
-            if (settings.Alt)
-                simulator.Keyboard.KeyUp(VirtualKeyCode.MENU);
+                // Modifier
+                if (settings.KeyCode != null)
+                    foreach (var k in settings.KeyCode)
+                    {
+                        KeyboardKey modifierKey = new KeyboardKey(k);
+                        if (!String.IsNullOrEmpty(modifierKey.KeyName))
+                            modifierKey.PressAndRelease();
+                    }
+                // Release Shift
+                if (settings.Shift)
+                    shiftKey.Release();
 
-            // Release Control
-            if (settings.Control)
-                simulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
+                // Release Alt
+                if (settings.Alt)
+                    altKey.Release();
 
-            // Release Windows
-            if (settings.Windows)
-                simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+                // Release Control
+                if (settings.Control)
+                    controlKey.Release();
+
+                // Release Windows
+                if (settings.Windows)
+                    winKey.Release();
+            }
+            else
+            {
+
+                InputSimulator simulator = new InputSimulator();
+
+                // Deceide which keys to press
+                // Windows
+                if (settings.Windows)
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+
+                // Control
+                if (settings.Control)
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
+
+                // Alt
+                if (settings.Alt)
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.MENU);
+
+                // Shift
+                if (settings.Shift)
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
+
+                // Modifier
+                if (settings.KeyCode != null)
+                    foreach (var k in settings.KeyCode)
+                    {
+                        if (!Enum.IsDefined(typeof(VirtualKeyCode), k.GetHashCode())) continue;
+
+                        var key = (VirtualKeyCode)k;
+                        simulator.Keyboard.KeyPress(key).Sleep(30);
+                    }
+                // Release Shift
+                if (settings.Shift)
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
+
+                // Release Alt
+                if (settings.Alt)
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.MENU);
+
+                // Release Control
+                if (settings.Control)
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
+
+                // Release Windows
+                if (settings.Windows)
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+            }
         }
 
         #endregion

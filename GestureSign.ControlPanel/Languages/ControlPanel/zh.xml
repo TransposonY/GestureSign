@@ -254,6 +254,8 @@ http://git.oschina.net/TransY/GestureSign
       <Tip>快捷键（请用键盘录入快捷键）</Tip>
       <Reset>重置</Reset>
       <AddExtraKey>(点击添加一个多媒体键)</AddExtraKey>
+      <SendByKeybdEvent>用旧方法发送</SendByKeybdEvent>
+      <UnauthorizedAccessException>权限不足。请检查安全软件设置。</UnauthorizedAccessException>
       <ExtraKeys>
         <BrowserBack>浏览器-后退键</BrowserBack>
         <BrowserForward>浏览器-前进键</BrowserForward>

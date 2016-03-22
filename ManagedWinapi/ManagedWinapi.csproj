@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
+    <Compile Include="KeyboardKey.cs" />
     <Compile Include="PInvokeTypes.cs" />
     <Compile Include="SendKeysEscaper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

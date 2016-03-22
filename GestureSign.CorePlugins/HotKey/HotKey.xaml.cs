@@ -105,7 +105,8 @@ namespace GestureSign.CorePlugins.HotKey
                     Control = chkControl.IsChecked.Value,
                     Shift = chkShift.IsChecked.Value,
                     Alt = chkAlt.IsChecked.Value,
-                    KeyCode = _KeyCode
+                    KeyCode = _KeyCode,
+                    SendByKeybdEvent = SendByKeybdEventCheckBox.IsChecked.Value
                 };
 
                 return _Settings;
@@ -118,6 +119,7 @@ namespace GestureSign.CorePlugins.HotKey
                 chkControl.IsChecked = _Settings.Control;
                 chkShift.IsChecked = _Settings.Shift;
                 chkAlt.IsChecked = _Settings.Alt;
+                SendByKeybdEventCheckBox.IsChecked = _Settings.SendByKeybdEvent;
 
                 if (_Settings.KeyCode != null)
                     _KeyCode = _Settings.KeyCode;

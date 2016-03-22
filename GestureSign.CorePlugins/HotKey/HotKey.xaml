@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <ComboBox x:Name="ExtraKeysComboBox"
                   ItemsSource="{Binding Source={StaticResource ExtraKeys},Path=DescriptionDict}"
@@ -94,5 +95,11 @@
                 Click="ResetButton_Click"
                 Margin="235,9,0,0"
                 Grid.Row="1" />
+        <CheckBox x:Name="SendByKeybdEventCheckBox"
+                  Content="{localization:LocalisedText CorePlugins.HotKey.SendByKeybdEvent}"
+                  Grid.Row="2"
+                  Margin="5,0,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>
