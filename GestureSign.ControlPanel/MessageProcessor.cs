@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
+using System.Windows.Threading;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.ControlPanel.Dialogs;
 using Point = System.Drawing.Point;
@@ -22,7 +23,7 @@ namespace GestureSign.ControlPanel
                     server.CopyTo(memoryStream);
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     object data = binForm.Deserialize(memoryStream);
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         string message = data as string;
                         if (message != null)
@@ -60,7 +61,7 @@ namespace GestureSign.ControlPanel
                             gu.Show();
                             gu.Activate();
                         }
-                    });
+                    }, DispatcherPriority.Input);
                 }
                 return true;
             }
