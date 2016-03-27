@@ -561,7 +561,7 @@
                                                               SelectionChanged="availableGesturesComboBox_SelectionChanged"
                                                               IsDropDownOpen="False"
                                                               ScrollViewer.IsDeferredScrollingEnabled="True"
-                                                              MaxDropDownHeight="265"
+                                                              MaxDropDownHeight="512"
                                                               MaxWidth="280"
                                                               MinWidth="210"
                                                               Loaded="availableGesturesComboBox_Loaded"

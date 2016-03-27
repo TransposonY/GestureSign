@@ -104,7 +104,7 @@
                       IsReadOnly="True"
                       IsDropDownOpen="False"
                       ScrollViewer.IsDeferredScrollingEnabled="True"
-                      MaxDropDownHeight="265"
+                      MaxDropDownHeight="512"
                       MaxWidth="300"
                       Width="280">
                 <!--<ComboBox.ItemsPanel>
