@@ -71,7 +71,10 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Overwrite");
                     txtGestureName.IsEnabled = false;
-                    this.ExistingGestureImage.Source = GestureImage.CreateImage(GestureManager.Instance.GetNewestGestureSample().Points, new Size(65, 65), brush);
+
+                    var gesture = GestureManager.Instance.GetNewestGestureSample();
+                    if (gesture != null)
+                        this.ExistingGestureImage.Source = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush);
                     return;
                 }
 
