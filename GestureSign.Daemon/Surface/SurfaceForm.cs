@@ -62,8 +62,9 @@ namespace GestureSign.Daemon.Surface
 
         protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (e.Mode != CaptureMode.UserDisabled &&
-                e.State == CaptureState.Capturing &&
+            var touchCapture = (ITouchCapture)sender;
+            if (touchCapture.Mode != CaptureMode.UserDisabled &&
+                touchCapture.State == CaptureState.Capturing &&
                 AppConfig.VisualFeedbackWidth > 0 &&
                 !(e.Points.Count == 1 && e.Points.First().Count == 1))
             {
@@ -90,7 +91,9 @@ namespace GestureSign.Daemon.Surface
 
         private void Instance_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            if (AppConfig.VisualFeedbackWidth <= 0 || e.Mode == CaptureMode.UserDisabled) return;
+            var touchCapture = (ITouchCapture)sender;
+
+            if (AppConfig.VisualFeedbackWidth <= 0 || touchCapture.Mode == CaptureMode.UserDisabled) return;
 
             if (_settingsChanged)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using GestureSign.Common.Gestures;
 
 namespace GestureSign.ControlPanel.Common
 {
@@ -55,53 +56,64 @@ namespace GestureSign.ControlPanel.Common
             return scaledStroke.ToArray();
         }
 
-        public static DrawingImage CreateImage(List<List<System.Drawing.Point>> points, Size size, Brush color)
+        public static DrawingImage CreateImage(PointPattern[] pointPatterns, Size size, Color color)
         {
-            if (points == null)
+            if (pointPatterns == null)
                 throw new Exception("You must provide a gesture before trying to generate a thumbnail");
-            //  System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            Pen drawingPen = new Pen(color, 4) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
 
-            PathGeometry pathGeometry = new PathGeometry();
-
-            for (int i = 0; i < points.Count; i++)
+            DrawingGroup drawingGroup = new DrawingGroup();
+            for (int i = 0; i < pointPatterns.Length; i++)
             {
-                if (points[i].Count == 1)
-                {
-                    Geometry ellipse = new EllipseGeometry(new Point(size.Width * i + size.Width / 2, size.Height / 2), drawingPen.Thickness / 2, drawingPen.Thickness / 2);
-                    pathGeometry.AddGeometry(ellipse);
-                    continue;
-                }
-                StreamGeometry sg = new StreamGeometry { FillRule = FillRule.EvenOdd };
-                using (StreamGeometryContext sgc = sg.Open())
-                {
-                    // Create new size object accounting for pen width
-                    Size szeAdjusted = new Size(size.Width - drawingPen.Thickness - 1, (size.Height - drawingPen.Thickness - 1));
+                PathGeometry pathGeometry = new PathGeometry();
 
-                    Size scaledSize;
-                    Point[] scaledPoints = ScaleGesture(points[i], szeAdjusted.Width - 10, szeAdjusted.Height - 10, out scaledSize);
+                color.A = (byte)(0xFF - i * 0x55);
+                SolidColorBrush brush = new SolidColorBrush(color);
+                Pen drawingPen = new Pen(brush, 3 + i * 2) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
 
-                    // Define size that will mark the offset to center the gesture
-                    double iLeftOffset = (size.Width / 2) - (scaledSize.Width / 2);
-                    double iTopOffset = (size.Height / 2) - (scaledSize.Height / 2);
-                    Vector sizOffset = new Vector(iLeftOffset + i * size.Width, iTopOffset);
-                    sgc.BeginFigure(Point.Add(scaledPoints[0], sizOffset), false, false);
-                    foreach (Point p in scaledPoints)
+                for (int j = 0; j < pointPatterns[i].Points.Count; j++)
+                {
+                    if (pointPatterns[i].Points[j].Count == 1)
                     {
-                        sgc.LineTo(Point.Add(p, sizOffset), true, true);
+                        Geometry ellipse = new EllipseGeometry(new Point(size.Width * j + size.Width / 2, size.Height / 2),
+                            drawingPen.Thickness / 2, drawingPen.Thickness / 2);
+                        pathGeometry.AddGeometry(ellipse);
+                        continue;
                     }
-                    DrawArrow(sgc, scaledPoints, sizOffset, drawingPen.Thickness);
+                    StreamGeometry sg = new StreamGeometry { FillRule = FillRule.EvenOdd };
+                    using (StreamGeometryContext sgc = sg.Open())
+                    {
+                        // Create new size object accounting for pen width
+                        Size szeAdjusted = new Size(size.Width - drawingPen.Thickness - 1,
+                            (size.Height - drawingPen.Thickness - 1));
+
+                        Size scaledSize;
+                        Point[] scaledPoints = ScaleGesture(pointPatterns[i].Points[j], szeAdjusted.Width - 10, szeAdjusted.Height - 10,
+                            out scaledSize);
+
+                        // Define size that will mark the offset to center the gesture
+                        double iLeftOffset = (size.Width / 2) - (scaledSize.Width / 2);
+                        double iTopOffset = (size.Height / 2) - (scaledSize.Height / 2);
+                        Vector sizOffset = new Vector(iLeftOffset + j * size.Width, iTopOffset);
+                        sgc.BeginFigure(Point.Add(scaledPoints[0], sizOffset), false, false);
+                        foreach (Point p in scaledPoints)
+                        {
+                            sgc.LineTo(Point.Add(p, sizOffset), true, true);
+                        }
+                        DrawArrow(sgc, scaledPoints, sizOffset, drawingPen.Thickness);
+                    }
+                    sg.Freeze();
+                    pathGeometry.AddGeometry(sg);
                 }
-                sg.Freeze();
-                pathGeometry.AddGeometry(sg);
+                pathGeometry.Freeze();
+                GeometryDrawing drawing = new GeometryDrawing(null, drawingPen, pathGeometry);
+                drawing.Freeze();
+                drawingGroup.Children.Add(drawing);
             }
             //  myPath.Data = sg;
-            pathGeometry.Freeze();
-            GeometryDrawing drawing = new GeometryDrawing(null, drawingPen, pathGeometry);
-            drawing.Freeze();
-            DrawingImage drawingImage = new DrawingImage(drawing);
+            drawingGroup.Freeze();
+            DrawingImage drawingImage = new DrawingImage(drawingGroup);
             drawingImage.Freeze();
-            // System.Diagnostics.Debug.WriteLine(sw.ElapsedMilliseconds.ToString());
+
             return drawingImage;
 
         }

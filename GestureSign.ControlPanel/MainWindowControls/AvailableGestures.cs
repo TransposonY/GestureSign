@@ -13,7 +13,6 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
-using GestureSign.Gestures;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 
@@ -68,9 +67,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             // Make sure at least one item is selected
             if (lstAvailableGestures.SelectedItems.Count == 0) return;
 
-            GestureDefinition gd = new GestureDefinition(
-                GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name).Points,
-                ((GestureItem)lstAvailableGestures.SelectedItems[0]).Name, true);
+            GestureDefinition gd = new GestureDefinition(GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name), true);
             gd.ShowDialog();
         }
 

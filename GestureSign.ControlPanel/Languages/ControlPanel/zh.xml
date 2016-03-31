@@ -169,6 +169,7 @@ http://git.oschina.net/TransY/GestureSign
     </ExistingGesture>
     <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
     <NewAction>新建动作</NewAction>
+    <OverlayGesture>叠加手势</OverlayGesture>
     <Messages>
       <GestureExistsTitle>手势已存在</GestureExistsTitle>
       <GestureExists>输入的手势名称已存在，请重新输入一个手势名称</GestureExists>
@@ -210,6 +211,7 @@ http://git.oschina.net/TransY/GestureSign
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
     <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
+    <Timeout>超时 (毫秒)</Timeout>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

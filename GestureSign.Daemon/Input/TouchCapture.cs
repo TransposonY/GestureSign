@@ -15,6 +15,7 @@ using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Windows;
+using Timer = System.Windows.Forms.Timer;
 
 namespace GestureSign.Daemon.Input
 {
@@ -27,8 +28,10 @@ namespace GestureSign.Daemon.Input
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly TouchEventTranslator _touchEventTranslator = new TouchEventTranslator();
         private readonly PointerInputTargetWindow _inputTargetWindow;
+        private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
+        private readonly Timer _delayTimer = new Timer();
 
-        Dictionary<int, List<Point>> _PointsCaptured = new Dictionary<int, List<Point>>(2);
+        Dictionary<int, List<Point>> _pointsCaptured = new Dictionary<int, List<Point>>(2);
         // Create variable to hold the only allowed instance of this class
         static readonly TouchCapture _Instance = new TouchCapture();
 
@@ -38,6 +41,8 @@ namespace GestureSign.Daemon.Input
 
         readonly WinEventDelegate _winEventDele;
         private readonly IntPtr _hWinEventHook;
+
+        private bool _gestureTimeout;
 
         #endregion
 
@@ -53,25 +58,27 @@ namespace GestureSign.Daemon.Input
 
         #region Public Instance Properties
 
+        public bool OverlayGesture { get; set; }
+
         // Create enumeration to identify Touch buttons
         public bool TemporarilyDisableCapture { get; set; }
 
         public Point[] CapturePoint
         {
-            get { return _PointsCaptured.Values.Select(p => p.FirstOrDefault()).ToArray(); }
+            get { return _pointsCaptured.Values.Select(p => p.FirstOrDefault()).ToArray(); }
         }
 
         public List<Point>[] InputPoints
         {
             get
             {
-                if (_PointsCaptured == null)
+                if (_pointsCaptured == null)
                     return new List<Point>[0];
-                return _PointsCaptured.Values.ToArray();
+                return _pointsCaptured.Values.ToArray();
             }
         }
 
-        public CaptureState State { get; private set; }
+        public CaptureState State { get; set; }
 
         public CaptureMode Mode
         {
@@ -184,6 +191,8 @@ namespace GestureSign.Daemon.Input
             }
 
             ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) _inputTargetWindow.InterceptTouchInput(false); };
+
+            _delayTimer.Tick += GestureRecognizedCallback;
         }
 
         #endregion
@@ -230,6 +239,7 @@ namespace GestureSign.Daemon.Input
                 {
                     Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
                 }
+                _delayTimer.Stop();
             }
         }
         protected void TouchEventTranslator_TouchMove(object sender, RawPointsDataMessageEventArgs e)
@@ -254,7 +264,6 @@ namespace GestureSign.Daemon.Input
 
                 EndCapture();
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-                _PointsCaptured = null;
             }
 
         }
@@ -263,11 +272,29 @@ namespace GestureSign.Daemon.Input
 
         #region Private Methods
 
+        private void GestureRecognizedCallback(object sender, EventArgs e)
+        {
+            _delayTimer.Stop();
+
+            _gestureTimeout = true;
+
+            PointsCapturedEventArgs pointsInformation = new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values));
+
+            // Fire recognized event if we found a gesture match, otherwise throw not recognized event
+            if (GestureManager.Instance.GestureName != null)
+                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.LastCapturedPoints));
+            else
+                OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
+
+            OnAfterPointsCaptured(pointsInformation);
+            _pointsCaptured = null;
+        }
+
         private bool TryBeginCapture(List<RawTouchData> firstTouch)
         {
 
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
-            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.RawPoints).ToList()) { Mode = Mode };
+            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.RawPoints).ToList());
             OnCaptureStarted(captureStartedArgs);
 
             _inputTargetWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
@@ -278,21 +305,21 @@ namespace GestureSign.Daemon.Input
             State = CaptureState.Capturing;
 
             // Clear old gesture from point list so we can start adding the new captures points to the list 
-            _PointsCaptured = new Dictionary<int, List<Point>>(firstTouch.Count);
+            _pointsCaptured = new Dictionary<int, List<Point>>(firstTouch.Count);
             if (AppConfig.IsOrderByLocation)
             {
                 foreach (var rawTouchData in firstTouch.OrderBy(p => p.RawPoints.X))
                 {
-                    if (!_PointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
-                        _PointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
+                    if (!_pointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
+                        _pointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
                 }
             }
             else
             {
                 foreach (var rawTouchData in firstTouch.OrderBy(p => p.ContactIdentifier))
                 {
-                    if (!_PointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
-                        _PointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
+                    if (!_pointsCaptured.ContainsKey(rawTouchData.ContactIdentifier))
+                        _pointsCaptured.Add(rawTouchData.ContactIdentifier, new List<Point>(30));
                 }
             }
             AddPoint(firstTouch);
@@ -303,68 +330,87 @@ namespace GestureSign.Daemon.Input
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Touch event
-            PointsCapturedEventArgs pointsInformation = new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), State);
+            PointsCapturedEventArgs pointsInformation = new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values));
 
             // Notify subscribers that capture has ended （draw end）
             OnCaptureEnded();
             State = CaptureState.Ready;
+
+            if (_gestureTimeout)
+            {
+                _gestureTimeout = false;
+                pointsInformation.GestureTimeout = true;
+            }
             // Notify PointsCaptured event subscribers that points have been captured.
             //CaptureWindow GetGestureName
             OnBeforePointsCaptured(pointsInformation);
 
-            if (!pointsInformation.Cancel)
+            if (pointsInformation.Cancel) return;
+
+            if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
-                if (Mode == CaptureMode.Training && !(_PointsCaptured.Count == 1 && _PointsCaptured.Values.First().Count == 1))
+                try
                 {
-                    try
+                    bool createdSetting;
+                    using (new Mutex(false, "GestureSignControlPanel", out createdSetting)) { }
+                    if (createdSetting)
                     {
-                        bool createdSetting;
-                        using (new Mutex(false, "GestureSignControlPanel", out createdSetting)) { }
-                        if (createdSetting)
-                        {
-                            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                            if (File.Exists(path))
-                                using (Process daemon = new Process())
-                                {
-                                    daemon.StartInfo.FileName = path;
-                                    daemon.StartInfo.Arguments = "/L";
-                                    // pipeClient.StartInfo.Arguments =            
-                                    //daemon.StartInfo.UseShellExecute = false;
-                                    daemon.Start();
-                                    daemon.WaitForInputIdle();
-                                }
-                        }
+                        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                        if (File.Exists(path))
+                            using (Process daemon = new Process())
+                            {
+                                daemon.StartInfo.FileName = path;
+                                daemon.StartInfo.Arguments = "/L";
+                                // pipeClient.StartInfo.Arguments =            
+                                //daemon.StartInfo.UseShellExecute = false;
+                                daemon.Start();
+                                daemon.WaitForInputIdle();
+                            }
                     }
-                    catch (Exception exception)
-                    {
-                        Logging.LogException(exception);
-                        MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-
-                    Tuple<string, List<List<Point>>> message =
-                        new Tuple<string, List<List<Point>>>(GestureManager.Instance.GestureName, new List<List<Point>>(_PointsCaptured.Values));
-                    if (await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
-                        Instance.DisableTouchCapture();
-
                 }
+                catch (Exception exception)
+                {
+                    Logging.LogException(exception);
+                    MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                if (OverlayGesture)
+                {
+                    OverlayGesture = false;
+                }
+                else
+                {
+                    _pointPatternCache.Clear();
+                }
+                _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
+
+                var message = new Tuple<string, List<List<List<Point>>>>(GestureManager.Instance.GestureName, _pointPatternCache.Select(p => p.Points).ToList());
+                if (await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
+                    DisableTouchCapture();
+            }
+
+            if (pointsInformation.Delay)
+            {
+                _delayTimer.Interval = AppConfig.GestureTimeout;
+                _delayTimer.Start();
+            }
+            else
+            {
                 // Fire recognized event if we found a gesture match, otherwise throw not recognized event
-                if (pointsInformation.GestureName != null)
-                    OnGestureRecognized(new RecognitionEventArgs(pointsInformation.GestureName, pointsInformation.Points,
-                        pointsInformation.LastCapturedPoints)
-                    { Mode = Mode });
+                if (GestureManager.Instance.GestureName != null)
+                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.LastCapturedPoints));
                 else
                     OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
 
                 OnAfterPointsCaptured(pointsInformation);
-
+                _pointsCaptured = null;
             }
-
         }
 
         private void CancelCapture(int num)
         {
             // Notify subscribers that gesture capture has been canceled
-            OnCaptureCanceled(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), State));
+            OnCaptureCanceled(new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values)));
         }
 
         private void AddPoint(List<RawTouchData> point)
@@ -372,9 +418,9 @@ namespace GestureSign.Daemon.Input
             bool getNewPoint = false;
             foreach (RawTouchData p in point)
             {                // Don't accept point if it's within specified distance of last point unless it's the first point
-                if (_PointsCaptured.ContainsKey(p.ContactIdentifier))
+                if (_pointsCaptured.ContainsKey(p.ContactIdentifier))
                 {
-                    var stroke = _PointsCaptured[p.ContactIdentifier];
+                    var stroke = _pointsCaptured[p.ContactIdentifier];
                     if (stroke.Count != 0 && PointPatternMath.GetDistance(stroke.Last(), p.RawPoints) < AppConfig.MinimumPointDistance)
                         continue;
                     getNewPoint = true;
@@ -386,7 +432,7 @@ namespace GestureSign.Daemon.Input
             {
 
                 // Notify subscribers that point has been captured
-                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_PointsCaptured.Values), point.Select(p => p.RawPoints).ToList(), State) { Mode = Mode });
+                OnPointCaptured(new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values), point.Select(p => p.RawPoints).ToList()));
             }
         }
 

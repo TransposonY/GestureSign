@@ -10,7 +10,6 @@ namespace GestureSign.PointPatterns
 	{
 		#region Interface Properties
 
-		string Name { get; set; }
         List<List<Point>> Points { get; set; }
 
 		#endregion

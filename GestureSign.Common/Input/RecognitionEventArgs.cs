@@ -30,7 +30,6 @@ namespace GestureSign.Common.Input
         public string GestureName { get; set; }
         public List<List<Point>> Points { get; set; }
         public List<Point> LastCapturedPoints { get; set; }
-        public CaptureMode Mode { get; set; }
 
         #endregion
     }

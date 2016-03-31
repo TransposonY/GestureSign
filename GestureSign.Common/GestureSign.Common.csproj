@@ -90,6 +90,8 @@
     <Compile Include="Gestures\GestureEventHandler.cs" />
     <Compile Include="Gestures\GestureManager.cs" />
     <Compile Include="Gestures\IGesture.cs" />
+    <Compile Include="Gestures\LegacyGesture.cs" />
+    <Compile Include="Gestures\PointPattern.cs" />
     <Compile Include="Input\RecognitionEventArgs.cs" />
     <Compile Include="Input\RecognitionEventHandler.cs" />
     <Compile Include="ILoadable.cs" />

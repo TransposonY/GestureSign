@@ -164,6 +164,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
     <NewAction>New Action</NewAction>
+    <OverlayGesture>Overlay Gesture</OverlayGesture>
     <Messages>
       <GestureExistsTitle>Gesture Conflict</GestureExistsTitle>
       <GestureExists>The Gesture Name you provided already exists, please provide a different Gesture Name</GestureExists>
@@ -205,6 +206,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
     <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
+    <Timeout>Timeout (ms)</Timeout>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

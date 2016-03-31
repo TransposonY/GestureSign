@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
@@ -7,10 +6,8 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using GestureSign.Gestures;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Point = System.Drawing.Point;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -27,19 +24,17 @@ namespace GestureSign.ControlPanel.Dialogs
         /// <summary>
         /// Edit gesture or add new one.
         /// </summary>
-        /// <param name="capturedPoints"></param>
-        /// <param name="gestureName"></param>
-        public GestureDefinition(List<List<Point>> capturedPoints, string gestureName, bool reName)
+        public GestureDefinition(IGesture gesture, bool reName)
             : this()
         {
-            _CapturedPoints = capturedPoints;
-            GestureManager.Instance.GestureName = gestureName;
-            if (reName) _existingGestureName = gestureName;
+            _capturedPointPatterns = gesture.PointPatterns;
+            GestureManager.Instance.GestureName = gesture.Name;
+            if (reName) _existingGestureName = gesture.Name;
             this.ReName = reName;
         }
 
         readonly string _existingGestureName;
-        List<List<Point>> _CapturedPoints = null;
+        PointPattern[] _capturedPointPatterns = null;
         bool reName = false;
         public static event EventHandler GesturesChanged;
 
@@ -55,9 +50,9 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
+            var color = (Color)Application.Current.Resources["HighlightColor"];
 
-            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_CapturedPoints, new Size(65, 65), brush);
+            this.imgGestureThumbnail.Source = GestureImage.CreateImage(_capturedPointPatterns, new Size(65, 65), color);
 
             if (String.IsNullOrEmpty(GestureManager.Instance.GestureName))
             {
@@ -74,16 +69,18 @@ namespace GestureSign.ControlPanel.Dialogs
 
                     var gesture = GestureManager.Instance.GetNewestGestureSample();
                     if (gesture != null)
-                        this.ExistingGestureImage.Source = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush);
+                        this.ExistingGestureImage.Source = GestureImage.CreateImage(gesture.PointPatterns, new Size(65, 65), color);
                     return;
                 }
 
-                cmdNext.Visibility = ExistingTextBlock.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
+                OverlayGestureButton.Visibility = cmdNext.Visibility = ExistingTextBlock.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
 
                 this.txtGestureName.Focus();
                 this.txtGestureName.SelectAll();
             }
             cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Save");
+
+            OverlayGestureButton.IsEnabled = _capturedPointPatterns.Length < 3;
         }
 
 
@@ -117,6 +114,14 @@ namespace GestureSign.ControlPanel.Dialogs
                 this.Close();
             }
             else txtGestureName.Focus();
+        }
+
+        private async void OverlayGestureButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (await NamedPipe.SendMessageAsync("OverlayGesture", "GestureSignDaemon"))
+            {
+                Close();
+            }
         }
 
         #region Private Methods
@@ -169,7 +174,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         return false;
                     }
                     // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
+                    GestureManager.Instance.AddGesture(new Gesture(newGestureName, _capturedPointPatterns));
                     GestureManager.Instance.GestureName = newGestureName;
                 }
                 else
@@ -177,13 +182,13 @@ namespace GestureSign.ControlPanel.Dialogs
                     if (newGestureName == GestureManager.Instance.GestureName)
                     {
                         GestureManager.Instance.DeleteGesture(newGestureName);
-                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _capturedPointPatterns));
                     }
                     else
                     {
                         GestureManager.Instance.DeleteGesture(GestureManager.Instance.GestureName);
                         // Add new gesture to gesture manager
-                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _CapturedPoints));
+                        GestureManager.Instance.AddGesture(new Gesture(newGestureName, _capturedPointPatterns));
                         GestureManager.Instance.GestureName = newGestureName;
                     }
                 }
@@ -198,6 +203,5 @@ namespace GestureSign.ControlPanel.Dialogs
 
 
         #endregion
-
     }
 }

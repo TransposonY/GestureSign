@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
 using System.Reflection;
-using GestureSign.Common;
-using GestureSign.Common.Plugins;
-using GestureSign.Common.Gestures;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Input;
 
 namespace GestureSign.Common.Plugins
 {
@@ -43,10 +40,11 @@ namespace GestureSign.Common.Plugins
 
         #region Events
 
-        protected void TouchCapture_GestureRecognized(object sender, Input.RecognitionEventArgs e)
+        protected void TouchCapture_GestureRecognized(object sender, RecognitionEventArgs e)
         {
+            var touchCapture = (ITouchCapture)sender;
             // Exit if we're teaching
-            if (e.Mode == Input.CaptureMode.Training)
+            if (touchCapture.Mode == CaptureMode.Training)
                 return;
 
             // Get action to be executed
@@ -55,7 +53,7 @@ namespace GestureSign.Common.Plugins
             {
                 // Exit if there is no action configured
                 if (executableAction == null || !executableAction.IsEnabled ||
-                    (e.Mode == Input.CaptureMode.UserDisabled &&
+                    (touchCapture.Mode == CaptureMode.UserDisabled &&
                     !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)))
                     continue;
 

@@ -13,6 +13,9 @@ namespace GestureSign.Common.Input
         void DisableTouchCapture();
         void EnableTouchCapture();
         event PointsCapturedEventHandler PointCaptured;
+        bool OverlayGesture { get; set; }
         bool TemporarilyDisableCapture { get; set; }
+        CaptureState State { get; set; }
+        CaptureMode Mode { get; set; }
     }
 }

@@ -6,7 +6,9 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using GestureSign.Common;
 using GestureSign.Common.Configuration;
@@ -20,7 +22,9 @@ using MahApps.Metro.Controls.Dialogs;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using File = System.IO.File;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.ControlPanel.MainWindowControls
@@ -58,6 +62,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                 LanguageComboBox.ItemsSource = LocalizationProvider.Instance.GetLanguageList("ControlPanel");
                 LanguageComboBox.SelectedValue = AppConfig.CultureName;
+
+                TimeoutTextBox.Text = AppConfig.GestureTimeout.ToString();
             }
             catch (Exception)
             {
@@ -411,6 +417,56 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                     AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
                                 });
                 }
+            }
+        }
+
+        private void TimeoutTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            int num = 0;
+            if (textBox == null || int.TryParse(textBox.Text, out num))
+            {
+                if (num < 1)
+                {
+                    num = 1;
+                    if (textBox != null) textBox.Text = num.ToString();
+                }
+                else if (num > 5000)
+                {
+                    num = 5000;
+                    if (textBox != null) textBox.Text = num.ToString();
+                }
+                AppConfig.GestureTimeout = num;
+                AppConfig.Save();
+            }
+        }
+
+        private void TimeoutTextBox_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox txt = sender as TextBox;
+
+            if ((e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)
+            {
+                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.Decimal))
+                {
+                    e.Handled = true;
+                    return;
+                }
+                e.Handled = false;
+            }
+            else if (((e.Key >= Key.D0 && e.Key <= Key.D9) || e.Key == Key.OemPeriod) && e.KeyboardDevice.Modifiers != ModifierKeys.Shift)
+            {
+                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.OemPeriod))
+                {
+                    e.Handled = true;
+                    return;
+                }
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
             }
         }
     }

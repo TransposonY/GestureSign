@@ -139,6 +139,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static int GestureTimeout
+        {
+            get
+            {
+                return (int)GetValue("Timeout", 800);
+            }
+            set
+            {
+                SetValue("Timeout", value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess

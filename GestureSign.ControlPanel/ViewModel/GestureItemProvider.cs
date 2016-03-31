@@ -19,7 +19,7 @@ namespace GestureSign.ControlPanel.ViewModel
             GestureManager.GestureSaved += (o, e) => { Update(); };
 
             GestureManager.OnLoadGesturesCompleted += (o, e) => { Application.Current.Dispatcher.Invoke(Update); };
-            
+
             if (GestureManager.FinishedLoading) Update();
         }
 
@@ -39,12 +39,12 @@ namespace GestureSign.ControlPanel.ViewModel
             // Get all available gestures from gesture manager
             IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);
 
-            var brush = Application.Current.Resources["HighlightBrush"] as Brush ?? Brushes.RoyalBlue;
+            var color = (Color)Application.Current.Resources["HighlightColor"];
             foreach (IGesture gesture in results)
             {
                 GestureItem newItem = new GestureItem()
                 {
-                    Image = GestureImage.CreateImage(gesture.Points, new Size(65, 65), brush),
+                    Image = GestureImage.CreateImage(gesture.PointPatterns, new Size(65, 65), color),
                     Name = gesture.Name
                 };
                 GestureItems.Add(newItem);

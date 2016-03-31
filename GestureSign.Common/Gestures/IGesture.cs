@@ -1,9 +1,9 @@
-﻿using System;
-using GestureSign.PointPatterns;
-
-namespace GestureSign.Common.Gestures
+﻿namespace GestureSign.Common.Gestures
 {
-	public interface IGesture : IPointPattern
-	{
-	}
+    public interface IGesture
+    {
+        string Name { get; set; }
+
+        PointPattern[] PointPatterns { get; set; }
+    }
 }

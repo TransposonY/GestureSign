@@ -32,18 +32,6 @@ namespace GestureSign.Common.Input
             this.LastCapturedPoints = capturePoint;
         }
 
-        public PointsCapturedEventArgs(List<List<Point>> points, CaptureState state)
-            : this(points)
-        {
-            this.State = state;
-        }
-
-        public PointsCapturedEventArgs(List<List<Point>> points, List<Point> capturePoint, CaptureState State)
-            : this(points, capturePoint)
-        {
-            this.State = State;
-        }
-
         #endregion
 
         #region Public Properties
@@ -51,10 +39,9 @@ namespace GestureSign.Common.Input
         public List<List<Point>> Points { get; set; }
         public List<Point> LastCapturedPoints { get; set; }
         public bool Cancel { get; set; }
-        public CaptureState State { get; set; }
-        public CaptureMode Mode { get; set; }
         public bool InterceptTouchInput { get; set; }
-        public string GestureName { get; set; }
+        public bool Delay { get; set; }
+        public bool GestureTimeout { get; set; }
 
         #endregion
     }

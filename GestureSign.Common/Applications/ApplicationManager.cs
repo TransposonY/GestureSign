@@ -80,7 +80,8 @@ namespace GestureSign.Common.Applications
 
         protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            if (e.Mode == CaptureMode.Training) return;
+            var touchCapture = (ITouchCapture)sender;
+            if (touchCapture.Mode == CaptureMode.Training) return;
 
             if (Environment.OSVersion.Version.Major == 6)
             {

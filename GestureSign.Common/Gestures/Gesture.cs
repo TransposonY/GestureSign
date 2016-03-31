@@ -1,38 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using GestureSign.PointPatterns;
 using System.Runtime.Serialization;
-using GestureSign.Common.Gestures;
 
-namespace GestureSign.Gestures
+namespace GestureSign.Common.Gestures
 {
     [DataContract]
-    [Serializable] 
-	[KnownType(typeof(Gesture))]
-	public class Gesture : IGesture
-	{
-		#region Constructors
+    [Serializable]
+    [KnownType(typeof(Gesture))]
+    public class Gesture : IGesture
+    {
+        #region Constructors
         public Gesture()
         { }
-        public Gesture(string Name, List<List<Point>> Points)
-		{
-			this.Name = Name;
-			this.Points = Points;
-		}
+        public Gesture(string name, PointPattern[] pointPatterns)
+        {
+            this.Name = name;
+            this.PointPatterns = pointPatterns;
+        }
 
-		#endregion
+        #endregion
 
-		#region IPointPattern Instance Properties
+        #region IPointPattern Instance Properties
 
-		[DataMember]
-		public string Name { get; set; }
+        [DataMember]
+        public string Name { get; set; }
 
-		[DataMember]
-        public List<List<Point>> Points { get; set; }
+        [DataMember]
+        public PointPattern[] PointPatterns { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }
