@@ -239,7 +239,6 @@ namespace GestureSign.Daemon.Input
                 {
                     Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
                 }
-                _delayTimer.Stop();
             }
         }
         protected void TouchEventTranslator_TouchMove(object sender, RawPointsDataMessageEventArgs e)
@@ -248,6 +247,9 @@ namespace GestureSign.Daemon.Input
             // Only add point if we're capturing
             if (State == CaptureState.Capturing)
             {
+                if (_delayTimer.Enabled)
+                    _delayTimer.Stop();
+
                 AddPoint(e.RawTouchsData);
             }
         }

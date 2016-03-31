@@ -115,7 +115,7 @@ namespace GestureSign.Daemon.Surface
             if (!Visible && !Modal)
             {
                 TopMost = true;
-                ShowDialog();
+                ShowDialog();//todo:do not block main thread
             }
             if (_lastStroke == null) { _lastStroke = points.Select(p => p.Count).ToArray(); return; }
             if (_lastStroke.Length != points.Count) return;

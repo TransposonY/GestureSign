@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Drawing;
 using GestureSign.Common.Input;
 
 namespace GestureSign.Daemon.Input
@@ -46,15 +42,17 @@ namespace GestureSign.Daemon.Input
 
         public void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
-            if (e.RawTouchsData.Any(rtd => !rtd.Tip))
+            int releaseCount = e.RawTouchsData.Count(rtd => !rtd.Tip);
+            if (releaseCount != 0)
             {
                 if (e.RawTouchsData.Count <= _lastPointsCount)
                 {
                     OnTouchUp(e);
-                    _lastPointsCount = 0;
+                    _lastPointsCount = _lastPointsCount - releaseCount;
                 }
                 return;
             }
+
             if (e.RawTouchsData.Count > _lastPointsCount)
             {
                 if (TouchCapture.Instance.InputPoints.Any(p => p.Count > 10))
