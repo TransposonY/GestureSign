@@ -206,7 +206,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
     <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
-    <Timeout>Timeout (ms)</Timeout>
+    <Timeout>Gesture Timeout (ms)</Timeout>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

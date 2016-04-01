@@ -29,8 +29,7 @@ namespace GestureSign.Daemon.Input
         private readonly TouchEventTranslator _touchEventTranslator = new TouchEventTranslator();
         private readonly PointerInputTargetWindow _inputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
-        private readonly Timer _delayTimer = new Timer();
-        private PointsCapturedEventArgs _tempPointsInformation;
+        private readonly Timer _timeoutTimer = new Timer();
 
         Dictionary<int, List<Point>> _pointsCaptured = new Dictionary<int, List<Point>>(2);
         // Create variable to hold the only allowed instance of this class
@@ -193,7 +192,7 @@ namespace GestureSign.Daemon.Input
 
             ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) _inputTargetWindow.InterceptTouchInput(false); };
 
-            _delayTimer.Tick += GestureRecognizedCallback;
+            _timeoutTimer.Tick += GestureRecognizedCallback;
         }
 
         #endregion
@@ -248,8 +247,8 @@ namespace GestureSign.Daemon.Input
             // Only add point if we're capturing
             if (State == CaptureState.Capturing)
             {
-                if (_delayTimer.Enabled)
-                    _delayTimer.Stop();
+                if (_timeoutTimer.Enabled)
+                    _timeoutTimer.Stop();
 
                 AddPoint(e.RawTouchsData);
             }
@@ -278,18 +277,8 @@ namespace GestureSign.Daemon.Input
 
         private void GestureRecognizedCallback(object sender, EventArgs e)
         {
-            _delayTimer.Stop();
-
+            _timeoutTimer.Stop();
             _gestureTimeout = true;
-
-            // Fire recognized event if we found a gesture match, otherwise throw not recognized event
-            if (GestureManager.Instance.GestureName != null)
-                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, _tempPointsInformation.Points, _tempPointsInformation.LastCapturedPoints));
-            else
-                OnGestureNotRecognized(new RecognitionEventArgs(_tempPointsInformation.Points, _tempPointsInformation.LastCapturedPoints));
-
-            OnAfterPointsCaptured(_tempPointsInformation);
-            _tempPointsInformation = null;
         }
 
         private bool TryBeginCapture(List<RawTouchData> firstTouch)
@@ -349,7 +338,12 @@ namespace GestureSign.Daemon.Input
 
             if (pointsInformation.Cancel) return;
 
-            if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
+            if (pointsInformation.Delay)
+            {
+                _timeoutTimer.Interval = AppConfig.GestureTimeout;
+                _timeoutTimer.Start();
+            }
+            else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
                 try
                 {
@@ -391,22 +385,14 @@ namespace GestureSign.Daemon.Input
                     DisableTouchCapture();
             }
 
-            if (pointsInformation.Delay)
-            {
-                _tempPointsInformation = pointsInformation;
-                _delayTimer.Interval = AppConfig.GestureTimeout;
-                _delayTimer.Start();
-            }
+            // Fire recognized event if we found a gesture match, otherwise throw not recognized event
+            if (GestureManager.Instance.GestureName != null)
+                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.LastCapturedPoints));
             else
-            {
-                // Fire recognized event if we found a gesture match, otherwise throw not recognized event
-                if (GestureManager.Instance.GestureName != null)
-                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.LastCapturedPoints));
-                else
-                    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
+                OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
 
-                OnAfterPointsCaptured(pointsInformation);
-            }
+            OnAfterPointsCaptured(pointsInformation);
+
         }
 
         private void CancelCapture(int num)

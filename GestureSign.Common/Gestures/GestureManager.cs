@@ -88,6 +88,7 @@ namespace GestureSign.Common.Gestures
             var touchCapture = (ITouchCapture)sender;
 
             if (touchCapture.Mode == CaptureMode.Training)
+            {
                 if (touchCapture.OverlayGesture)
                 {
                     _gestureLevel++;
@@ -97,6 +98,7 @@ namespace GestureSign.Common.Gestures
                     _gestureLevel = 0;
                     _gestureMatchResult = null;
                 }
+            }
 
             if (e.GestureTimeout)
             {
