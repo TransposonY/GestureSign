@@ -236,15 +236,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             else
             {
                 _selecteNewestItem = true;
-                var newApp =
-                    selectedApplication.Actions.Where(
-                        a => !ActionInfos.Any
-                            (ai => ai.ActionName.Equals(a.Name, StringComparison.Ordinal))).ToList();
-                var deletedApp =
-                    ActionInfos.Where(
-                        ai =>
-                            !selectedApplication.Actions.Any(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal)))
-                        .ToList();
+                var newApp = selectedApplication.Actions.Where(a => !ActionInfos.Any(ai => ai.Equals(a))).ToList();
+                var deletedApp = ActionInfos.Where(ai => !selectedApplication.Actions.Any(ai.Equals)).ToList();
 
                 if (newApp.Count == 1 && deletedApp.Count == 1)
                 {
@@ -427,22 +420,26 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var listBoxItemParent = UIHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
             if (listBoxItemParent == null) return;
             var listBoxItems = listBoxItemParent.Children;
+            string newGestureName = ((GestureItem)e.AddedItems[0]).Name;
+            ActionInfo ai = null;
             foreach (ListBoxItem listBoxItem in listBoxItems)
             {
-                ActionInfo ai = listBoxItem.Content as ActionInfo;
+                ai = listBoxItem.Content as ActionInfo;
                 IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                if (ai != null && ((GestureItem)e.AddedItems[0]).Name != ai.GestureName)
+                if (ai != null && newGestureName != ai.GestureName)
                 {
                     if (app != null)
                     {
                         IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
-                        ai.GestureName = action.GestureName = ((GestureItem)e.AddedItems[0]).Name;
+                        ai.GestureName = action.GestureName = newGestureName;
 
                         ApplicationManager.Instance.SaveApplications();
                     }
                 }
                 else return;
             }
+            RefreshGroup(newGestureName);
+            SelectAction(ai);
         }
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)

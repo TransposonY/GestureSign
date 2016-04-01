@@ -1,10 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using GestureSign.Common.Applications;
 
 namespace GestureSign.ControlPanel.Common
 {
-    public class ActionInfo : INotifyPropertyChanged
+    public class ActionInfo : INotifyPropertyChanged, IEquatable<IAction>
     {
 
         public ActionInfo(string actionName, string description, string gestureName, bool isEnabled)
@@ -53,6 +54,11 @@ namespace GestureSign.ControlPanel.Common
 
             storage = value;
             this.OnPropertyChanged(propertyName);
+        }
+
+        public bool Equals(IAction action)
+        {
+            return GestureName == action.GestureName && ActionName == action.Name;
         }
     }
 }
