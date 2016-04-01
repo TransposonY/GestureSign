@@ -249,13 +249,13 @@ namespace GestureSign.Common.Gestures
                 comparisonResults[i].AddRange(gestureAnalyzer.GetPointPatternMatchResults(points[i].ToArray()));
             }
 
-            int[] numbers = new int[gestures.Count];
+            List<int> numbers = new List<int>(gestures.Count);
             for (int j = 0; j < gestures.Count; j++)
             {
-                numbers[j] = j;
+                numbers.Add(j);
             }
 
-            numbers = comparisonResults.Aggregate(numbers, (current, matchResultsList) => current.Where(i => matchResultsList[i].Probability > ProbabilityThreshold).ToArray());
+            numbers = comparisonResults.Aggregate(numbers, (current, matchResultsList) => current.Where(i => matchResultsList[i].Probability > ProbabilityThreshold).ToList());
 
             List<IGesture> result = new List<IGesture>();
             List<KeyValuePair<string, double>> recognizedResult = new List<KeyValuePair<string, double>>();
