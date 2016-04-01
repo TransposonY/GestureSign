@@ -30,6 +30,7 @@ namespace GestureSign.Daemon.Input
         private readonly PointerInputTargetWindow _inputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly Timer _delayTimer = new Timer();
+        private PointsCapturedEventArgs _tempPointsInformation;
 
         Dictionary<int, List<Point>> _pointsCaptured = new Dictionary<int, List<Point>>(2);
         // Create variable to hold the only allowed instance of this class
@@ -266,6 +267,7 @@ namespace GestureSign.Daemon.Input
 
                 EndCapture();
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                _pointsCaptured = null;
             }
 
         }
@@ -280,16 +282,14 @@ namespace GestureSign.Daemon.Input
 
             _gestureTimeout = true;
 
-            PointsCapturedEventArgs pointsInformation = new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values));
-
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
             if (GestureManager.Instance.GestureName != null)
-                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.LastCapturedPoints));
+                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, _tempPointsInformation.Points, _tempPointsInformation.LastCapturedPoints));
             else
-                OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
+                OnGestureNotRecognized(new RecognitionEventArgs(_tempPointsInformation.Points, _tempPointsInformation.LastCapturedPoints));
 
-            OnAfterPointsCaptured(pointsInformation);
-            _pointsCaptured = null;
+            OnAfterPointsCaptured(_tempPointsInformation);
+            _tempPointsInformation = null;
         }
 
         private bool TryBeginCapture(List<RawTouchData> firstTouch)
@@ -393,6 +393,7 @@ namespace GestureSign.Daemon.Input
 
             if (pointsInformation.Delay)
             {
+                _tempPointsInformation = pointsInformation;
                 _delayTimer.Interval = AppConfig.GestureTimeout;
                 _delayTimer.Start();
             }
@@ -405,7 +406,6 @@ namespace GestureSign.Daemon.Input
                     OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.LastCapturedPoints));
 
                 OnAfterPointsCaptured(pointsInformation);
-                _pointsCaptured = null;
             }
         }
 
