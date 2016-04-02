@@ -225,13 +225,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (selectedApplication == null) return;
             if (refreshAll)
             {
-                if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
+                Task.Run(() =>
                 {
-                    _cancelTokenSource.Cancel();
-                    _task.Wait(500);
-                }
-                ActionInfos.Clear();
-                AddActionsToGroup(selectedApplication.Actions);
+                    Thread.Sleep(16);
+                    if (_task != null && _task.Status.HasFlag(TaskStatus.Running))
+                    {
+                        _cancelTokenSource.Cancel();
+                        _task.Wait(500);
+                    }
+                    lstAvailableActions.Dispatcher.Invoke(() => ActionInfos.Clear());
+                    AddActionsToGroup(selectedApplication.Actions);
+                });
             }
             else
             {
@@ -254,6 +258,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
             }
         }
+
         private void AddActionsToGroup(List<IAction> actions)
         {
             _cancelTokenSource = new CancellationTokenSource();
@@ -261,20 +266,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
             _task = new Task<ActionInfo>(() =>
             {
                 ActionInfo actionInfo = null;
-                foreach (Applications.Action currentAction in actions)
+                foreach (var currentAction in actions)
                 {
                     actionInfo = Action2ActionInfo(currentAction);
 
                     if (_cancelTokenSource.IsCancellationRequested) break;
 
+                    var info = actionInfo;
                     lstAvailableApplication.Dispatcher.Invoke(() =>
                     {
-                        ActionInfos.Add(actionInfo);
+                        ActionInfos.Add(info);
                     });
                 }
                 return actionInfo;
             }, _cancelTokenSource.Token);
-            _task.ContinueWith((t) =>
+            _task.ContinueWith(t =>
             {
                 ActionInfo ai = t.Result;
                 if (ai != null && _selecteNewestItem)

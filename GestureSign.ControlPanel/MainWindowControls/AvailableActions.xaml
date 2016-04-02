@@ -303,6 +303,7 @@
                       HorizontalAlignment="Right"
                       Margin="0,0,1,0" />
         </Grid>
+        <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
         <ListBox x:Name="lstAvailableActions"
                  ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
