@@ -22,7 +22,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
             InitializeComponent();
             ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
 
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindIgnoredApplications); };
+            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.InvokeAsync(BindIgnoredApplications); };
+
+            if (ApplicationManager.FinishedLoading) BindIgnoredApplications();
         }
 
         void ApplicationsFlyout_BindIgnoredApplications(object sender, EventArgs e)

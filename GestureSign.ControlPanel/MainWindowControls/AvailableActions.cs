@@ -75,7 +75,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 lstAvailableApplication.ScrollIntoView(e.Application);
             };
 
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.Invoke(BindApplications); };
+            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.InvokeAsync(BindApplications); };
 
             if (ApplicationManager.FinishedLoading) BindApplications();
         }
