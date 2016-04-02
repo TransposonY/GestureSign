@@ -112,10 +112,10 @@ namespace GestureSign.Daemon.Surface
         public void DrawSegments(List<List<Point>> points)
         {
             // Ensure that surface is visible
-            if (!Visible && !Modal)
+            if (!Visible)
             {
                 TopMost = true;
-                ShowDialog();//todo:do not block main thread
+                Show();
             }
             if (_lastStroke == null) { _lastStroke = points.Select(p => p.Count).ToArray(); return; }
             if (_lastStroke.Length != points.Count) return;
@@ -188,7 +188,6 @@ namespace GestureSign.Daemon.Surface
             FormBorderStyle = FormBorderStyle.None;
             Name = "SurfaceForm";
             ShowIcon = false;
-            ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
             Hide();
 
@@ -353,7 +352,7 @@ namespace GestureSign.Daemon.Surface
             {
                 CreateParams myParams = base.CreateParams;
                 myParams.ExStyle = myParams.ExStyle | (int)WindowExStyleFlags.NOACTIVATE |
-                                    (int)WindowExStyleFlags.TRANSPARENT | //To ignore input?
+                                    (int)WindowExStyleFlags.TOOLWINDOW |
                                     (int)WindowExStyleFlags.LAYERED;
                 return myParams;
             }
