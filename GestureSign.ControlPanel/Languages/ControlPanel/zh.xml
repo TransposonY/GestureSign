@@ -357,6 +357,7 @@ http://git.oschina.net/TransY/GestureSign
       <Category>键盘</Category>
       <Show>显示键盘</Show>
       <Hide>隐藏键盘</Hide>
+      <Auto>自动显示或隐藏键盘</Auto>
       <Tip>提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度</Tip>
     </TouchKeyboard>
     <Volume>

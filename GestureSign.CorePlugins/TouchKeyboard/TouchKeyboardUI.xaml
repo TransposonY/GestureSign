@@ -7,28 +7,31 @@
              mc:Ignorable="d"
              d:DesignHeight="150"
              d:DesignWidth="300">
-    <Grid>
+    <StackPanel>
+        <RadioButton x:Name="AutoRadioButton"
+                     Content="{localization:LocalisedText CorePlugins.TouchKeyboard.Auto}"
+                     HorizontalAlignment="Left"
+                     Margin="10,0,0,0"
+                     GroupName="0"
+                     FontSize="20" />
         <RadioButton x:Name="ShowTouchKeyboardRB"
                      Content="{localization:LocalisedText CorePlugins.TouchKeyboard.Show}"
                      HorizontalAlignment="Left"
-                     Margin="10,0,0,0"
-                     VerticalAlignment="Top"
+                     Margin="10,10,0,0"
                      GroupName="0"
                      FontSize="20" />
         <RadioButton x:Name="HideTouchKeyboardRB"
                      Content="{localization:LocalisedText CorePlugins.TouchKeyboard.Hide}"
                      HorizontalAlignment="Left"
-                     Margin="10,32,0,0"
-                     VerticalAlignment="Top"
+                     Margin="10,10,0,0"
                      GroupName="0"
                      FontSize="20" />
         <TextBlock HorizontalAlignment="Left"
-                   Margin="10,70,0,0"
+                   Margin="10,10,0,0"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.TouchKeyboard.Tip}"
-                   VerticalAlignment="Top"
                    FontSize="14"
                    Width="280" />
 
-    </Grid>
+    </StackPanel>
 </UserControl>

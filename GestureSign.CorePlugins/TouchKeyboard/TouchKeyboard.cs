@@ -19,7 +19,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         IHostControl _HostControl = null;
         TouchKeyboardUI _GUI = null;
-        bool isShow;
+        bool? _showKeyboard;
         #endregion
 
         #region Win32API
@@ -28,12 +28,12 @@ namespace GestureSign.CorePlugins.TouchKeyboard
         private const int WM_LBUTTONDOWN = 0x201;
         //释放鼠标左键  
         private const int WM_LBUTTONUP = 0x202;
-        private const Int32 WM_MOVE = 0x0003;
         private const Int32 WM_SYSCOMMAND = 274;
         private const UInt32 SC_CLOSE = 61536;
 
         [DllImport("user32.dll")]
         internal static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, uint lParam);
+
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
@@ -55,9 +55,11 @@ namespace GestureSign.CorePlugins.TouchKeyboard
         {
             get
             {
-                return isShow
+                return _showKeyboard.HasValue ?
+                    _showKeyboard.Value
                     ? LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Show")
-                    : LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Hide");
+                    : LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Hide")
+                    : LocalizationProvider.Instance.GetTextValue("CorePlugins.TouchKeyboard.Auto");
             }
         }
 
@@ -95,8 +97,13 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             TouchKeyboardUI touchKeyboardUI = new TouchKeyboardUI();
             touchKeyboardUI.Loaded += (s, o) =>
             {
-                TypedGUI.ShowTouchKeyboardRB.IsChecked = isShow;
-                TypedGUI.HideTouchKeyboardRB.IsChecked = !isShow;
+                if (_showKeyboard == null)
+                    TypedGUI.AutoRadioButton.IsChecked = true;
+                else
+                {
+                    TypedGUI.ShowTouchKeyboardRB.IsChecked = _showKeyboard.Value;
+                    TypedGUI.HideTouchKeyboardRB.IsChecked = !_showKeyboard.Value;
+                }
             };
             return touchKeyboardUI;
         }
@@ -125,6 +132,43 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             catch { return false; }
         }
 
+        private bool ShowKeyboard()
+        {
+            //find taskbar 
+            IntPtr hwndTaskbar = FindWindow("Shell_TrayWnd", null);
+            //Win 10
+            IntPtr hwndTrayNotifyWnd = FindWindowEx(hwndTaskbar, 0, "TrayNotifyWnd", null);
+            IntPtr hwndTIPBand = FindWindowEx(hwndTrayNotifyWnd, 0, "TIPBand", null);
+            if (hwndTIPBand == IntPtr.Zero)
+            {
+                //Win 8
+                IntPtr hwndReBar = FindWindowEx(hwndTaskbar, 0, "ReBarWindow32", null);
+                hwndTIPBand = FindWindowEx(hwndReBar, 0, "TIPBand", null);
+                if (hwndTIPBand == IntPtr.Zero) return StartProcess();
+            }
+            else
+            {
+                SystemWindow ww = new SystemWindow(hwndTIPBand);
+                if (ww.Size.Height == 0 || ww.Size.Width == 0)
+                {
+                    return StartProcess();
+                }
+            }
+            SendMessage(hwndTIPBand, WM_LBUTTONDOWN, (IntPtr)1, 0x160010);
+            SendMessage(hwndTIPBand, WM_LBUTTONUP, (IntPtr)0, 0x160010);
+
+            return true;
+        }
+
+        private bool HideKeyboard()
+        {
+            var keyboardHwnd = FindWindow("IPTip_Main_Window", null);
+
+            if (keyboardHwnd != IntPtr.Zero)
+                PostMessage(keyboardHwnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+            return true;
+        }
+
         #endregion
 
         #region Public Methods
@@ -134,56 +178,46 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
         }
 
-        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        public bool Gestured(PointInfo ActionPoint)
         {
-            if (isShow)
+            if (_showKeyboard.HasValue)
             {
-                //find taskbar 
-                IntPtr hwndTaskbar = FindWindow("Shell_TrayWnd", null);
-                //Win 10
-                IntPtr hwndTrayNotifyWnd = FindWindowEx(hwndTaskbar, 0, "TrayNotifyWnd", null);
-                IntPtr hwndTIPBand = FindWindowEx(hwndTrayNotifyWnd, 0, "TIPBand", null);
-                if (hwndTIPBand == IntPtr.Zero)
-                {
-                    //Win 8
-                    IntPtr hwndReBar = FindWindowEx(hwndTaskbar, 0, "ReBarWindow32", null);
-                    hwndTIPBand = FindWindowEx(hwndReBar, 0, "TIPBand", null);
-                    if (hwndTIPBand == IntPtr.Zero) return StartProcess();
-                }
-                else
-                {
-                    SystemWindow ww = new SystemWindow(hwndTIPBand);
-                    if (ww.Size.Height == 0 || ww.Size.Width == 0)
-                    {
-                        return StartProcess();
-                    }
-                }
-
-                SendMessage(hwndTIPBand, WM_LBUTTONDOWN, (IntPtr)1, 0x160010);
-                SendMessage(hwndTIPBand, WM_LBUTTONUP, (IntPtr)0, 0x160010);
+                return _showKeyboard.Value ? ShowKeyboard() : HideKeyboard();
             }
             else
             {
                 var keyboardHwnd = FindWindow("IPTip_Main_Window", null);
+                if (keyboardHwnd == IntPtr.Zero) return false;
 
-                if (keyboardHwnd != IntPtr.Zero)
-                    PostMessage(keyboardHwnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+                var taptipWindow = new SystemWindow(keyboardHwnd);
+                return taptipWindow.Enabled ? HideKeyboard() : ShowKeyboard();
             }
-            return true;
         }
 
         public bool Deserialize(string SerializedData)
         {
-            return Boolean.TryParse(SerializedData, out isShow);
+            if (string.IsNullOrEmpty(SerializedData))
+            {
+                _showKeyboard = null;
+                return true;
+            }
+            else
+            {
+                bool show;
+                var result = Boolean.TryParse(SerializedData, out show);
+                _showKeyboard = show;
+                return result;
+            }
         }
 
         public string Serialize()
         {
-            if (_GUI != null && _GUI.ShowTouchKeyboardRB.IsChecked.HasValue)
+            if (_GUI?.ShowTouchKeyboardRB.IsChecked != null)
             {
+                if (_GUI.AutoRadioButton.IsChecked != null && _GUI.AutoRadioButton.IsChecked.Value) return null;
                 return _GUI.ShowTouchKeyboardRB.IsChecked.Value ? Boolean.TrueString : Boolean.FalseString;
             }
-            else return isShow ? Boolean.TrueString : Boolean.FalseString;
+            else return _showKeyboard.HasValue ? _showKeyboard.Value ? Boolean.TrueString : Boolean.FalseString : null;
         }
 
         #endregion
