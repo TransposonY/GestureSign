@@ -45,7 +45,8 @@ namespace GestureSign.Daemon
         {
             if (!IsHandleCreated)
             {
-                CreateHandle();
+                if (!IsDisposed)
+                    CreateHandle();
             }
 
             if (InvokeRequired)
