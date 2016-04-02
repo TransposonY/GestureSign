@@ -79,7 +79,7 @@ namespace GestureSign.Daemon.Surface
 
         protected void MouseCapture_CaptureEnded(object sender, EventArgs e)
         {
-            if (AppConfig.VisualFeedbackWidth > 0)
+            if (AppConfig.VisualFeedbackWidth > 0 && _lastStroke != null)
                 EndDraw();
         }
 
