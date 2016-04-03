@@ -122,7 +122,7 @@ namespace GestureSign.Daemon
             _exitGestureSignMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Exit");
             _exitGestureSignMenuItem.Click += async (o, e) =>
             {
-                await NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel");
+                await NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel", false);
                 Application.Exit();
             };
         }

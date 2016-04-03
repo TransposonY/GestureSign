@@ -74,7 +74,7 @@ namespace GestureSign.Common.InterProcessCommunication
             _persistentPipeServerStream.BeginWaitForConnection(ac, _persistentPipeServerStream);
         }
 
-        public static Task<bool> SendMessageAsync(object message, string pipeName)
+        public static Task<bool> SendMessageAsync(object message, string pipeName, bool wait = true)
         {
             return Task.Run<bool>(new Func<bool>(() =>
                {
@@ -84,26 +84,28 @@ namespace GestureSign.Common.InterProcessCommunication
                        {
                            using (MemoryStream ms = new MemoryStream())
                            {
-                               int i = 0;
-                               for (; i != 20; i++)
+                               if (wait)
                                {
-                                   if (!NamedPipeDoesNotExist(pipeName)) break;
-                                   Thread.Sleep(50);
+                                   int i = 0;
+                                   for (; i != 20; i++)
+                                   {
+                                       if (!NamedPipeDoesNotExist(pipeName)) break;
+                                       Thread.Sleep(50);
+                                   }
+                                   if (i == 20) return false;
                                }
-                               if (i == 20) return false;
+                               if (NamedPipeDoesNotExist(pipeName)) return false;
 
                                pipeClient.Connect(10);
 
-                               {
-                                   BinaryFormatter bf = new BinaryFormatter();
+                               BinaryFormatter bf = new BinaryFormatter();
 
-                                   bf.Serialize(ms, message);
-                                   ms.Seek(0, SeekOrigin.Begin);
-                                   ms.CopyTo(pipeClient);
-                                   pipeClient.Flush();
-                               }
+                               bf.Serialize(ms, message);
+                               ms.Seek(0, SeekOrigin.Begin);
+                               ms.CopyTo(pipeClient);
+                               pipeClient.Flush();
+
                                pipeClient.WaitForPipeDrain();
-
                            }
                        }
                        return true;
