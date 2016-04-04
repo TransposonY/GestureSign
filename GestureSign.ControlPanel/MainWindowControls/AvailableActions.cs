@@ -226,8 +226,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 Action<object> refreshAction = (o) =>
                  {
-                     Thread.Sleep(16);
-                     Dispatcher.Invoke(() => { ActionInfos.Clear(); });
+                     Dispatcher.Invoke(() => { ActionInfos.Clear(); }, DispatcherPriority.Loaded);
                      AddActionsToGroup(selectedApplication.Actions);
                  };
 
