@@ -196,7 +196,8 @@ namespace GestureSign.Common.Gestures
 
                             foreach (var gesture in legacyGestures)
                             {
-                                gesture.PointPatterns = new[] { new PointPattern(gesture.Points) };
+                                if (gesture.Points != null)
+                                    gesture.PointPatterns = new[] { new PointPattern(gesture.Points) };
                             }
                             _Gestures = legacyGestures.Cast<IGesture>().ToList();
                         }
@@ -238,11 +239,11 @@ namespace GestureSign.Common.Gestures
 
         public string GetGestureSetNameMatch(List<List<Point>> points, List<IGesture> sourceGestures, out List<IGesture> matchResult)//PointF[]
         {
-            if (points.Count == 0 || sourceGestures == null || !sourceGestures.Any())
+            if (points.Count == 0 || sourceGestures == null || sourceGestures.Count == 0)
             { matchResult = null; return null; }
             // Update gesture analyzer with latest gestures and get gesture match from current points array
             // Comparison results are sorted descending from highest to lowest probability
-            var gestures = sourceGestures.Where(g => g.PointPatterns.Length > _gestureLevel && g.PointPatterns[_gestureLevel].Points.Count == points.Count).ToList();
+            var gestures = sourceGestures.Where(g => g.PointPatterns.Length > _gestureLevel && g.PointPatterns[_gestureLevel].Points != null && g.PointPatterns[_gestureLevel].Points.Count == points.Count).ToList();
             List<PointPatternMatchResult>[] comparisonResults = new List<PointPatternMatchResult>[points.Count];
             for (int i = 0; i < points.Count; i++)
             {
