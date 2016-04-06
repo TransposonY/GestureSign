@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media;
-using GestureSign.Common.Gestures;
+﻿using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -47,6 +47,8 @@ namespace GestureSign.ControlPanel.Dialogs
                 reName = value;
             }
         }
+
+        public string GestureName { get; set; }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -124,6 +126,14 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
+        private void txtGestureName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string newGestureName = txtGestureName.Text.Trim();
+            if (_existingGestureName == newGestureName) return;
+
+            txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        }
+
         #region Private Methods
 
 
@@ -132,8 +142,9 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             string newGestureName = txtGestureName.Text.Trim();
 
-            if (newGestureName == "")
+            if (string.IsNullOrEmpty(newGestureName))
             {
+                txtGestureName.Clear();
                 return false;
             }
 
@@ -142,15 +153,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 if (_existingGestureName.Equals(newGestureName)) return true;
                 if (GestureManager.Instance.GestureExists(newGestureName))
                 {
-                    this.ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
-                        LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
-                        MessageDialogStyle.Affirmative,
-                        new MetroDialogSettings()
-                        {
-                            AnimateHide = false,
-                            AnimateShow = false,
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK")
-                        });
+                    txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                     return false;
                 }
                 GestureManager.Instance.RenameGesture(_existingGestureName, newGestureName);
@@ -161,16 +164,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     if (GestureManager.Instance.GestureExists(newGestureName))
                     {
-                        this.ShowMessageAsync(
-                            LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExistsTitle"),
-                            LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"),
-                            MessageDialogStyle.Affirmative,
-                            new MetroDialogSettings()
-                            {
-                                AnimateHide = false,
-                                AnimateShow = false,
-                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            });
+                        txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                         return false;
                     }
                     // Add new gesture to gesture manager
@@ -199,9 +193,7 @@ namespace GestureSign.ControlPanel.Dialogs
             return true;
         }
 
-
-
-
         #endregion
+
     }
 }

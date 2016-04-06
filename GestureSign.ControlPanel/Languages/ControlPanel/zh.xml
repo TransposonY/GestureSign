@@ -171,8 +171,7 @@ http://git.oschina.net/TransY/GestureSign
     <NewAction>新建动作</NewAction>
     <OverlayGesture>叠加手势</OverlayGesture>
     <Messages>
-      <GestureExistsTitle>手势已存在</GestureExistsTitle>
-      <GestureExists>输入的手势名称已存在，请重新输入一个手势名称</GestureExists>
+      <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
     </Messages>
   </GestureDefinition>
   <Ignored>

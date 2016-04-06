@@ -170,6 +170,7 @@
       <DependentUpon>RuningApplicationsFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\SliderTools.cs" />
+    <Compile Include="ValidationRules\GestureNameValidationRule.cs" />
     <Compile Include="ViewModel\GestureItemProvider.cs" />
     <Page Include="Dialogs\ApplicationDialog.xaml">
       <SubType>Designer</SubType>

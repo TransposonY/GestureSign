@@ -166,8 +166,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <NewAction>New Action</NewAction>
     <OverlayGesture>Overlay Gesture</OverlayGesture>
     <Messages>
-      <GestureExistsTitle>Gesture Conflict</GestureExistsTitle>
-      <GestureExists>The Gesture Name you provided already exists, please provide a different Gesture Name</GestureExists>
+      <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
     </Messages>
   </GestureDefinition>
   <Ignored>
