@@ -30,13 +30,13 @@ Continue to run?
   <About>
     <Header>About</Header>
     <Help>Open the help page</Help>
-    <HelpPageUrl>https://github.com/TransposonY/GestureSign</HelpPageUrl>
+    <HelpPageUrl>http://transposony.github.io/GestureSign/</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
     <Information>Author:TransposonY
 Translator:TransposonY
 Email:ccfyzh@gmail.com
-Page:https://github.com/TransposonY
+Page:http://transposony.github.io/GestureSign/
     </Information>
   </About>
   <ApplicationDialog>

@@ -32,7 +32,7 @@
   <About>
     <Header>关于</Header>
     <Help>打开帮助页面</Help>
-    <HelpPageUrl>http://git.oschina.net/TransY/GestureSign/wikis/home</HelpPageUrl>
+    <HelpPageUrl>http://transposony.coding.me/GestureSign/</HelpPageUrl>
     <Version>版本：  </Version>
     <ReleaseDate>发布时间：  </ReleaseDate>
     <Information>作者:   TransposonY
@@ -40,8 +40,7 @@
 553078206@qq.com
 
 项目主页:
-OSC:
-http://git.oschina.net/TransY/GestureSign
+http://transposony.coding.me/GestureSign/
     </Information>
   </About>
   <ApplicationDialog>
