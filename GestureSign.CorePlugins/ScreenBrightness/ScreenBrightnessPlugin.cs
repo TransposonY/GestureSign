@@ -10,6 +10,7 @@
 ///</summary>
 
 using System;
+using System.Linq;
 using System.Management;
 using System.Windows.Controls;
 using GestureSign.Common.Localization;
@@ -141,17 +142,27 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             if (Settings == null)
                 return false;
 
-
             try
             {
                 int currentBrightness = GetBrightness();
+                byte[] level = GetBrightnessLevels();
+                byte maxLevel = level.Max();
+                byte minLevel = level.Min();
+                int levelChange = Settings.Percent * maxLevel / 100;
+                int targetValue;
+                byte targetLevel;
+
                 switch ((Method)_Settings.Method)
                 {
                     case Method.BrightnessUp:
-                        SetBrightness((byte)((currentBrightness + Settings.Percent) > 100 ? 100 : currentBrightness + Settings.Percent));
+                        targetValue = currentBrightness + levelChange > maxLevel ? maxLevel : currentBrightness + levelChange;
+                        targetLevel = Array.Find(level, l => l >= targetValue);
+                        SetBrightness(targetLevel);
                         break;
                     case Method.BrightnessDown:
-                        SetBrightness((byte)((currentBrightness - Settings.Percent) < 0 ? 0 : currentBrightness - Settings.Percent));
+                        targetValue = currentBrightness - levelChange < minLevel ? minLevel : currentBrightness - levelChange;
+                        targetLevel = Array.Find(level, l => l >= targetValue);
+                        SetBrightness(targetLevel);
                         break;
                 }
 
@@ -176,22 +187,16 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
             //output current brightness
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
-
-            ManagementObjectCollection moc = mos.Get();
-
-            //store result
-            byte curBrightness = 0;
-            foreach (ManagementObject o in moc)
+            byte curBrightness;
+            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
             {
-                curBrightness = (byte)o.GetPropertyValue("CurrentBrightness");
-                break; //only work on the first object
+                using (ManagementObjectCollection moc = mos.Get())
+                {
+                    curBrightness = (from ManagementObject o in moc select (byte)o.GetPropertyValue("CurrentBrightness")).FirstOrDefault();
+                }
             }
 
-            moc.Dispose();
-            mos.Dispose();
-
-            return (int)curBrightness;
+            return curBrightness;
         }
 
         //array of valid brightness values in percent
@@ -203,33 +208,28 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             //define query
             SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
-            //output current brightness
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
+            //store result
             byte[] BrightnessLevels = new byte[0];
-
-            try
+            //output current brightness
+            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
             {
-                ManagementObjectCollection moc = mos.Get();
-
-                //store result
-
-
-                foreach (ManagementObject o in moc)
+                try
                 {
-                    BrightnessLevels = (byte[])o.GetPropertyValue("Level");
-                    break; //only work on the first object
+                    using (ManagementObjectCollection moc = mos.Get())
+                    {
+                        foreach (ManagementObject o in moc)
+                        {
+                            BrightnessLevels = (byte[])o.GetPropertyValue("Level");
+                            break; //only work on the first object
+                        }
+                    }
                 }
+                catch (Exception)
+                {
+                    // MessageBox.Show("Sorry, Your System does not support this brightness control...");
 
-                moc.Dispose();
-                mos.Dispose();
-
+                }
             }
-            catch (Exception)
-            {
-                // MessageBox.Show("Sorry, Your System does not support this brightness control...");
-
-            }
-
             return BrightnessLevels;
         }
 
@@ -242,18 +242,17 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             SelectQuery q = new SelectQuery("WmiMonitorBrightnessMethods");
 
             //output current brightness
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
-
-            ManagementObjectCollection moc = mos.Get();
-
-            foreach (ManagementObject o in moc)
+            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
             {
-                o.InvokeMethod("WmiSetBrightness", new Object[] { UInt32.MaxValue, targetBrightness }); //note the reversed order - won't work otherwise!
-                break; //only work on the first object
+                using (ManagementObjectCollection moc = mos.Get())
+                {
+                    foreach (ManagementObject o in moc)
+                    {
+                        o.InvokeMethod("WmiSetBrightness", new Object[] { UInt32.MaxValue, targetBrightness }); //note the reversed order - won't work otherwise!
+                        break; //only work on the first object
+                    }
+                }
             }
-
-            moc.Dispose();
-            mos.Dispose();
         }
         #endregion
 

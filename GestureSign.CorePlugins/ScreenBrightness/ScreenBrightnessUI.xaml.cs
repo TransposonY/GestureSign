@@ -16,10 +16,18 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         IHostControl _HostControl = null;
 
         #endregion
+
         public ScreenBrightnessUI()
         {
             InitializeComponent();
+
+            int[] items = new[] { 2, 4, 6, 8, 10, 20, 30, 50, 80, 100 };
+            foreach (var i in items)
+            {
+                NumPercent.Items.Add(i);
+            }
         }
+
         public BrightnessSettings Settings
         {
             get
@@ -53,11 +61,11 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         private void NumPercent_KeyDown(object sender, KeyEventArgs e)
         {
-            TextBox txt = sender as TextBox;
+            ComboBox comboBox = sender as ComboBox;
 
             if ((e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)
             {
-                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.Decimal))
+                if (comboBox != null && (comboBox.Text.Contains(".") && e.Key == Key.Decimal))
                 {
                     e.Handled = true;
                     return;
@@ -66,7 +74,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             }
             else if (((e.Key >= Key.D0 && e.Key <= Key.D9) || e.Key == Key.OemPeriod) && e.KeyboardDevice.Modifiers != ModifierKeys.Shift)
             {
-                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.OemPeriod))
+                if (comboBox != null && (comboBox.Text.Contains(".") && e.Key == Key.OemPeriod))
                 {
                     e.Handled = true;
                     return;
@@ -81,25 +89,18 @@ namespace GestureSign.CorePlugins.ScreenBrightness
 
         private void NumPercent_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            var change = new TextChange[e.Changes.Count];
-            e.Changes.CopyTo(change, 0);
+            ComboBox comboBox = sender as ComboBox;
 
-            int offset = change[0].Offset;
-            if (change[0].AddedLength > 0)
+            if (comboBox != null)
             {
-                int num = 0;
-                if (textBox == null || int.TryParse(textBox.Text, out num))
+                int num;
+                if (int.TryParse(comboBox.Text, out num))
                 {
                     if (num < 1)
-                    {
-                        if (textBox != null) textBox.Text = 1.ToString();
-                    }
-                    else if (num > 100) if (textBox != null) textBox.Text = 100.ToString();
-                    return;
+                        comboBox.Text = 1.ToString();
+                    else if (num > 100)
+                        comboBox.Text = 100.ToString();
                 }
-                textBox.Text = textBox.Text.Remove(offset, change[0].AddedLength);
-                textBox.Select(offset, 0);
             }
         }
 

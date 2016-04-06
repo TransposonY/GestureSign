@@ -21,17 +21,17 @@
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.DecreaseBrightness}" />
         </ComboBox>
 
-        <TextBox x:Name="NumPercent"
-                 InputMethod.IsInputMethodEnabled="False"
-                 TextAlignment="Left"
-                 HorizontalAlignment="Right"
-                 Width="71"
-                 KeyDown="NumPercent_KeyDown"
-                 TextChanged="NumPercent_TextChanged"
-                 FontSize="14"
-                 Canvas.Left="186"
-                 Canvas.Top="10"
-                 Height="27" />
+        <ComboBox x:Name="NumPercent"
+                  IsEditable="True"
+                  InputMethod.IsInputMethodEnabled="False"
+                  HorizontalAlignment="Right"
+                  Width="71"
+                  KeyDown="NumPercent_KeyDown"
+                  TextBoxBase.TextChanged="NumPercent_TextChanged"
+                  FontSize="14"
+                  Canvas.Left="186"
+                  Canvas.Top="10"
+                  Height="27" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
                    Text="(1-100)"
