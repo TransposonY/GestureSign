@@ -190,7 +190,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
                 if (keyboardHwnd == IntPtr.Zero) return false;
 
                 var taptipWindow = new SystemWindow(keyboardHwnd);
-                return taptipWindow.Enabled ? HideKeyboard() : ShowKeyboard();
+                return taptipWindow.Visible && taptipWindow.Enabled ? HideKeyboard() : ShowKeyboard();
             }
         }
 
