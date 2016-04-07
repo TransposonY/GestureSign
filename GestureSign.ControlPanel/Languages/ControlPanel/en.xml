@@ -250,7 +250,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <Tip>Hot Key(Use keyboard to enter)</Tip>
       <Reset>Reset</Reset>
       <AddExtraKey>(Click to add a extra key)</AddExtraKey>
-      <SendByKeybdEvent>Send By Old Method</SendByKeybdEvent>
+      <SendByKeybdEvent>Send By Legacy Method</SendByKeybdEvent>
       <UnauthorizedAccessException>Insufficient permissions.Please check your virus scanning software settings.</UnauthorizedAccessException>
       <ExtraKeys>
         <BrowserBack>Browser Back key</BrowserBack>
