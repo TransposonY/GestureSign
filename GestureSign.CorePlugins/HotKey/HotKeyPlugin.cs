@@ -298,15 +298,15 @@ namespace GestureSign.CorePlugins.HotKey
 
                 // Control
                 if (settings.Control)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
 
                 // Alt
                 if (settings.Alt)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.MENU);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU);
 
                 // Shift
                 if (settings.Shift)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
 
                 // Modifier
                 if (settings.KeyCode != null)
@@ -319,15 +319,15 @@ namespace GestureSign.CorePlugins.HotKey
                     }
                 // Release Shift
                 if (settings.Shift)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
 
                 // Release Alt
                 if (settings.Alt)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.MENU);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU);
 
                 // Release Control
                 if (settings.Control)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
 
                 // Release Windows
                 if (settings.Windows)
