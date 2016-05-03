@@ -10,6 +10,7 @@ using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
+using GestureSign.Common;
 
 namespace GestureSign.ControlPanel
 {
@@ -44,7 +45,15 @@ namespace GestureSign.ControlPanel
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
+            try
+            {
+                Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
+            }
+            catch (Exception exception)
+            {
+                Logging.LogException(exception);
+                MessageBox.Show(exception.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"));
+            }
         }
 
         private bool ExistsNewerErrorLog()
