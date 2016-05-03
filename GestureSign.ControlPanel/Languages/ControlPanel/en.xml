@@ -132,8 +132,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteGestureConfirm>Are you sure?</DeleteGestureConfirm>
-      <AddGestureTitle>Add Gesture</AddGestureTitle>
-      <AddGesture>Enter Training Mode?</AddGesture>
       <ReplaceConfirmTitle>Gesture Conflict</ReplaceConfirmTitle>
       <ReplaceConfirm>Gesture {0} is already existing,Replace it?</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
@@ -160,11 +158,11 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ExistingGesture>
       Exist similar gesture
       Click Overwrite to replace existing gesture
-      Click New Action to replace existing gesture and add new action
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
-    <NewAction>New Action</NewAction>
-    <OverlayGesture>Overlay Gesture</OverlayGesture>
+    <StackUpGesture>Stack Up</StackUpGesture>
+    <ExitTraining>Exit Training</ExitTraining>
+    <NewAction>Add New Action After Saving</NewAction>
     <Messages>
       <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
     </Messages>

@@ -137,8 +137,6 @@ http://transposony.coding.me/GestureSign/
     <Messages>
       <DeleteConfirmTitle>删除手势</DeleteConfirmTitle>
       <DeleteGestureConfirm>确定删除这手势吗？</DeleteGestureConfirm>
-      <AddGestureTitle>添加手势</AddGestureTitle>
-      <AddGesture>是否打开“学习模式”以便添加手势？</AddGesture>
       <ReplaceConfirmTitle>已存在同名手势</ReplaceConfirmTitle>
       <ReplaceConfirm>已经存在手势 {0} ，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
@@ -164,11 +162,11 @@ http://transposony.coding.me/GestureSign/
     <ExistingGesture>
       已存在以下相似手势
       点击“覆盖”覆盖旧手势
-      点击“新建动作”覆盖旧手势并用此手势添加动作
     </ExistingGesture>
     <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
-    <NewAction>新建动作</NewAction>
-    <OverlayGesture>叠加手势</OverlayGesture>
+    <StackUpGesture>叠加手势</StackUpGesture>
+    <ExitTraining>保存并退出学习模式</ExitTraining>
+    <NewAction>保存并添加新动作</NewAction>
     <Messages>
       <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
     </Messages>

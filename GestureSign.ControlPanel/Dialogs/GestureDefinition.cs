@@ -75,14 +75,14 @@ namespace GestureSign.ControlPanel.Dialogs
                     return;
                 }
 
-                OverlayGestureButton.Visibility = cmdNext.Visibility = ExistingTextBlock.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
+                StackUpGestureButton.Visibility = NewActionCheckBox.Visibility = ExitTrainingCheckBox.Visibility = ExistingTextBlock.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
 
                 this.txtGestureName.Focus();
                 this.txtGestureName.SelectAll();
             }
             cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Save");
 
-            OverlayGestureButton.IsEnabled = _capturedPointPatterns.Length < 3;
+            StackUpGestureButton.IsEnabled = _capturedPointPatterns.Length < 3;
         }
 
 
@@ -92,10 +92,22 @@ namespace GestureSign.ControlPanel.Dialogs
         }
 
 
-        private void cmdDone_Click(object sender, RoutedEventArgs e)
+        private async void cmdDone_Click(object sender, RoutedEventArgs e)
         {
             if (SaveGesture())
             {
+                if (NewActionCheckBox.IsChecked.Value)
+                {
+                    this.Hide();
+                    ActionDialog ad = new ActionDialog(GestureManager.Instance.GestureName);
+                    ad.Show();
+                }
+
+                if (ExitTrainingCheckBox.IsChecked.Value)
+                {
+                    await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
+                }
+
                 this.Close();
             }
             else txtGestureName.Focus();
@@ -106,19 +118,7 @@ namespace GestureSign.ControlPanel.Dialogs
             this.Close();
         }
 
-        private void cmdNext_Click(object sender, RoutedEventArgs e)
-        {
-            if (SaveGesture())
-            {
-                this.Hide();
-                ActionDialog ad = new ActionDialog(GestureManager.Instance.GestureName);
-                ad.Show();
-                this.Close();
-            }
-            else txtGestureName.Focus();
-        }
-
-        private async void OverlayGestureButton_OnClick(object sender, RoutedEventArgs e)
+        private async void StackUpGestureButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (await NamedPipe.SendMessageAsync("OverlayGesture", "GestureSignDaemon"))
             {
