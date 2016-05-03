@@ -190,7 +190,13 @@ namespace GestureSign.Daemon.Input
                 _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT);
             }
 
-            ModeChanged += (o, e) => { if (e.Mode == CaptureMode.UserDisabled) _inputTargetWindow.InterceptTouchInput(false); };
+            ModeChanged += (o, e) =>
+            {
+                NamedPipe.SendMessageAsync(Mode.ToString(), "GestureSignControlPanel", false);
+
+                if (e.Mode == CaptureMode.UserDisabled)
+                    _inputTargetWindow.InterceptTouchInput(false);
+            };
 
             _timeoutTimer.Tick += GestureRecognizedCallback;
         }

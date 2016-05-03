@@ -43,10 +43,14 @@ namespace GestureSign.Daemon
                             //    GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += InitializationRatio.MessageWindow_PointsIntercepted;
                             //    break;
                             case "StartTeaching":
-                                {
-                                    TouchCapture.Instance.Mode = CaptureMode.Training;
-                                    break;
-                                }
+                                TouchCapture.Instance.Mode = CaptureMode.Training;
+                                break;
+                            case "StopTraining":
+                                TouchCapture.Instance.Mode = CaptureMode.Normal;
+                                break;
+                            case "CaptureMode":
+                                NamedPipe.SendMessageAsync(TouchCapture.Instance.Mode.ToString(), "GestureSignControlPanel");
+                                break;
                             case "EnableTouchCapture":
                                 TouchCapture.Instance.EnableTouchCapture();
                                 break;

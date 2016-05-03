@@ -30,6 +30,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public AvailableGestures()
         {
             InitializeComponent();
+            MessageProcessor.CaptureModeChanged += MessageProcessor_CaptureModeChanged;
+        }
+
+        private void MessageProcessor_CaptureModeChanged(object sender, bool e)
+        {
+            CaptureModeButton.IsChecked = e;
         }
 
         private void lstAvailableGestures_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -71,23 +77,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
             gd.ShowDialog();
         }
 
-        private async void btnAddGesture_Click(object sender, RoutedEventArgs e)
+        private async void CaptureModeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await UIHelper.GetParentWindow(this).ShowMessageAsync(
-                LocalizationProvider.Instance.GetTextValue("Gesture.Messages.AddGestureTitle"),
-                LocalizationProvider.Instance.GetTextValue("Gesture.Messages.AddGesture"),
-                MessageDialogStyle.AffirmativeAndNegative,
-                new MetroDialogSettings()
-                {
-                    AnimateHide = false,
-                    AnimateShow = false,
-                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                    NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel")
-                }) == MessageDialogResult.Affirmative)
+            if (CaptureModeButton.IsChecked.Value)
             {
                 await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
+            else await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
         }
+
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofdGestures = new OpenFileDialog()
@@ -162,5 +160,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
+        private void CaptureModeButton_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            NamedPipe.SendMessageAsync("CaptureMode", "GestureSignDaemon");
+        }
     }
 }

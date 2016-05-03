@@ -9,18 +9,6 @@
              d:DesignHeight="400"
              d:DesignWidth="450">
     <UserControl.Resources>
-        <Canvas x:Key="appbar_add"
-                Width="76"
-                Height="76"
-                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
-            <Path Width="38"
-                  Height="38"
-                  Canvas.Left="19"
-                  Canvas.Top="19"
-                  Stretch="Fill"
-                  Fill="#FF000000"
-                  Data="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z " />
-        </Canvas>
         <Canvas x:Key="appbar_page_edit"
                 Width="76"
                 Height="76"
@@ -191,21 +179,90 @@
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
-        <Button x:Name="btnAddGesture"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                Height="50"
-                Width="50"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Click="btnAddGesture_Click"
-                Grid.Row="1"
-                Margin="0,0,120,10">
-            <Rectangle Width="20"
-                       Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_add}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
+        <ToggleButton x:Name="CaptureModeButton"
+                      Height="50"
+                      Width="50"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      Click="CaptureModeButton_Click"
+                      Grid.Row="1"
+                      Margin="0,0,120,10"
+                      Loaded="CaptureModeButton_OnLoaded">
+            <Ellipse x:Name="Ellipse"
+                     Width="30"
+                     Height="30"
+                     Fill="#FF0662F7" />
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}"
+                       BasedOn="{StaticResource MetroCircleToggleButtonStyle}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                <Grid>
+                                    <Ellipse Fill="{TemplateBinding Background}"
+                                             Margin="4"
+                                             StrokeThickness="0" />
+                                    <Ellipse x:Name="ellipse"
+                                             Margin="4"
+                                             Stroke="{TemplateBinding BorderBrush}"
+                                             StrokeThickness="{Binding RelativeSource={x:Static RelativeSource.TemplatedParent}, Path=BorderThickness.Left}" />
+                                    <ContentPresenter x:Name="PART_ContentPresenter"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      RecognizesAccessKey="True"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="ellipse"
+                                                Property="Opacity"
+                                                Value="1" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="False">
+                                        <Setter TargetName="ellipse"
+                                                Property="Opacity"
+                                                Value="0.7" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled"
+                                             Value="False">
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource GrayBrush7}" />
+                                        <Setter TargetName="ellipse"
+                                                Property="Opacity"
+                                                Value="0.3" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ToggleButton.Style>
+            <ToggleButton.Triggers>
+                <EventTrigger RoutedEvent="ToggleButton.Checked">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Ellipse"
+                                            Storyboard.TargetProperty="Fill.Color"
+                                            To="#4AB839"
+                                            Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Ellipse"
+                                            Storyboard.TargetProperty="Fill.Color"
+                                            To="#FF0662F7"
+                                            Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </ToggleButton.Triggers>
+        </ToggleButton>
     </Grid>
 </UserControl>
+
