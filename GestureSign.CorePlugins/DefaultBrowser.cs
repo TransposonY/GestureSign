@@ -58,12 +58,11 @@ namespace GestureSign.CorePlugins
         public bool Gestured(PointInfo ActionPoint)
         {
             // Extract default browser path from registery
-            string defaultBrowserPath = GetDefaultBrowserPath();
+            var defaultBrowserInfo = GetDefaultBrowserPath();
 
             // If path is incorrect or empty and exception will be thrown, catch it and return false
-            try { Process.Start(defaultBrowserPath); }
+            try { Process.Start(defaultBrowserInfo); }
             catch { return false; }
-
             return true;
         }
 
@@ -85,34 +84,69 @@ namespace GestureSign.CorePlugins
 
         /// <summary>
         /// Reads path of default browser from registry
+        /// source:
+        /// http://www.seirer.net/blog/2014/6/10/solved-how-to-open-a-url-in-the-default-browser-in-csharp
         /// </summary>
         /// <returns>Rooted path to the browser</returns>
-        private string GetDefaultBrowserPath()
+        private static ProcessStartInfo GetDefaultBrowserPath()
         {
-            string key = @"HTTP\shell\open\command";
-            RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(key, false);
+            string urlAssociation = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http";
+            string browserPathKey = @"$BROWSER$\shell\open\command";
 
-            // Ensure we found a registry key
-            if (registryKey == null)
-                return "";
+            try
+            {
+                //Read default browser path from userChoiceLKey
+                var userChoiceKey = Registry.CurrentUser.OpenSubKey(urlAssociation + @"\UserChoice", false);
 
-            // Get default browser path
-            string registryValue = (string)registryKey.GetValue(null, null) ?? "";
+                //If user choice was not found, try machine default
+                if (userChoiceKey == null)
+                {
+                    //Read default browser path from Win XP registry key
+                    var browserKey = Registry.ClassesRoot.OpenSubKey(@"HTTP\shell\open\command", false) ?? Registry.CurrentUser.OpenSubKey(urlAssociation, false);
 
-            // Make sure we got a value back
-            if (String.IsNullOrEmpty(registryValue))
-                return "";
+                    //If browser path wasn’t found, try Win Vista (and newer) registry key
+                    var path = CleanifyBrowserPath(browserKey.GetValue(null) as string);
+                    browserKey.Close();
+                    return new ProcessStartInfo(path);
+                }
+                else
+                {
+                    // user defined browser choice was found
+                    string progId = (userChoiceKey.GetValue("ProgId").ToString());
+                    userChoiceKey.Close();
 
-            // We have a value, seperate parts
-            string[] pathPieces = registryValue.Split('"');
-
-            // Do we have the peice we need
-            if (pathPieces.Count() >= 2)
-                return pathPieces[1];
-            else
-                return "";
+                    if (progId.StartsWith("AppX"))
+                    {
+                        string appUserModelID;
+                        using (var applicationInfo = Registry.ClassesRoot.OpenSubKey(progId + @"\Application"))
+                        {
+                            appUserModelID = applicationInfo.GetValue("AppUserModelID") as string;
+                        }
+                        return new ProcessStartInfo("explorer.exe", @"shell:AppsFolder\" + appUserModelID);
+                    }
+                    else
+                    {
+                        // now look up the path of the executable
+                        string concreteBrowserKey = browserPathKey.Replace("$BROWSER$", progId);
+                        var kp = Registry.ClassesRoot.OpenSubKey(concreteBrowserKey, false);
+                        var browserPath = CleanifyBrowserPath(kp.GetValue(null) as string);
+                        kp.Close();
+                        return new ProcessStartInfo(browserPath);
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
+        private static string CleanifyBrowserPath(string p)
+        {
+            string[] url = p.Split('"');
+            string clean = url[1];
+            return clean;
+        }
         #endregion
 
         #region Host Control
