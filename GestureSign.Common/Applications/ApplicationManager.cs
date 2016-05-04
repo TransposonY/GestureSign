@@ -43,7 +43,13 @@ namespace GestureSign.Common.Applications
             }
         }
 
-        public List<IApplication> Applications { get { return _Applications; } }
+        public List<IApplication> Applications
+        {
+            get
+            {
+                return _Applications ?? new List<IApplication>();
+            }
+        }
 
         public static ApplicationManager Instance
         {
