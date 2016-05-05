@@ -9,8 +9,6 @@ namespace GestureSign.Daemon
     public class PointerInputTargetWindow : Form
     {
         bool _isRegistered;
-        bool _isPointerMove;
-        POINT _lastPoint;
 
         public bool IsRegistered
         {
@@ -76,16 +74,10 @@ namespace GestureSign.Daemon
                 //case WM_POINTERLEAVE:
                 //case WM_POINTERCAPTURECHANGED:
                 case NativeMethods.WM_POINTERDOWN:
-                    _isPointerMove = false;
-                    _lastPoint.X = _lastPoint.Y = 0;
-                    if (ProcessPointerMessage(message)) return;
-                    break;
                 case NativeMethods.WM_POINTERUP:
                 case NativeMethods.WM_POINTERUPDATE:
-                    _isPointerMove |= ProcessPointerMessage(message);
-                    if (_isPointerMove) return;
-                    else break;
-
+                    ProcessPointerMessage(message);
+                    return;
             }
             base.WndProc(ref message);
         }
@@ -101,9 +93,8 @@ namespace GestureSign.Daemon
 
         #region ProcessInput
 
-        private bool ProcessPointerMessage(Message message)
+        private void ProcessPointerMessage(Message message)
         {
-            bool pointChanged = false;
             int pointerId = (int)(message.WParam.ToInt64() & 0xffff);
             int pCount = 0;
             try
@@ -120,40 +111,28 @@ namespace GestureSign.Daemon
 
                 if (pCount == 1)
                 {
-                    if (_lastPoint.X == 0 && _lastPoint.Y == 0) _lastPoint = pointerInfos[0].PtPixelLocation;
-                    else
-                    {
-                        int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-                        int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-
-                        pointChanged = Math.Abs(pointerInfos[0].PtPixelLocation.X - _lastPoint.X) >
-                                       screenWidth / 100 ||
-                                       Math.Abs(pointerInfos[0].PtPixelLocation.Y - _lastPoint.Y) >
-                                       screenHeight / 100;
-
-                        _lastPoint = pointerInfos[0].PtPixelLocation;
-                    }
-
                     //Allow single-finger slide
-                    POINTER_TOUCH_INFO[] ptis = new POINTER_TOUCH_INFO[pCount];
-                    for (int i = 0; i < ptis.Length; i++)
+                    POINTER_TOUCH_INFO[] ptis = new POINTER_TOUCH_INFO[1];
+
+                    ptis[0].TouchFlags = TOUCH_FLAGS.NONE;
+                    ptis[0].PointerInfo = new POINTER_INFO
                     {
-                        ptis[i].TouchFlags = TOUCH_FLAGS.NONE;
-                        ptis[i].PointerInfo = new POINTER_INFO
-                        {
-                            pointerType = POINTER_INPUT_TYPE.TOUCH,
-                            PointerFlags = pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UPDATE) ?
-                            POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE : pointerInfos[i].PointerFlags.HasFlag(POINTER_FLAGS.UP) ?
-                            POINTER_FLAGS.UP : POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT,
-                            PtPixelLocation = pointerInfos[i].PtPixelLocation,
-                        };
-                    }
+                        pointerType = POINTER_INPUT_TYPE.TOUCH,
+                        PtPixelLocation = pointerInfos[0].PtPixelLocation,
+                    };
+
+                    if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
+                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
+                    else if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.UP))
+                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+                    else if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
+                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+                    else return;
+
                     NativeMethods.InjectTouchInput(1, ptis);
                 }
-                else pointChanged = true;
             }
             catch (Win32Exception) { }
-            return pointChanged;
         }
 
         #endregion ProcessInput
