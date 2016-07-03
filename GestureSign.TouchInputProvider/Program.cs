@@ -21,11 +21,7 @@ namespace GestureSign.TouchInputProvider
         private static MessageWindow _messageWindow;
         private static NamedPipeClientStream _pipeClient;
         private static BinaryWriter _binaryWriter;
-
-        private static readonly Timer ConnectTimer = new Timer(o =>
-        {
-            if (!_pipeClient.IsConnected && !Connect()) Application.Exit();
-        }, null, 10000, 10000);
+        private static Timer _connectTimer;
 
         /// <summary>
         /// 应用程序的主入口点。
@@ -46,6 +42,11 @@ namespace GestureSign.TouchInputProvider
                         Logging.OpenLogFile();
 
                         if (!Connect()) return;
+
+                        _connectTimer = new Timer(o =>
+                         {
+                             if (!_pipeClient.IsConnected && !Connect()) Application.Exit();
+                         }, null, 10000, 10000);
 
                         _messageWindow = new MessageWindow();
                         _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
