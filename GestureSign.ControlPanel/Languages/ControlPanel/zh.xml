@@ -143,16 +143,6 @@ http://transposony.coding.me/GestureSign/
       <ImportComplete>已添加 {0} 个手势</ImportComplete>
     </Messages>
   </Gesture>
-  <EditApplicationFlyout>
-    <EditApplicationTitle>修改程序</EditApplicationTitle>
-    <AddIgnoredAppTitle>添加忽略的程序</AddIgnoredAppTitle>
-   <AppName>程序名称</AppName>
-    <LocateWindow>定位窗口</LocateWindow>
-    <LocateWindowTip>将右侧图标拖至目标程序窗口上，然后释放鼠标按键</LocateWindowTip>
-    <UsingRegularExpression>正则表达式</UsingRegularExpression>
-    <InterceptTouchInput>屏蔽触摸输入</InterceptTouchInput>
-    <AllowSingleFinger>允许单指</AllowSingleFinger>
-  </EditApplicationFlyout>
   <RuningApplicationsFlyout>
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>

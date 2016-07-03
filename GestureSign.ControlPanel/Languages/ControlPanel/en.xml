@@ -138,17 +138,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <ImportComplete>{0} gesture have been added</ImportComplete>
     </Messages>
   </Gesture>
-  <EditApplicationFlyout>
-    <EditApplicationTitle>Edit Application</EditApplicationTitle>
-    <AddIgnoredAppTitle>New Ignored</AddIgnoredAppTitle>
-    <ShowRunningApplications>Select Running...</ShowRunningApplications>
-    <AppName>Application Name</AppName>
-    <LocateWindow>Locate Window</LocateWindow>
-    <LocateWindowTip>Drag and drop the crosshair on the target window you would like to control.</LocateWindowTip>
-    <UsingRegularExpression>Match as pattern</UsingRegularExpression>
-    <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
-    <AllowSingleFinger>Allow Single</AllowSingleFinger>
-  </EditApplicationFlyout>
   <RuningApplicationsFlyout>
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>

@@ -26,11 +26,6 @@ namespace GestureSign.ControlPanel.Flyouts
             this.IsOpenChanged += RuningApplicationsFlyout_IsOpenChanged;
         }
 
-        void EditApplicationFlyout_OpenIgnoredRuningFlyout(object sender, EventArgs e)
-        {
-            this.IsOpen = !IsOpen;
-        }
-
         void RuningApplicationsFlyout_IsOpenChanged(object sender, EventArgs e)
         {
             if (this.IsOpen)
