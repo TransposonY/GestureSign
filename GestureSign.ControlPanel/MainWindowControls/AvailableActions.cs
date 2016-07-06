@@ -564,8 +564,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 IsRegEx = userApplication.IsRegEx,
                                 MatchString = userApplication.MatchString,
                                 MatchUsing = userApplication.MatchUsing,
-                                AllowSingleStroke = userApplication.AllowSingleStroke,
-                                InterceptTouchInput = userApplication.InterceptTouchInput,
+                                LimitNumberOfFingers = userApplication.LimitNumberOfFingers,
+                                BlockTouchInputThreshold = userApplication.BlockTouchInputThreshold,
                                 Name = userApplication.Name
                             });
                     }
@@ -576,22 +576,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            UserApplication userApplication = lstAvailableApplication.SelectedItem as UserApplication;
-            if (userApplication == null)
-            {
-                InterceptTouchInputMenuItem.IsChecked =
-                    InterceptTouchInputMenuItem.IsEnabled =
-                    AllowSingleMenuItem.IsChecked =
-                    AllowSingleMenuItem.IsEnabled = false;
-            }
-            else
-            {
-                AllowSingleMenuItem.IsEnabled = true;
-                InterceptTouchInputMenuItem.IsEnabled = AppConfig.UiAccess;
-                InterceptTouchInputMenuItem.IsChecked = userApplication.InterceptTouchInput;
-                AllowSingleMenuItem.IsChecked = userApplication.AllowSingleStroke;
-            }
-
             PasteActionMenuItem2.IsEnabled = _actionClipboard != null;
         }
 
@@ -657,27 +641,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             RefreshActions(false);
 
             ApplicationManager.Instance.SaveApplications();
-        }
-
-        private void InterceptTouchInputMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            UserApplication selectedItem = lstAvailableApplication.SelectedItem as UserApplication;
-            if (selectedItem == null) return;
-            var menuItem = (MenuItem)sender;
-            selectedItem.InterceptTouchInput = menuItem.IsChecked;
-
-            ApplicationManager.Instance.SaveApplications();
-
-        }
-        private void AllowSingleMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = (MenuItem)sender;
-            var userApplication = lstAvailableApplication.SelectedItem as UserApplication;
-            if (userApplication != null)
-            {
-                userApplication.AllowSingleStroke = menuItem.IsChecked;
-                ApplicationManager.Instance.SaveApplications();
-            }
         }
 
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)

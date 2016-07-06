@@ -75,8 +75,8 @@ namespace GestureSign.ControlPanel.Dialogs
                     GroupComboBox.Text = _currentApplication.Group;
                     ApplicationNameTextBox.Text = _currentApplication.Name;
 
-                    AllowSingleCheckBox.IsChecked = currentApplication.AllowSingleStroke;
-                    InterceptTouchInputCheckBox.IsChecked = currentApplication.InterceptTouchInput;
+                    BlockTouchInputSlider.Value = currentApplication.BlockTouchInputThreshold;
+                    LimitNumberOfFingersSlider.Value = currentApplication.LimitNumberOfFingers;
                 }
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
                 RegexCheckBox.IsChecked = _currentApplication.IsRegEx;
@@ -88,12 +88,13 @@ namespace GestureSign.ControlPanel.Dialogs
                     .Distinct()
                     .OrderBy(g => g);
 
-            InterceptTouchInputCheckBox.IsEnabled = AppConfig.UiAccess;
+            BlockTouchInputSlider.IsEnabled = AppConfig.UiAccess;
 
-            AllowSingleCheckBox.Visibility = InterceptTouchInputCheckBox.Visibility =
-                ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
-                GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
-                        _isUserApp ? Visibility.Visible : Visibility.Collapsed;
+            BlockTouchInputSlider.Visibility = BlockTouchInputInfoTextBlock.Visibility = BlockTouchInputTextBlock.Visibility =
+                LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility = LimitNumberOfFingersTextBlock.Visibility =
+                            ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
+                                GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
+                                    _isUserApp ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void MatchStringTextBox_OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -167,6 +168,21 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
+        private void BlockTouchInputSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            BlockTouchInputInfoTextBlock.Text = e.NewValue < 2
+                ? LocalizationProvider.Instance.GetTextValue("Options.Off")
+                : string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.BlockTouchInputInfo"),
+                    (int)e.NewValue);
+        }
+
+        private void LimitNumberOfFingersSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            LimitNumberOfFingersInfoTextBlock.Text = string.Format(
+                LocalizationProvider.Instance.GetTextValue("ApplicationDialog.LimitNumberOfFingersInfo"),
+                (int)e.NewValue);
+        }
+
         #endregion
 
         #region Private Methods
@@ -222,8 +238,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
                     var newApplication = new UserApplication
                     {
-                        InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value,
-                        AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value,
+                        BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
+                        LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
                         Name = name,
                         Group = groupName,
                         MatchString = matchString,
@@ -256,8 +272,8 @@ namespace GestureSign.ControlPanel.Dialogs
                     _currentApplication.MatchUsing = matchUsingRadio.MatchUsing;
                     _currentApplication.MatchString = matchString;
                     _currentApplication.IsRegEx = RegexCheckBox.IsChecked.Value;
-                    ((UserApplication)_currentApplication).AllowSingleStroke = AllowSingleCheckBox.IsChecked.Value;
-                    ((UserApplication)_currentApplication).InterceptTouchInput = InterceptTouchInputCheckBox.IsChecked.Value;
+                    ((UserApplication)_currentApplication).BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value;
+                    ((UserApplication)_currentApplication).LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value;
 
                     UserApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(_currentApplication));
                 }
@@ -291,5 +307,6 @@ namespace GestureSign.ControlPanel.Dialogs
         }
 
         #endregion
+
     }
 }

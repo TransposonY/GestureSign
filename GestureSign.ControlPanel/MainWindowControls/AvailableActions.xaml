@@ -209,17 +209,6 @@
                                Header="{localization:LocalisedText Action.PasteAction}"
                                FontSize="16"
                                Click="PasteActionMenuItem_Click" />
-                    <Separator />
-                    <MenuItem x:Name="InterceptTouchInputMenuItem"
-                              Header="{localization:LocalisedText ApplicationDialog.InterceptTouchInput}"
-                              IsCheckable="True"
-                              FontSize="16"
-                              Click="InterceptTouchInputMenuItem_Click" />
-                    <MenuItem x:Name="AllowSingleMenuItem"
-                              Header="{localization:LocalisedText ApplicationDialog.AllowSingleFinger}"
-                              IsCheckable="True"
-                              FontSize="16"
-                              Click="AllowSingleMenuItem_Click" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.GroupStyle>

@@ -96,7 +96,8 @@ namespace GestureSign.Common.Applications
 
                 if (window != null && window.HWnd.Equals(hwndCharmBar))
                 {
-                    e.Cancel = e.InterceptTouchInput = false;
+                    e.Cancel = false;
+                    e.BlockTouchInputThreshold = 0;
                     return;
                 }
             }
@@ -105,25 +106,25 @@ namespace GestureSign.Common.Applications
             IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
             foreach (IApplication app in applicationFromWindow)
             {
-                e.InterceptTouchInput |= (app is UserApplication && (app as UserApplication).InterceptTouchInput);
+                UserApplication userApplication = app as UserApplication;
+
+                e.BlockTouchInputThreshold = userApplication != null && userApplication.BlockTouchInputThreshold > e.BlockTouchInputThreshold
+                    ? userApplication.BlockTouchInputThreshold
+                    : e.BlockTouchInputThreshold;
+
                 if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
                 {
                     e.Cancel = true;
                     return;
                 }
-                else if (e.Points.Count == 1)
+
+                e.Cancel = true;
+                if (userApplication != null && e.Points.Count >= userApplication.LimitNumberOfFingers)
                 {
-                    e.Cancel = true;
-                    UserApplication userApplication = app as UserApplication;
-                    if (userApplication != null && userApplication.AllowSingleStroke)
-                    {
-                        e.Cancel = false;
-                        return;
-                    }
+                    e.Cancel = false;
+                    return;
                 }
             }
-
-
         }
 
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)

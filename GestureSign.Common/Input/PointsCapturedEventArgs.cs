@@ -39,7 +39,7 @@ namespace GestureSign.Common.Input
         public List<List<Point>> Points { get; set; }
         public List<Point> LastCapturedPoints { get; set; }
         public bool Cancel { get; set; }
-        public bool InterceptTouchInput { get; set; }
+        public int BlockTouchInputThreshold { get; set; }
         public bool Delay { get; set; }
         public bool GestureTimeout { get; set; }
 

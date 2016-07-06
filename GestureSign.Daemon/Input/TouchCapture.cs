@@ -161,6 +161,8 @@ namespace GestureSign.Daemon.Input
             if (CaptureCanceled != null) CaptureCanceled(this, e);
         }
 
+        public event EventHandler<int> BlockTouchInputThresholdChanged;
+
         #endregion
 
         #region Public Properties
@@ -183,6 +185,7 @@ namespace GestureSign.Daemon.Input
             _touchEventTranslator.TouchDown += (PointEventTranslator_TouchDown);
             _touchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
             _touchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
+            BlockTouchInputThresholdChanged += _inputTargetWindow.InterceptTouchInput;
 
             if (AppConfig.UiAccess)
             {
@@ -195,7 +198,7 @@ namespace GestureSign.Daemon.Input
                 NamedPipe.SendMessageAsync(Mode.ToString(), "GestureSignControlPanel", false);
 
                 if (e.Mode == CaptureMode.UserDisabled)
-                    _inputTargetWindow.InterceptTouchInput(false);
+                    BlockTouchInputThresholdChanged?.Invoke(this, 0);
             };
 
             _timeoutTimer.Tick += GestureRecognizedCallback;
@@ -221,11 +224,16 @@ namespace GestureSign.Daemon.Input
                 Application.OpenForms.Count != 0 && hwnd.Equals(Application.OpenForms[0].Handle))
                 return;
             var systemWindow = new SystemWindow(hwnd);
-            var userApp = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
-            bool flag = userApp != null &&
-                        (userApp.Any(app => app is UserApplication && ((UserApplication)app).InterceptTouchInput));
+            var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
+            if (apps != null)
+            {
+                var userAppList = apps.Where(application => application is UserApplication).Cast<UserApplication>();
+                var userApplications = userAppList as IList<UserApplication> ?? userAppList.ToList();
 
-            _inputTargetWindow.InterceptTouchInput(flag);
+                int maxBlockTouchInputThreshold = userApplications.Max(app => app.BlockTouchInputThreshold);
+
+                BlockTouchInputThresholdChanged?.Invoke(this, maxBlockTouchInputThreshold);
+            }
         }
 
         #endregion
@@ -294,7 +302,7 @@ namespace GestureSign.Daemon.Input
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.RawPoints).ToList());
             OnCaptureStarted(captureStartedArgs);
 
-            _inputTargetWindow.InterceptTouchInput(captureStartedArgs.InterceptTouchInput && Mode == CaptureMode.Normal);
+            BlockTouchInputThresholdChanged?.Invoke(this, Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0);
 
             if (captureStartedArgs.Cancel)
                 return false;

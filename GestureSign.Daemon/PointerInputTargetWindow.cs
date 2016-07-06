@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,6 +10,14 @@ namespace GestureSign.Daemon
     public class PointerInputTargetWindow : Form
     {
         bool _isRegistered;
+        private int _blockTouchInputThreshold;
+        private Dictionary<int, int> pointerIdList = new Dictionary<int, int>(10);
+        private Queue<int> idPool = new Queue<int>(10);
+
+        public PointerInputTargetWindow()
+        {
+            ResetIdPool();
+        }
 
         public bool IsRegistered
         {
@@ -39,8 +48,11 @@ namespace GestureSign.Daemon
 
         public int NumberOfTouchscreens { get; set; }
 
-        public void InterceptTouchInput(bool intercept)
+        public void InterceptTouchInput(object sender, int blockTouchInputThreshold)
         {
+            _blockTouchInputThreshold = blockTouchInputThreshold;
+            bool flag = _blockTouchInputThreshold >= 2;
+
             if (!IsHandleCreated)
             {
                 if (!IsDisposed)
@@ -48,9 +60,9 @@ namespace GestureSign.Daemon
             }
 
             if (InvokeRequired)
-                Invoke(new Action(() => IsRegistered = intercept));
+                Invoke(new Action(() => IsRegistered = flag));
             else
-                IsRegistered = intercept;
+                IsRegistered = flag;
 
         }
 
@@ -64,6 +76,15 @@ namespace GestureSign.Daemon
         {
             IntPtr HWND_MESSAGE = new IntPtr(-3);
             NativeMethods.SetParent(this.Handle, HWND_MESSAGE);
+        }
+
+        private void ResetIdPool()
+        {
+            idPool.Clear();
+            for (int i = 0; i < 10; i++)
+            {
+                idPool.Enqueue(i);
+            }
         }
 
         protected override void WndProc(ref Message message)
@@ -109,27 +130,82 @@ namespace GestureSign.Daemon
                     CheckLastError();
                 }
 
-                if (pCount == 1)
+                if (pCount < _blockTouchInputThreshold)
                 {
-                    //Allow single-finger slide
-                    POINTER_TOUCH_INFO[] ptis = new POINTER_TOUCH_INFO[1];
+                    List<POINTER_TOUCH_INFO> ptis = new List<POINTER_TOUCH_INFO>(pCount);
+                    int upFlagCount = 0;
 
-                    ptis[0].TouchFlags = TOUCH_FLAGS.NONE;
-                    ptis[0].PointerInfo = new POINTER_INFO
+                    for (int i = 0; i < pCount; i++)
                     {
-                        pointerType = POINTER_INPUT_TYPE.TOUCH,
-                        PtPixelLocation = pointerInfos[0].PtPixelLocation,
-                    };
+                        var currentPointerInfo = pointerInfos[i];
+                        POINTER_TOUCH_INFO pti = new POINTER_TOUCH_INFO
+                        {
+                            TouchFlags = TOUCH_FLAGS.NONE,
+                            PointerInfo = new POINTER_INFO
+                            {
+                                pointerType = POINTER_INPUT_TYPE.TOUCH,
+                                PtPixelLocation = currentPointerInfo.PtPixelLocation,
+                            }
+                        };
 
-                    if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
-                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
-                    else if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.UP))
-                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
-                    else if (pointerInfos[0].PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
-                        ptis[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
-                    else return;
+                        if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
+                        {
+                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
 
-                    NativeMethods.InjectTouchInput(1, ptis);
+                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                            {
+                                pti.PointerInfo.PointerID = pointerIdList[currentPointerInfo.PointerID];
+                            }
+                            else
+                            {
+                                return;
+                            }
+                        }
+                        else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UP))
+                        {
+                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+
+                            upFlagCount++;
+
+                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                            {
+                                int id = pointerIdList[currentPointerInfo.PointerID];
+                                pti.PointerInfo.PointerID = id;
+                                idPool.Enqueue(id);
+                                pointerIdList.Remove(currentPointerInfo.PointerID);
+                            }
+                            else
+                            {
+                                return;
+                            }
+                        }
+                        else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
+                        {
+                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+
+                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return;
+
+                            if (idPool.Count > 0)
+                            {
+                                pti.PointerInfo.PointerID = idPool.Dequeue();
+                                pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
+                            }
+                        }
+                        else return;
+
+                        ptis.Add(pti);
+                    }
+
+                    if (upFlagCount == pCount)
+                    {
+                        pointerIdList.Clear();
+                        ResetIdPool();
+                    }
+
+                    if (ptis.Count > 0)
+                    {
+                        NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
+                    }
                 }
             }
             catch (Win32Exception) { }

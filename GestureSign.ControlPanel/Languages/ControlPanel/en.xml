@@ -54,10 +54,12 @@ Page:http://transposony.github.io/GestureSign/
     <GetMatchStringTip>Drag and drop the crosshair on the target window you would like to control.
 Or click the button below to select the running applications.</GetMatchStringTip>
     <ShowRunningApplications>Select Running..</ShowRunningApplications>
-    <AllowSingleFinger>Allow Single Stroke</AllowSingleFinger>
-    <InterceptTouchInput>Intercept Touch Input</InterceptTouchInput>
+    <BlockTouchInput>Block Touch Input</BlockTouchInput>
     <EditApplication>Edit Application</EditApplication>
     <ExecutableFile>Executable File</ExecutableFile>
+    <BlockTouchInputInfo>When fingers not less than {0}</BlockTouchInputInfo>
+    <LimitNumberOfFingers>Limit Number Of Fingers</LimitNumberOfFingers>
+    <LimitNumberOfFingersInfo>Not less than {0} fingers</LimitNumberOfFingersInfo>
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
       <EmptyString>Please provide Match String for the application</EmptyString>
