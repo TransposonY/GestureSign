@@ -25,11 +25,7 @@ namespace GestureSign.ControlPanel
     {
         Mutex mutex;
 
-        private static readonly Timer Timer = new Timer(o =>
-        {
-            Current.Dispatcher.Invoke(
-                () => { if (Current.Windows.Count == 0) Current.Shutdown(); else Timer.Change(300000, Timeout.Infinite); });
-        }, Timer, Timeout.Infinite, Timeout.Infinite);
+        private static Timer _timer;
 
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -94,7 +90,12 @@ namespace GestureSign.ControlPanel
                         if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
                         {
                             Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                            Timer.Change(300000, Timeout.Infinite);
+
+                            _timer = new Timer(o =>
+                            {
+                                Current.Dispatcher.Invoke(
+                                    () => { if (Current.Windows.Count == 0) Current.Shutdown(); else _timer.Change(300000, Timeout.Infinite); });
+                            }, _timer, 300000, Timeout.Infinite);
                         }
                         else
                         {
