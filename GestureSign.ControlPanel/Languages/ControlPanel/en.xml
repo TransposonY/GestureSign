@@ -57,9 +57,9 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <BlockTouchInput>Block Touch Input</BlockTouchInput>
     <EditApplication>Edit Application</EditApplication>
     <ExecutableFile>Executable File</ExecutableFile>
-    <BlockTouchInputInfo>When fingers not less than {0}</BlockTouchInputInfo>
-    <LimitNumberOfFingers>Limit Number Of Fingers</LimitNumberOfFingers>
-    <LimitNumberOfFingersInfo>Not less than {0} fingers</LimitNumberOfFingersInfo>
+    <BlockTouchInputInfo>At least {0} fingers</BlockTouchInputInfo>
+    <LimitNumberOfFingers>Number Of Fingers</LimitNumberOfFingers>
+    <LimitNumberOfFingersInfo>At least {0} fingers</LimitNumberOfFingersInfo>
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
       <EmptyString>Please provide Match String for the application</EmptyString>
