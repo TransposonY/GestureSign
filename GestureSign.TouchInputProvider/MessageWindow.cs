@@ -44,7 +44,7 @@ namespace GestureSign.TouchInputProvider
 
             rid[0].usUsagePage = NativeMethods.TouchScreenUsagePage;
             rid[0].usUsage = 0x04;
-            rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK;
+            rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK | NativeMethods.RIDEV_DEVNOTIFY;
             rid[0].hwndTarget = Handle;
 
             if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
@@ -80,12 +80,10 @@ namespace GestureSign.TouchInputProvider
 
                 ourKey = ourKey.OpenSubKey(findme, false);
 
-                if (ourKey == null) return false;
-
                 //Retrieve the desired information and set isKeyboard
-                string deviceDesc = (string)ourKey.GetValue("DeviceDesc");
+                string deviceDesc = (string)ourKey?.GetValue("DeviceDesc");
 
-                return deviceDesc.ToLower().Contains("touch_screen");
+                return deviceDesc?.IndexOf("touch_screen", StringComparison.OrdinalIgnoreCase) >= 0;
             }
             catch
             {
@@ -95,8 +93,7 @@ namespace GestureSign.TouchInputProvider
 
         private int EnumerateDevices()
         {
-
-            int NumberOfDevices = 0;
+            int numberOfDevices = 0;
             uint deviceCount = 0;
             int dwSize = (Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICELIST)));
 
@@ -105,6 +102,8 @@ namespace GestureSign.TouchInputProvider
                 IntPtr pRawInputDeviceList = Marshal.AllocHGlobal((int)(dwSize * deviceCount));
                 try
                 {
+                    _touchScreenPhysicalMax.Clear();
+
                     NativeMethods.GetRawInputDeviceList(pRawInputDeviceList, ref deviceCount, (uint)dwSize);
 
                     for (int i = 0; i < deviceCount; i++)
@@ -124,10 +123,8 @@ namespace GestureSign.TouchInputProvider
                                 NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
                                 string deviceName = Marshal.PtrToStringAnsi(pData);
 
-                                if (deviceName.ToUpper().Contains("ROOT"))
-                                {
+                                if (deviceName != null && deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
                                     continue;
-                                }
 
                                 if (rid.dwType == NativeMethods.RIM_TYPEHID)
                                 {
@@ -135,7 +132,7 @@ namespace GestureSign.TouchInputProvider
 
                                     if (isTouchDevice && !_touchScreenPhysicalMax.ContainsKey(rid.hDevice))
                                     {
-                                        NumberOfDevices++;
+                                        numberOfDevices++;
 
                                         _touchScreenPhysicalMax.Add(rid.hDevice, Point.Empty);
                                     }
@@ -148,7 +145,7 @@ namespace GestureSign.TouchInputProvider
                 }
                 finally
                 { Marshal.FreeHGlobal(pRawInputDeviceList); }
-                return NumberOfDevices;
+                return numberOfDevices;
             }
             else
             {
@@ -175,8 +172,15 @@ namespace GestureSign.TouchInputProvider
                 case NativeMethods.WM_INPUT:
                     {
                         ProcessInputCommand(message.LParam);
+                        break;
                     }
-                    break;
+                case NativeMethods.WM_INPUT_DEVICE_CHANGE:
+                    {
+                        //GIDC_ARRIVAL=1
+                        if (message.WParam.ToInt32() == 1)
+                            EnumerateDevices();
+                        break;
+                    }
             }
             base.WndProc(ref message);
         }

@@ -8,6 +8,7 @@ namespace GestureSign.TouchInputProvider.Native
         #region const definitions
 
         internal const int RIDEV_INPUTSINK = 0x00000100;
+        internal const int RIDEV_DEVNOTIFY = 0x00002000;
         internal const int RID_INPUT = 0x10000003;
 
         internal const int RIM_TYPEHID = 2;
@@ -18,6 +19,7 @@ namespace GestureSign.TouchInputProvider.Native
         internal const int WM_KEYDOWN = 0x0100;
         internal const int WM_SYSKEYDOWN = 0x0104;
         internal const int WM_INPUT = 0x00FF;
+        internal const int WM_INPUT_DEVICE_CHANGE = 0x00FE;
         internal const int VK_OEM_CLEAR = 0xFE;
         internal const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
 
