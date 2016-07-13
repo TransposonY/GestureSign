@@ -13,7 +13,6 @@ using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Windows;
 using Action = GestureSign.Applications.Action;
-using RECT = ManagedWinapi.Windows.RECT;
 
 namespace GestureSign.Common.Applications
 {
@@ -103,28 +102,34 @@ namespace GestureSign.Common.Applications
             }
 
             CaptureWindow = GetWindowFromPoint(e.LastCapturedPoints.FirstOrDefault());
-            IApplication[] applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+            var applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+
+            int maxThreshold = 0;
+            bool? limitNumberFlag = null;
+
             foreach (IApplication app in applicationFromWindow)
             {
                 UserApplication userApplication = app as UserApplication;
+                if (userApplication != null)
+                {
+                    maxThreshold = userApplication.BlockTouchInputThreshold > maxThreshold ? userApplication.BlockTouchInputThreshold : maxThreshold;
 
-                e.BlockTouchInputThreshold = userApplication != null && userApplication.BlockTouchInputThreshold > e.BlockTouchInputThreshold
-                    ? userApplication.BlockTouchInputThreshold
-                    : e.BlockTouchInputThreshold;
+                    //Got UserApplication
+                    if (limitNumberFlag == null)
+                        limitNumberFlag = e.Points.Count < userApplication.LimitNumberOfFingers;
+                    else
+                        limitNumberFlag |= e.Points.Count < userApplication.LimitNumberOfFingers;
+                }
 
-                if ((app is IgnoredApplication) && (app as IgnoredApplication).IsEnabled)
+                IgnoredApplication ignoredApplication = app as IgnoredApplication;
+                if (ignoredApplication != null && ignoredApplication.IsEnabled)
                 {
                     e.Cancel = true;
                     return;
                 }
-
-                e.Cancel = true;
-                if (userApplication != null && e.Points.Count >= userApplication.LimitNumberOfFingers)
-                {
-                    e.Cancel = false;
-                    return;
-                }
             }
+            e.Cancel = limitNumberFlag ?? e.Points.Count == 1;
+            e.BlockTouchInputThreshold = maxThreshold;
         }
 
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
