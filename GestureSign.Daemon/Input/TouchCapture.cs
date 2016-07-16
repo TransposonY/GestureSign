@@ -195,8 +195,6 @@ namespace GestureSign.Daemon.Input
 
             ModeChanged += (o, e) =>
             {
-                NamedPipe.SendMessageAsync(Mode.ToString(), "GestureSignControlPanel", false);
-
                 if (e.Mode == CaptureMode.UserDisabled)
                     BlockTouchInputThresholdChanged?.Invoke(this, 0);
             };

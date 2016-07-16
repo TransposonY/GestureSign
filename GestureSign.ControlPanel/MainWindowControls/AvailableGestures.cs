@@ -30,12 +30,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public AvailableGestures()
         {
             InitializeComponent();
-            MessageProcessor.CaptureModeChanged += MessageProcessor_CaptureModeChanged;
-        }
-
-        private void MessageProcessor_CaptureModeChanged(object sender, bool e)
-        {
-            CaptureModeButton.IsChecked = e;
         }
 
         private void lstAvailableGestures_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -75,15 +69,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             GestureDefinition gd = new GestureDefinition(GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name), true);
             gd.ShowDialog();
-        }
-
-        private async void CaptureModeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (CaptureModeButton.IsChecked.Value)
-            {
-                await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
-            }
-            else await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
         }
 
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
@@ -158,11 +143,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
-        }
-
-        private void CaptureModeButton_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            NamedPipe.SendMessageAsync("CaptureMode", "GestureSignDaemon");
         }
     }
 }

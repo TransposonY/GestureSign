@@ -15,8 +15,6 @@ namespace GestureSign.ControlPanel
 {
     class MessageProcessor : IMessageProcessor
     {
-        public static event EventHandler<bool> CaptureModeChanged;
-
         public bool ProcessMessages(NamedPipeServerStream server)
         {
             try
@@ -55,13 +53,6 @@ namespace GestureSign.ControlPanel
                                         Application.Current.Shutdown();
                                         break;
                                     }
-                                case "Normal":
-                                case "UserDisabled":
-                                    CaptureModeChanged?.Invoke(this, false);
-                                    break;
-                                case "Training":
-                                    CaptureModeChanged?.Invoke(this, true);
-                                    break;
                             }
                         }
                         else

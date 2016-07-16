@@ -48,9 +48,6 @@ namespace GestureSign.Daemon
                             case "StopTraining":
                                 TouchCapture.Instance.Mode = CaptureMode.Normal;
                                 break;
-                            case "CaptureMode":
-                                NamedPipe.SendMessageAsync(TouchCapture.Instance.Mode.ToString(), "GestureSignControlPanel");
-                                break;
                             case "EnableTouchCapture":
                                 TouchCapture.Instance.EnableTouchCapture();
                                 break;
