@@ -68,7 +68,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (lstAvailableGestures.SelectedItems.Count == 0) return;
 
             GestureDefinition gd = new GestureDefinition(GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name));
-            gd.ShowDialog();
+            var result = gd.ShowDialog();
+            if (result != null && result.Value)
+            {
+                lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
+                lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem);
+            }
         }
 
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)

@@ -104,7 +104,8 @@
                  ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableGestures_SelectionChanged"
-                 Margin="0">
+                 Margin="0"
+                 SelectedValuePath="Name">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="ImportGestureMenuItem"
