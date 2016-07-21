@@ -59,7 +59,7 @@ namespace GestureSign.ControlPanel.Common
         public static DrawingImage CreateImage(PointPattern[] pointPatterns, Size size, Color color)
         {
             if (pointPatterns == null)
-                throw new Exception("You must provide a gesture before trying to generate a thumbnail");
+                return null;
 
             DrawingGroup drawingGroup = new DrawingGroup();
             for (int i = 0; i < pointPatterns.Length; i++)
