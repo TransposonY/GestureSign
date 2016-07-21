@@ -149,16 +149,15 @@ http://transposony.coding.me/GestureSign/
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Title>保存手势</Title>
+    <Title>添加手势</Title>
     <Rename>重命名</Rename>
     <ExistingGesture>
-      已存在以下相似手势
-      点击“覆盖”覆盖旧手势
+      已存在以下相似手势，点击“覆盖”将覆盖旧手势
     </ExistingGesture>
     <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
     <StackUpGesture>叠加手势</StackUpGesture>
-    <ExitTraining>保存并退出学习模式</ExitTraining>
-    <NewAction>保存并添加新动作</NewAction>
+    <DrawGesture>请画出手势</DrawGesture>
+    <Reset>重置</Reset>
     <Messages>
       <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
     </Messages>

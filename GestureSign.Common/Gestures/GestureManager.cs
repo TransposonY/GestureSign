@@ -89,7 +89,7 @@ namespace GestureSign.Common.Gestures
 
             if (touchCapture.Mode == CaptureMode.Training)
             {
-                if (touchCapture.OverlayGesture)
+                if (touchCapture.StackUpGesture)
                 {
                     _gestureLevel++;
                 }

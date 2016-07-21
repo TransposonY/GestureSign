@@ -7,7 +7,6 @@
     <CannotFindTouchInputProviderMessage>未找到组件GestureSign.TouchInputProvider.exe，请重新下载或安装本软件。</CannotFindTouchInputProviderMessage>
   </Messages>
   <TrayMenu>
-    <TrainingMode>学习模式</TrainingMode>
     <Disable>关闭手势识别</Disable>
     <ControlPanel>设置</ControlPanel>
     <Exit>退出</Exit>

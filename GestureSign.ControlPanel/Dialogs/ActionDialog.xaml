@@ -13,7 +13,6 @@
                       WindowStyle="ToolWindow"
                       Loaded="MetroWindow_Loaded"
                       SizeToContent="Height"
-                      Closed="MetroWindow_Closed"
                       Icon="/GestureSign;component/Resources/normal.ico"
                       BorderThickness="1"
                       ShowIconOnTitleBar="False"
@@ -27,6 +26,10 @@
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
+            <Canvas x:Key="Plus">
+                <Path Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+                      Fill="{StaticResource HighlightBrush}" />
+            </Canvas>
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
@@ -94,9 +97,9 @@
                       ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
                       Loaded="availableGesturesComboBox_Loaded"
                       HorizontalContentAlignment="Left"
-                      HorizontalAlignment="Center"
+                      HorizontalAlignment="Left"
                       VerticalContentAlignment="Center"
-                      Margin="10,5,5,5"
+                      Margin="25,5,5,0"
                       VerticalAlignment="Center"
                       BorderThickness="0"
                       Height="80"
@@ -106,7 +109,7 @@
                       ScrollViewer.IsDeferredScrollingEnabled="True"
                       MaxDropDownHeight="512"
                       MaxWidth="300"
-                      Width="280">
+                      Width="250">
                 <!--<ComboBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
@@ -294,6 +297,23 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <Button x:Name="NewGestureButton"
+                    Style="{DynamicResource SquareButtonStyle}"
+                    Margin="0,-80,25,10"
+                    Width="35"
+                    HorizontalAlignment="Right"
+                    Click="NewGestureButton_Click"
+                    Height="80"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource HighlightBrush}"
+                    MinHeight="25">
+                <Rectangle Width="25"
+                           Height="25">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Plus}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
         </StackPanel>
         <StackPanel Grid.Row="0"
                     Grid.Column="1"
@@ -337,3 +357,4 @@
         <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
     </Grid>
 </controls:MetroWindow>
+

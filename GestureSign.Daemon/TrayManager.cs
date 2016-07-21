@@ -29,7 +29,6 @@ namespace GestureSign.Daemon
 
         private NotifyIcon _trayIcon;
         private ContextMenu _trayMenu;
-        private MenuItem _trainingModeMenuItem;
         private MenuItem _disableGesturesMenuItem;
         private MenuItem _controlPanelMenuItem;
         private MenuItem _exitGestureSignMenuItem;
@@ -42,7 +41,6 @@ namespace GestureSign.Daemon
         {
             _trayIcon = new NotifyIcon();
             _trayMenu = new ContextMenu();
-            _trainingModeMenuItem = new MenuItem();
             _disableGesturesMenuItem = new MenuItem();
             _controlPanelMenuItem = new MenuItem();
             _exitGestureSignMenuItem = new MenuItem();
@@ -55,23 +53,11 @@ namespace GestureSign.Daemon
             _trayIcon.Icon = Resources.normal_daemon;
 
             // Tray Menu
-            _trayMenu.MenuItems.AddRange(new MenuItem[] { _trainingModeMenuItem, _disableGesturesMenuItem, new MenuItem("-"), _controlPanelMenuItem, new MenuItem("-"), _exitGestureSignMenuItem });
+            _trayMenu.MenuItems.AddRange(new MenuItem[] { _disableGesturesMenuItem, new MenuItem("-"), _controlPanelMenuItem, new MenuItem("-"), _exitGestureSignMenuItem });
             _trayMenu.Name = "TrayMenu";
             //TrayMenu.Size = new Size(194, 82);
             //TrayMenu.Opened += (o, e) => { Input.TouchCapture.Instance.DisableTouchCapture(); };
             //TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
-
-            // Training Mode Menu Item
-            //miTrainingMode.CheckOnClick = true;
-            _trainingModeMenuItem.Name = "TrainingModeMenuItem";
-            //miTrainingMode.Size = new Size(193, 22);
-            _trainingModeMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.TrainingMode");
-            _trainingModeMenuItem.Click += (o, e) =>
-            {
-                TouchCapture.Instance.Mode = TouchCapture.Instance.Mode != CaptureMode.Training
-                    ? CaptureMode.Training
-                    : CaptureMode.Normal;
-            };
 
             // Disable Gestures Menu Item
             _disableGesturesMenuItem.Checked = false;
@@ -132,12 +118,8 @@ namespace GestureSign.Daemon
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    if (e.Clicks == 2)
-                        if (Input.TouchCapture.Instance.Mode == CaptureMode.Training)
-                        {
-                            Input.TouchCapture.Instance.Mode = CaptureMode.Normal;
-                        }
-                        else ToggleDisableGestures();
+                    if (e.Clicks == 2 && TouchCapture.Instance.Mode != CaptureMode.Training)
+                        ToggleDisableGestures();
                     break;
                 case MouseButtons.Right:
                     break;
@@ -198,25 +180,14 @@ namespace GestureSign.Daemon
             // Update tray icon based on new state
             if (e.Mode == CaptureMode.UserDisabled)
             {
-                _trainingModeMenuItem.Enabled = false;
                 _disableGesturesMenuItem.Checked = true;
                 _trayIcon.Icon = Resources.stop;
             }
             else
             {
-                _trainingModeMenuItem.Enabled = true;
                 _disableGesturesMenuItem.Checked = false;
                 // Consider state of Training Mode and load according icon
-                if (e.Mode == CaptureMode.Training)
-                {
-                    _trayIcon.Icon = Resources.add;
-                    _trainingModeMenuItem.Checked = true;
-                }
-                else
-                {
-                    _trayIcon.Icon = Resources.normal_daemon;
-                    _trainingModeMenuItem.Checked = false;
-                }
+                _trayIcon.Icon = e.Mode == CaptureMode.Training ? Resources.add : Resources.normal_daemon;
             }
         }
 

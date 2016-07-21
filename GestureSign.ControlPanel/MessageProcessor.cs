@@ -8,13 +8,14 @@ using System.Windows;
 using System.Windows.Threading;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
-using GestureSign.ControlPanel.Dialogs;
 using Point = System.Drawing.Point;
 
 namespace GestureSign.ControlPanel
 {
     class MessageProcessor : IMessageProcessor
     {
+        public static event EventHandler<Gesture> GotNewGesture;
+
         public bool ProcessMessages(NamedPipeServerStream server)
         {
             try
@@ -60,9 +61,7 @@ namespace GestureSign.ControlPanel
                             var newGesture = data as Tuple<string, List<List<List<Point>>>>;
                             if (newGesture == null) return;
 
-                            GestureDefinition gu = new GestureDefinition(new Gesture(newGesture.Item1, newGesture.Item2.Select(list => new PointPattern(list)).ToArray()), false);
-                            gu.Show();
-                            gu.Activate();
+                            GotNewGesture?.Invoke(this, new Gesture(newGesture.Item1, newGesture.Item2.Select(list => new PointPattern(list)).ToArray()));
                         }
                     }, DispatcherPriority.Input);
                 }

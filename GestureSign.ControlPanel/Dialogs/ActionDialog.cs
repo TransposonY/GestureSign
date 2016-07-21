@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
@@ -81,8 +82,6 @@ namespace GestureSign.ControlPanel.Dialogs
                     }
                 }
             }
-
-            NamedPipe.SendMessageAsync("DisableTouchCapture", "GestureSignDaemon");
         }
 
         private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -98,13 +97,6 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private async void MetroWindow_Closed(object sender, EventArgs e)
-        {
-            // User canceled dialog, re-enable gestures and hide form
-
-            await NamedPipe.SendMessageAsync("EnableTouchCapture", "GestureSignDaemon");
-        }
-
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -115,6 +107,17 @@ namespace GestureSign.ControlPanel.Dialogs
         private void cmdCancel_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void NewGestureButton_Click(object sender, RoutedEventArgs e)
+        {
+            GestureDefinition gestureDefinition = new GestureDefinition();
+            var result = gestureDefinition.ShowDialog();
+
+            if (result != null && result.Value)
+            {
+                SelectCurrentGesture(GestureManager.Instance.GestureName);
+            }
         }
 
         #endregion

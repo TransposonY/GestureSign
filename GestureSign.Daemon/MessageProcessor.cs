@@ -69,8 +69,8 @@ namespace GestureSign.Daemon
                             case "HideTrayIcon":
                                 TrayManager.Instance.TrayIconVisible = false;
                                 break;
-                            case "OverlayGesture":
-                                TouchCapture.Instance.OverlayGesture = true;
+                            case "StackUpGesture":
+                                TouchCapture.Instance.StackUpGesture = true;
                                 break;
                         }
                     }, null);

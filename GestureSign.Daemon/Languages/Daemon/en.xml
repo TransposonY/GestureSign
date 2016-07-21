@@ -7,7 +7,6 @@
     <CannotFindTouchInputProviderMessage>Can not find GestureSign.TouchInputProvider.exe.Try to redownload or reinstall GestureSign.</CannotFindTouchInputProviderMessage>
   </Messages>
   <TrayMenu>
-    <TrainingMode>Training Mode</TrainingMode>
     <Disable>Disable GestureSign</Disable>
     <ControlPanel>Control Panel</ControlPanel>
     <Exit>Exit</Exit>

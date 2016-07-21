@@ -58,7 +58,7 @@ namespace GestureSign.Daemon.Input
 
         #region Public Instance Properties
 
-        public bool OverlayGesture { get; set; }
+        public bool StackUpGesture { get; set; }
 
         // Create enumeration to identify Touch buttons
         public bool TemporarilyDisableCapture { get; set; }
@@ -197,6 +197,8 @@ namespace GestureSign.Daemon.Input
             {
                 if (e.Mode == CaptureMode.UserDisabled)
                     BlockTouchInputThresholdChanged?.Invoke(this, 0);
+                else if (e.Mode == CaptureMode.Normal && StackUpGesture)
+                    StackUpGesture = false;
             };
 
             _timeoutTimer.Tick += GestureRecognizedCallback;
@@ -357,34 +359,9 @@ namespace GestureSign.Daemon.Input
             }
             else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
-                try
+                if (StackUpGesture)
                 {
-                    bool createdSetting;
-                    using (new Mutex(false, "GestureSignControlPanel", out createdSetting)) { }
-                    if (createdSetting)
-                    {
-                        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                        if (File.Exists(path))
-                            using (Process daemon = new Process())
-                            {
-                                daemon.StartInfo.FileName = path;
-                                daemon.StartInfo.Arguments = "/L";
-                                // pipeClient.StartInfo.Arguments =            
-                                //daemon.StartInfo.UseShellExecute = false;
-                                daemon.Start();
-                                daemon.WaitForInputIdle();
-                            }
-                    }
-                }
-                catch (Exception exception)
-                {
-                    Logging.LogException(exception);
-                    MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-
-                if (OverlayGesture)
-                {
-                    OverlayGesture = false;
+                    StackUpGesture = false;
                 }
                 else
                 {
@@ -393,8 +370,8 @@ namespace GestureSign.Daemon.Input
                 _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
 
                 var message = new Tuple<string, List<List<List<Point>>>>(GestureManager.Instance.GestureName, _pointPatternCache.Select(p => p.Points).ToList());
-                if (await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
-                    DisableTouchCapture();
+                if (!await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
+                    Mode = CaptureMode.Normal;
             }
 
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event

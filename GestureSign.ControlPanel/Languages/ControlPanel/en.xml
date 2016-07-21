@@ -144,16 +144,15 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Title>Save</Title>
+    <Title>New Gesture</Title>
     <Rename>Rename</Rename>
     <ExistingGesture>
-      Exist similar gesture
-      Click Overwrite to replace existing gesture
+      Exist similar gesture, clicking 'Overwrite' will replace existing gesture.
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
     <StackUpGesture>Stack Up</StackUpGesture>
-    <ExitTraining>Exit Training</ExitTraining>
-    <NewAction>Add New Action After Saving</NewAction>
+    <DrawGesture>Please draw a gesture</DrawGesture>
+    <Reset>Reset</Reset>
     <Messages>
       <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
     </Messages>
