@@ -101,7 +101,7 @@ namespace GestureSign.Common.Applications
                 }
             }
 
-            CaptureWindow = GetWindowFromPoint(e.LastCapturedPoints.FirstOrDefault());
+            CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
             var applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
 
             int maxThreshold = 0;
@@ -135,7 +135,7 @@ namespace GestureSign.Common.Applications
         protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             // Derive capture window from capture point
-            CaptureWindow = GetWindowFromPoint(e.LastCapturedPoints.FirstOrDefault());
+            CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
             RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
 
