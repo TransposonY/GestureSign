@@ -132,10 +132,10 @@ namespace GestureSign.Daemon.Input
             if (GestureRecognized != null) GestureRecognized(this, e);
         }
 
-        protected virtual void OnGestureNotRecognized(RecognitionEventArgs e)
-        {
-            if (GestureNotRecognized != null) GestureNotRecognized(this, e);
-        }
+        //protected virtual void OnGestureNotRecognized(RecognitionEventArgs e)
+        //{
+        //    if (GestureNotRecognized != null) GestureNotRecognized(this, e);
+        //}
 
         // Create event to notify subscribers that a single point has been captured
         public event PointsCapturedEventHandler PointCaptured;
@@ -377,8 +377,8 @@ namespace GestureSign.Daemon.Input
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
             if (GestureManager.Instance.GestureName != null)
                 OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
-            else
-                OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
+            //else
+            //    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
 
             OnAfterPointsCaptured(pointsInformation);
 
