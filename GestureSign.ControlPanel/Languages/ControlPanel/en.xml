@@ -83,13 +83,14 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
     <ApplicationTools>Drag and drop the crosshair on the window.Or click the right button to select the running applications.</ApplicationTools>
     <AppName>Application Name</AppName>
-    <Group>Group</Group>
     <Icon>Icon</Icon>
     <MatchUsing>Match Using</MatchUsing>
     <MatchString>Match String</MatchString>
     <SelectApp>Select Application</SelectApp>
     <SelectCommand>Select Command</SelectCommand>
     <SelectGesture>Select Gesture</SelectGesture>
+    <Condition>Triggering Condition</Condition>
+    <Default>Default</Default>
     <Messages>
       <ActionExistsTitle>Action Conflict</ActionExistsTitle>
       <ActionExists>Action "{0}" is already defined for {1}</ActionExists>
@@ -98,8 +99,15 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <NoSelectedGesture>Please select a gesture</NoSelectedGesture>
       <NoActionNameTitle>No Action Name</NoActionNameTitle>
       <NoActionName>Please provide a name for this action</NoActionName>
+      <ConditionError>Condition Error</ConditionError>
     </Messages>
   </ActionDialog>
+  <EditConditionDialog>
+    <Title>Edit Condition</Title>
+    <Variables>Variables</Variables>
+    <Insert>Insert</Insert>
+    <Sample>Sample: finger_2_start_X>100</Sample>
+  </EditConditionDialog>
   <Action>
     <Header>Action</Header>
     <ActionFile>Action File</ActionFile>

@@ -627,7 +627,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 IsEnabled = _actionClipboard.IsEnabled,
                 Name = _actionClipboard.Name,
                 PluginClass = _actionClipboard.PluginClass,
-                PluginFilename = _actionClipboard.PluginFilename
+                PluginFilename = _actionClipboard.PluginFilename,
+                Condition = _actionClipboard.Condition
             };
             targetApplication.AddAction(newAction);
 

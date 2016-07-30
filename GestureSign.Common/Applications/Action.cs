@@ -29,6 +29,9 @@ namespace GestureSign.Applications
 
         [DataMember]
         public bool IsEnabled { get; set; }
+
+        [DataMember]
+        public string Condition { get; set; }
         #endregion
     }
 }

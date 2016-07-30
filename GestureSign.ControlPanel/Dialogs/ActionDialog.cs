@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
@@ -78,9 +81,10 @@ namespace GestureSign.ControlPanel.Dialogs
                     if (pluginInfo.Class == _currentAction.PluginClass && pluginInfo.Filename == _currentAction.PluginFilename)
                     {
                         cmbPlugins.SelectedIndex = cmbPlugins.Items.IndexOf(comboItem);
-                        return;
+                        break;
                     }
                 }
+                ConditionTextBox.Text = _currentAction.Condition;
             }
         }
 
@@ -117,6 +121,15 @@ namespace GestureSign.ControlPanel.Dialogs
             if (result != null && result.Value)
             {
                 SelectCurrentGesture(GestureManager.Instance.GestureName);
+            }
+        }
+
+        private void ConditionTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            EditConditionDialog editConditionDialog = new EditConditionDialog(ConditionTextBox.Text);
+            if (editConditionDialog.ShowDialog().Value)
+            {
+                ConditionTextBox.Text = editConditionDialog.ConditionTextBox.Text;
             }
         }
 
@@ -253,12 +266,26 @@ namespace GestureSign.ControlPanel.Dialogs
                 }
             }
 
+            try
+            {
+                var regex = new Regex("finger_[0-9]+_start_[XY]?|finger_[0-9]+_end_[XY]?|finger_[0-9]+_ID");
+                var replaced = regex.Replace(ConditionTextBox.Text, "10");
+
+                DataTable dataTable = new DataTable();
+                dataTable.Compute(replaced, null);
+            }
+            catch (Exception exception)
+            {
+                return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ConditionError"), exception.Message);
+            }
+
             // Store new values
             _currentAction.GestureName = (availableGesturesComboBox.SelectedItem as GestureItem).Name;
             _currentAction.Name = newActionName;
             _currentAction.PluginClass = _pluginInfo.Class;
             _currentAction.PluginFilename = _pluginInfo.Filename;
             _currentAction.ActionSettings = _pluginInfo.Plugin.Serialize();
+            _currentAction.Condition = ConditionTextBox.Text;
             _currentAction.IsEnabled = true;
 
             if (isNew)

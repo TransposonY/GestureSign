@@ -10,17 +10,17 @@ namespace GestureSign.Common.Input
     {
         #region Constructors
 
-        public RecognitionEventArgs(List<List<Point>> points, List<Point> capturePoints)
+        public RecognitionEventArgs(List<List<Point>> points, List<Point> capturePoints, List<int> contactIdentifiers)
         {
             this.Points = points;
-            this.LastCapturedPoints = capturePoints;
+            this.FirstCapturedPoints = capturePoints;
+            ContactIdentifiers = contactIdentifiers;
         }
 
-        public RecognitionEventArgs(string gestureName, List<List<Point>> points, List<Point> capturePoints)
+        public RecognitionEventArgs(string gestureName, List<List<Point>> points, List<Point> capturePoints, List<int> contactIdentifiers)
+            : this(points, capturePoints, contactIdentifiers)
         {
             this.GestureName = gestureName;
-            this.Points = points;
-            this.LastCapturedPoints = capturePoints;
         }
 
         #endregion
@@ -29,7 +29,8 @@ namespace GestureSign.Common.Input
 
         public string GestureName { get; set; }
         public List<List<Point>> Points { get; set; }
-        public List<Point> LastCapturedPoints { get; set; }
+        public List<Point> FirstCapturedPoints { get; set; }
+        public List<int> ContactIdentifiers { get; set; }
 
         #endregion
     }

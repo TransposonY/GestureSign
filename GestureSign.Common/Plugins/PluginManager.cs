@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Input;
 
@@ -54,7 +57,8 @@ namespace GestureSign.Common.Plugins
                 // Exit if there is no action configured
                 if (executableAction == null || !executableAction.IsEnabled ||
                     (touchCapture.Mode == CaptureMode.UserDisabled &&
-                    !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)))
+                    !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
+                   !Compute(executableAction.Condition, e.Points, e.ContactIdentifiers))
                     continue;
 
                 // Locate the plugin associated with this action
@@ -67,7 +71,7 @@ namespace GestureSign.Common.Plugins
                 // Load action settings into plugin
                 pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
                 // Execute plugin process
-                pluginInfo.Plugin.Gestured(new PointInfo(e.LastCapturedPoints, e.Points));
+                pluginInfo.Plugin.Gestured(new PointInfo(e.FirstCapturedPoints, e.Points));
             }
         }
 
@@ -149,6 +153,47 @@ namespace GestureSign.Common.Plugins
                 }
 
             return retPlugins;
+        }
+
+        private bool Compute(string condition, List<List<Point>> pointList, List<int> contactIdentifiers)
+        {
+            if (string.IsNullOrWhiteSpace(condition)) return true;
+
+            string expression = GetExpression(condition, pointList, contactIdentifiers);
+
+            DataTable dataTable = new DataTable();
+            var result = dataTable.Compute(expression, null);
+
+            return result is DBNull || Convert.ToBoolean(result);
+        }
+
+        private string GetExpression(string condition, List<List<Point>> pointList, List<int> contactIdentifiers)
+        {
+            StringBuilder sb = new StringBuilder(condition);
+
+            for (int i = 1; i <= pointList.Count; i++)
+            {
+                var format = "finger_{0}_start_X";
+                string variable = string.Format(format, i);
+                sb.Replace(variable, pointList[i - 1].FirstOrDefault().X.ToString());
+
+                format = "finger_{0}_start_Y";
+                variable = string.Format(format, i);
+                sb.Replace(variable, pointList[i - 1].FirstOrDefault().Y.ToString());
+
+                format = "finger_{0}_end_X";
+                variable = string.Format(format, i);
+                sb.Replace(variable, pointList[i - 1].LastOrDefault().X.ToString());
+
+                format = "finger_{0}_end_Y";
+                variable = string.Format(format, i);
+                sb.Replace(variable, pointList[i - 1].LastOrDefault().Y.ToString());
+
+                format = "finger_{0}_ID";
+                variable = string.Format(format, i);
+                sb.Replace(variable, contactIdentifiers[i - 1].ToString());
+            }
+            return sb.ToString();
         }
 
         #endregion

@@ -88,13 +88,14 @@ http://transposony.coding.me/GestureSign/
     <AppName>程序名称</AppName>
     <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
     <EditActionTitle>编辑动作</EditActionTitle>
-    <Group>分组</Group>
     <Icon>图标</Icon>
     <MatchUsing>匹配类型</MatchUsing>
     <MatchString>匹配文本</MatchString>
     <SelectApp>选择要控制的程序</SelectApp>
     <SelectCommand>选择想执行的命令</SelectCommand>
     <SelectGesture>选择手势</SelectGesture>
+    <Condition>触发条件</Condition>
+    <Default>默认</Default>
     <Messages>
       <ActionExistsTitle>此动作已存在</ActionExistsTitle>
       <ActionExists>动作 “{0}”已经定义给 {1}</ActionExists>
@@ -103,8 +104,15 @@ http://transposony.coding.me/GestureSign/
       <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
       <NoActionNameTitle>无动作名</NoActionNameTitle>
       <NoActionName>未填写动作名称，请先为该动作命名</NoActionName>
+      <ConditionError>条件错误</ConditionError>
     </Messages>
   </ActionDialog>
+  <EditConditionDialog>
+    <Title>编辑条件</Title>
+    <Variables>变量</Variables>
+    <Insert>插入</Insert>
+    <Sample>示例：finger_2_start_X>100</Sample>
+  </EditConditionDialog>
   <Action>
     <Header>动作</Header>
     <ActionFile>动作文件</ActionFile>

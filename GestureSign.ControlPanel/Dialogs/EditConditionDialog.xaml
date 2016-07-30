@@ -1,0 +1,78 @@
+﻿<controls:MetroWindow x:Class="GestureSign.ControlPanel.Dialogs.EditConditionDialog"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:GestureSign.ControlPanel.Dialogs"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                      mc:Ignorable="d"
+                      Title="{localization:LocalisedText EditConditionDialog.Title}"
+                      Width="350"
+                      SizeToContent="Height"
+                      FlowDirection="{StaticResource DefaultFlowDirection}"
+                      BorderBrush="{StaticResource AccentColorBrush}"
+                      Icon="/GestureSign;component/Resources/normal.ico"
+                      BorderThickness="1"
+                      ResizeMode="NoResize"
+                      WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="175" />
+            <ColumnDefinition Width="175" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="VariableTextBlock"
+                   HorizontalAlignment="Left"
+                   Margin="10,10,0,0"
+                   TextWrapping="Wrap"
+                   Text="{localization:LocalisedText EditConditionDialog.Variables}"
+                   VerticalAlignment="Top"
+                   Height="15" />
+        <ComboBox Grid.Row="0"
+                  Grid.Column="0"
+                  x:Name="VariableComboBox"
+                  HorizontalAlignment="Left"
+                  Margin="10,30,0,0"
+                  VerticalAlignment="Top"
+                  FontSize="16"
+                  Loaded="VariableComboBox_Loaded" />
+        <Button x:Name="InsertButton"
+                Content="{localization:LocalisedText EditConditionDialog.Insert}"
+                HorizontalAlignment="Right"
+                Margin="0,30,10,0"
+                VerticalAlignment="Top"
+                Click="InsertButton_Click"
+                Grid.Row="0"
+                Grid.Column="1"
+                Focusable="False" />
+        <TextBox x:Name="ConditionTextBox"
+                 controls:TextBoxHelper.Watermark="{localization:LocalisedText EditConditionDialog.Sample}"
+                 Loaded="ConditionTextBox_Loaded"
+                 TextWrapping="Wrap"
+                 MinHeight="52"
+                 MaxLines="6"
+                 Grid.Row="1"
+                 Grid.Column="0"
+                 Margin="10"
+                 FontSize="14"
+                 Grid.ColumnSpan="2" />
+        <Button x:Name="CancelButton"
+                Content="{localization:LocalisedText Common.Cancel}"
+                FontSize="14"
+                Grid.Row="2"
+                Grid.Column="0"
+                IsCancel="True" />
+        <Button x:Name="OkButton"
+                Content="{localization:LocalisedText Common.OK}"
+                Click="OkButton_Click"
+                IsDefault="True"
+                FontSize="14"
+                Grid.Row="2"
+                Grid.Column="1" />
+    </Grid>
+</controls:MetroWindow>
