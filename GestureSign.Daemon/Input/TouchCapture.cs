@@ -280,9 +280,7 @@ namespace GestureSign.Daemon.Input
 
                 EndCapture();
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-                _pointsCaptured = null;
             }
-
         }
 
         #endregion
@@ -382,6 +380,7 @@ namespace GestureSign.Daemon.Input
 
             OnAfterPointsCaptured(pointsInformation);
 
+            _pointsCaptured = null;
         }
 
         private void CancelCapture(int num)
