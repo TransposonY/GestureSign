@@ -27,7 +27,7 @@ namespace GestureSign.ControlPanel
 
         private static Timer _timer;
 
-        private async void Application_Startup(object sender, StartupEventArgs e)
+        private void Application_Startup(object sender, StartupEventArgs e)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace GestureSign.ControlPanel
                     }
                     else
                     {
-                        await NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel");
+                        NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel").Wait();
                         Current.Shutdown();
                     }
 
