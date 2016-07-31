@@ -141,7 +141,6 @@ namespace GestureSign.CorePlugins.ScreenBrightness
         {
             if (Settings == null)
                 return false;
-
             try
             {
                 int currentBrightness = GetBrightness();
@@ -187,12 +186,16 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
             //output current brightness
-            byte curBrightness;
+            byte curBrightness = 0;
             using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
             {
                 using (ManagementObjectCollection moc = mos.Get())
                 {
-                    curBrightness = (from ManagementObject o in moc select (byte)o.GetPropertyValue("CurrentBrightness")).FirstOrDefault();
+                    foreach (ManagementObject o in moc)
+                    {
+                        curBrightness = (byte)o["CurrentBrightness"];
+                        break; //only work on the first object
+                    }
                 }
             }
 
@@ -209,7 +212,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             SelectQuery q = new SelectQuery("WmiMonitorBrightness");
 
             //store result
-            byte[] BrightnessLevels = new byte[0];
+            byte[] brightnessLevels = new byte[0];
             //output current brightness
             using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
             {
@@ -219,7 +222,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                     {
                         foreach (ManagementObject o in moc)
                         {
-                            BrightnessLevels = (byte[])o.GetPropertyValue("Level");
+                            brightnessLevels = (byte[])o.GetPropertyValue("Level");
                             break; //only work on the first object
                         }
                     }
@@ -227,33 +230,50 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                 catch (Exception)
                 {
                     // MessageBox.Show("Sorry, Your System does not support this brightness control...");
-
                 }
             }
-            return BrightnessLevels;
+            return brightnessLevels;
         }
 
-        static void SetBrightness(byte targetBrightness)
+        //static void SetBrightness(byte targetBrightness)
+        //{
+        //    int timeout = 1;// UInt32.MaxValue
+        //    //define scope (namespace)
+        //    ManagementScope s = new ManagementScope("root\\WMI");
+
+        //    //define query
+        //    SelectQuery q = new SelectQuery("WmiMonitorBrightnessMethods");
+
+        //    //output current brightness
+        //    using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
+        //    {
+        //        using (ManagementObjectCollection moc = mos.Get())
+        //        {
+        //            foreach (ManagementObject o in moc)
+        //            {
+        //                o.InvokeMethod("WmiSetBrightness", new Object[] { timeout, targetBrightness }); //note the reversed order - won't work otherwise!
+        //                break; //only work on the first object
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void SetBrightness(byte brightness)
         {
-            //define scope (namespace)
-            ManagementScope s = new ManagementScope("root\\WMI");
-
-            //define query
-            SelectQuery q = new SelectQuery("WmiMonitorBrightnessMethods");
-
-            //output current brightness
-            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q))
+            using (var brightnessMethods = new ManagementClass("root/wmi", "WmiMonitorBrightnessMethods", null))
+            using (var inParams = brightnessMethods.GetMethodParameters("WmiSetBrightness"))
             {
-                using (ManagementObjectCollection moc = mos.Get())
+                foreach (var o in brightnessMethods.GetInstances())
                 {
-                    foreach (ManagementObject o in moc)
-                    {
-                        o.InvokeMethod("WmiSetBrightness", new Object[] { UInt32.MaxValue, targetBrightness }); //note the reversed order - won't work otherwise!
-                        break; //only work on the first object
-                    }
+                    var mo = (ManagementObject)o;
+                    inParams["Brightness"] = brightness; // set brightness to brightness %
+                    inParams["Timeout"] = 1;
+                    mo.InvokeMethod("WmiSetBrightness", inParams, null);
+                    break;
                 }
             }
         }
+
         #endregion
 
         #region Host Control
