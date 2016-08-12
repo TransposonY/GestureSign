@@ -40,7 +40,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public Options()
         {
             InitializeComponent();
-            LoadSettings();
         }
 
         private void LoadSettings()
@@ -75,8 +74,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // Disable gestures while options are open
-            //Input.MouseCapture.Instance.DisableMouseCapture();
+            LoadSettings();
 
             UpdateVisualFeedbackExample();
         }

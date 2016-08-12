@@ -31,7 +31,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public AvailableActions()
         {
             InitializeComponent();
+        }
 
+        ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
+        private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
+        private Task _addActionTask;
+        private bool _selecteNewestItem;
+        private IApplication _cutActionSource;
+        private IAction _actionClipboard;
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs routedEvent)
+        {
             var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
             actionsSourceView.GroupDescriptions.Add(new PropertyGroupDescription("GestureName"));//在图中添加分组
             actionsSourceView.SortDescriptions.Add(new SortDescription("GestureName", ListSortDirection.Ascending));
@@ -79,14 +89,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             if (ApplicationManager.FinishedLoading) BindApplications();
         }
-
-
-        ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
-        private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
-        private Task _addActionTask;
-        private bool _selecteNewestItem;
-        private IApplication _cutActionSource;
-        private IAction _actionClipboard;
 
         private void cmdEditAction_Click(object sender, RoutedEventArgs e)
         {

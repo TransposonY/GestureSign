@@ -21,15 +21,17 @@ namespace GestureSign.ControlPanel
     {
         public MainWindow()
         {
-            Loaded += (e, o) =>
-            {
-                if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
-                {
-                    SendLog();
-                }
-            };
             InitializeComponent();
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
             SetAboutInfo();
+
+            if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
+            {
+                SendLog();
+            }
         }
 
         private void SetAboutInfo()

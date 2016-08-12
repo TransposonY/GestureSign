@@ -20,11 +20,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public IgnoredApplications()
         {
             InitializeComponent();
-            ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
-
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.InvokeAsync(BindIgnoredApplications); };
-
-            if (ApplicationManager.FinishedLoading) BindIgnoredApplications();
         }
 
         void ApplicationsFlyout_BindIgnoredApplications(object sender, EventArgs e)
@@ -44,6 +39,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             sourceView.GroupDescriptions.Add(groupDesctrption);//在图中添加分组
             this.lstIgnoredApplications.ItemsSource = sourceView;//绑定数据源
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
+
+            ApplicationManager.OnLoadApplicationsCompleted += (o, ev) => { this.Dispatcher.InvokeAsync(BindIgnoredApplications); };
+
+            if (ApplicationManager.FinishedLoading) BindIgnoredApplications();
         }
 
         private void btnDeleteIgnoredApp_Click(object sender, RoutedEventArgs e)

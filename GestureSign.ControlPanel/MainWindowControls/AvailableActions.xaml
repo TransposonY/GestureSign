@@ -9,7 +9,8 @@
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="400"
-             d:DesignWidth="540">
+             d:DesignWidth="540"
+             Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
