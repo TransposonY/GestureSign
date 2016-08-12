@@ -130,8 +130,6 @@ http://transposony.coding.me/GestureSign/
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteActionConfirm>确定要删除这个动作吗？</DeleteActionConfirm>
       <DeleteAppConfirm>确定删除该程序吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
-      <NoGestureTitle>无可用手势</NoGestureTitle>
-      <NoGesture>添加动作前需要先添加至少一项手势</NoGesture>
       <NoAssociationAction>无关联动作</NoAssociationAction>
       <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
       <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>

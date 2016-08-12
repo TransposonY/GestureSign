@@ -163,7 +163,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             EnableRelevantButtons();
         }
-        //如果有全选需求，再分别选择：界面+保存的数据
+
         private void ActionCheckBox_Click(object sender, RoutedEventArgs e)
         {
             ActionInfo actionInfo = UIHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
@@ -174,27 +174,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ApplicationManager.Instance.SaveApplications();
         }
 
-
-
-
-
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
         {
-            if (GestureManager.Instance.Gestures.Length == 0)
-            {
-                UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.NoGestureTitle"),
-                        LocalizationProvider.Instance.GetTextValue("Action.Messages.NoGesture"), MessageDialogStyle.Affirmative,
-                        new MetroDialogSettings()
-                        {
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide = false,
-                            AnimateShow = false
-                        });
-                return;
-            }
-
             var ai = lstAvailableActions.SelectedItem as ActionInfo;
             string gestureName = ai?.GestureName;
             ActionDialog actionDialog = new ActionDialog(gestureName, lstAvailableApplication.SelectedItem as IApplication);
@@ -496,7 +477,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-                End:
+            End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();

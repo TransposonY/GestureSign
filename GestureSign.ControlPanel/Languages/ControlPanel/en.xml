@@ -125,8 +125,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteActionConfirm>Are you sure?</DeleteActionConfirm>
       <DeleteAppConfirm>Are you sure to delete this application?All actions in this application will be deleted</DeleteAppConfirm>
-      <NoGestureTitle>No Gestures</NoGestureTitle>
-      <NoGesture>You should add at least one gesture before adding an action</NoGesture>
       <NoAssociationAction>No Association Action</NoAssociationAction>
       <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
       <ReplaceConfirm>There is already a {0} action in {0}.Replace it?</ReplaceConfirm>
