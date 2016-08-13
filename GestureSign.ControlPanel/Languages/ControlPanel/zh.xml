@@ -18,7 +18,7 @@
     </FindNewErrorLog>
   </Messages>
   <Common>
-    <AllApplications>(所有程序)</AllApplications>
+    <AllApplications>(全局)</AllApplications>
     <Cancel>取消</Cancel>
     <FileName>文件名</FileName>
     <No>否</No>
