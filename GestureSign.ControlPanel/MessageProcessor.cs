@@ -26,7 +26,7 @@ namespace GestureSign.ControlPanel
                     server.CopyTo(memoryStream);
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     object data = binForm.Deserialize(memoryStream);
-                    Application.Current.Dispatcher.InvokeAsync(() =>
+                    Application.Current?.Dispatcher.InvokeAsync(() =>
                     {
                         string message = data as string;
                         if (message != null)
