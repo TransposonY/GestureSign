@@ -12,7 +12,6 @@
                       SizeToContent="Height"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
                       BorderBrush="{StaticResource AccentColorBrush}"
-                      Icon="/GestureSign;component/Resources/normal.ico"
                       BorderThickness="1"
                       ResizeMode="NoResize"
                       WindowStartupLocation="CenterScreen">
