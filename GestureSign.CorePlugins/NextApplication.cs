@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
 using GestureSign.Common.Plugins;
-using ManagedWinapi.Windows;
-
 using System.Windows.Controls;
+using WindowsInput;
+using WindowsInput.Native;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
@@ -58,27 +53,28 @@ namespace GestureSign.CorePlugins
 
         public bool Gestured(PointInfo ActionPoint)
         {
+            InputSimulator simulator = new InputSimulator();
             try
             {
-                SystemWindow.ForegroundWindow = SystemWindow.AllToplevelWindows.Where
-                                                (w => w.Visible &&	// Must be a visible windows  
-                                                    //w.WindowState != FormWindowState.Minimized && 
-                                                 w.Title != "" &&	// Must have a window title
-                                                    //(w.Style & WindowStyleFlags.POPUPWINDOW) 
-                                                    //	!= WindowStyleFlags.POPUPWINDOW &&
-                                                (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW)
-                                                    != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
-                                                ).Last();
-            }
-            catch (InvalidOperationException)
-            {
-                // Do nothing here, no other window open..
+                simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU)
+                    .Sleep(20)
+                    .KeyDown(VirtualKeyCode.TAB)
+                    .Sleep(20)
+                    .KeyUp(VirtualKeyCode.TAB)
+                    .Sleep(20)
+                    .KeyUp(VirtualKeyCode.LMENU)
+                    .Sleep(20);
             }
             catch (Exception)
             {
-                //MessageBox.Show("Oops! - "+ex.Message);
+                simulator.Keyboard.KeyUp(VirtualKeyCode.TAB)
+                    .Sleep(20)
+                    .KeyUp(VirtualKeyCode.LMENU)
+                    .Sleep(20);
+
+                return false;
             }
-            finally { }
+
             return true;
         }
 
