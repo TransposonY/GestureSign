@@ -294,19 +294,19 @@ namespace GestureSign.CorePlugins.HotKey
                 // Deceide which keys to press
                 // Windows
                 if (settings.Windows)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN).Sleep(30);
 
                 // Control
                 if (settings.Control)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL).Sleep(30);
 
                 // Alt
                 if (settings.Alt)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU).Sleep(30);
 
                 // Shift
                 if (settings.Shift)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
+                    simulator.Keyboard.KeyDown(VirtualKeyCode.LSHIFT).Sleep(30);
 
                 // Modifier
                 if (settings.KeyCode != null)
@@ -319,19 +319,19 @@ namespace GestureSign.CorePlugins.HotKey
                     }
                 // Release Shift
                 if (settings.Shift)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LSHIFT).Sleep(30);
 
                 // Release Alt
                 if (settings.Alt)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU).Sleep(30);
 
                 // Release Control
                 if (settings.Control)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL).Sleep(30);
 
                 // Release Windows
                 if (settings.Windows)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+                    simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN).Sleep(30);
             }
         }
 

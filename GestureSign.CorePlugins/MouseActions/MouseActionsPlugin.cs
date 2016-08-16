@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using WindowsInput;
 using GestureSign.Common.Localization;
@@ -72,10 +73,10 @@ namespace GestureSign.CorePlugins.MouseActions
                 switch (_settings.MouseAction)
                 {
                     case MouseActions.HorizontalScroll:
-                        simulator.Mouse.HorizontalScroll(_settings.ScrollAmount);
+                        simulator.Mouse.HorizontalScroll(_settings.ScrollAmount).Sleep(30);
                         return true;
                     case MouseActions.VerticalScroll:
-                        simulator.Mouse.VerticalScroll(_settings.ScrollAmount);
+                        simulator.Mouse.VerticalScroll(_settings.ScrollAmount).Sleep(30);
                         return true;
                     case MouseActions.MoveMouseTo:
                         MoveMouse(simulator, _settings.MovePoint);
@@ -90,6 +91,7 @@ namespace GestureSign.CorePlugins.MouseActions
 
                             MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
                             clickMethod.Invoke(simulator.Mouse, null);
+                            Thread.Sleep(30);
                             break;
                         }
                 }
@@ -129,7 +131,7 @@ namespace GestureSign.CorePlugins.MouseActions
             int realX = 0xffff * point.X / screenWidth;
             int realY = 0xffff * point.Y / screenHeight;
 
-            simulator.Mouse.MoveMouseTo(realX, realY);
+            simulator.Mouse.MoveMouseTo(realX, realY).Sleep(30);
         }
 
         private Point GetReferencePoint(ClickPositions position, PointInfo actionPoint)
