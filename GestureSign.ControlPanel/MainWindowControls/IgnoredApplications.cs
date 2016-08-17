@@ -41,7 +41,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             this.lstIgnoredApplications.ItemsSource = sourceView;//绑定数据源
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void UserControl_Initialized(object sender, EventArgs e)
         {
             ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
 

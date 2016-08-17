@@ -40,7 +40,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private IApplication _cutActionSource;
         private IAction _actionClipboard;
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs routedEvent)
+        private void UserControl_Initialized(object sender, EventArgs eArgs)
         {
             var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
             actionsSourceView.GroupDescriptions.Add(new PropertyGroupDescription("GestureName"));//在图中添加分组
@@ -479,7 +479,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-            End:
+                End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.SaveApplications();

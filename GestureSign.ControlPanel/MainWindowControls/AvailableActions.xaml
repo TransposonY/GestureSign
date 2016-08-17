@@ -10,7 +10,7 @@
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
-             Loaded="UserControl_Loaded">
+             Initialized="UserControl_Initialized">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>

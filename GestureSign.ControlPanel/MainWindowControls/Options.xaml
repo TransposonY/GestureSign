@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              Height="381"
              Width="380"
-             Loaded="UserControl_Loaded">
+             Initialized="UserControl_Initialized">
     <ScrollViewer PanningMode="VerticalFirst">
         <StackPanel Margin="0,0,0.4,0">
             <StackPanel.Resources>
