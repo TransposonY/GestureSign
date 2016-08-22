@@ -31,10 +31,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public AvailableActions()
         {
             InitializeComponent();
+            DataContext = this;
         }
 
-        ObservableCollection<ActionInfo> ActionInfos = new ObservableCollection<ActionInfo>();
-        private ObservableCollection<IApplication> _applications = new ObservableCollection<IApplication>();
+        public ObservableCollection<ActionInfo> ActionInfos { get; } = new ObservableCollection<ActionInfo>();
+
+        public ObservableCollection<IApplication> ApplicationCollection { get; } = new ObservableCollection<IApplication>();
+
         private Task _addActionTask;
         private bool _selecteNewestItem;
         private IApplication _cutActionSource;
@@ -42,16 +45,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void UserControl_Initialized(object sender, EventArgs eArgs)
         {
-            var actionsSourceView = new ListCollectionView(ActionInfos);//创建数据源的视图
-            actionsSourceView.GroupDescriptions.Add(new PropertyGroupDescription("GestureName"));//在图中添加分组
-            actionsSourceView.SortDescriptions.Add(new SortDescription("GestureName", ListSortDirection.Ascending));
-            lstAvailableActions.ItemsSource = actionsSourceView;//绑定数据源
-
-            var applicationSourceView = new ListCollectionView(_applications);
-            var applicationGroupDesctrption = new PropertyGroupDescription("Group");//设置分组列
-            applicationSourceView.GroupDescriptions.Add(applicationGroupDesctrption);//在图中添加分组
-            lstAvailableApplication.ItemsSource = applicationSourceView;
-
             ActionDialog.ActionsChanged += (o, e) =>
             {
                 if (lstAvailableApplication.SelectedItem == e.Application)
@@ -188,7 +181,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void BindApplications()
         {
-            _applications.Clear();
+            ApplicationCollection.Clear();
 
             // Add global actions to global applications group
             var userApplications =
@@ -197,7 +190,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             foreach (var app in globalApplication.Union(userApplications))
             {
-                _applications.Add(app);
+                ApplicationCollection.Add(app);
             }
         }
 

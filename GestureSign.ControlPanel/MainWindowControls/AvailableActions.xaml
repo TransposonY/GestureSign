@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
+             xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
@@ -117,6 +118,22 @@
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
+            <CollectionViewSource x:Key="ActionsViewSource"
+                                  Source="{Binding ActionInfos}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="GestureName" />
+                </CollectionViewSource.GroupDescriptions>
+                <CollectionViewSource.SortDescriptions>
+                    <componentModel:SortDescription PropertyName="GestureName"
+                                                    Direction="Ascending" />
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
+            <CollectionViewSource x:Key="ApplicationViewSource"
+                                  Source="{Binding ApplicationCollection}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Group" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid SnapsToDevicePixels="True"
@@ -196,6 +213,7 @@
             </Button.Content>
         </Button>
         <ListBox x:Name="lstAvailableApplication"
+                 ItemsSource="{Binding Source={StaticResource ApplicationViewSource}}"
                  ScrollViewer.CanContentScroll="False"
                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -295,6 +313,7 @@
         </Grid>
         <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
         <ListBox x:Name="lstAvailableActions"
+                 ItemsSource="{Binding Source={StaticResource ActionsViewSource}}"
                  ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
