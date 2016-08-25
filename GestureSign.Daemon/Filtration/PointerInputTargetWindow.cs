@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Daemon.Native;
 
-namespace GestureSign.Daemon
+namespace GestureSign.Daemon.Filtration
 {
     public class PointerInputTargetWindow : Form
     {
@@ -17,6 +17,29 @@ namespace GestureSign.Daemon
         public PointerInputTargetWindow()
         {
             ResetIdPool();
+            NativeMethods.InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
+        }
+
+        public int BlockTouchInputThreshold
+        {
+            get { return _blockTouchInputThreshold; }
+            set
+            {
+                _blockTouchInputThreshold = value;
+
+                bool flag = _blockTouchInputThreshold >= 2;
+
+                if (!IsHandleCreated)
+                {
+                    if (!IsDisposed)
+                        CreateHandle();
+                }
+
+                if (InvokeRequired)
+                    Invoke(new Action(() => IsRegistered = flag));
+                else
+                    IsRegistered = flag;
+            }
         }
 
         public bool IsRegistered
@@ -29,8 +52,6 @@ namespace GestureSign.Daemon
                     if (_isRegistered) return;
                     if (NativeMethods.RegisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
                     {
-                        NativeMethods.InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
-
                         NativeMethods.AccSetRunningUtilityState(Handle, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE);
                         _isRegistered = true;
                     }
@@ -44,26 +65,6 @@ namespace GestureSign.Daemon
                     }
                 }
             }
-        }
-
-        public int NumberOfTouchscreens { get; set; }
-
-        public void InterceptTouchInput(object sender, int blockTouchInputThreshold)
-        {
-            _blockTouchInputThreshold = blockTouchInputThreshold;
-            bool flag = _blockTouchInputThreshold >= 2;
-
-            if (!IsHandleCreated)
-            {
-                if (!IsDisposed)
-                    CreateHandle();
-            }
-
-            if (InvokeRequired)
-                Invoke(new Action(() => IsRegistered = flag));
-            else
-                IsRegistered = flag;
-
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -91,14 +92,16 @@ namespace GestureSign.Daemon
         {
             switch (message.Msg)
             {
-                //case WM_POINTERENTER:
-                //case WM_POINTERLEAVE:
-                //case WM_POINTERCAPTURECHANGED:
+                //case NativeMethods.WM_POINTERENTER:
+                //case NativeMethods.WM_POINTERLEAVE:
+                //case NativeMethods.WM_POINTERCAPTURECHANGED:
                 case NativeMethods.WM_POINTERDOWN:
                 case NativeMethods.WM_POINTERUP:
                 case NativeMethods.WM_POINTERUPDATE:
-                    ProcessPointerMessage(message);
-                    return;
+                    if (ProcessPointerMessage(message))
+                        break;
+                    else
+                        return;
             }
             base.WndProc(ref message);
         }
@@ -114,7 +117,7 @@ namespace GestureSign.Daemon
 
         #region ProcessInput
 
-        private void ProcessPointerMessage(Message message)
+        private bool ProcessPointerMessage(Message message)
         {
             int pointerId = (int)(message.WParam.ToInt64() & 0xffff);
             int pCount = 0;
@@ -158,7 +161,7 @@ namespace GestureSign.Daemon
                             }
                             else
                             {
-                                return;
+                                return false;
                             }
                         }
                         else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UP))
@@ -176,14 +179,14 @@ namespace GestureSign.Daemon
                             }
                             else
                             {
-                                return;
+                                return false;
                             }
                         }
                         else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
                         {
                             pti.PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
 
-                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return;
+                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return false;
 
                             if (idPool.Count > 0)
                             {
@@ -191,7 +194,7 @@ namespace GestureSign.Daemon
                                 pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
                             }
                         }
-                        else return;
+                        else return false;
 
                         ptis.Add(pti);
                     }
@@ -206,9 +209,13 @@ namespace GestureSign.Daemon
                     {
                         NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
                     }
+
+                    if (pCount == 1)
+                        return true;
                 }
+                return false;
             }
-            catch (Win32Exception) { }
+            catch (Win32Exception) { return false; }
         }
 
         #endregion ProcessInput

@@ -13,6 +13,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Daemon.Filtration;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Windows;
 using Timer = System.Windows.Forms.Timer;
@@ -27,7 +28,7 @@ namespace GestureSign.Daemon.Input
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly TouchEventTranslator _touchEventTranslator = new TouchEventTranslator();
-        private readonly PointerInputTargetWindow _inputTargetWindow;
+        private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly Timer _timeoutTimer = new Timer();
 
@@ -161,8 +162,6 @@ namespace GestureSign.Daemon.Input
             if (CaptureCanceled != null) CaptureCanceled(this, e);
         }
 
-        public event EventHandler<int> BlockTouchInputThresholdChanged;
-
         #endregion
 
         #region Public Properties
@@ -178,14 +177,14 @@ namespace GestureSign.Daemon.Input
 
         protected TouchCapture()
         {
-            _inputTargetWindow = new PointerInputTargetWindow();
+            _pointerInputTargetWindow = new PointerInputTargetWindow();
             var inputProvider = new InputProvider();
 
             inputProvider.TouchInputProcessor.PointsIntercepted += _touchEventTranslator.TranslateTouchEvent;
+
             _touchEventTranslator.TouchDown += (PointEventTranslator_TouchDown);
             _touchEventTranslator.TouchUp += (TouchEventTranslator_TouchUp);
             _touchEventTranslator.TouchMove += (TouchEventTranslator_TouchMove);
-            BlockTouchInputThresholdChanged += _inputTargetWindow.InterceptTouchInput;
 
             if (AppConfig.UiAccess)
             {
@@ -196,7 +195,7 @@ namespace GestureSign.Daemon.Input
             ModeChanged += (o, e) =>
             {
                 if (e.Mode == CaptureMode.UserDisabled)
-                    BlockTouchInputThresholdChanged?.Invoke(this, 0);
+                    _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
                 else if (e.Mode == CaptureMode.Normal && StackUpGesture)
                     StackUpGesture = false;
             };
@@ -232,7 +231,7 @@ namespace GestureSign.Daemon.Input
 
                 int maxBlockTouchInputThreshold = userApplications.Max(app => app.BlockTouchInputThreshold);
 
-                BlockTouchInputThresholdChanged?.Invoke(this, maxBlockTouchInputThreshold);
+                _pointerInputTargetWindow.BlockTouchInputThreshold = maxBlockTouchInputThreshold;
             }
         }
 
@@ -300,7 +299,7 @@ namespace GestureSign.Daemon.Input
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstTouch.Select(p => p.RawPoints).ToList());
             OnCaptureStarted(captureStartedArgs);
 
-            BlockTouchInputThresholdChanged?.Invoke(this, Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0);
+            _pointerInputTargetWindow.BlockTouchInputThreshold = Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0;
 
             if (captureStartedArgs.Cancel)
                 return false;
