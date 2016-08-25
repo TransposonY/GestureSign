@@ -9,10 +9,11 @@ namespace GestureSign.Daemon.Filtration
 {
     public class PointerInputTargetWindow : Form
     {
-        bool _isRegistered;
+        private bool _isRegistered;
         private int _blockTouchInputThreshold;
-        private Dictionary<int, int> pointerIdList = new Dictionary<int, int>(10);
-        private Queue<int> idPool = new Queue<int>(10);
+        private Dictionary<int, int> _pointerIdList = new Dictionary<int, int>(10);
+        private Queue<int> _idPool = new Queue<int>(10);
+        private POINT _firstPoint;
 
         public PointerInputTargetWindow()
         {
@@ -81,10 +82,10 @@ namespace GestureSign.Daemon.Filtration
 
         private void ResetIdPool()
         {
-            idPool.Clear();
+            _idPool.Clear();
             for (int i = 0; i < 10; i++)
             {
-                idPool.Enqueue(i);
+                _idPool.Enqueue(i);
             }
         }
 
@@ -155,9 +156,9 @@ namespace GestureSign.Daemon.Filtration
                         {
                             pti.PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
 
-                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
                             {
-                                pti.PointerInfo.PointerID = pointerIdList[currentPointerInfo.PointerID];
+                                pti.PointerInfo.PointerID = _pointerIdList[currentPointerInfo.PointerID];
                             }
                             else
                             {
@@ -170,12 +171,12 @@ namespace GestureSign.Daemon.Filtration
 
                             upFlagCount++;
 
-                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
                             {
-                                int id = pointerIdList[currentPointerInfo.PointerID];
+                                int id = _pointerIdList[currentPointerInfo.PointerID];
                                 pti.PointerInfo.PointerID = id;
-                                idPool.Enqueue(id);
-                                pointerIdList.Remove(currentPointerInfo.PointerID);
+                                _idPool.Enqueue(id);
+                                _pointerIdList.Remove(currentPointerInfo.PointerID);
                             }
                             else
                             {
@@ -186,13 +187,14 @@ namespace GestureSign.Daemon.Filtration
                         {
                             pti.PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
 
-                            if (pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return false;
+                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return false;
 
-                            if (idPool.Count > 0)
+                            if (_idPool.Count > 0)
                             {
-                                pti.PointerInfo.PointerID = idPool.Dequeue();
-                                pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
+                                pti.PointerInfo.PointerID = _idPool.Dequeue();
+                                _pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
                             }
+                            _firstPoint = currentPointerInfo.PtPixelLocation;
                         }
                         else return false;
 
@@ -201,7 +203,7 @@ namespace GestureSign.Daemon.Filtration
 
                     if (upFlagCount == pCount)
                     {
-                        pointerIdList.Clear();
+                        _pointerIdList.Clear();
                         ResetIdPool();
                     }
 
@@ -211,7 +213,16 @@ namespace GestureSign.Daemon.Filtration
                     }
 
                     if (pCount == 1)
-                        return true;
+                    {
+                        int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+                        int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+                        bool pointMoved = Math.Abs(pointerInfos[0].PtPixelLocation.X - _firstPoint.X) >
+                                         screenWidth / 100 ||
+                                         Math.Abs(pointerInfos[0].PtPixelLocation.Y - _firstPoint.Y) >
+                                         screenHeight / 100;
+                        return !pointMoved;
+                    }
                 }
                 return false;
             }
