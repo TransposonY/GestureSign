@@ -116,7 +116,7 @@ namespace GestureSign.Daemon.Input
         public event PointsCapturedEventHandler AfterPointsCaptured;
         public event PointsCapturedEventHandler BeforePointsCaptured;
         public event RecognitionEventHandler GestureRecognized;
-        public event RecognitionEventHandler GestureNotRecognized;
+        //public event RecognitionEventHandler GestureNotRecognized;
 
         protected virtual void OnAfterPointsCaptured(PointsCapturedEventArgs e)
         {
