@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
@@ -267,7 +266,7 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        protected void TouchEventTranslator_TouchUp(object sender, RawPointsDataMessageEventArgs e)
+        protected async void TouchEventTranslator_TouchUp(object sender, RawPointsDataMessageEventArgs e)
         {
             if (State == CaptureState.Capturing)
             {
@@ -277,7 +276,7 @@ namespace GestureSign.Daemon.Input
                     ToggleUserDisableTouchCapture();
                 }
 
-                EndCapture();
+                await EndCapture();
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
         }
@@ -328,7 +327,7 @@ namespace GestureSign.Daemon.Input
             return true;
         }
 
-        private async void EndCapture()
+        private async Task EndCapture()
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Touch event
