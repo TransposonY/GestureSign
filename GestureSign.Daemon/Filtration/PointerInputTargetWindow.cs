@@ -282,8 +282,9 @@ namespace GestureSign.Daemon.Filtration
             get
             {
                 const int WS_EX_NOACTIVATE = 0x08000000;
+                const int WS_EX_TOOLWINDOW = 0x00000080;
                 CreateParams myParams = base.CreateParams;
-                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE;
+                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
                 return myParams;
             }
         }
