@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Management;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using GestureSign.Common;
 using GestureSign.Common.Configuration;
@@ -64,7 +62,6 @@ namespace GestureSign.ControlPanel.Common
                 result.AppendLine(rk.GetValue("ProductName") + " " + rk.GetValue("BuildLabEx"));
 
             string version = LocalizationProvider.Instance.GetTextValue("About.Version") +
-                           FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion +
                            (Environment.Is64BitProcess ? " X64" : " x86") +
                         (AppConfig.UiAccess ? " UIAccess" : "");
 
@@ -74,8 +71,21 @@ namespace GestureSign.ControlPanel.Common
                 var daemonRecord = layers?.GetValue(daemonPath) as string;
                 if (daemonRecord != null && daemonRecord.Contains("WIN8RTM")) version += " CompatibilityMode";
             }
-
             result.AppendLine(version);
+
+            string directoryPath = Path.GetDirectoryName(new Uri(Application.ResourceAssembly.CodeBase).LocalPath);
+            if (directoryPath != null)
+            {
+                result.AppendLine(directoryPath);
+
+                var components = Directory.EnumerateFiles(directoryPath).Where(s => s.EndsWith(".dll") || s.EndsWith(".exe"));
+                foreach (var com in components)
+                {
+                    result.AppendLine($"{Path.GetFileName(com)} {FileVersionInfo.GetVersionInfo(com).FileVersion}");
+                }
+            }
+            result.AppendLine();
+
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_computersystem");
             foreach (ManagementObject mo in searcher.Get())
