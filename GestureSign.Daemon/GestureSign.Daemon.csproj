@@ -38,7 +38,7 @@
     <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,7 +81,7 @@
     <Compile Include="Input\TouchInputProcessor.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\PointerInfo.cs" />
-    <Compile Include="PointerInputTargetWindow.cs">
+    <Compile Include="Filtration\PointerInputTargetWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">

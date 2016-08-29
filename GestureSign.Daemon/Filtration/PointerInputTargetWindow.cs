@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Daemon.Native;
 
@@ -13,7 +15,10 @@ namespace GestureSign.Daemon.Filtration
         private int _blockTouchInputThreshold;
         private Dictionary<int, int> _pointerIdList = new Dictionary<int, int>(10);
         private Queue<int> _idPool = new Queue<int>(10);
-        private POINT _firstPoint;
+        private Dictionary<int, POINTER_TOUCH_INFO> _pointerCache = new Dictionary<int, POINTER_TOUCH_INFO>();
+        private bool _pointMoved;
+        private int _screenWidth;
+        private int _screenHeight;
 
         public PointerInputTargetWindow()
         {
@@ -99,10 +104,8 @@ namespace GestureSign.Daemon.Filtration
                 case NativeMethods.WM_POINTERDOWN:
                 case NativeMethods.WM_POINTERUP:
                 case NativeMethods.WM_POINTERUPDATE:
-                    if (ProcessPointerMessage(message))
-                        break;
-                    else
-                        return;
+                    ProcessPointerMessage(message);
+                    return;
             }
             base.WndProc(ref message);
         }
@@ -118,115 +121,158 @@ namespace GestureSign.Daemon.Filtration
 
         #region ProcessInput
 
-        private bool ProcessPointerMessage(Message message)
+        private void ProcessPointerMessage(Message message)
+        {
+            POINTER_INFO[] pointerInfos = GetPointerInfos(message);
+            List<POINTER_TOUCH_INFO> ptis = GenerateInput(pointerInfos);
+
+            if (pointerInfos.Length != ptis.Count) return;
+
+            if (!_pointMoved)
+            {
+                GetDisplayResolution();
+                foreach (var pointerTouchInfo in ptis)
+                {
+                    var currentPointerInfo = pointerTouchInfo.PointerInfo;
+                    if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
+                    {
+                        _pointMoved |= IsPointMoved(_pointerCache[currentPointerInfo.PointerID].PointerInfo.PtPixelLocation, currentPointerInfo.PtPixelLocation);
+                    }
+                    else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
+                    {
+                        if (!_pointerCache.ContainsKey(currentPointerInfo.PointerID))
+                            _pointerCache.Add(currentPointerInfo.PointerID, pointerTouchInfo);
+                    }
+                    else
+                    {
+                        if (_pointerCache.ContainsKey(currentPointerInfo.PointerID))
+                            _pointerCache.Remove(currentPointerInfo.PointerID);
+                        if (ptis.Count == 1)
+                            SimulateClick(ptis.ToArray());
+                    }
+                }
+            }
+
+            if (_pointMoved && pointerInfos.Length < _blockTouchInputThreshold)
+            {
+                if (_pointerCache.Count != 0)
+                {
+                    NativeMethods.InjectTouchInput(_pointerCache.Count, _pointerCache.Values.ToArray());
+                    _pointerCache.Clear();
+                    Thread.Sleep(1);
+                }
+                if (ptis.Count != 0)
+                    NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
+            }
+
+            if (_pointerIdList.Count == 0)
+            {
+                _pointerCache.Clear();
+                _pointMoved = false;
+            }
+        }
+
+        private POINTER_INFO[] GetPointerInfos(Message message)
         {
             int pointerId = (int)(message.WParam.ToInt64() & 0xffff);
             int pCount = 0;
-            try
+            if (!NativeMethods.GetPointerFrameInfo(pointerId, ref pCount, null))
             {
-                if (!NativeMethods.GetPointerFrameInfo(pointerId, ref pCount, null))
-                {
-                    CheckLastError();
-                }
-                POINTER_INFO[] pointerInfos = new POINTER_INFO[pCount];
-                if (!NativeMethods.GetPointerFrameInfo(pointerId, ref pCount, pointerInfos))
-                {
-                    CheckLastError();
-                }
-
-                if (pCount < _blockTouchInputThreshold)
-                {
-                    List<POINTER_TOUCH_INFO> ptis = new List<POINTER_TOUCH_INFO>(pCount);
-                    int upFlagCount = 0;
-
-                    for (int i = 0; i < pCount; i++)
-                    {
-                        var currentPointerInfo = pointerInfos[i];
-                        POINTER_TOUCH_INFO pti = new POINTER_TOUCH_INFO
-                        {
-                            TouchFlags = TOUCH_FLAGS.NONE,
-                            PointerInfo = new POINTER_INFO
-                            {
-                                pointerType = POINTER_INPUT_TYPE.TOUCH,
-                                PtPixelLocation = currentPointerInfo.PtPixelLocation,
-                            }
-                        };
-
-                        if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
-                        {
-                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
-
-                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
-                            {
-                                pti.PointerInfo.PointerID = _pointerIdList[currentPointerInfo.PointerID];
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UP))
-                        {
-                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.UP;
-
-                            upFlagCount++;
-
-                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
-                            {
-                                int id = _pointerIdList[currentPointerInfo.PointerID];
-                                pti.PointerInfo.PointerID = id;
-                                _idPool.Enqueue(id);
-                                _pointerIdList.Remove(currentPointerInfo.PointerID);
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
-                        {
-                            pti.PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
-
-                            if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID)) return false;
-
-                            if (_idPool.Count > 0)
-                            {
-                                pti.PointerInfo.PointerID = _idPool.Dequeue();
-                                _pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
-                            }
-                            _firstPoint = currentPointerInfo.PtPixelLocation;
-                        }
-                        else return false;
-
-                        ptis.Add(pti);
-                    }
-
-                    if (upFlagCount == pCount)
-                    {
-                        _pointerIdList.Clear();
-                        ResetIdPool();
-                    }
-
-                    if (ptis.Count > 0)
-                    {
-                        NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
-                    }
-
-                    if (pCount == 1)
-                    {
-                        int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-                        int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-
-                        bool pointMoved = Math.Abs(pointerInfos[0].PtPixelLocation.X - _firstPoint.X) >
-                                         screenWidth / 100 ||
-                                         Math.Abs(pointerInfos[0].PtPixelLocation.Y - _firstPoint.Y) >
-                                         screenHeight / 100;
-                        return !pointMoved;
-                    }
-                }
-                return false;
+                CheckLastError();
             }
-            catch (Win32Exception) { return false; }
+            POINTER_INFO[] pointerInfos = new POINTER_INFO[pCount];
+            if (!NativeMethods.GetPointerFrameInfo(pointerId, ref pCount, pointerInfos))
+            {
+                CheckLastError();
+            }
+            return pointerInfos;
+        }
+
+        private List<POINTER_TOUCH_INFO> GenerateInput(POINTER_INFO[] pointerInfos)
+        {
+            List<POINTER_TOUCH_INFO> ptis = new List<POINTER_TOUCH_INFO>(pointerInfos.Length);
+            int upFlagCount = 0;
+
+            foreach (var currentPointerInfo in pointerInfos)
+            {
+                POINTER_TOUCH_INFO pti = new POINTER_TOUCH_INFO
+                {
+                    TouchFlags = TOUCH_FLAGS.NONE,
+                    PointerInfo = new POINTER_INFO
+                    {
+                        pointerType = POINTER_INPUT_TYPE.TOUCH,
+                        PtPixelLocation = currentPointerInfo.PtPixelLocation,
+                    }
+                };
+
+                if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
+                {
+                    pti.PointerInfo.PointerFlags = POINTER_FLAGS.INCONTACT | POINTER_FLAGS.INRANGE | POINTER_FLAGS.UPDATE;
+
+                    if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                    {
+                        pti.PointerInfo.PointerID = _pointerIdList[currentPointerInfo.PointerID];
+                    }
+                    else continue;
+                }
+                else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UP))
+                {
+                    pti.PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+
+                    upFlagCount++;
+
+                    if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID))
+                    {
+                        int id = _pointerIdList[currentPointerInfo.PointerID];
+                        pti.PointerInfo.PointerID = id;
+                        _idPool.Enqueue(id);
+                        _pointerIdList.Remove(currentPointerInfo.PointerID);
+                    }
+                    else continue;
+                }
+                else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
+                {
+                    pti.PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+
+                    if (_pointerIdList.ContainsKey(currentPointerInfo.PointerID)) continue;
+
+                    if (_idPool.Count > 0)
+                    {
+                        pti.PointerInfo.PointerID = _idPool.Dequeue();
+                        _pointerIdList.Add(currentPointerInfo.PointerID, pti.PointerInfo.PointerID);
+                    }
+                }
+                else continue;
+
+                ptis.Add(pti);
+            }
+
+            if (upFlagCount == pointerInfos.Length)
+            {
+                _pointerIdList.Clear();
+                ResetIdPool();
+            }
+            return ptis;
+        }
+
+        private void SimulateClick(POINTER_TOUCH_INFO[] pointerTouchInfos)
+        {
+            pointerTouchInfos[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+            NativeMethods.InjectTouchInput(1, pointerTouchInfos);
+            Thread.Sleep(5);
+            pointerTouchInfos[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+            NativeMethods.InjectTouchInput(1, pointerTouchInfos);
+        }
+
+        private bool IsPointMoved(POINT point1, POINT point2)
+        {
+            return Math.Abs(point1.X - point2.X) > _screenWidth / 150 || Math.Abs(point1.Y - point2.Y) > _screenHeight / 150;
+        }
+
+        private void GetDisplayResolution()
+        {
+            _screenWidth = Screen.PrimaryScreen.Bounds.Width;
+            _screenHeight = Screen.PrimaryScreen.Bounds.Height;
         }
 
         #endregion ProcessInput
