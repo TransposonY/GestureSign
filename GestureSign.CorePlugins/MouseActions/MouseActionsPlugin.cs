@@ -87,7 +87,8 @@ namespace GestureSign.CorePlugins.MouseActions
                         break;
                     default:
                         {
-                            MoveMouse(simulator, referencePoint);
+                            if (_settings.ClickPosition != ClickPositions.Original)
+                                MoveMouse(simulator, referencePoint);
 
                             MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
                             clickMethod.Invoke(simulator.Mouse, null);
