@@ -31,7 +31,7 @@ namespace GestureSign.Daemon.Input
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly Timer _timeoutTimer = new Timer();
 
-        Dictionary<int, List<Point>> _pointsCaptured = new Dictionary<int, List<Point>>(2);
+        private Dictionary<int, List<Point>> _pointsCaptured;
         // Create variable to hold the only allowed instance of this class
         static readonly TouchCapture _Instance = new TouchCapture();
 
@@ -62,11 +62,6 @@ namespace GestureSign.Daemon.Input
 
         // Create enumeration to identify Touch buttons
         public bool TemporarilyDisableCapture { get; set; }
-
-        public Point[] CapturePoint
-        {
-            get { return _pointsCaptured.Values.Select(p => p.FirstOrDefault()).ToArray(); }
-        }
 
         public List<Point>[] InputPoints
         {
@@ -378,7 +373,7 @@ namespace GestureSign.Daemon.Input
 
             OnAfterPointsCaptured(pointsInformation);
 
-            _pointsCaptured = null;
+            _pointsCaptured.Clear();
         }
 
         private void CancelCapture(int num)
