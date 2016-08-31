@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Security.Principal;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GestureSign.Common;
 using GestureSign.Common.InterProcessCommunication;
@@ -20,7 +17,6 @@ namespace GestureSign.TouchInputProvider
 
         private static MessageWindow _messageWindow;
         private static NamedPipeClientStream _pipeClient;
-        private static BinaryWriter _binaryWriter;
         private static Timer _connectTimer;
 
         /// <summary>
@@ -73,14 +69,22 @@ namespace GestureSign.TouchInputProvider
             if (!_pipeClient.IsConnected) return;
             try
             {
-                _binaryWriter.Write(e.RawTouchsData.Count);
-                foreach (var touchData in e.RawTouchsData)
+                const int size = 16;
+                int rawDataCount = e.RawTouchsData.Count;
+
+                byte[] buffer = new byte[rawDataCount * size + 4];
+
+                BitConverter.GetBytes(e.RawTouchsData.Count).CopyTo(buffer, 0);
+                for (int i = 0; i < rawDataCount; i++)
                 {
-                    _binaryWriter.Write(touchData.Tip);
-                    _binaryWriter.Write(touchData.ContactIdentifier);
-                    _binaryWriter.Write(touchData.RawPoints.X);
-                    _binaryWriter.Write(touchData.RawPoints.Y);
+                    var current = e.RawTouchsData[i];
+                    BitConverter.GetBytes(current.Tip).CopyTo(buffer, i * size + 4);
+                    BitConverter.GetBytes(current.ContactIdentifier).CopyTo(buffer, i * size + 8);
+                    BitConverter.GetBytes(current.RawPoints.X).CopyTo(buffer, i * size + 12);
+                    BitConverter.GetBytes(current.RawPoints.Y).CopyTo(buffer, i * size + 16);
                 }
+
+                _pipeClient.Write(buffer, 0, buffer.Length);
                 _pipeClient.Flush();
                 _pipeClient.WaitForPipeDrain();
             }
@@ -106,9 +110,6 @@ namespace GestureSign.TouchInputProvider
                 }
                 if (i == 10) return false;
                 _pipeClient.Connect(10);
-
-                if (_binaryWriter == null)
-                    _binaryWriter = new BinaryWriter(_pipeClient);
 
                 ThreadPool.QueueUserWorkItem(delegate
                 {

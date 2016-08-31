@@ -22,6 +22,7 @@ namespace GestureSign.Daemon.Input
 
         public bool ProcessMessages(NamedPipeServerStream server)
         {
+            const int size = 16;
             try
             {
                 //BinaryReader would throw EndOfStreamException
@@ -31,20 +32,16 @@ namespace GestureSign.Daemon.Input
                     return false;
 
                 int count = BitConverter.ToInt32(buffer, 0);
+                buffer = new byte[size * count];
                 var rawTouchDatas = new List<RawTouchData>(count);
+                server.Read(buffer, 0, buffer.Length);
+
                 for (int i = 0; i < count; i++)
                 {
-                    buffer = new byte[13];
-
-                    server.Read(buffer, 0, 1);
-                    server.Read(buffer, 1, 4);
-                    server.Read(buffer, 5, 4);
-                    server.Read(buffer, 9, 4);
-
-                    bool tip = BitConverter.ToBoolean(buffer, 0);
-                    int contactIdentifier = BitConverter.ToInt32(buffer, 1);
-                    int x = BitConverter.ToInt32(buffer, 5);
-                    int y = BitConverter.ToInt32(buffer, 9);
+                    bool tip = BitConverter.ToBoolean(buffer, size * i);
+                    int contactIdentifier = BitConverter.ToInt32(buffer, size * i + 4);
+                    int x = BitConverter.ToInt32(buffer, size * i + 8);
+                    int y = BitConverter.ToInt32(buffer, size * i + 12);
 
                     rawTouchDatas.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
                 }
