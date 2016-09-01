@@ -124,7 +124,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private void ConditionTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void ConditionTextBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             EditConditionDialog editConditionDialog = new EditConditionDialog(ConditionTextBox.Text);
             if (editConditionDialog.ShowDialog().Value)

@@ -20,8 +20,9 @@ namespace GestureSign.ControlPanel.Dialogs
             string variable = VariableComboBox.Text;
             int caretIndex = ConditionTextBox.CaretIndex;
             ConditionTextBox.Text = ConditionTextBox.Text.Insert(caretIndex, variable);
-
             ConditionTextBox.CaretIndex = caretIndex + variable.Length;
+
+            ConditionTextBox.Focus();
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -32,6 +33,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private void ConditionTextBox_Loaded(object sender, RoutedEventArgs e)
         {
             ConditionTextBox.Text = DataContext as string;
+            ConditionTextBox.Focus();
         }
 
         private void VariableComboBox_Loaded(object sender, RoutedEventArgs e)

@@ -86,7 +86,7 @@
                      FontSize="14"
                      Margin="10,10,10,0"
                      controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.Default}"
-                     PreviewMouseDown="ConditionTextBox_PreviewMouseDown" />
+                     PreviewMouseUp="ConditionTextBox_PreviewMouseUp" />
             <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
                        FontSize="24"
                        Margin="0,5,0,0"
