@@ -25,8 +25,6 @@ namespace GestureSign.ControlPanel
     {
         Mutex mutex;
 
-        private static Timer _timer;
-
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             try
@@ -87,21 +85,8 @@ namespace GestureSign.ControlPanel
                             ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
                         }
 
-                        if (e.Args.Length != 0 && e.Args[0].Equals("/L"))
-                        {
-                            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-
-                            _timer = new Timer(o =>
-                            {
-                                Current.Dispatcher.Invoke(
-                                    () => { if (Current.Windows.Count == 0) Current.Shutdown(); else _timer.Change(300000, Timeout.Infinite); });
-                            }, _timer, 300000, Timeout.Infinite);
-                        }
-                        else
-                        {
-                            MainWindow mainWindow = new MainWindow();
-                            mainWindow.Show();
-                        }
+                        MainWindow mainWindow = new MainWindow();
+                        mainWindow.Show();
 
                         GestureManager.Instance.Load(null);
                         PluginManager.Instance.Load(null);
