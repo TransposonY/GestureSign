@@ -9,8 +9,14 @@
         <ResourceDictionary>
             <FlowDirection x:Key="DefaultFlowDirection">LeftToRight</FlowDirection>
             <FontFamily x:Key="DefaultFont">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
-            <FontFamily x:Key="HeaderFontFamily">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="HeaderFontFamily">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
             <FontFamily x:Key="ContentFontFamily">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+
+            <!--<FontFamily x:Key="ToggleSwitchFontFamily">Segoe UI Semibold, Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="ToggleSwitchHeaderFontFamily">Segoe UI Semibold, Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="ToggleSwitchFontFamily.Win10">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+            <FontFamily x:Key="ToggleSwitchHeaderFontFamily.Win10">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>-->
+
             <system:Double x:Key="HeaderFontSize">40</system:Double>
             <system:Double x:Key="SubHeaderFontSize">29.333</system:Double>
             <system:Double x:Key="WindowTitleFontSize">16</system:Double>
@@ -20,7 +26,9 @@
             <system:Double x:Key="TabItemFontSize">26.67</system:Double>
             <system:Double x:Key="UpperCaseContentFontSize">10</system:Double>
             <system:Double x:Key="FloatingWatermarkFontSize">10</system:Double>
+            <system:Double x:Key="ClearTextButtonFontSize">16</system:Double>
 
+            <system:Double x:Key="TooltipFontSize">12</system:Double>
             <system:Double x:Key="MenuFontSize">14</system:Double>
             <system:Double x:Key="ContextMenuFontSize">14</system:Double>
 
@@ -30,6 +38,11 @@
             <system:Double x:Key="DialogMessageFontSize">15</system:Double>
 
             <system:Double x:Key="FlyoutHeaderFontSize">20</system:Double>
+
+            <system:Double x:Key="ToggleSwitchFontSize">14.667</system:Double>
+            <system:Double x:Key="ToggleSwitchHeaderFontSize">16</system:Double>
+            <system:Double x:Key="ToggleSwitchFontSize.Win10">15</system:Double>
+            <system:Double x:Key="ToggleSwitchHeaderFontSize.Win10">15</system:Double>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />

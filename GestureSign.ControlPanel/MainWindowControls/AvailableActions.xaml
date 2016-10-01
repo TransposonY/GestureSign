@@ -532,7 +532,8 @@
                                                                           OverridesDefaultStyle="True"
                                                                           Template="{StaticResource ExpanderButton}"
                                                                           Padding="0"
-                                                                          BorderThickness="0" />
+                                                                          BorderThickness="0"
+                                                                          Background="{StaticResource GrayBrush10}" />
                                                         </Border>
                                                         <Border x:Name="ExpanderSite"
                                                                 Style="{StaticResource ShowBorderStyle}"
