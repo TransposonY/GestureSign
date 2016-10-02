@@ -32,6 +32,12 @@
                    Text="{localization:LocalisedText CorePlugins.TouchKeyboard.Tip}"
                    FontSize="14"
                    Width="280" />
-
+        <CheckBox x:Name="AutoInvokeCheckBox"
+                  Margin="10,10,0,0"
+                  FontSize="14"
+                  Content="{localization:LocalisedText CorePlugins.TouchKeyboard.DesktopModeAutoInvoke}"
+                  Click="AutoInvokeCheckBox_Click"
+                  Loaded="AutoInvokeCheckBox_Loaded" />
     </StackPanel>
 </UserControl>
+

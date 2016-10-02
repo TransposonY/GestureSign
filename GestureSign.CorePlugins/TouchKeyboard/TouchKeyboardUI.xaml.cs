@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace GestureSign.CorePlugins.TouchKeyboard
 {
@@ -20,9 +23,60 @@ namespace GestureSign.CorePlugins.TouchKeyboard
     /// </summary>
     public partial class TouchKeyboardUI : UserControl
     {
+        private const string KeyPath = @"SOFTWARE\Microsoft\TabletTip\1.7";
+        private const string ValueName = "EnableDesktopModeAutoInvoke";
+
         public TouchKeyboardUI()
         {
             InitializeComponent();
+        }
+
+        private void AutoInvokeCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (AutoInvokeCheckBox.IsChecked.Value)
+            {
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey(KeyPath, true);
+                rk?.SetValue(ValueName, 1, RegistryValueKind.DWord);
+            }
+            else
+            {
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey(KeyPath, true);
+                rk?.DeleteValue(ValueName);
+            }
+
+            foreach (var process in Process.GetProcessesByName("TabTip"))
+            {
+                process.Kill();
+                process.WaitForExit();
+                process.Dispose();
+            }
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName =
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) +
+                    @"\Microsoft Shared\ink\TabTip.exe"
+            };
+            Process.Start(startInfo);
+        }
+
+        private void AutoInvokeCheckBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            AutoInvokeCheckBox.IsEnabled = IsAdministrator();
+
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey(KeyPath);
+            if (rk != null)
+            {
+                var result = rk.GetValue(ValueName);
+                AutoInvokeCheckBox.IsChecked = result != null && (int)result == 1;
+            }
+        }
+
+        private bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
