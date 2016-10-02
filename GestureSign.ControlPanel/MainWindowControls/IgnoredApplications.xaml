@@ -10,17 +10,11 @@
              d:DesignWidth="450"
              Initialized="UserControl_Initialized">
     <UserControl.Resources>
-        <Canvas x:Key="appbar_add"
-                Width="76"
-                Height="76"
-                Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0">
-            <Path Width="38"
-                  Height="38"
-                  Canvas.Left="19"
-                  Canvas.Top="19"
-                  Stretch="Fill"
-                  Fill="#FF000000"
-                  Data="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z " />
+        <Canvas x:Key="Plus"
+                Width="24"
+                Height="24">
+            <Path Data="M490.313583 952.700117c-2.921539 0-5.685489-2.76395-5.685489-5.684466L484.628094 538.349111 75.959507 538.349111c-2.921539 0-5.683443-2.761903-5.683443-5.684466l0-43.367717c0-2.920516 2.761903-5.683443 5.683443-5.683443l408.667563 0L484.627071 74.93876c0-2.922563 2.76395-5.685489 5.685489-5.685489l43.36567 0c2.921539 0 5.686513 2.762927 5.686513 5.685489l0 408.674727 408.671657 0c2.922563 0 5.685489 2.762927 5.685489 5.683443l0 43.367717c0 2.921539-2.765997 5.684466-5.691629 5.684466L539.365766 538.349111l0 408.66654c0 2.920516-2.76395 5.684466-5.686513 5.684466L490.313583 952.700117z"
+                  Fill="Black" />
         </Canvas>
         <Canvas x:Key="appbar_page_edit"
                 Width="76"
@@ -188,7 +182,7 @@
             <Rectangle Width="20"
                        Height="20">
                 <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_add}" />
+                    <VisualBrush Visual="{StaticResource Plus}" />
                 </Rectangle.Fill>
             </Rectangle>
         </Button>

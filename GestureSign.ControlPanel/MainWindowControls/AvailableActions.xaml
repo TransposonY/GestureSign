@@ -19,7 +19,7 @@
             <Canvas x:Key="Plus"
                     Width="24"
                     Height="24">
-                <Path Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+                <Path Data="M490.313583 952.700117c-2.921539 0-5.685489-2.76395-5.685489-5.684466L484.628094 538.349111 75.959507 538.349111c-2.921539 0-5.683443-2.761903-5.683443-5.684466l0-43.367717c0-2.920516 2.761903-5.683443 5.683443-5.683443l408.667563 0L484.627071 74.93876c0-2.922563 2.76395-5.685489 5.685489-5.685489l43.36567 0c2.921539 0 5.686513 2.762927 5.686513 5.685489l0 408.674727 408.671657 0c2.922563 0 5.685489 2.762927 5.685489 5.683443l0 43.367717c0 2.921539-2.765997 5.684466-5.691629 5.684466L539.365766 538.349111l0 408.66654c0 2.920516-2.76395 5.684466-5.686513 5.684466L490.313583 952.700117z"
                       Fill="Black" />
             </Canvas>
             <Canvas x:Key="appbar_page_edit"
@@ -46,16 +46,16 @@
                       Fill="#FF000000"
                       Data="F1 M 25.3333,23.75L 50.6667,23.75C 51.5411,23.75 51.8541,27.3125 51.8541,27.3125L 24.1458,27.3125C 24.1458,27.3125 24.4589,23.75 25.3333,23.75 Z M 35.625,19.7917L 40.375,19.7917C 40.8122,19.7917 41.9583,20.9378 41.9583,21.375C 41.9583,21.8122 40.8122,22.9584 40.375,22.9584L 35.625,22.9584C 35.1878,22.9584 34.0416,21.8122 34.0416,21.375C 34.0416,20.9378 35.1878,19.7917 35.625,19.7917 Z M 27.7083,28.5L 48.2916,28.5C 49.1661,28.5 49.875,29.2089 49.875,30.0834L 48.2916,53.8334C 48.2916,54.7078 47.5828,55.4167 46.7083,55.4167L 29.2917,55.4167C 28.4172,55.4167 27.7083,54.7078 27.7083,53.8334L 26.125,30.0834C 26.125,29.2089 26.8339,28.5 27.7083,28.5 Z M 30.0833,31.6667L 30.4792,52.25L 33.25,52.25L 32.8542,31.6667L 30.0833,31.6667 Z M 36.4167,31.6667L 36.4167,52.25L 39.5833,52.25L 39.5833,31.6667L 36.4167,31.6667 Z M 43.1458,31.6667L 42.75,52.25L 45.5208,52.25L 45.9167,31.6667L 43.1458,31.6667 Z " />
             </Canvas>
-            <Canvas x:Key="arrow-up-bold"
+            <Canvas x:Key="Chevron-Up"
                     Width="24"
                     Height="24">
-                <Path Data="M14,20H10V11L6.5,14.5L4.08,12.08L12,4.16L19.92,12.08L17.5,14.5L14,11V20Z"
+                <Path Data="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"
                       Fill="Black" />
             </Canvas>
-            <Canvas x:Key="arrow-down-bold"
+            <Canvas x:Key="Chevron-Down"
                     Width="24"
                     Height="24">
-                <Path Data="M10,4H14V13L17.5,9.5L19.92,11.92L12,19.84L4.08,11.92L6.5,9.5L10,13V4Z"
+                <Path Data="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
                       Fill="Black" />
             </Canvas>
 
@@ -759,11 +759,12 @@
                 Grid.Column="1"
                 Click="MoveUpButton_Click"
                 IsEnabled="False">
-            <Rectangle Width="18"
+            <Rectangle Width="20"
                        Height="20"
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                 <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource arrow-up-bold}" />
+                    <VisualBrush Visual="{StaticResource Chevron-Up}"
+                                 Stretch="Uniform" />
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
@@ -778,11 +779,12 @@
                 Grid.Column="1"
                 Click="MoveDownButton_Click"
                 IsEnabled="False">
-            <Rectangle Width="18"
+            <Rectangle Width="20"
                        Height="20"
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                 <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource arrow-down-bold}" />
+                    <VisualBrush Visual="{StaticResource Chevron-Down}"
+                                 Stretch="Uniform" />
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
