@@ -7,13 +7,13 @@
     <CannotFindDaemonMessage>未找到组件GestureSignDaemon.exe，请重新下载或安装本软件。</CannotFindDaemonMessage>
     <Error>错误</Error>
     <CompatWarning>检测到您在本程序的文件属性中勾选了“以管理员身份运行此程序”，这将导致开机启动、屏蔽等功能失效。
-如需用管理员身份运行，推荐在快捷方式的高级属性中设置，或右键菜单-以管理员身份运行。
+如需用管理员身份运行，请在快捷方式的高级属性中设置，或右键菜单-以管理员身份运行。
 
 是否继续运行本程序？</CompatWarning>
     <CompatWarningTitle>注意</CompatWarningTitle>
     <ShowLog>显示日志...</ShowLog>
     <FindNewErrorLog>有新的错误日志生成。
-日志包含程序崩溃的信息，你可以发送这些信息给我，以便定位并尽快解决问题。
+日志包含程序崩溃的信息，你可以将这些信息发回作者以便尽快解决问题。
 您可以在“选项”中关闭此提示。
     </FindNewErrorLog>
   </Messages>
@@ -73,11 +73,11 @@ http://transposony.coding.me/GestureSign/
       <StringConflictTitle>匹配字段冲突</StringConflictTitle>
       <StringConflict>匹配字段 "{0}" 已经存在于程序{1}中，请输入不同的匹配字段。</StringConflict>
       <NoApplicationNameTitle>无程序名</NoApplicationNameTitle>
-      <NoApplicationName>请定义程序名</NoApplicationName>
+      <NoApplicationName>请提供程序名</NoApplicationName>
       <AppExistsTitle>该程序名已经存在</AppExistsTitle>
       <AppExists>程序名称已经存在，请输入其他名字</AppExists>
       <NoMatchStringTitle>无匹配字段</NoMatchStringTitle>
-      <NoMatchString>请先定义一个匹配字段</NoMatchString>
+      <NoMatchString>请先提供一个匹配字段</NoMatchString>
     </Messages>
   </ApplicationDialog>
   <ActionDialog>
@@ -99,7 +99,7 @@ http://transposony.coding.me/GestureSign/
     <Default>默认</Default>
     <Messages>
       <ActionExistsTitle>此动作已存在</ActionExistsTitle>
-      <ActionExists>动作 “{0}”已经定义给 {1}</ActionExists>
+      <ActionExists>动作 “{0}”已经存在于 {1}</ActionExists>
       <ActionExistsInGlobal>在全局动作中已存在 “{0}” </ActionExistsInGlobal>
       <NoSelectedGestureTitle>手势未定义</NoSelectedGestureTitle>
       <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
@@ -195,7 +195,7 @@ http://transposony.coding.me/GestureSign/
     <Exporting>正在导出日志...</Exporting>
     <Sending>发送日志中...</Sending>
     <SendLogTitle>发送日志</SendLogTitle>
-    <SendLog>日志包含程序崩溃的信息，你可以发送这些信息给我，以便定位并尽快解决问题。</SendLog>
+    <SendLog>日志包含程序崩溃的信息，可以将这些信息发回作者以便定位并尽快解决问题。</SendLog>
     <SendButton>发送</SendButton>
     <DontSendButton>不发送</DontSendButton>
     <SendSuccessTitle>发送成功</SendSuccessTitle>
@@ -353,7 +353,7 @@ http://transposony.coding.me/GestureSign/
       <Hide>隐藏键盘</Hide>
       <Auto>自动显示或隐藏键盘</Auto>
       <Tip>提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度</Tip>
-      <DesktopModeAutoInvoke>桌面模式下自动激活</DesktopModeAutoInvoke>
+      <DesktopModeAutoInvoke>桌面模式下自动激活（需要以管理员身份运行）</DesktopModeAutoInvoke>
     </TouchKeyboard>
     <Volume>
       <Name>调整音量</Name>

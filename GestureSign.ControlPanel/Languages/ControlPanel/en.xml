@@ -346,7 +346,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <Hide>Hide Keyboard</Hide>
       <Auto>Show/Hide Keyboard</Auto>
       <Tip>Tip:To show the Touch Keyboard Button in taskbar can accelerate the pop-up speed.</Tip>
-      <DesktopModeAutoInvoke>Desktop Mode Auto Invoke</DesktopModeAutoInvoke>
+      <DesktopModeAutoInvoke>Desktop Mode Auto Invoke(Need admin identity)</DesktopModeAutoInvoke>
     </TouchKeyboard>
     <Volume>
       <Name>Adjust Volume</Name>
