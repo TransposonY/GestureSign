@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Input;
 using GestureSign.TouchInputProvider.Native;
-using Microsoft.Win32;
 
 namespace GestureSign.TouchInputProvider
 {
@@ -20,22 +18,11 @@ namespace GestureSign.TouchInputProvider
         private List<RawTouchData> _outputTouchs = new List<RawTouchData>(1);
         private int _requiringContactCount;
 
-        private Dictionary<IntPtr, Point> _touchScreenPhysicalMax = new Dictionary<IntPtr, Point>(1);
-
         public event RawPointsDataMessageEventHandler PointsIntercepted;
-        public int NumberOfTouchscreens { get; set; }
 
         public MessageWindow()
         {
-            try
-            {
-                RegisterDevices();
-                NumberOfTouchscreens = EnumerateDevices();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            RegisterDevices();
         }
 
         private void RegisterDevices()
@@ -50,106 +37,6 @@ namespace GestureSign.TouchInputProvider
             if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
             {
                 throw new ApplicationException("Failed to register raw input device(s).");
-            }
-        }
-
-        private bool CheckDeviceIsTouchScreen(string item)
-        {
-            // Example Device Identification string
-            // @"\??\ACPI#PNP0303#3&13c0b0c5&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
-            try
-            {
-                // remove the \??\
-                item = item.Substring(4);
-
-                string[] split = item.Split('#');
-                if (split.Length < 3)
-                {
-                    return false;
-                }
-                string id_01 = split[0]; // ACPI (Class code)
-                string id_02 = split[1]; // PNP0303 (SubClass code)
-                string id_03 = split[2]; // 3&13c0b0c5&0 (Protocol code)
-                //The final part is the class GUID and is not needed here
-
-                //Open the appropriate key as read-only so no permissions
-                //are needed.
-                RegistryKey ourKey = Registry.LocalMachine;
-
-                string findme = string.Format(@"System\CurrentControlSet\Enum\{0}\{1}\{2}", id_01, id_02, id_03);
-
-                ourKey = ourKey.OpenSubKey(findme, false);
-
-                //Retrieve the desired information and set isKeyboard
-                string deviceDesc = (string)ourKey?.GetValue("DeviceDesc");
-
-                return deviceDesc?.IndexOf("touch_screen", StringComparison.OrdinalIgnoreCase) >= 0;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private int EnumerateDevices()
-        {
-            int numberOfDevices = 0;
-            uint deviceCount = 0;
-            int dwSize = (Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICELIST)));
-
-            if (NativeMethods.GetRawInputDeviceList(IntPtr.Zero, ref deviceCount, (uint)dwSize) == 0)
-            {
-                IntPtr pRawInputDeviceList = Marshal.AllocHGlobal((int)(dwSize * deviceCount));
-                try
-                {
-                    _touchScreenPhysicalMax.Clear();
-
-                    NativeMethods.GetRawInputDeviceList(pRawInputDeviceList, ref deviceCount, (uint)dwSize);
-
-                    for (int i = 0; i < deviceCount; i++)
-                    {
-                        uint pcbSize = 0;
-
-                        NativeMethods.RAWINPUTDEVICELIST rid = (NativeMethods.RAWINPUTDEVICELIST)Marshal.PtrToStructure(
-                            new IntPtr(pRawInputDeviceList.ToInt64() + dwSize * i),
-                            typeof(NativeMethods.RAWINPUTDEVICELIST));
-                        NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
-
-                        if (pcbSize > 0)
-                        {
-                            IntPtr pData = Marshal.AllocHGlobal((int)pcbSize);
-                            try
-                            {
-                                NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
-                                string deviceName = Marshal.PtrToStringAnsi(pData);
-
-                                if (deviceName != null && deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
-                                    continue;
-
-                                if (rid.dwType == NativeMethods.RIM_TYPEHID)
-                                {
-                                    var isTouchDevice = CheckDeviceIsTouchScreen(deviceName);
-
-                                    if (isTouchDevice && !_touchScreenPhysicalMax.ContainsKey(rid.hDevice))
-                                    {
-                                        numberOfDevices++;
-
-                                        _touchScreenPhysicalMax.Add(rid.hDevice, Point.Empty);
-                                    }
-                                }
-                            }
-                            finally
-                            { Marshal.FreeHGlobal(pData); }
-                        }
-                    }
-                }
-                finally
-                { Marshal.FreeHGlobal(pRawInputDeviceList); }
-                return numberOfDevices;
-            }
-            else
-            {
-                throw new ApplicationException("Error!");
             }
         }
 
@@ -172,13 +59,6 @@ namespace GestureSign.TouchInputProvider
                 case NativeMethods.WM_INPUT:
                     {
                         ProcessInputCommand(message.LParam);
-                        break;
-                    }
-                case NativeMethods.WM_INPUT_DEVICE_CHANGE:
-                    {
-                        //GIDC_ARRIVAL=1
-                        if (message.WParam.ToInt32() == 1)
-                            EnumerateDevices();
                         break;
                     }
             }
@@ -227,32 +107,23 @@ namespace GestureSign.TouchInputProvider
                 {
                     NativeMethods.RAWINPUT raw = (NativeMethods.RAWINPUT)Marshal.PtrToStructure(buffer, typeof(NativeMethods.RAWINPUT));
 
-                    if (!_touchScreenPhysicalMax.ContainsKey(raw.header.hDevice)) return;
                     GetCurrentScreenOrientation();
 
                     uint pcbSize = 0;
                     NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
                     pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-
                     NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
 
-                    if (_touchScreenPhysicalMax[raw.header.hDevice].Equals(Point.Empty))
-                    {
-                        GetPhysicalMax(raw, pPreparsedData);
-                        return;
-                    }
-
                     int contactCount = 0;
-
                     IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
-
                     HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.TouchScreenUsagePage, 0, NativeMethods.ContactCountId,
                         ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
-
                     int linkCount = 0;
                     HidNativeApi.HidP_GetLinkCollectionNodes(null, ref linkCount, pPreparsedData);
                     HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
                     HidNativeApi.HidP_GetLinkCollectionNodes(lcn, ref linkCount, pPreparsedData);
+
+                    Point screenPhysicalMax = GetPhysicalMax(linkCount, pPreparsedData);
 
                     if (contactCount != 0)
                     {
@@ -281,15 +152,14 @@ namespace GestureSign.TouchInputProvider
                             int x, y;
                             if (_isAxisCorresponds)
                             {
-                                x = physicalX * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].X;
-                                y = physicalY * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].Y;
+                                x = physicalX * screenWidth / screenPhysicalMax.X;
+                                y = physicalY * screenHeight / screenPhysicalMax.Y;
                             }
                             else
                             {
-                                x = physicalY * screenWidth / _touchScreenPhysicalMax[raw.header.hDevice].Y;
-                                y = physicalX * screenHeight / _touchScreenPhysicalMax[raw.header.hDevice].X;
+                                x = physicalY * screenWidth / screenPhysicalMax.Y;
+                                y = physicalX * screenHeight / screenPhysicalMax.X;
                             }
-
                             x = _xAxisDirection ? x : screenWidth - x;
                             y = _yAxisDirection ? y : screenHeight - y;
                             bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
@@ -341,19 +211,18 @@ namespace GestureSign.TouchInputProvider
             }
         }
 
-        private void GetPhysicalMax(NativeMethods.RAWINPUT rawInput, IntPtr pPreparsedData)
+        private Point GetPhysicalMax(int collectionCount, IntPtr pPreparsedData)
         {
-            short valueCapsLength = 1;
+            short valueCapsLength = (short)collectionCount;
             Point p = new Point();
             HidNativeApi.HidP_Value_Caps[] hvc = new HidNativeApi.HidP_Value_Caps[valueCapsLength];
 
-            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 1, NativeMethods.XCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
+            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.XCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
             p.X = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
 
-            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 1, NativeMethods.YCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
+            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.YCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
             p.Y = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
-
-            _touchScreenPhysicalMax[rawInput.header.hDevice] = p;
+            return p;
         }
 
         #endregion ProcessInput
