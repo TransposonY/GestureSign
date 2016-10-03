@@ -366,14 +366,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             Process.Start("notepad.exe", logPath);
 
             var dialogResult =
-                await
-                    UIHelper.GetParentWindow(this)
-                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
+                UIHelper.GetParentWindow(this)
+                        .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
                             LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
                             MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                             {
-                                AnimateHide = false,
-                                AnimateShow = false,
                                 AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
                                 NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton")
                             });
@@ -391,27 +388,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                 if (exceptionMessage == null)
                 {
-                    await UIHelper.GetParentWindow(this)
-                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"), settings: new MetroDialogSettings()
-                            {
-                                AnimateHide = false,
-                                AnimateShow = false,
-                            });
+                    UIHelper.GetParentWindow(this)
+                        .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
+                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
                     break;
                 }
                 else
                 {
-                    dialogResult = await
+                    dialogResult =
                         UIHelper.GetParentWindow(this)
-                            .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
+                            .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
                                 LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" +
                                 exceptionMessage +
                                 ":\r\n" + LocalizationProvider.Instance.GetTextValue("Options.Mail"),
                                 MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                                 {
-                                    AnimateHide = false,
-                                    AnimateShow = false,
                                     AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
                                 });
                 }

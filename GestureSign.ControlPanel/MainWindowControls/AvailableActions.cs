@@ -114,23 +114,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
             actionDialog.ShowDialog();
         }
 
-        private async void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
+        private void cmdDeleteAction_Click(object sender, RoutedEventArgs e)
         {
             // Verify that we have an item selected
             if (lstAvailableActions.SelectedItems.Count == 0) return;
 
             // Confirm user really wants to delete selected items
-            if (await
-                UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+            if (UIHelper.GetParentWindow(this)
+                    .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
                         LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide = false,
-                            AnimateShow = false
                         }) != MessageDialogResult.Affirmative)
                 return;
 
@@ -583,15 +580,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (targetApplication.Actions.Exists(a => a.Name.Equals(_actionClipboard.Name, StringComparison.Ordinal)))
             {
                 UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                    .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
                         string.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
                             _actionClipboard.Name, targetApplication.Name),
                         MessageDialogStyle.Affirmative, new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateShow = false,
-                            AnimateHide = false
                         });
                 return;
             }
@@ -652,19 +647,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private async void DeleteAppButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteAppButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await
-                UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+            if (UIHelper.GetParentWindow(this)
+                    .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
                         LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
                             ColorScheme = MetroDialogColorScheme.Accented,
-                            AnimateHide = false,
-                            AnimateShow = false
                         }) == MessageDialogResult.Affirmative)
             {
                 ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);

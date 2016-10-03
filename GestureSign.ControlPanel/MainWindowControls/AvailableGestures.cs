@@ -37,12 +37,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
             this.btnEditGesture.IsEnabled = this.btnDelGesture.IsEnabled = lstAvailableGestures.SelectedItems.Count > 0;
         }
 
-        private async void btnDelGesture_Click(object sender, RoutedEventArgs e)
+        private void btnDelGesture_Click(object sender, RoutedEventArgs e)
         {
             // Make sure at least one item is selected
             if (lstAvailableGestures.SelectedItems.Count == 0) return;
-            if (await UIHelper.GetParentWindow(this)
-                    .ShowMessageAsync(
+            if (UIHelper.GetParentWindow(this)
+                    .ShowModalMessageExternal(
                         LocalizationProvider.Instance.GetTextValue("Gesture.Messages.DeleteConfirmTitle"),
                         LocalizationProvider.Instance.GetTextValue("Gesture.Messages.DeleteGestureConfirm"),
                         MessageDialogStyle.AffirmativeAndNegative,
@@ -50,8 +50,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
-                            AnimateHide = false,
-                            AnimateShow = false,
                         }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
