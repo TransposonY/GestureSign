@@ -353,7 +353,7 @@ http://transposony.coding.me/GestureSign/
       <Hide>隐藏键盘</Hide>
       <Auto>自动显示或隐藏键盘</Auto>
       <Tip>提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度</Tip>
-      <DesktopModeAutoInvoke>桌面模式下自动激活（需要以管理员身份运行）</DesktopModeAutoInvoke>
+      <DesktopModeAutoInvoke>桌面模式下自动激活</DesktopModeAutoInvoke>
     </TouchKeyboard>
     <Volume>
       <Name>调整音量</Name>
