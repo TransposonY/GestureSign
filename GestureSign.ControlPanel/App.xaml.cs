@@ -70,36 +70,32 @@ namespace GestureSign.ControlPanel
                         daemon.StartInfo.CreateNoWindow = false;
                         daemon.Start();
                     }
-                    Current.Shutdown();
+                }
+
+                bool createdNew;
+                mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
+                if (createdNew)
+                {
+                    var systemAccent = UIHelper.GetSystemAccent();
+                    if (systemAccent != null)
+                    {
+                        var accent = ThemeManager.GetAccent(systemAccent);
+                        ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
+                    }
+
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+
+                    GestureManager.Instance.Load(null);
+                    PluginManager.Instance.Load(null);
+                    ApplicationManager.Instance.Load(null);
+
+                    NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
                 }
                 else
                 {
-                    bool createdNew;
-                    mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
-                    if (createdNew)
-                    {
-                        var systemAccent = UIHelper.GetSystemAccent();
-                        if (systemAccent != null)
-                        {
-                            var accent = ThemeManager.GetAccent(systemAccent);
-                            ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
-                        }
-
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Show();
-
-                        GestureManager.Instance.Load(null);
-                        PluginManager.Instance.Load(null);
-                        ApplicationManager.Instance.Load(null);
-
-                        NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
-                    }
-                    else
-                    {
-                        NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel").Wait();
-                        Current.Shutdown();
-                    }
-
+                    NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel").Wait();
+                    Current.Shutdown();
                 }
 
             }
