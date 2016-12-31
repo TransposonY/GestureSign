@@ -146,72 +146,6 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
-        <Button x:Name="NewApplicationButton"
-                Grid.Row="0"
-                Grid.Column="0"
-                Click="NewApplicationButton_OnClick"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
-                VerticalAlignment="Top"
-                Height="50"
-                Panel.ZIndex="1">
-            <Button.Style>
-                <Style  TargetType="Button">
-                    <Setter Property="Foreground"
-                            Value="{StaticResource HighlightBrush}" />
-                    <Setter Property="Background"
-                            Value="{StaticResource AccentColorBrush4}" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border SnapsToDevicePixels="True"
-                                        BorderThickness="0"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch" />
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver"
-                                             Value="True">
-                                        <Setter Property="BorderBrush"
-                                                Value="{StaticResource AccentColorBrush3}" />
-                                        <Setter Property="Background"
-                                                Value="{StaticResource AccentColorBrush3}" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed"
-                                             Value="True">
-                                        <Setter Property="Background"
-                                                Value="{StaticResource AccentColorBrush}" />
-                                        <Setter Property="Foreground"
-                                                Value="{StaticResource IdealForegroundColorBrush}" />
-                                        <Setter Property="BorderBrush"
-                                                Value="{StaticResource AccentColorBrush}" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Button.Style>
-            <Button.Content>
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle Width="20"
-                               Height="20"
-                               VerticalAlignment="Center"
-                               Margin="5,0,0,0">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource Plus}"
-                                         Stretch="Uniform" />
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
-                               VerticalAlignment="Center"
-                               FontSize="15"
-                               Margin="5,0,0,0" />
-                </StackPanel>
-            </Button.Content>
-        </Button>
         <ListBox x:Name="lstAvailableApplication"
                  ItemsSource="{Binding Source={StaticResource ApplicationViewSource}}"
                  ScrollViewer.CanContentScroll="False"
@@ -220,8 +154,7 @@
                  SelectionChanged="lstAvailableApplication_SelectionChanged"
                  ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
                  Grid.Row="0"
-                 Grid.Column="0"
-                 Margin="0,50,0,0">
+                 Grid.Column="0">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem  x:Name="PasteActionMenuItem2"
@@ -296,7 +229,7 @@
         <Grid Grid.Row="0"
               Grid.Column="1"
               Background="{StaticResource AccentColorBrush}"
-              Height="29"
+              Height="27"
               VerticalAlignment="Top">
             <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
                        HorizontalAlignment="Center"
@@ -321,7 +254,7 @@
                  Grid.Row="0"
                  Grid.Column="1"
                  BorderBrush="{StaticResource AccentColorBrush}"
-                 Margin="0,29,0,0">
+                 Margin="0,27,0,0">
             <ListBox.Resources>
                 <ControlTemplate x:Key="ExpanderButton"
                                  TargetType="{x:Type ToggleButton}">

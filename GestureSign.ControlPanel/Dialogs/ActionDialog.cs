@@ -124,6 +124,17 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
+        private void NewApplicationButton_Click(object sender, RoutedEventArgs e)
+        {
+            ApplicationDialog applicationDialog = new ApplicationDialog(true);
+            var result = applicationDialog.ShowDialog();
+            if (result != null && result.Value)
+            {
+                BindExistingApplications();//todo: 
+                cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
+            }
+        }
+
         private void ConditionTextBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             EditConditionDialog editConditionDialog = new EditConditionDialog(ConditionTextBox.Text);

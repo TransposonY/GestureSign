@@ -632,12 +632,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selectedApp is UserApplication ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            ApplicationDialog applicationDialog = new ApplicationDialog(true);
-            applicationDialog.ShowDialog();
-        }
-
         private void EditAppButton_Click(object sender, RoutedEventArgs e)
         {
             if (lstAvailableApplication.SelectedItem != null)

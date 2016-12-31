@@ -164,6 +164,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (SaveApplication())
             {
+                DialogResult = true;
                 Close();
             }
         }

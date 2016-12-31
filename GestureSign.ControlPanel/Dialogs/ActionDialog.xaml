@@ -30,6 +30,44 @@
                 <Path Data="M490.313583 952.700117c-2.921539 0-5.685489-2.76395-5.685489-5.684466L484.628094 538.349111 75.959507 538.349111c-2.921539 0-5.683443-2.761903-5.683443-5.684466l0-43.367717c0-2.920516 2.761903-5.683443 5.683443-5.683443l408.667563 0L484.627071 74.93876c0-2.922563 2.76395-5.685489 5.685489-5.685489l43.36567 0c2.921539 0 5.686513 2.762927 5.686513 5.685489l0 408.674727 408.671657 0c2.922563 0 5.685489 2.762927 5.685489 5.683443l0 43.367717c0 2.921539-2.765997 5.684466-5.691629 5.684466L539.365766 538.349111l0 408.66654c0 2.920516-2.76395 5.684466-5.686513 5.684466L490.313583 952.700117z"
                       Fill="{StaticResource HighlightBrush}" />
             </Canvas>
+            <Style x:Key="NewButtonStyle"
+                   TargetType="Button">
+                <Setter Property="Foreground"
+                        Value="{StaticResource HighlightBrush}" />
+                <Setter Property="Background"
+                        Value="{StaticResource IdealForegroundColorBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border SnapsToDevicePixels="True"
+                                    BorderThickness="1"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="BorderBrush"
+                                            Value="{StaticResource AccentColorBrush3}" />
+                                    <Setter Property="Background"
+                                            Value="{StaticResource AccentColorBrush3}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter Property="Background"
+                                            Value="{StaticResource AccentColorBrush}" />
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource IdealForegroundColorBrush}" />
+                                    <Setter Property="BorderBrush"
+                                            Value="{StaticResource AccentColorBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
@@ -63,7 +101,22 @@
             <ComboBox x:Name="cmbExistingApplication"
                       DisplayMemberPath="Name"
                       FontSize="14"
-                      Margin="10,10,10,0" />
+                      Margin="10,10,51,0" />
+            <Button x:Name="NewApplicationButton"
+                    Style="{StaticResource NewButtonStyle}"
+                    BorderBrush="{StaticResource AccentColorBrush4}"
+                    Width="36"
+                    Height="27"
+                    HorizontalAlignment="Right"
+                    Margin="0,-27,10,0"
+                    Click="NewApplicationButton_Click">
+                <Rectangle Width="18"
+                           Height="18">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Plus}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
             <TextBlock Text="{localization:LocalisedText ActionDialog.MatchUsing}"
                        FontSize="14"
                        FontWeight="Bold"
@@ -119,8 +172,6 @@
                            BasedOn="{StaticResource {x:Type ComboBox}}">
                         <Setter Property="Foreground"
                                 Value="{StaticResource AccentSelectedColorBrush}" />
-                        <Setter Property="BorderBrush"
-                                Value="{StaticResource HighlightBrush}" />
                         <Setter Property="Background"
                                 Value="White" />
                         <Setter Property="SnapsToDevicePixels"
@@ -296,14 +347,13 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Button x:Name="NewGestureButton"
-                    Style="{DynamicResource SquareButtonStyle}"
+                    Style="{StaticResource NewButtonStyle}"
+                    BorderBrush="{StaticResource AccentColorBrush4}"
                     Margin="0,-80,25,10"
                     Width="36"
                     HorizontalAlignment="Right"
                     Click="NewGestureButton_Click"
                     Height="80"
-                    BorderThickness="1"
-                    BorderBrush="{StaticResource HighlightBrush}"
                     MinHeight="25">
                 <Rectangle Width="24"
                            Height="24">
