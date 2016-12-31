@@ -37,6 +37,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
             this.btnEditGesture.IsEnabled = this.btnDelGesture.IsEnabled = lstAvailableGestures.SelectedItems.Count > 0;
         }
 
+        private void NewGestureButton_Click(object sender, RoutedEventArgs e)
+        {
+            GestureDefinition gestureDefinition = new GestureDefinition();
+            var result = gestureDefinition.ShowDialog();
+            if (result != null && result.Value)
+            {
+                lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
+                lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem);
+            }
+        }
+
         private void btnDelGesture_Click(object sender, RoutedEventArgs e)
         {
             // Make sure at least one item is selected
