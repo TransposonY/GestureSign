@@ -16,6 +16,7 @@
         <ResourceDictionary>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
             <converters:VisibilityConverter x:Key="VisibilityConverter"></converters:VisibilityConverter>
+            <converters:Application2VisibilityConverter x:Key="Application2VisibilityConverter" />
             <Canvas x:Key="Plus"
                     Width="24"
                     Height="24">
@@ -161,6 +162,15 @@
                                Header="{localization:LocalisedText Action.PasteAction}"
                                FontSize="16"
                                Click="PasteActionMenuItem_Click" />
+                    <Separator />
+                    <MenuItem  x:Name="DeleteMenuItem"
+                               Header="{localization:LocalisedText Action.Delete}"
+                               FontSize="16"
+                               Click="DeleteMenuItem_Click" />
+                    <MenuItem  x:Name="EditMenuItem"
+                               Header="{localization:LocalisedText Action.Edit}"
+                               FontSize="16"
+                               Click="EditApplication_Click" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.GroupStyle>
@@ -209,11 +219,41 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Height="50"
-                                Orientation="Horizontal">
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="23" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding Name}"
                                    VerticalAlignment="Center"></TextBlock>
-                    </StackPanel>
+                        <Button Click="EditApplication_Click"
+                                Grid.Column="1"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,5,0"
+                                Width="18">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Rectangle Fill="{StaticResource AccentColorBrush}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Uniform"
+                                                         Visual="{DynamicResource appbar_page_edit}" />
+                                        </Rectangle.OpacityMask>
+                                        <Rectangle.Visibility>
+                                            <MultiBinding Converter="{StaticResource Application2VisibilityConverter}">
+                                                <Binding  Path="DataContext"
+                                                          RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"
+                                                          Mode="OneWay" />
+                                                <Binding  Path="IsSelected"
+                                                          RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"
+                                                          Mode="OneWay" />
+                                            </MultiBinding>
+                                        </Rectangle.Visibility>
+                                    </Rectangle>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ItemContainerStyle>
@@ -718,45 +758,6 @@
                 <Rectangle.OpacityMask>
                     <VisualBrush Visual="{StaticResource Chevron-Down}"
                                  Stretch="Uniform" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button Grid.Row="2"
-                Grid.Column="0"
-                x:Name="EditAppButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                Visibility="Hidden"
-                Height="50"
-                Width="50"
-                Click="EditAppButton_Click"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Margin="10,0,0,0">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Fill"
-                                 Visual="{DynamicResource appbar_page_edit}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="DeleteAppButton"
-                Grid.Row="2"
-                Grid.Column="0"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                Visibility="Hidden"
-                Height="50"
-                Width="50"
-                Click="DeleteAppButton_Click"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Left"
-                Margin="65,0,0,0">
-            <Rectangle Width="18"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource appbar_delete}" />
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>

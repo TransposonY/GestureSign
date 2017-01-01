@@ -550,6 +550,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             PasteActionMenuItem2.IsEnabled = _actionClipboard != null;
+
+            EditMenuItem.IsEnabled = DeleteMenuItem.IsEnabled = lstAvailableApplication.SelectedItem is UserApplication;
         }
 
         private void LstAvailableActions_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -627,12 +629,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
             ToggleAllActionsCheckBox.IsEnabled = true;
             ToggleAllActionsCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
-
-            EditAppButton.Visibility = DeleteAppButton.Visibility =
-                selectedApp is UserApplication ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void EditAppButton_Click(object sender, RoutedEventArgs e)
+        private void EditApplication_Click(object sender, RoutedEventArgs e)
         {
             if (lstAvailableApplication.SelectedItem != null)
             {
@@ -641,19 +640,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private void DeleteAppButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (UIHelper.GetParentWindow(this)
-                    .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
-                        LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"),
-                        MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                        {
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
-                            ColorScheme = MetroDialogColorScheme.Accented,
-                        }) == MessageDialogResult.Affirmative)
+            UserApplication selectedApp = lstAvailableApplication.SelectedItem as UserApplication;
+            if (selectedApp != null && UIHelper.GetParentWindow(this)
+                .ShowModalMessageExternal(
+                    LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
+                    String.Format(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteAppConfirm"), selectedApp.Name),
+                    MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                    {
+                        AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                        NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
+                        ColorScheme = MetroDialogColorScheme.Accented,
+                    }) == MessageDialogResult.Affirmative)
             {
-                ApplicationManager.Instance.RemoveApplication((IApplication)lstAvailableApplication.SelectedItem);
+                ApplicationManager.Instance.RemoveApplication(selectedApp);
 
                 BindApplications();
                 lstAvailableApplication.SelectedIndex = 0;
