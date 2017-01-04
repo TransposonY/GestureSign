@@ -127,6 +127,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
             await SetTrainingState(false);
             StackUpGestureButton.IsEnabled = _currentPointPatterns.Length < 3;
+            txtGestureName.Focus();
         }
 
         private async void ResetButton_Click(object sender, RoutedEventArgs e)
