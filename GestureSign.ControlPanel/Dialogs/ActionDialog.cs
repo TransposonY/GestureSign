@@ -68,7 +68,12 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            BindExistingApplications();
+            ApplicationManager.ApplicationChanged += (o, ace) =>
+            {
+                cmbExistingApplication.SelectedItem = ace.Application;
+            };
+
+            cmbExistingApplication.SelectedItem = _selectedApplication ?? ApplicationManager.Instance.GetGlobalApplication();
             BindPlugins();
 
             if (_currentAction != null)
@@ -127,12 +132,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private void NewApplicationButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationDialog applicationDialog = new ApplicationDialog(true);
-            var result = applicationDialog.ShowDialog();
-            if (result != null && result.Value)
-            {
-                BindExistingApplications();//todo: 
-                cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
-            }
+            applicationDialog.ShowDialog();
         }
 
         private void ConditionTextBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -155,25 +155,6 @@ namespace GestureSign.ControlPanel.Dialogs
             MessageFlyout.Header = title;
             MessageFlyout.IsOpen = true;
             return false;
-        }
-
-        private void BindExistingApplications()
-        {
-            // Clear existing items
-            cmbExistingApplication.Items.Clear();
-
-            // Add generic application listview item
-            IApplication allApplicationsItem = ApplicationManager.Instance.GetGlobalApplication();
-
-            IApplication[] existingApplications = ApplicationManager.Instance.GetAvailableUserApplications();
-
-            // Add application items to the combobox
-            cmbExistingApplication.Items.Add(allApplicationsItem);
-            foreach (IApplication app in existingApplications)
-                cmbExistingApplication.Items.Add(app);
-
-            // Select new applications
-            cmbExistingApplication.SelectedItem = _selectedApplication ?? allApplicationsItem;
         }
 
         private void SelectCurrentGesture(string currentGesture)

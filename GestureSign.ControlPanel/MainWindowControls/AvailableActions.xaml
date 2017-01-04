@@ -119,6 +119,9 @@
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
+            <ObjectDataProvider ObjectType="{x:Type viewModel:ApplicationItemProvider}"
+                                x:Key="ApplicationItemProvider">
+            </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
                                   Source="{Binding ActionInfos}">
                 <CollectionViewSource.GroupDescriptions>
@@ -130,7 +133,7 @@
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="ApplicationViewSource"
-                                  Source="{Binding ApplicationCollection}">
+                                  Source="{Binding Source={StaticResource ApplicationItemProvider},Path=ApplicationItems}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Group" />
                 </CollectionViewSource.GroupDescriptions>

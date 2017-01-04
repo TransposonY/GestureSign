@@ -22,40 +22,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
             InitializeComponent();
         }
 
-        void ApplicationsFlyout_BindIgnoredApplications(object sender, EventArgs e)
-        {
-            BindIgnoredApplications();
-        }
-
-        private void BindIgnoredApplications()
-        {
-            this.lstIgnoredApplications.ItemsSource = null;
-            var lstApplications = ApplicationManager.Instance.GetIgnoredApplications().ToList();
-
-
-            var sourceView = new ListCollectionView(lstApplications);//创建数据源的视图
-
-            var groupDesctrption = new PropertyGroupDescription("MatchUsing");//设置分组列
-
-            sourceView.GroupDescriptions.Add(groupDesctrption);//在图中添加分组
-            this.lstIgnoredApplications.ItemsSource = sourceView;//绑定数据源
-        }
-
-        private void UserControl_Initialized(object sender, EventArgs e)
-        {
-            ApplicationDialog.IgnoredApplicationsChanged += ApplicationsFlyout_BindIgnoredApplications;
-
-            ApplicationManager.OnLoadApplicationsCompleted += (o, ev) => { this.Dispatcher.InvokeAsync(BindIgnoredApplications); };
-
-            if (ApplicationManager.FinishedLoading) BindIgnoredApplications();
-        }
-
         private void btnDeleteIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
-            foreach (IgnoredApplication lvItem in this.lstIgnoredApplications.SelectedItems)
-                ApplicationManager.Instance.RemoveIgnoredApplications(lvItem.Name);
+            var ignoredApps = lstIgnoredApplications.SelectedItems.Cast<IgnoredApplication>().ToList();
+            foreach (var app in ignoredApps)
+            {
+                ApplicationManager.Instance.RemoveApplication(app);
+            }
             ApplicationManager.Instance.SaveApplications();
-            BindIgnoredApplications();
         }
 
         private void btnEditIgnoredApp_Click(object sender, RoutedEventArgs e)
@@ -130,7 +104,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     }
                 if (addcount != 0)
                 {
-                    BindIgnoredApplications();
                     ApplicationManager.Instance.SaveApplications();
                 }
                 MessageBox.Show(

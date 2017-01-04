@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+             xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="400"
-             d:DesignWidth="450"
-             Initialized="UserControl_Initialized">
+             d:DesignWidth="450">
     <UserControl.Resources>
         <Canvas x:Key="Plus"
                 Width="24"
@@ -42,6 +42,15 @@
         </Canvas>
         <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
         <converters:BoolConverter x:Key="boolConverter"></converters:BoolConverter>
+        <ObjectDataProvider ObjectType="{x:Type viewModel:ApplicationItemProvider}"
+                            x:Key="ApplicationItemProvider">
+        </ObjectDataProvider>
+        <CollectionViewSource x:Key="IgnoredApplicationViewSource"
+                              Source="{Binding Source={StaticResource ApplicationItemProvider},Path=IgnoredApplicationItems}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="MatchUsing" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </UserControl.Resources>
 
 
@@ -51,6 +60,7 @@
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
         <ListView x:Name="lstIgnoredApplications"
+                  ItemsSource="{Binding Source={StaticResource IgnoredApplicationViewSource}}"
                   BorderThickness="0"
                   Margin="0"
                   SelectionChanged="lstIgnoredApplications_SelectionChanged">

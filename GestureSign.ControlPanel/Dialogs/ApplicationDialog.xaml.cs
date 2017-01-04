@@ -20,9 +20,6 @@ namespace GestureSign.ControlPanel.Dialogs
     /// </summary>
     public partial class ApplicationDialog : MetroWindow
     {
-        public static event ApplicationChangedEventHandler UserApplicationChanged;
-        public static event EventHandler IgnoredApplicationsChanged;
-
         private IApplication _currentApplication;
         private bool _isUserApp;
 
@@ -220,6 +217,18 @@ namespace GestureSign.ControlPanel.Dialogs
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationNameTitle"),
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationName"));
                 }
+
+                var newApplication = new UserApplication
+                {
+                    BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
+                    LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
+                    Name = name,
+                    Group = groupName,
+                    MatchString = matchString,
+                    MatchUsing = matchUsingRadio.MatchUsing,
+                    IsRegEx = RegexCheckBox.IsChecked.Value
+                };
+
                 if (_currentApplication == null)
                 {
                     //Add new UserApplication
@@ -236,20 +245,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         return ShowErrorMessage(
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
-
-                    var newApplication = new UserApplication
-                    {
-                        BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
-                        LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
-                        Name = name,
-                        Group = groupName,
-                        MatchString = matchString,
-                        MatchUsing = matchUsingRadio.MatchUsing,
-                        IsRegEx = RegexCheckBox.IsChecked.Value
-                    };
                     ApplicationManager.Instance.AddApplication(newApplication);
-
-                    UserApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(newApplication));
                 }
                 else
                 {
@@ -268,15 +264,9 @@ namespace GestureSign.ControlPanel.Dialogs
                             LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
                             LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
                     }
-                    _currentApplication.Name = name;
-                    _currentApplication.Group = groupName;
-                    _currentApplication.MatchUsing = matchUsingRadio.MatchUsing;
-                    _currentApplication.MatchString = matchString;
-                    _currentApplication.IsRegEx = RegexCheckBox.IsChecked.Value;
-                    ((UserApplication)_currentApplication).BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value;
-                    ((UserApplication)_currentApplication).LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value;
 
-                    UserApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(_currentApplication));
+                    newApplication.Actions = _currentApplication.Actions;
+                    ApplicationManager.Instance.ReplaceApplication(_currentApplication, newApplication);
                 }
             }
             else
@@ -301,7 +291,6 @@ namespace GestureSign.ControlPanel.Dialogs
                 }
 
                 ApplicationManager.Instance.AddApplication(new IgnoredApplication(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
-                IgnoredApplicationsChanged?.Invoke(this, EventArgs.Empty);
             }
             ApplicationManager.Instance.SaveApplications();
             return true;

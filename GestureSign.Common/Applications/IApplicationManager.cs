@@ -7,7 +7,6 @@ namespace GestureSign.Common.Applications
 {
     public interface IApplicationManager
     {
-        event ApplicationChangedEventHandler ApplicationChanged;
         bool ApplicationExists(string ApplicationName);
         List<IApplication> Applications { get; }
         SystemWindow CaptureWindow { get; }

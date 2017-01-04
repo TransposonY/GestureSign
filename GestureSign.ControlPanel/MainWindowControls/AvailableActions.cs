@@ -36,8 +36,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         public ObservableCollection<ActionInfo> ActionInfos { get; } = new ObservableCollection<ActionInfo>();
 
-        public ObservableCollection<IApplication> ApplicationCollection { get; } = new ObservableCollection<IApplication>();
-
         private Task _addActionTask;
         private bool _selecteNewestItem;
         private IApplication _cutActionSource;
@@ -63,7 +61,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
                 else
                 {
-                    BindApplications();
                     _selecteNewestItem = true;
                     lstAvailableApplication.SelectedItem = e.Application;
                     lstAvailableApplication.ScrollIntoView(e.Application);
@@ -71,16 +68,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
             AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
             GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
-            ApplicationDialog.UserApplicationChanged += (o, e) =>
+            ApplicationManager.ApplicationChanged += (o, e) =>
             {
-                BindApplications();
                 lstAvailableApplication.SelectedItem = e.Application;
                 lstAvailableApplication.ScrollIntoView(e.Application);
             };
-
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { this.Dispatcher.InvokeAsync(BindApplications); };
-
-            if (ApplicationManager.FinishedLoading) BindApplications();
         }
 
         private void cmdEditAction_Click(object sender, RoutedEventArgs e)
@@ -172,23 +164,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             string gestureName = ai?.GestureName;
             ActionDialog actionDialog = new ActionDialog(gestureName, lstAvailableApplication.SelectedItem as IApplication);
             actionDialog.Show();
-        }
-
-
-
-        private void BindApplications()
-        {
-            ApplicationCollection.Clear();
-
-            // Add global actions to global applications group
-            var userApplications =
-                ApplicationManager.Instance.Applications.Where(app => (app is UserApplication)).OrderBy(app => app.Name);
-            var globalApplication = ApplicationManager.Instance.GetAllGlobalApplication();
-
-            foreach (var app in globalApplication.Union(userApplications))
-            {
-                ApplicationCollection.Add(app);
-            }
         }
 
         private void RefreshActions(bool refreshAll)
@@ -418,6 +393,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
+                List<IApplication> newApplications = new List<IApplication>();
                 var newApps = System.IO.Path.GetExtension(ofdApplications.FileName)
                     .Equals(".act", StringComparison.OrdinalIgnoreCase)
                     ? FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true)
@@ -465,15 +441,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         else
                         {
                             addcount += newApp.Actions.Count;
-                            ApplicationManager.Instance.AddApplication(newApp);
+                            newApplications.Add(newApp);
                         }
                     }
                 }
                 End:
                 if (addcount != 0)
                 {
+                    ApplicationManager.Instance.AddApplicationRange(newApplications);
                     ApplicationManager.Instance.SaveApplications();
-                    BindApplications();
                     lstAvailableApplication.SelectedIndex = 0;
                 }
                 MessageBox.Show(
@@ -656,7 +632,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 ApplicationManager.Instance.RemoveApplication(selectedApp);
 
-                BindApplications();
                 lstAvailableApplication.SelectedIndex = 0;
                 ApplicationManager.Instance.SaveApplications();
             }

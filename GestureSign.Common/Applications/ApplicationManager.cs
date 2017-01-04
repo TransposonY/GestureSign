@@ -38,7 +38,6 @@ namespace GestureSign.Common.Applications
             set
             {
                 _CurrentApplication = value;
-                OnApplicationChanged(new ApplicationChangedEventArgs(value));
             }
         }
 
@@ -151,12 +150,7 @@ namespace GestureSign.Common.Applications
 
         #region Custom Events
 
-        public event ApplicationChangedEventHandler ApplicationChanged;
-
-        protected virtual void OnApplicationChanged(ApplicationChangedEventArgs e)
-        {
-            if (ApplicationChanged != null) ApplicationChanged(this, e);
-        }
+        public static event ApplicationChangedEventHandler ApplicationChanged;
 
         #endregion
 
@@ -173,14 +167,29 @@ namespace GestureSign.Common.Applications
             }
         }
 
-        public void AddApplication(IApplication Application)
+        public void AddApplication(IApplication application)
         {
-            _Applications.Add(Application);
+            _Applications.Add(application);
+            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(application));
         }
 
-        public void RemoveApplication(IApplication Application)
+        public void AddApplicationRange(List<IApplication> applications)
         {
-            _Applications.Remove(Application);
+            _Applications.AddRange(applications);
+            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(applications.FirstOrDefault()));
+        }
+
+        public void RemoveApplication(IApplication application)
+        {
+            _Applications.Remove(application);
+            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(application));
+        }
+
+        public void ReplaceApplication(IApplication oldApplication, IApplication newApplication)
+        {
+            _Applications.Remove(oldApplication);
+            _Applications.Add(newApplication);
+            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(newApplication));
         }
 
         public void RemoveIgnoredApplications(string applicationName)
