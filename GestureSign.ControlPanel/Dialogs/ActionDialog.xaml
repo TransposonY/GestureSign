@@ -29,10 +29,6 @@
             <ObjectDataProvider ObjectType="{x:Type viewModel:ApplicationItemProvider}"
                                 x:Key="ApplicationItemProvider">
             </ObjectDataProvider>
-            <Canvas x:Key="Plus">
-                <Path Data="M490.313583 952.700117c-2.921539 0-5.685489-2.76395-5.685489-5.684466L484.628094 538.349111 75.959507 538.349111c-2.921539 0-5.683443-2.761903-5.683443-5.684466l0-43.367717c0-2.920516 2.761903-5.683443 5.683443-5.683443l408.667563 0L484.627071 74.93876c0-2.922563 2.76395-5.685489 5.685489-5.685489l43.36567 0c2.921539 0 5.686513 2.762927 5.686513 5.685489l0 408.674727 408.671657 0c2.922563 0 5.685489 2.762927 5.685489 5.683443l0 43.367717c0 2.921539-2.765997 5.684466-5.691629 5.684466L539.365766 538.349111l0 408.66654c0 2.920516-2.76395 5.684466-5.686513 5.684466L490.313583 952.700117z"
-                      Fill="{StaticResource HighlightBrush}" />
-            </Canvas>
             <Style x:Key="NewButtonStyle"
                    TargetType="Button">
                 <Setter Property="Foreground"
@@ -115,10 +111,12 @@
                     Margin="0,-27,10,0"
                     Click="NewApplicationButton_Click">
                 <Rectangle Width="18"
-                           Height="18">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource Plus}" />
-                    </Rectangle.Fill>
+                           Height="18"
+                           Fill="{StaticResource HighlightBrush}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource PlusIcon}" />
+                    </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
             <TextBlock Text="{localization:LocalisedText ActionDialog.MatchUsing}"
@@ -360,10 +358,12 @@
                     Height="80"
                     MinHeight="25">
                 <Rectangle Width="24"
-                           Height="24">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource Plus}" />
-                    </Rectangle.Fill>
+                           Height="24"
+                           Fill="{StaticResource HighlightBrush}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource PlusIcon}" />
+                    </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
         </StackPanel>
