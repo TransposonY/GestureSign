@@ -79,6 +79,12 @@
                      Canvas.Top="10"
                      Width="60"
                      FontSize="14" />
+            <local:Crosshair x:Name="Crosshair"
+                             Height="36"
+                             Width="36"
+                             CrosshairDragging="Crosshair_CrosshairDragging"
+                             Canvas.Left="260"
+                             Canvas.Top="10" />
         </Canvas>
         <Canvas x:Name="ScrollCanvas"
                 Height="86"

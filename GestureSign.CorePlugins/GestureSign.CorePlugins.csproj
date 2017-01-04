@@ -92,6 +92,9 @@
     <Compile Include="LaunchApp\LaunchAppView.xaml.cs">
       <DependentUpon>LaunchAppView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MouseActions\Crosshair.xaml.cs">
+      <DependentUpon>Crosshair.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MouseActions\MouseActionsPlugin.cs" />
     <Compile Include="MouseActions\MouseActionsSettings.cs" />
     <Compile Include="MouseActions\MouseActionsUI.xaml.cs">
@@ -194,6 +197,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MouseActions\Crosshair.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MouseActions\MouseActionsUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -223,7 +230,12 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="MouseActions\crosshair.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MouseActions\crosshair.cur" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(XamlSpyInstallPath)MSBuild\FirstFloor.XamlSpy.WPF.targets" Condition="'$(XamlSpyInstallPath)' != '' and '$(Configuration)' == 'DEBUG'" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

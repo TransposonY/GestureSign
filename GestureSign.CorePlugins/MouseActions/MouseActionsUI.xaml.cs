@@ -141,6 +141,13 @@ namespace GestureSign.CorePlugins.MouseActions
                     break;
             }
         }
+
+        private void Crosshair_CrosshairDragging(object sender, MouseEventArgs e)
+        {
+            Point p = Crosshair.PointToScreen(e.GetPosition(Crosshair));
+            XTextBox.Text = p.X.ToString();
+            YTextBox.Text = p.Y.ToString();
+        }
     }
 
 }
