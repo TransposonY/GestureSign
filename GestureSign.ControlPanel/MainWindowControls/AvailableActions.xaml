@@ -240,7 +240,7 @@
                                     <Rectangle Fill="{StaticResource AccentColorBrush}">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
-                                                         Visual="{DynamicResource appbar_page_edit}" />
+                                                         Visual="{StaticResource appbar_page_edit}" />
                                         </Rectangle.OpacityMask>
                                         <Rectangle.Visibility>
                                             <MultiBinding Converter="{StaticResource Application2VisibilityConverter}">
@@ -701,7 +701,7 @@
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
                 <Rectangle.OpacityMask>
                     <VisualBrush Stretch="Fill"
-                                 Visual="{DynamicResource appbar_page_edit}" />
+                                 Visual="{StaticResource appbar_page_edit}" />
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
