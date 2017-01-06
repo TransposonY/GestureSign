@@ -54,16 +54,7 @@ namespace GestureSign.Common.Gestures
 
         protected GestureManager()
         {
-            Action<bool> loadCompleted =
-                   result =>
-                   {
-                       if (!result)
-                           if (!LoadDefaults())
-                               _Gestures = new List<IGesture>();
-                       if (OnLoadGesturesCompleted != null) OnLoadGesturesCompleted(this, EventArgs.Empty);
-                       FinishedLoading = true;
-                   };
-            LoadGestures().ContinueWith(antecendent => loadCompleted(antecendent.Result));
+            LoadGestures();
             // Instantiate gesture analyzer using gestures loaded from file
             gestureAnalyzer = new PointPatternAnalyzer();//Gestures
         }
@@ -172,16 +163,26 @@ namespace GestureSign.Common.Gestures
             _Gestures.Add(Gesture);
         }
 
-        public Task<bool> LoadGestures()
+        public Task LoadGestures()
         {
-            return Task.Run(() =>
+            Action<bool> loadCompleted =
+                   result =>
+                   {
+                       if (!result)
+                           if (!LoadDefaults())
+                               _Gestures = new List<IGesture>();
+                       OnLoadGesturesCompleted?.Invoke(this, EventArgs.Empty);
+                       FinishedLoading = true;
+                   };
+
+            var startLoading = Task.Run(() =>
             {
                 try
                 {
                     // Load gestures from file, create empty list if load failed
                     var gestures = FileManager.LoadObject<List<Gesture>>(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "GestureSign", "Gestures.gest"), true);
+                       Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                       "GestureSign", "Gestures.gest"), true);
 
                     if (gestures != null)
                     {
@@ -210,6 +211,8 @@ namespace GestureSign.Common.Gestures
                     return false;
                 }
             });
+
+            return startLoading.ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
 
         public bool SaveGestures(bool notice = true)
