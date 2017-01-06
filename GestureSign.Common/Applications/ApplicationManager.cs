@@ -227,23 +227,7 @@ namespace GestureSign.Common.Applications
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign",
                             "Actions.act"),
                         true, true);
-                if (_Applications == null)
-                {
-                    _Applications = FileManager.LoadObject<List<IApplication>>(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Applications.json"),
-                        new[]
-                        {
-                            typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
-                            typeof (Action)
-                        }, true);
-                    if (_Applications != null)
-                    {
-                        _Applications.ForEach(a => { if (a.Group == null) a.Group = String.Empty; });
-                        SaveFile(false);
-                    }
-                    else return false;// No object, failed
-                }
-                return true; // Success
+                return _Applications != null;
             });
         }
 

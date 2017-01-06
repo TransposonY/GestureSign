@@ -82,16 +82,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.json;*.ign",
+                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
                 Title = LocalizationProvider.Instance.GetTextValue("Ignored.ImportIgnoredApps"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IApplication> newApps = System.IO.Path.GetExtension(ofdApplications.FileName).Equals(".ign", StringComparison.OrdinalIgnoreCase) ?
-                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true) :
-                    FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, new Type[] { typeof(GlobalApplication), typeof(UserApplication), typeof(IgnoredApplication), typeof(Applications.Action) }, false);
+                List<IApplication> newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
+
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {

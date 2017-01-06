@@ -89,22 +89,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             OpenFileDialog ofdGestures = new OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.json;*.gest",
+                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
                 Title = LocalizationProvider.Instance.GetTextValue("Gesture.ImportGesture"),
                 CheckFileExists = true
             };
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
-                List<IGesture> newGestures;
-                if (Path.GetExtension(ofdGestures.FileName)
-                    .Equals(".gest", StringComparison.OrdinalIgnoreCase))
-                {
-                    var gestures =
+
+                var gestures =
                         FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
-                    newGestures = gestures == null ? null : gestures.Cast<IGesture>().ToList();
-                }
-                else newGestures = FileManager.LoadObject<List<IGesture>>(ofdGestures.FileName, new Type[] { typeof(Gesture) }, false);
+                var newGestures = gestures?.Cast<IGesture>().ToList();
 
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)

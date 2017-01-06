@@ -25,7 +25,7 @@ namespace GestureSign.Common.Gestures
         private static GestureManager _instance;
 
         // Create read/write list of IGestures to hold system gestures
-        List<IGesture> _Gestures = new List<IGesture>();
+        private List<IGesture> _Gestures;
 
         // Create PointPatternAnalyzer to process gestures when received
         PointPatternAnalyzer gestureAnalyzer = null;
@@ -182,13 +182,8 @@ namespace GestureSign.Common.Gestures
                     var gestures = FileManager.LoadObject<List<Gesture>>(
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "GestureSign", "Gestures.gest"), true);
-                    if (gestures == null)
-                    {
-                        _Gestures = FileManager.LoadObject<List<IGesture>>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.json"), new Type[] { typeof(Gesture) }, true);
-                        if (_Gestures != null)
-                            SaveGestures(false);
-                    }
-                    else
+
+                    if (gestures != null)
                     {
                         if (gestures.Count != 0 && gestures[0].PointPatterns == null)
                         {

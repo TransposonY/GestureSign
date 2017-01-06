@@ -386,7 +386,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.json;*.act",
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.act",
                 Title = LocalizationProvider.Instance.GetTextValue("Action.ImportActions"),
                 CheckFileExists = true
             };
@@ -394,15 +394,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 int addcount = 0;
                 List<IApplication> newApplications = new List<IApplication>();
-                var newApps = System.IO.Path.GetExtension(ofdApplications.FileName)
-                    .Equals(".act", StringComparison.OrdinalIgnoreCase)
-                    ? FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true)
-                    : FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName,
-                        new Type[]
-                        {
-                            typeof (GlobalApplication), typeof (UserApplication), typeof (IgnoredApplication),
-                            typeof (Applications.Action)
-                        }, false);
+                var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
 
                 if (newApps != null)
                 {
