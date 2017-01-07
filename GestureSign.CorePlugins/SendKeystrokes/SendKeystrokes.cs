@@ -1,7 +1,5 @@
 ﻿using System;
 using GestureSign.Common.Plugins;
-
-using System.Windows.Controls;
 using WindowsInput;
 using GestureSign.Common.Localization;
 
@@ -40,7 +38,7 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             get { return true; }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {

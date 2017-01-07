@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GestureSign.Common.Plugins;
-using System.Windows.Controls;
+
 namespace GestureSign.CorePlugins
 {
 	public class Notifier : IPlugin
@@ -20,7 +17,7 @@ namespace GestureSign.CorePlugins
             get { return "Notifies user of performed actions"; }
 		}
 
-        public UserControl GUI
+        public object GUI
 		{
 			get { return null; }
 		}

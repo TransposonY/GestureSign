@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GestureSign.Common.Plugins;
-
-using System.Windows.Controls;
+﻿using GestureSign.Common.Plugins;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
@@ -29,7 +23,7 @@ namespace GestureSign.CorePlugins
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MaximizeRestore.Description"); }
 		}
 
-		public UserControl GUI
+		public object GUI
 		{
 			get { return null; }
 		}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
@@ -28,7 +27,7 @@ namespace GestureSign.CorePlugins.RunCommand
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {

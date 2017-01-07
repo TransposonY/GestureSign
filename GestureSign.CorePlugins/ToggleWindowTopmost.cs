@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using GestureSign.Common.Localization;
+﻿using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins
@@ -29,7 +23,7 @@ namespace GestureSign.CorePlugins
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ToggleWindowTopmost.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return null; }
         }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using GestureSign.Common.Plugins;
 using Microsoft.Win32;
-
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
@@ -31,7 +25,7 @@ namespace GestureSign.CorePlugins
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.DefaultBrowser.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return null; }
         }

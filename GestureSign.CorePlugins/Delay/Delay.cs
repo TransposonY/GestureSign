@@ -1,7 +1,5 @@
 ﻿using System;
 using GestureSign.Common.Plugins;
-
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.Delay
@@ -37,7 +35,7 @@ namespace GestureSign.CorePlugins.Delay
             get { return true; }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using GestureSign.Common.Plugins;
-using System.Windows.Controls;
 using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Localization;
@@ -27,7 +26,7 @@ namespace GestureSign.CorePlugins
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.NextApplication.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return null; }
         }

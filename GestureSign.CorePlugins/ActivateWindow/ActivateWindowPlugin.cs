@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
@@ -45,7 +44,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.ActivateWindow.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return _gui ?? (_gui = CreateGUI()); }
         }

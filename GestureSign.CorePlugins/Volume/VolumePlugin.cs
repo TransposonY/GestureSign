@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Windows.Controls;
-using WindowsInput;
+﻿using WindowsInput;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
@@ -36,7 +32,7 @@ namespace GestureSign.CorePlugins.Volume
             get { return GetDescription(_settings); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {

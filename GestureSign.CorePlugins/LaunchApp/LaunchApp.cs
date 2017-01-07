@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using System.Runtime.InteropServices;
@@ -55,7 +50,7 @@ namespace GestureSign.CorePlugins.LaunchApp
         public string Description => AppInfo.Value == null ? LocalizationProvider.Instance.GetTextValue("CorePlugins.LaunchApp.Name") :
             string.Format(LocalizationProvider.Instance.GetTextValue("CorePlugins.LaunchApp.Description"), AppInfo.Value);
 
-        public UserControl GUI => _gui ?? (_gui = CreateGui());
+        public object GUI => _gui ?? (_gui = CreateGui());
 
         public string Category => LocalizationProvider.Instance.GetTextValue("CorePlugins.LaunchApp.Category");
 

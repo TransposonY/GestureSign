@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GestureSign.Common.Plugins;
-
-using System.Windows.Controls;
-
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using GestureSign.Common.Localization;
@@ -74,7 +68,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             get { return true; }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {

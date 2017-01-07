@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using WindowsInput;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.MouseActions
 {
@@ -32,7 +31,7 @@ namespace GestureSign.CorePlugins.MouseActions
             get { return GetDescription(); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return _gui ?? (_gui = CreateGUI()); }
         }

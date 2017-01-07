@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GestureSign.Common.Plugins;
+﻿using GestureSign.Common.Plugins;
 using ManagedWinapi.Windows;
-
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
@@ -30,7 +24,7 @@ namespace GestureSign.CorePlugins
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.Minimize.Description"); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return null; }
         }

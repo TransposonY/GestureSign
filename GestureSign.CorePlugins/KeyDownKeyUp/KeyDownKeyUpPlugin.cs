@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.KeyDownKeyUp
 {
@@ -45,7 +42,7 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
             get { return GetDescription(); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return _GUI ?? (_GUI = CreateGui()); }
         }

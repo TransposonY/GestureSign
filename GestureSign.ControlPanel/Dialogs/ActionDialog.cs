@@ -350,15 +350,15 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void ShowSettings(IPluginInfo pluginInfo)
         {
-            var PluginGUI = pluginInfo.Plugin.GUI;
-            if (PluginGUI.Parent != null)
+            var pluginGui = pluginInfo.Plugin.GUI as UserControl;
+            if (pluginGui?.Parent != null)
             {
                 SettingsContent.Content = null;
             }
             // Add settings to settings panel
-            SettingsContent.Content = PluginGUI;
+            SettingsContent.Content = pluginGui;
 
-            SettingsContent.Height = PluginGUI.Height;
+            SettingsContent.Height = pluginGui.Height;
             SettingsContent.Visibility = Visibility.Visible;
         }
         private void HideSettings()

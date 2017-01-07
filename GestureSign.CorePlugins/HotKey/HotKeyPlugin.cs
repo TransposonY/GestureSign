@@ -8,7 +8,6 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using ManagedWinapi;
 using ManagedWinapi.Windows;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.CorePlugins.HotKey
 {
@@ -48,7 +47,7 @@ namespace GestureSign.CorePlugins.HotKey
             get { return GetDescription(_Settings); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get { return _GUI ?? (_GUI = CreateGUI()); }
         }

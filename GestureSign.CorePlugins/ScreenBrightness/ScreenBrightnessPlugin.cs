@@ -12,7 +12,6 @@
 using System;
 using System.Linq;
 using System.Management;
-using System.Windows.Controls;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
@@ -42,7 +41,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             get { return GetDescription(_Settings); }
         }
 
-        public UserControl GUI
+        public object GUI
         {
             get
             {
