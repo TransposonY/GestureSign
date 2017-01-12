@@ -19,9 +19,6 @@
                       Loaded="MetroWindow_Loaded">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
-            </ResourceDictionary.MergedDictionaries>
             <Path x:Key="QuestionIcon"
                   Width="15"
                   Height="24"
