@@ -8,7 +8,9 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using ManagedWinapi;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -26,11 +28,12 @@ namespace GestureSign.ControlPanel.Dialogs
         public GestureDefinition(IGesture gesture)
             : this()
         {
+            _oldGesture = (Gesture)gesture;
             _currentPointPatterns = gesture.PointPatterns;
-            GestureManager.Instance.GestureName = _oldGestureName = gesture.Name;
+            GestureManager.Instance.GestureName = gesture.Name;
         }
 
-        private string _oldGestureName;
+        private Gesture _oldGesture;
         private string _similarGestureName;
         private PointPattern[] _currentPointPatterns;
         private Color _color;
@@ -70,7 +73,7 @@ namespace GestureSign.ControlPanel.Dialogs
             if (_currentPointPatterns != null)
                 imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
 
-            if (_oldGestureName == null)
+            if (_oldGesture == null)
             {
                 NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
                 Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Title");
@@ -78,8 +81,10 @@ namespace GestureSign.ControlPanel.Dialogs
             else
             {
                 Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
-                txtGestureName.Text = _oldGestureName; //this.txtGestureName.Text
-
+                txtGestureName.Text = _oldGesture.Name; //this.txtGestureName.Text
+                var hotkey = ((Gesture)_oldGesture).Hotkey;
+                if (hotkey != null)
+                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
                 DrawGestureTextBlock.Visibility = ResetButton.Visibility = StackUpGestureButton.Visibility = Visibility.Collapsed;
 
                 txtGestureName.Focus();
@@ -91,7 +96,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
             //Non-renaming mode
-            if (_oldGestureName == null)
+            if (_oldGesture == null)
                 await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
         }
 
@@ -114,7 +119,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private void txtGestureName_TextChanged(object sender, TextChangedEventArgs e)
         {
             string newGestureName = txtGestureName.Text.Trim();
-            if (_oldGestureName == newGestureName || SimilarGestureName == newGestureName) return;
+            if (_oldGesture?.Name == newGestureName || SimilarGestureName == newGestureName) return;
 
             txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
         }
@@ -178,16 +183,30 @@ namespace GestureSign.ControlPanel.Dialogs
             if (_currentPointPatterns == null || _currentPointPatterns.Length == 0)
                 return false;
 
-            //Rename mode
-            if (_oldGestureName != null)
+            var newGesture = new Gesture()
             {
-                if (_oldGestureName.Equals(newGestureName)) return true;
-                if (GestureManager.Instance.GestureExists(newGestureName))
+                Name = newGestureName,
+                PointPatterns = _currentPointPatterns,
+                Hotkey = HotKeyTextBox.HotKey != null ?
+                  new Hotkey()
+                  {
+                      KeyCode = KeyInterop.VirtualKeyFromKey(HotKeyTextBox.HotKey.Key),
+                      ModifierKeys = (int)HotKeyTextBox.HotKey.ModifierKeys
+                  } : null
+            };
+
+            if (_oldGesture != null)
+            {
+                //Edit gesture
+                if (_oldGesture.Equals(newGesture)) return true;
+                if (!_oldGesture.Name.Equals(newGestureName) && GestureManager.Instance.GestureExists(newGestureName))
                 {
                     txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                     return false;
                 }
-                GestureManager.Instance.RenameGesture(_oldGestureName, newGestureName);
+                GestureManager.Instance.RenameGesture(_oldGesture.Name, newGestureName);
+                GestureManager.Instance.DeleteGesture(newGestureName);
+                GestureManager.Instance.AddGesture(newGesture);
             }
             else
             {
@@ -199,7 +218,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         return false;
                     }
                     // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(new Gesture(newGestureName, _currentPointPatterns));
+                    GestureManager.Instance.AddGesture(newGesture);
                 }
                 else
                 {
@@ -214,7 +233,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
                     GestureManager.Instance.DeleteGesture(newGestureName);
                     // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(new Gesture(newGestureName, _currentPointPatterns));
+                    GestureManager.Instance.AddGesture(newGesture);
                 }
             }
             GestureManager.Instance.GestureName = newGestureName;

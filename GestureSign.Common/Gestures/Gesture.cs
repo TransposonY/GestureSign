@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using ManagedWinapi;
 
 namespace GestureSign.Common.Gestures
 {
@@ -26,6 +27,15 @@ namespace GestureSign.Common.Gestures
 
         [DataMember]
         public PointPattern[] PointPatterns { get; set; }
+
+        [DataMember]
+        public Hotkey Hotkey { get; set; }
+
+        public bool Equals(Gesture other)
+        {
+            if (other == null) return false;
+            return Name != null && Name.Equals(other.Name) && Hotkey != null && Hotkey.Equals(other.Hotkey);
+        }
 
         #endregion
     }

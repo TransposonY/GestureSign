@@ -13,6 +13,7 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using GestureSign.Daemon.Input;
 using GestureSign.Daemon.Surface;
+using GestureSign.Daemon.Triggers;
 
 namespace GestureSign.Daemon
 {
@@ -46,6 +47,8 @@ namespace GestureSign.Daemon
 
                         TouchCapture.Instance.Load();
                         _surfaceForm = new SurfaceForm();
+                        SynchronizationContext uiContext = SynchronizationContext.Current;
+                        TriggerManager.Instance.Load(uiContext);
 
                         if (!StartTouchInputProvider()) return;
 
@@ -63,7 +66,6 @@ namespace GestureSign.Daemon
                         PluginManager.Instance.Load(hostControl);
                         TrayManager.Instance.Load();
 
-                        SynchronizationContext uiContext = SynchronizationContext.Current;
                         NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor(uiContext));
 
                         //if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)

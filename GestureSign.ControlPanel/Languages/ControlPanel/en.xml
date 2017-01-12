@@ -161,6 +161,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <StackUpGesture>Stack Up</StackUpGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
     <Reset>Reset</Reset>
+    <HotKey>HotKey</HotKey>
+    <HotKeyWatermark>Enter hot key</HotKeyWatermark>
     <Messages>
       <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
     </Messages>

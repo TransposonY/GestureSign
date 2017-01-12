@@ -12,7 +12,6 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Windows;
-using Action = GestureSign.Applications.Action;
 
 namespace GestureSign.Common.Applications
 {
@@ -119,12 +118,14 @@ namespace GestureSign.Common.Applications
                     else
                         limitNumberFlag |= e.Points.Count < userApplication.LimitNumberOfFingers;
                 }
-
-                IgnoredApplication ignoredApplication = app as IgnoredApplication;
-                if (ignoredApplication != null && ignoredApplication.IsEnabled)
+                else
                 {
-                    e.Cancel = true;
-                    return;
+                    IgnoredApplication ignoredApplication = app as IgnoredApplication;
+                    if (ignoredApplication != null && ignoredApplication.IsEnabled)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                 }
             }
             e.Cancel = limitNumberFlag ?? e.Points.Count == 1;
@@ -361,6 +362,13 @@ namespace GestureSign.Common.Applications
                         matchString.Equals(a.MatchString, StringComparison.CurrentCultureIgnoreCase) &&
                         matchUsing == a.MatchUsing &&
                         excludedApplication != a.Name).ToArray();
+        }
+
+        public SystemWindow GetForegroundApplications()
+        {
+            CaptureWindow = SystemWindow.ForegroundWindow;
+            RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
+            return CaptureWindow;
         }
 
         #endregion

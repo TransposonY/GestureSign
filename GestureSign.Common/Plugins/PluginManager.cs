@@ -46,19 +46,27 @@ namespace GestureSign.Common.Plugins
         protected void TouchCapture_GestureRecognized(object sender, RecognitionEventArgs e)
         {
             var touchCapture = (ITouchCapture)sender;
-            // Exit if we're teaching
-            if (touchCapture.Mode == CaptureMode.Training)
-                return;
+            ExecuteAction(touchCapture.Mode, e.GestureName, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
+        }
 
+        #endregion
+
+        #region Public Methods
+
+        public void ExecuteAction(CaptureMode mode, string gestureName, List<int> contactIdentifiers, List<Point> firstCapturedPoints, List<List<Point>> points)
+        {
+            // Exit if we're teaching
+            if (mode == CaptureMode.Training)
+                return;
             // Get action to be executed
-            IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(e.GestureName);
+            IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(gestureName);
             foreach (IAction executableAction in executableActions)
             {
                 // Exit if there is no action configured
                 if (executableAction == null || !executableAction.IsEnabled ||
-                    (touchCapture.Mode == CaptureMode.UserDisabled &&
+                    (mode == CaptureMode.UserDisabled &&
                     !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
-                   !Compute(executableAction.Condition, e.Points, e.ContactIdentifiers))
+                   !Compute(executableAction.Condition, points, contactIdentifiers))
                     continue;
 
                 // Locate the plugin associated with this action
@@ -71,13 +79,10 @@ namespace GestureSign.Common.Plugins
                 // Load action settings into plugin
                 pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
                 // Execute plugin process
-                pluginInfo.Plugin.Gestured(new PointInfo(e.FirstCapturedPoints, e.Points));
+                pluginInfo.Plugin.Gestured(new PointInfo(firstCapturedPoints, points));
             }
+
         }
-
-        #endregion
-
-        #region Public Methods
 
         public bool LoadPlugins(IHostControl host)
         {

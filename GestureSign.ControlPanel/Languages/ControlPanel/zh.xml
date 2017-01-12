@@ -167,6 +167,8 @@ http://transposony.coding.me/GestureSign/
     <StackUpGesture>叠加手势</StackUpGesture>
     <DrawGesture>请画出手势</DrawGesture>
     <Reset>重置</Reset>
+    <HotKey>快捷键</HotKey>
+    <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
     <Messages>
       <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
     </Messages>

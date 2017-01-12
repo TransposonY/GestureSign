@@ -64,11 +64,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
+    <Compile Include="Hotkey.cs" />
     <Compile Include="KeyboardKey.cs" />
-    <Compile Include="PInvokeTypes.cs" />
+    <Compile Include="Windows\EventDispatchingNativeWindow.cs" />
+    <Compile Include="Windows\PInvokeTypes.cs" />
     <Compile Include="SendKeysEscaper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemWindow.cs" />
+    <Compile Include="Windows\SystemWindow.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
