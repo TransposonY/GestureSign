@@ -11,7 +11,7 @@ namespace GestureSign.ControlPanel.ValidationRules
         {
             string newGestureName = value as string;
 
-            if (GestureManager.Instance.GestureExists(newGestureName.Trim()))
+            if (newGestureName != null && GestureManager.Instance.GestureExists(newGestureName.Trim()))
                 return new ValidationResult(false, string.Format(LocalizationProvider.Instance.GetTextValue("GestureDefinition.Messages.GestureExists"), newGestureName));
 
             return new ValidationResult(true, null);
