@@ -153,5 +153,22 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
             }
         }
+
+        private void ViewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem clickedMenuItem = (MenuItem)sender;
+            if (!clickedMenuItem.IsChecked)
+                clickedMenuItem.IsChecked = true;
+
+            MenuItem parentMenuItem = clickedMenuItem.Parent as MenuItem;
+            if (parentMenuItem != null)
+                foreach (var item in parentMenuItem.Items)
+                {
+                    var current = item as MenuItem;
+                    if (!ReferenceEquals(current, clickedMenuItem))
+                        if (current != null)
+                            current.IsChecked = false;
+                }
+        }
     }
 }

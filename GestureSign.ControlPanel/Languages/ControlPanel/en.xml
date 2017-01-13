@@ -137,6 +137,10 @@ Or click the button below to select the running applications.</GetMatchStringTip
   <Gesture>
     <Header>Gesture</Header>
     <GestureFile>Gesture File</GestureFile>
+    <Name>Name</Name>
+    <View>View</View>
+    <LargeIcons>Large icons</LargeIcons>
+    <Details>Details</Details>
     <ImportGesture>Import Gestures...</ImportGesture>
     <ExportGestures>Export Gestures...</ExportGestures>
     <Messages>

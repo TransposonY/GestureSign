@@ -9,81 +9,98 @@
              d:DesignHeight="400"
              d:DesignWidth="450">
     <UserControl.Resources>
-        <!--disable-mouseover-effects-->
-        <Style TargetType="ListBoxItem"
-               BasedOn="{StaticResource {x:Type ListBoxItem}}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border x:Name="Border"
-                                Background="{TemplateBinding Background}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter Margin="5, 0, 0, 0"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected"
-                                     Value="True">
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource AccentColorBrush}" />
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource AccentSelectedColorBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled"
-                                     Value="False">
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource GrayBrush7}" />
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsEnabled"
-                                               Value="False" />
-                                    <Condition Property="IsSelected"
-                                               Value="True" />
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource GrayBrush7}" />
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource AccentSelectedColorBrush}" />
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected"
-                                               Value="True" />
-                                    <Condition Property="Selector.IsSelectionActive"
-                                               Value="True" />
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="{DynamicResource AccentColorBrush2}" />
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                             x:Key="GestureItemProvider"
                             IsAsynchronous="True">
         </ObjectDataProvider>
+        <ItemsPanelTemplate x:Key="IconPanelTemplate">
+            <WrapPanel IsItemsHost="True" />
+        </ItemsPanelTemplate>
+        <DataTemplate x:Key="IconTemplate">
+            <StackPanel Width="260"
+                        Height="95"
+                        Margin="0,5">
+                <Image Source="{Binding Path=Image}"
+                       Margin="5,5,5,0"
+                       HorizontalAlignment="Center"
+                       Width="Auto"
+                       Height="65"
+                       Stretch="Uniform"
+                       StretchDirection="DownOnly" />
+                <TextBlock Text="{Binding Name}"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           Margin="0" />
+            </StackPanel>
+        </DataTemplate>
+        <GridView x:Key="GridView">
+            <GridViewColumn Header="{localization:LocalisedText Gesture.Header}">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Height="40"
+                               MaxWidth="220"
+                               Margin="5"
+                               Stretch="Uniform"
+                               StretchDirection="DownOnly"
+                               Source="{Binding Path=Image}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="{localization:LocalisedText Gesture.Name}"
+                            DisplayMemberBinding="{Binding Path=Name}" />
+            <GridViewColumn Header="{localization:LocalisedText GestureDefinition.HotKey}"
+                            DisplayMemberBinding="{Binding Path=HotKey}" />
+        </GridView>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
-        <ListBox x:Name="lstAvailableGestures"
-                 ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 SelectionChanged="lstAvailableGestures_SelectionChanged"
-                 Margin="0"
-                 SelectedValuePath="Name">
-            <ListBox.ContextMenu>
+        <ListView x:Name="lstAvailableGestures"
+                  ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionChanged="lstAvailableGestures_SelectionChanged"
+                  BorderThickness="0"
+                  SelectedValuePath="Name">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=LargeIconsMenuItem, Path=IsChecked}"
+                                     Value="True">
+                            <Setter Property="View"
+                                    Value="{x:Null}" />
+                            <Setter Property="ItemsPanel"
+                                    Value="{DynamicResource IconPanelTemplate}" />
+                            <Setter Property="ItemTemplate"
+                                    Value="{StaticResource IconTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=DetailsMenuItem, Path=IsChecked}"
+                                     Value="True">
+                            <Setter Property="View"
+                                    Value="{DynamicResource GridView}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Style>
+            <ListView.ContextMenu>
                 <ContextMenu>
+                    <MenuItem x:Name="ViewMenuItem"
+                              Header="{localization:LocalisedText Gesture.View}"
+                              FontSize="16">
+                        <MenuItem x:Name="LargeIconsMenuItem"
+                                  Header="{localization:LocalisedText Gesture.LargeIcons}"
+                                  FontSize="16"
+                                  IsCheckable="True"
+                                  IsChecked="True"
+                                  Click="ViewMenuItem_Click" />
+                        <MenuItem x:Name="DetailsMenuItem"
+                                  Header="{localization:LocalisedText Gesture.Details}"
+                                  FontSize="16"
+                                  IsCheckable="True"
+                                  Click="ViewMenuItem_Click" />
+                    </MenuItem>
+                    <Separator />
                     <MenuItem x:Name="ImportGestureMenuItem"
                               Header="{localization:LocalisedText Gesture.ImportGesture}"
                               Click="ImportGestureMenuItem_Click"
@@ -93,32 +110,8 @@
                               Click="ExportGestureMenuItem_Click"
                               FontSize="16" />
                 </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True"></WrapPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Width="260"
-                                Height="95"
-                                Margin="0,5">
-                        <Image Source="{Binding Image}"
-                               Margin="5,5,5,0"
-                               HorizontalAlignment="Center"
-                               Width="Auto"
-                               Height="65"
-                               Stretch="Uniform"
-                               StretchDirection="DownOnly" />
-                        <TextBlock Text="{Binding Name}"
-                                   FontSize="12"
-                                   HorizontalAlignment="Center"
-                                   Margin="0" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ListView.ContextMenu>
+        </ListView>
         <Button x:Name="NewGestureButton"
                 Style="{DynamicResource MetroCircleButtonStyle}"
                 HorizontalAlignment="Right"

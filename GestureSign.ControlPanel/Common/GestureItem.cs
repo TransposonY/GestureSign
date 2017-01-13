@@ -10,5 +10,6 @@ namespace GestureSign.ControlPanel.Common
     {
         public string Name { get; set; }
         public System.Windows.Media.ImageSource Image { get; set; }
+        public string HotKey { get; set; }
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using GestureSign.Common.Gestures;
 using GestureSign.ControlPanel.Common;
+using MahApps.Metro.Controls;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
@@ -40,12 +42,14 @@ namespace GestureSign.ControlPanel.ViewModel
             IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.Name);
 
             var color = (Color)Application.Current.Resources["HighlightColor"];
-            foreach (IGesture gesture in results)
+            foreach (var g in results)
             {
+                var gesture = (Gesture)g;
                 GestureItem newItem = new GestureItem()
                 {
                     Image = GestureImage.CreateImage(gesture.PointPatterns, new Size(65, 65), color),
-                    Name = gesture.Name
+                    Name = gesture.Name,
+                    HotKey = gesture.Hotkey != null ? new HotKey(KeyInterop.KeyFromVirtualKey(gesture.Hotkey.KeyCode), (ModifierKeys)gesture.Hotkey.ModifierKeys).ToString() : string.Empty
                 };
                 GestureItems.Add(newItem);
             }
