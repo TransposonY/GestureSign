@@ -49,7 +49,7 @@ namespace GestureSign.Daemon.Triggers
 
         private void GestureManager_OnLoadGesturesCompleted(object sender, EventArgs e)
         {
-            _synchronizationContext.Send(state => { LoadConfig(((GestureManager)sender).Gestures); }, null);
+            _synchronizationContext.Post(state => { LoadConfig(((GestureManager)sender).Gestures); }, null);
         }
 
         private void LoadConfig(IGesture[] gestures)
