@@ -2,8 +2,6 @@
 <Language DisplayName="English" Culture="en" Version="0.13">
   <Messages>
     <Error>Error</Error>
-    <TouchscreenNotFoundTitle>Error</TouchscreenNotFoundTitle>
-    <TouchscreenNotFound>Can not find Touchscreen!</TouchscreenNotFound>
     <CannotFindTouchInputProviderMessage>Can not find GestureSign.TouchInputProvider.exe.Try to redownload or reinstall GestureSign.</CannotFindTouchInputProviderMessage>
   </Messages>
   <TrayMenu>

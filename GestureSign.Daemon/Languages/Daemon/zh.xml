@@ -2,8 +2,6 @@
 <Language DisplayName="中文" Culture="zh-CN" Version="0.13">
   <Messages>
     <Error>错误</Error>
-    <TouchscreenNotFoundTitle>错误</TouchscreenNotFoundTitle>
-    <TouchscreenNotFound>未检测到触摸屏设备，本软件或无法正常使用！</TouchscreenNotFound>
     <CannotFindTouchInputProviderMessage>未找到组件GestureSign.TouchInputProvider.exe，请重新下载或安装本软件。</CannotFindTouchInputProviderMessage>
   </Messages>
   <TrayMenu>
