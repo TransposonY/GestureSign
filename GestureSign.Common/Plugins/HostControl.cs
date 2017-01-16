@@ -16,7 +16,7 @@ namespace GestureSign.Common.Plugins
 
 		public IApplicationManager _ApplicationManager;
         public IGestureManager _GestureManager;
-        public ITouchCapture _TouchCapture;
+        public IPointCapture _PointCapture;
         public IPluginManager _PluginManager;
         public ITrayManager _TrayManager;
 
@@ -39,9 +39,9 @@ namespace GestureSign.Common.Plugins
 		{
 			get { return _GestureManager; }
 		}
-        public ITouchCapture TouchCapture
+        public IPointCapture PointCapture
         {
-            get { return _TouchCapture; }
+            get { return _PointCapture; }
         }
 		public IPluginManager PluginManager
 		{

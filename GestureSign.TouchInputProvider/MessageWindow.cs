@@ -15,7 +15,7 @@ namespace GestureSign.TouchInputProvider
         private bool _yAxisDirection;
         private bool _isAxisCorresponds;
 
-        private List<RawTouchData> _outputTouchs = new List<RawTouchData>(1);
+        private List<RawData> _outputTouchs = new List<RawData>(1);
         private int _requiringContactCount;
 
         public event RawPointsDataMessageEventHandler PointsIntercepted;
@@ -128,7 +128,7 @@ namespace GestureSign.TouchInputProvider
                     if (contactCount != 0)
                     {
                         _requiringContactCount = contactCount;
-                        _outputTouchs = new List<RawTouchData>(contactCount);
+                        _outputTouchs = new List<RawData>(contactCount);
                     }
                     if (_requiringContactCount == 0) return;
                     int contactIdentifier = 0;
@@ -163,7 +163,7 @@ namespace GestureSign.TouchInputProvider
                             x = _xAxisDirection ? x : screenWidth - x;
                             y = _yAxisDirection ? y : screenHeight - y;
                             bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
-                            _outputTouchs.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
+                            _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x, y)));
 
                             if (--_requiringContactCount == 0) break;
                         }

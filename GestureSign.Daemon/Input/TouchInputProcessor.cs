@@ -33,7 +33,7 @@ namespace GestureSign.Daemon.Input
 
                 int count = BitConverter.ToInt32(buffer, 0);
                 buffer = new byte[size * count];
-                var rawTouchDatas = new List<RawTouchData>(count);
+                var rawTouchDatas = new List<RawData>(count);
                 server.Read(buffer, 0, buffer.Length);
 
                 for (int i = 0; i < count; i++)
@@ -43,7 +43,7 @@ namespace GestureSign.Daemon.Input
                     int x = BitConverter.ToInt32(buffer, size * i + 8);
                     int y = BitConverter.ToInt32(buffer, size * i + 12);
 
-                    rawTouchDatas.Add(new RawTouchData(tip, contactIdentifier, new Point(x, y)));
+                    rawTouchDatas.Add(new RawData(tip, contactIdentifier, new Point(x, y)));
                 }
 
                 _synchronizationContext.Post(o =>

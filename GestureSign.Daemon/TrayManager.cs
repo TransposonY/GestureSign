@@ -118,7 +118,7 @@ namespace GestureSign.Daemon
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    if (e.Clicks == 2 && TouchCapture.Instance.Mode != CaptureMode.Training)
+                    if (e.Clicks == 2 && PointCapture.Instance.Mode != CaptureMode.Training)
                         ToggleDisableGestures();
                     break;
                 case MouseButtons.Right:
@@ -135,7 +135,7 @@ namespace GestureSign.Daemon
 
         protected TrayManager()
         {
-            TouchCapture.Instance.ModeChanged += CaptureMode_Changed;
+            PointCapture.Instance.ModeChanged += CaptureMode_Changed;
             Application.ApplicationExit += Application_ApplicationExit;
         }
         #endregion
@@ -197,7 +197,7 @@ namespace GestureSign.Daemon
 
         public void ToggleDisableGestures()
         {
-            TouchCapture.Instance.ToggleUserDisableTouchCapture();
+            PointCapture.Instance.ToggleUserDisablePointCapture();
         }
 
         #endregion

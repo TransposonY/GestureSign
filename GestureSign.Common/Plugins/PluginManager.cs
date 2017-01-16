@@ -43,10 +43,10 @@ namespace GestureSign.Common.Plugins
 
         #region Events
 
-        protected void TouchCapture_GestureRecognized(object sender, RecognitionEventArgs e)
+        protected void PointCapture_GestureRecognized(object sender, RecognitionEventArgs e)
         {
-            var touchCapture = (ITouchCapture)sender;
-            ExecuteAction(touchCapture.Mode, e.GestureName, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
+            var pointCapture = (IPointCapture)sender;
+            ExecuteAction(pointCapture.Mode, e.GestureName, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
         }
 
         #endregion
@@ -211,7 +211,7 @@ namespace GestureSign.Common.Plugins
             LoadPlugins(host);
 
             if (host == null) return;
-            host.TouchCapture.GestureRecognized += TouchCapture_GestureRecognized;
+            host.PointCapture.GestureRecognized += PointCapture_GestureRecognized;
         }
 
         #endregion

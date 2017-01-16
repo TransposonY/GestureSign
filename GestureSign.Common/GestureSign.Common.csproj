@@ -98,11 +98,11 @@
     <Compile Include="ILoadable.cs" />
     <Compile Include="Input\CaptureMode.cs" />
     <Compile Include="Input\PointEventArgs.cs" />
-    <Compile Include="Input\RawTouchData.cs" />
+    <Compile Include="Input\RawData.cs" />
     <Compile Include="Input\CaptureState.cs" />
     <Compile Include="Input\RawPointsDataMessageEventHandler.cs" />
     <Compile Include="Input\RawPointsDataMessageEventArgs.cs" />
-    <Compile Include="Input\ITouchCapture.cs" />
+    <Compile Include="Input\IPointCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
     <Compile Include="InterProcessCommunication\IMessageProcessor.cs" />

@@ -3,9 +3,9 @@
 namespace GestureSign.Common.Input
 {
 
-    public struct RawTouchData
+    public struct RawData
     {
-        public RawTouchData(bool tip, int contactIdentifier, Point rawPointsData)
+        public RawData(bool tip, int contactIdentifier, Point rawPointsData)
         {
             this.Tip = tip;
             this.ContactIdentifier = contactIdentifier;

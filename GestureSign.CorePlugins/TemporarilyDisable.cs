@@ -49,7 +49,7 @@ namespace GestureSign.CorePlugins
 
 		public bool Gestured(PointInfo ActionPoint)
 		{
-		    _HostControl.TouchCapture.TemporarilyDisableCapture = true;
+		    _HostControl.PointCapture.TemporarilyDisableCapture = true;
 			_HostControl.TrayManager.ToggleDisableGestures();
 			return true;
 		}

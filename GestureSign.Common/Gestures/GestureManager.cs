@@ -74,13 +74,13 @@ namespace GestureSign.Common.Gestures
 
         #region Events
 
-        protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
+        protected void PointCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
-            var touchCapture = (ITouchCapture)sender;
+            var pointCapture = (IPointCapture)sender;
 
-            if (touchCapture.Mode == CaptureMode.Training)
+            if (pointCapture.Mode == CaptureMode.Training)
             {
-                if (touchCapture.StackUpGesture)
+                if (pointCapture.StackUpGesture)
                 {
                     _gestureLevel++;
                 }
@@ -100,7 +100,7 @@ namespace GestureSign.Common.Gestures
             var sourceGesture = _gestureLevel == 0 ? _Gestures : _gestureMatchResult;
             GestureName = GetGestureSetNameMatch(e.Points, sourceGesture, out _gestureMatchResult);
 
-            if (touchCapture.Mode != CaptureMode.Training)
+            if (pointCapture.Mode != CaptureMode.Training)
             {
                 if (_gestureMatchResult != null && _gestureMatchResult.Count != 0)
                 {
@@ -147,14 +147,14 @@ namespace GestureSign.Common.Gestures
 
         #region Public Methods
 
-        public void Load(ITouchCapture touchCapture)
+        public void Load(IPointCapture pointCapture)
         {
             // Shortcut method to control singleton instantiation
 
             // Wireup event to Touch capture class to catch points captured       
-            if (touchCapture != null)
+            if (pointCapture != null)
             {
-                touchCapture.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
+                pointCapture.BeforePointsCaptured += PointCapture_BeforePointsCaptured;
             }
         }
 

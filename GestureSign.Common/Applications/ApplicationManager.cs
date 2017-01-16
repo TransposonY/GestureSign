@@ -81,10 +81,10 @@ namespace GestureSign.Common.Applications
 
         #region Events
 
-        protected void TouchCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
+        protected void PointCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            var touchCapture = (ITouchCapture)sender;
-            if (touchCapture.Mode == CaptureMode.Training) return;
+            var pointCapture = (IPointCapture)sender;
+            if (pointCapture.Mode == CaptureMode.Training) return;
 
             if (Environment.OSVersion.Version.Major == 6)
             {
@@ -132,7 +132,7 @@ namespace GestureSign.Common.Applications
             e.BlockTouchInputThreshold = maxThreshold;
         }
 
-        protected void TouchCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
+        protected void PointCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             // Derive capture window from capture point
             CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
@@ -157,14 +157,14 @@ namespace GestureSign.Common.Applications
 
         #region Public Methods
 
-        public void Load(ITouchCapture touchCapture)
+        public void Load(IPointCapture pointCapture)
         {
             // Shortcut method to control singleton instantiation
-            // Consume Touch Capture events
-            if (touchCapture != null)
+            // Consume Point Capture events
+            if (pointCapture != null)
             {
-                touchCapture.CaptureStarted += new PointsCapturedEventHandler(TouchCapture_CaptureStarted);
-                touchCapture.BeforePointsCaptured += new PointsCapturedEventHandler(TouchCapture_BeforePointsCaptured);
+                pointCapture.CaptureStarted += new PointsCapturedEventHandler(PointCapture_CaptureStarted);
+                pointCapture.BeforePointsCaptured += new PointsCapturedEventHandler(PointCapture_BeforePointsCaptured);
             }
         }
 

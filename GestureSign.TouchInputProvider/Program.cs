@@ -70,14 +70,14 @@ namespace GestureSign.TouchInputProvider
             try
             {
                 const int size = 16;
-                int rawDataCount = e.RawTouchsData.Count;
+                int rawDataCount = e.RawData.Count;
 
                 byte[] buffer = new byte[rawDataCount * size + 4];
 
-                BitConverter.GetBytes(e.RawTouchsData.Count).CopyTo(buffer, 0);
+                BitConverter.GetBytes(e.RawData.Count).CopyTo(buffer, 0);
                 for (int i = 0; i < rawDataCount; i++)
                 {
-                    var current = e.RawTouchsData[i];
+                    var current = e.RawData[i];
                     BitConverter.GetBytes(current.Tip).CopyTo(buffer, i * size + 4);
                     BitConverter.GetBytes(current.ContactIdentifier).CopyTo(buffer, i * size + 8);
                     BitConverter.GetBytes(current.RawPoints.X).CopyTo(buffer, i * size + 12);

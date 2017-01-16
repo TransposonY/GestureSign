@@ -72,7 +72,7 @@ namespace GestureSign.Daemon.Triggers
             var point = new List<Point>(new[] { window.Rectangle.Location });
             foreach (var name in e.GestureName)
             {
-                PluginManager.Instance.ExecuteAction(TouchCapture.Instance.Mode,
+                PluginManager.Instance.ExecuteAction(PointCapture.Instance.Mode,
                     name,
                     new List<int>(new[] { 1 }),
                     point,

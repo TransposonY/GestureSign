@@ -9,9 +9,9 @@ namespace GestureSign.Common.Input
     public class RawPointsDataMessageEventArgs : EventArgs
     {
         #region Constructors
-        public RawPointsDataMessageEventArgs(List<RawTouchData> rawTouchsData)
+        public RawPointsDataMessageEventArgs(List<RawData> rawData)
         {
-            this.RawTouchsData = rawTouchsData;
+            this.RawData = rawData;
         }
 
 
@@ -19,7 +19,7 @@ namespace GestureSign.Common.Input
 
         #region Public Properties
 
-        public List<RawTouchData> RawTouchsData { get; set; }
+        public List<RawData> RawData { get; set; }
 
         #endregion
     }

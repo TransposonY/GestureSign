@@ -39,20 +39,17 @@ namespace GestureSign.Daemon
                     {
                         switch (message)
                         {
-                            //case "Guide":
-                            //    GestureSignDaemon.Input.TouchCapture.Instance.MessageWindow.PointsIntercepted += InitializationRatio.MessageWindow_PointsIntercepted;
-                            //    break;
                             case "StartTeaching":
-                                TouchCapture.Instance.Mode = CaptureMode.Training;
+                                PointCapture.Instance.Mode = CaptureMode.Training;
                                 break;
                             case "StopTraining":
-                                TouchCapture.Instance.Mode = CaptureMode.Normal;
+                                PointCapture.Instance.Mode = CaptureMode.Normal;
                                 break;
-                            case "EnableTouchCapture":
-                                TouchCapture.Instance.EnableTouchCapture();
+                            case "EnableCapture":
+                                PointCapture.Instance.EnablePointCapture();
                                 break;
-                            case "DisableTouchCapture":
-                                TouchCapture.Instance.DisableTouchCapture();
+                            case "DisableCapture":
+                                PointCapture.Instance.DisablePointCapture();
                                 break;
                             case "LoadApplications":
                                 ApplicationManager.Instance.LoadApplications().Wait();
@@ -70,7 +67,7 @@ namespace GestureSign.Daemon
                                 TrayManager.Instance.TrayIconVisible = false;
                                 break;
                             case "StackUpGesture":
-                                TouchCapture.Instance.StackUpGesture = true;
+                                PointCapture.Instance.StackUpGesture = true;
                                 break;
                         }
                     }, null);

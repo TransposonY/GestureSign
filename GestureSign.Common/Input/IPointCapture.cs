@@ -2,15 +2,15 @@
 
 namespace GestureSign.Common.Input
 {
-    public interface ITouchCapture
+    public interface IPointCapture
     {
         event PointsCapturedEventHandler AfterPointsCaptured;
         event PointsCapturedEventHandler BeforePointsCaptured;
         event PointsCapturedEventHandler CaptureStarted;
         event EventHandler CaptureEnded;
         event RecognitionEventHandler GestureRecognized;
-        void DisableTouchCapture();
-        void EnableTouchCapture();
+        void DisablePointCapture();
+        void EnablePointCapture();
         event PointsCapturedEventHandler PointCaptured;
         bool StackUpGesture { get; set; }
         bool TemporarilyDisableCapture { get; set; }

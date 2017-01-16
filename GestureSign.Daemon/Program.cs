@@ -45,21 +45,21 @@ namespace GestureSign.Daemon
                             LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
                         }
 
-                        TouchCapture.Instance.Load();
+                        PointCapture.Instance.Load();
                         _surfaceForm = new SurfaceForm();
                         SynchronizationContext uiContext = SynchronizationContext.Current;
                         TriggerManager.Instance.Load(uiContext);
 
                         if (!StartTouchInputProvider()) return;
 
-                        GestureManager.Instance.Load(TouchCapture.Instance);
-                        ApplicationManager.Instance.Load(TouchCapture.Instance);
+                        GestureManager.Instance.Load(PointCapture.Instance);
+                        ApplicationManager.Instance.Load(PointCapture.Instance);
                         // Create host control class and pass to plugins
                         HostControl hostControl = new HostControl()
                         {
                             _ApplicationManager = ApplicationManager.Instance,
                             _GestureManager = GestureManager.Instance,
-                            _TouchCapture = TouchCapture.Instance,
+                            _PointCapture = PointCapture.Instance,
                             _PluginManager = PluginManager.Instance,
                             _TrayManager = TrayManager.Instance
                         };
@@ -68,13 +68,6 @@ namespace GestureSign.Daemon
 
                         NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor(uiContext));
 
-                        //if (TouchCapture.Instance.MessageWindow.NumberOfTouchscreens == 0)
-                        //{
-                        //    MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFound"),
-                        //        LocalizationProvider.Instance.GetTextValue("Messages.TouchscreenNotFoundTitle"),
-                        //        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        //    //return;
-                        //}
                         Application.Run();
                     }
                     catch (Exception e)

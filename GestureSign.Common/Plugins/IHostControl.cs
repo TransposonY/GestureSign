@@ -17,7 +17,7 @@ namespace GestureSign.Common.Plugins
 		IPluginManager PluginManager { get; }
 		ITrayManager TrayManager { get; }
 
-        ITouchCapture TouchCapture { get; }
+        IPointCapture PointCapture { get; }
 		#region Methods
 
 		bool AllowEscapeKey { get; set; }

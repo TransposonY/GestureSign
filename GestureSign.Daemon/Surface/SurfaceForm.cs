@@ -43,10 +43,10 @@ namespace GestureSign.Daemon.Surface
         {
             InitializeForm();
 
-            TouchCapture.Instance.PointCaptured += MouseCapture_PointCaptured;
-            TouchCapture.Instance.CaptureEnded += MouseCapture_CaptureEnded;
-            TouchCapture.Instance.CaptureCanceled += MouseCapture_CaptureCanceled;
-            TouchCapture.Instance.CaptureStarted += Instance_CaptureStarted;
+            PointCapture.Instance.PointCaptured += PointCapture_PointCaptured;
+            PointCapture.Instance.CaptureEnded += PointCapture_CaptureEnded;
+            PointCapture.Instance.CaptureCanceled += PointCapture_CaptureCanceled;
+            PointCapture.Instance.CaptureStarted += Instance_CaptureStarted;
             AppConfig.ConfigChanged += (o, e) => { ResetSurface(); };
             // Respond to system event changes by reinitializing the form
             SystemEvents.DisplaySettingsChanged += (o, e) => { ResetSurface(); };
@@ -60,11 +60,11 @@ namespace GestureSign.Daemon.Surface
 
         #region Events
 
-        protected void MouseCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
+        protected void PointCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            var touchCapture = (ITouchCapture)sender;
-            if (touchCapture.Mode != CaptureMode.UserDisabled &&
-                touchCapture.State == CaptureState.Capturing &&
+            var pointCapture = (IPointCapture)sender;
+            if (pointCapture.Mode != CaptureMode.UserDisabled &&
+                pointCapture.State == CaptureState.Capturing &&
                 AppConfig.VisualFeedbackWidth > 0 &&
                 !(e.Points.Count == 1 && e.Points.First().Count == 1))
             {
@@ -77,13 +77,13 @@ namespace GestureSign.Daemon.Surface
             }
         }
 
-        protected void MouseCapture_CaptureEnded(object sender, EventArgs e)
+        protected void PointCapture_CaptureEnded(object sender, EventArgs e)
         {
             if (AppConfig.VisualFeedbackWidth > 0 && _lastStroke != null)
                 EndDraw();
         }
 
-        protected void MouseCapture_CaptureCanceled(object sender, PointsCapturedEventArgs e)
+        protected void PointCapture_CaptureCanceled(object sender, PointsCapturedEventArgs e)
         {
             if (AppConfig.VisualFeedbackWidth > 0)
                 EndDraw();
@@ -91,9 +91,9 @@ namespace GestureSign.Daemon.Surface
 
         private void Instance_CaptureStarted(object sender, PointsCapturedEventArgs e)
         {
-            var touchCapture = (ITouchCapture)sender;
+            var pointCapture = (IPointCapture)sender;
 
-            if (AppConfig.VisualFeedbackWidth <= 0 || touchCapture.Mode == CaptureMode.UserDisabled) return;
+            if (AppConfig.VisualFeedbackWidth <= 0 || pointCapture.Mode == CaptureMode.UserDisabled) return;
 
             if (_settingsChanged)
             {
