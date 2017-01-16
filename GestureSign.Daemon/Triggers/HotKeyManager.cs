@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using ManagedWinapi;
 
@@ -72,7 +73,8 @@ namespace GestureSign.Daemon.Triggers
             Hotkey hotkey = (Hotkey)sender;
             if (_hotKeyMap.ContainsKey(hotkey))
             {
-                OnTriggerFired(new GestureNameEventArgs(_hotKeyMap[hotkey]));
+                var window = ApplicationManager.Instance.GetForegroundApplications();
+                OnTriggerFired(new TriggerFiredEventArgs(_hotKeyMap[hotkey], window.Rectangle.Location));
             }
         }
     }

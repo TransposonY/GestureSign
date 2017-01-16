@@ -9,10 +9,10 @@ namespace GestureSign.Daemon.Triggers
 {
     public abstract class Trigger
     {
-        public event EventHandler<GestureNameEventArgs> TriggerFired;
+        public event EventHandler<TriggerFiredEventArgs> TriggerFired;
         public abstract bool LoadConfiguration(IGesture[] gestures);
 
-        protected virtual void OnTriggerFired(GestureNameEventArgs e)
+        protected virtual void OnTriggerFired(TriggerFiredEventArgs e)
         {
             TriggerFired?.Invoke(this, e);
         }

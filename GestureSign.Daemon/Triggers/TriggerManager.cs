@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
-using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Plugins;
 using GestureSign.Daemon.Input;
@@ -66,10 +65,9 @@ namespace GestureSign.Daemon.Triggers
             _triggerList.Add(newTrigger);
         }
 
-        private void Trigger_TriggerFired(object sender, GestureNameEventArgs e)
+        private void Trigger_TriggerFired(object sender, TriggerFiredEventArgs e)
         {
-            var window = ApplicationManager.Instance.GetForegroundApplications();
-            var point = new List<Point>(new[] { window.Rectangle.Location });
+            var point = new List<Point>(new[] { e.FiredPoint });
             foreach (var name in e.GestureName)
             {
                 PluginManager.Instance.ExecuteAction(PointCapture.Instance.Mode,
