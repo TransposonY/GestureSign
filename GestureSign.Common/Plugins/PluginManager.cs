@@ -60,13 +60,14 @@ namespace GestureSign.Common.Plugins
                 return;
             // Get action to be executed
             IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(gestureName);
+            if (executableActions == null) return;
             foreach (IAction executableAction in executableActions)
             {
                 // Exit if there is no action configured
                 if (executableAction == null || !executableAction.IsEnabled ||
                     (mode == CaptureMode.UserDisabled &&
-                    !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
-                   !Compute(executableAction.Condition, points, contactIdentifiers))
+                     !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
+                    !Compute(executableAction.Condition, points, contactIdentifiers))
                     continue;
 
                 // Locate the plugin associated with this action
@@ -81,7 +82,6 @@ namespace GestureSign.Common.Plugins
                 // Execute plugin process
                 pluginInfo.Plugin.Gestured(new PointInfo(firstCapturedPoints, points));
             }
-
         }
 
         public bool LoadPlugins(IHostControl host)
