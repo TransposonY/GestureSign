@@ -193,7 +193,7 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 Name = newGestureName,
                 PointPatterns = _currentPointPatterns,
-                MouseAction = (MouseActions)MouseActionComboBox.SelectedValue,
+                MouseAction = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None,
                 Hotkey = HotKeyTextBox.HotKey != null ?
                   new Hotkey()
                   {
