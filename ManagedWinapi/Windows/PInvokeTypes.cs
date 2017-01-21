@@ -7,6 +7,42 @@ using System.Runtime.InteropServices;
 // from www.pinvoke.net
 namespace ManagedWinapi.Windows
 {
+    /// <summary>
+    /// The Win32 MSG structure.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSG
+    {
+        /// <summary>
+        /// The window handle of the message.
+        /// </summary>
+        public IntPtr hwnd;
+
+        /// <summary>
+        /// The ID number for the message.
+        /// </summary>
+        public int message;
+
+        /// <summary>
+        /// The WParam of the message.
+        /// </summary>
+        public IntPtr wParam;
+
+        /// <summary>
+        /// The LParam of the message.
+        /// </summary>
+        public IntPtr lParam;
+
+        /// <summary>
+        /// The time of the message.
+        /// </summary>
+        public int time;
+
+        /// <summary>
+        /// The POINT of the message
+        /// </summary>
+        public POINT pt;
+    }
 
     /// <summary>
     /// Wrapper around the Winapi POINT type.

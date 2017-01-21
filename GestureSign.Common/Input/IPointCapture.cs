@@ -14,6 +14,7 @@ namespace GestureSign.Common.Input
         event PointsCapturedEventHandler PointCaptured;
         bool StackUpGesture { get; set; }
         bool TemporarilyDisableCapture { get; set; }
+        bool MouseCaptured { get; set; }
         CaptureState State { get; set; }
         CaptureMode Mode { get; set; }
     }

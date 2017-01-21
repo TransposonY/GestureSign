@@ -99,6 +99,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TrayManager.cs" />
+    <Compile Include="Triggers\MouseTrigger.cs" />
     <Compile Include="Triggers\TriggerFiredEventArgs.cs" />
     <Compile Include="Triggers\HotKeyManager.cs" />
     <Compile Include="Triggers\Trigger.cs" />

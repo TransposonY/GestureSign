@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Configuration;
 using System.Globalization;
 using System.Threading;
 using System.IO;
 using GestureSign.Common.InterProcessCommunication;
+using ManagedWinapi.Hooks;
 
 namespace GestureSign.Common.Configuration
 {
@@ -148,6 +145,18 @@ namespace GestureSign.Common.Configuration
             set
             {
                 SetValue("Timeout", value);
+            }
+        }
+
+        public static MouseActions DrawingButton
+        {
+            get
+            {
+                return (MouseActions)GetValue(nameof(DrawingButton), 0x200000);
+            }
+            set
+            {
+                SetValue(nameof(DrawingButton), (int)value);
             }
         }
 

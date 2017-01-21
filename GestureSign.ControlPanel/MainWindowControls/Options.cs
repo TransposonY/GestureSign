@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
@@ -10,15 +9,14 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
-using ManagedWinapi.Windows;
 using Microsoft.Win32.TaskScheduler;
 using MahApps.Metro.Controls.Dialogs;
+using ManagedWinapi.Hooks;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using File = System.IO.File;
@@ -58,6 +56,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
+                if (AppConfig.DrawingButton != MouseActions.None)
+                {
+                    MouseSwitch.IsChecked = true;
+                    DrawingButtonComboBox.SelectedValue = AppConfig.DrawingButton;
+                }
 
                 LanguageComboBox.ItemsSource = LocalizationProvider.Instance.GetLanguageList("ControlPanel");
                 LanguageComboBox.SelectedValue = AppConfig.CultureName;
@@ -338,6 +341,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (LanguageComboBox.SelectedValue == null) return;
             AppConfig.CultureName = (string)LanguageComboBox.SelectedValue;
+            AppConfig.Save();
+        }
+
+        private void MouseSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (MouseSwitch.IsChecked != null && MouseSwitch.IsChecked.Value)
+                DrawingButtonComboBox.SelectedValue = AppConfig.DrawingButton = MouseActions.Right;
+            else AppConfig.DrawingButton = MouseActions.None;
+            AppConfig.Save();
+        }
+
+        private void DrawingButtonComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            AppConfig.DrawingButton = (MouseActions)DrawingButtonComboBox.SelectedValue;
             AppConfig.Save();
         }
 

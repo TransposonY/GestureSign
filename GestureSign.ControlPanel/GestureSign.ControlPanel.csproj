@@ -121,6 +121,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\MouseActionDescription.cs" />
     <Compile Include="Common\ErrorReport.cs" />
     <Compile Include="Converters\Application2VisibilityConverter.cs" />
     <Compile Include="Converters\MatchUsing2VisibilityConverter.cs" />

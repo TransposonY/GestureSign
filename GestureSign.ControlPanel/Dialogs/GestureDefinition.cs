@@ -10,7 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using GestureSign.Common.Configuration;
+using GestureSign.ControlPanel.ViewModel;
 using ManagedWinapi;
+using ManagedWinapi.Hooks;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -68,6 +71,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (MouseActionDescription.DescriptionDict.ContainsKey(AppConfig.DrawingButton))
+                DrawingButtonTextBlock.Text = MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + "  +  ";
             _color = (Color)Application.Current.Resources["HighlightColor"];
 
             if (_currentPointPatterns != null)
@@ -80,6 +85,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
+                MouseActionComboBox.SelectedValue = _oldGesture.MouseAction;
                 Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
                 txtGestureName.Text = _oldGesture.Name; //this.txtGestureName.Text
                 var hotkey = ((Gesture)_oldGesture).Hotkey;
@@ -187,6 +193,7 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 Name = newGestureName,
                 PointPatterns = _currentPointPatterns,
+                MouseAction = (MouseActions)MouseActionComboBox.SelectedValue,
                 Hotkey = HotKeyTextBox.HotKey != null ?
                   new Hotkey()
                   {

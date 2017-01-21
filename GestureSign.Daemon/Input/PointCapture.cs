@@ -14,6 +14,7 @@ using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Daemon.Filtration;
 using GestureSign.PointPatterns;
+using ManagedWinapi.Hooks;
 using ManagedWinapi.Windows;
 using Timer = System.Windows.Forms.Timer;
 
@@ -26,7 +27,8 @@ namespace GestureSign.Daemon.Input
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
-        private readonly PointEventTranslator _pointEventTranslator = new PointEventTranslator();
+        private readonly PointEventTranslator _pointEventTranslator;
+        private readonly InputProvider _inputProvider;
         private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly Timer _timeoutTimer = new Timer();
@@ -57,6 +59,13 @@ namespace GestureSign.Daemon.Input
         #endregion
 
         #region Public Instance Properties
+
+        public bool MouseCaptured { get; set; }
+
+        public LowLevelMouseHook MouseHook
+        {
+            get { return _inputProvider.LowLevelMouseHook; }
+        }
 
         public bool StackUpGesture { get; set; }
 
@@ -171,10 +180,8 @@ namespace GestureSign.Daemon.Input
         protected PointCapture()
         {
             _pointerInputTargetWindow = new PointerInputTargetWindow();
-            var inputProvider = new InputProvider();
-
-            inputProvider.TouchInputProcessor.PointsIntercepted += _pointEventTranslator.TranslateTouchEvent;
-
+            _inputProvider = new InputProvider();
+            _pointEventTranslator = new PointEventTranslator(_inputProvider);
             _pointEventTranslator.PointDown += (PointEventTranslator_PointDown);
             _pointEventTranslator.PointUp += (PointEventTranslator_PointUp);
             _pointEventTranslator.PointMove += (PointEventTranslator_PointMove);

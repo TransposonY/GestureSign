@@ -64,6 +64,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
+    <Compile Include="Hooks\Hook.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Hooks\LowLevelHook.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Hotkey.cs" />
     <Compile Include="KeyboardKey.cs" />
     <Compile Include="Windows\EventDispatchingNativeWindow.cs" />

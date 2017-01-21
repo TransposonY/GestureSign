@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using ManagedWinapi;
+using ManagedWinapi.Hooks;
 
 namespace GestureSign.Common.Gestures
 {
@@ -30,6 +31,9 @@ namespace GestureSign.Common.Gestures
 
         [DataMember]
         public Hotkey Hotkey { get; set; }
+
+        [DataMember]
+        public MouseActions MouseAction { get; set; }
 
         public bool Equals(Gesture other)
         {

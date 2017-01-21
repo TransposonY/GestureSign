@@ -143,6 +143,16 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Details>Details</Details>
     <ImportGesture>Import Gestures...</ImportGesture>
     <ExportGestures>Export Gestures...</ExportGestures>
+    <MouseActions>
+      <None>None</None>
+      <WheelForward>Wheel Forward</WheelForward>
+      <WheelBackward>Wheel Backward</WheelBackward>
+      <Left>Left Button</Left>
+      <Right>Right Button</Right>
+      <Middle>Middle Button</Middle>
+      <XButton1>XButton1</XButton1>
+      <XButton2>XButton2</XButton2>
+    </MouseActions>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteGestureConfirm>Are you sure?</DeleteGestureConfirm>
@@ -167,6 +177,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Reset>Reset</Reset>
     <HotKey>HotKey</HotKey>
     <HotKeyWatermark>Enter hot key</HotKeyWatermark>
+    <Mouse>Mouse</Mouse>
     <Messages>
       <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
     </Messages>
@@ -208,6 +219,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <OffLabel>Off</OffLabel>
     <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
     <Timeout>Gesture Timeout (ms)</Timeout>
+    <MouseGesture>Mouse Gesture</MouseGesture>
+    <DrawingButton>Draw gesture by holding: </DrawingButton>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

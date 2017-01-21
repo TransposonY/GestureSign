@@ -149,6 +149,16 @@ http://transposony.coding.me/GestureSign/
     <Details>详细信息</Details>
     <ImportGesture>导入手势文件</ImportGesture>
     <ExportGestures>导出手势数据</ExportGestures>
+    <MouseActions>
+      <None>未设置</None>
+      <WheelForward>向前滚动</WheelForward>
+      <WheelBackward>向后滚动</WheelBackward>
+      <Left>左键</Left>
+      <Right>右键</Right>
+      <Middle>中键</Middle>
+      <XButton1>X1键</XButton1>
+      <XButton2>X2键</XButton2>
+    </MouseActions>
     <Messages>
       <DeleteConfirmTitle>删除手势</DeleteConfirmTitle>
       <DeleteGestureConfirm>确定删除这手势吗？</DeleteGestureConfirm>
@@ -173,6 +183,7 @@ http://transposony.coding.me/GestureSign/
     <Reset>重置</Reset>
     <HotKey>快捷键</HotKey>
     <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
+    <Mouse>鼠标键</Mouse>
     <Messages>
       <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
     </Messages>
@@ -214,6 +225,8 @@ http://transposony.coding.me/GestureSign/
     <OffLabel>关</OffLabel>
     <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
     <Timeout>手势超时 (毫秒)</Timeout>
+    <MouseGesture>鼠标手势</MouseGesture>
+    <DrawingButton>鼠标手势键：</DrawingButton>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>
