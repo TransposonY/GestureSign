@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Daemon.Input;
@@ -18,32 +16,29 @@ namespace GestureSign.Daemon.Triggers
             PointCapture.Instance.MouseHook.MouseWheel += MouseHook_MouseWheel;
         }
 
-        private void MouseHook_MouseWheel(object sender, MouseEventArgs e)
+        private void MouseHook_MouseWheel(LowLevelMouseMessage e, ref bool handled)
         {
-            if (!IsCapturing()) return;
-
-            MouseActions wheelAction = e.Delta > 0 ? MouseActions.WheelForward :
-                e.Delta < 0 ? MouseActions.WheelBackward : MouseActions.None;
-            if (_actionMap.ContainsKey(wheelAction))
+            if (PointCapture.Instance.State == CaptureState.CapturingInvalid || PointCapture.Instance.State == CaptureState.TriggerFired)
             {
-                OnTriggerFired(new TriggerFiredEventArgs(_actionMap[wheelAction], e.Location));
+                MouseActions wheelAction = e.MouseData > 0 ? MouseActions.WheelForward : e.MouseData < 0 ? MouseActions.WheelBackward : MouseActions.None;
+                if (_actionMap.ContainsKey(wheelAction))
+                {
+                    OnTriggerFired(new TriggerFiredEventArgs(_actionMap[wheelAction], e.Point));
+                    PointCapture.Instance.State = CaptureState.TriggerFired;
+                    handled = PointCapture.Instance.Mode != CaptureMode.UserDisabled;
+                }
             }
         }
 
-        private void MouseHook_MouseUp(object sender, MouseEventArgs e)
+        private void MouseHook_MouseUp(LowLevelMouseMessage e, ref bool handled)
         {
-            if (!IsCapturing()) return;
-
-            if (_actionMap.ContainsKey((MouseActions)e.Button))
-            {
-                OnTriggerFired(new TriggerFiredEventArgs(_actionMap[(MouseActions)e.Button], e.Location));
-            }
-        }
-
-        private bool IsCapturing()
-        {
-            return PointCapture.Instance.State == CaptureState.Capturing &&
-                   PointCapture.Instance.InputPoints.FirstOrDefault()?.Count == 1;
+            if (PointCapture.Instance.State == CaptureState.CapturingInvalid || PointCapture.Instance.State == CaptureState.TriggerFired)
+                if (_actionMap.ContainsKey((MouseActions)e.Button))
+                {
+                    OnTriggerFired(new TriggerFiredEventArgs(_actionMap[(MouseActions)e.Button], e.Point));
+                    PointCapture.Instance.State = CaptureState.TriggerFired;
+                    handled = PointCapture.Instance.Mode != CaptureMode.UserDisabled;
+                }
         }
 
         public override bool LoadConfiguration(IGesture[] gestures)

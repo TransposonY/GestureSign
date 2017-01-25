@@ -100,12 +100,12 @@ namespace GestureSign.Common.Applications
             }
 
             CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
-            var applicationFromWindow = GetApplicationFromWindow(CaptureWindow);
+            RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
 
             int maxThreshold = 0;
             bool? limitNumberFlag = null;
 
-            foreach (IApplication app in applicationFromWindow)
+            foreach (IApplication app in RecognizedApplication)
             {
                 UserApplication userApplication = app as UserApplication;
                 if (userApplication != null)

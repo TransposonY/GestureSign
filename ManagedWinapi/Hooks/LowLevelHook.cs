@@ -178,16 +178,16 @@ namespace ManagedWinapi.Hooks
         public event LowLevelMessageCallback MessageIntercepted;
 
         /// <summary>Occurs when the mouse pointer is moved.</summary>
-        public event EventHandler<MouseEventArgs> MouseMove;
+        public event LowLevelMouseMessageCallback MouseMove;
 
         /// <summary>Occurs when a mouse button is pressed.</summary>
-        public event EventHandler<MouseEventArgs> MouseDown;
+        public event LowLevelMouseMessageCallback MouseDown;
 
         /// <summary>Occurs when a mouse button is released.</summary>
-        public event EventHandler<MouseEventArgs> MouseUp;
+        public event LowLevelMouseMessageCallback MouseUp;
 
         /// <summary>Occurs when the mouse wheel moves.</summary>
-        public event EventHandler<MouseEventArgs> MouseWheel;
+        public event LowLevelMouseMessageCallback MouseWheel;
 
         /// <summary>
         /// Represents a method that handles an intercepted mouse action.
@@ -219,9 +219,9 @@ namespace ManagedWinapi.Hooks
             {
                 MSLLHOOKSTRUCT llh = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 
-                fireMouseEvents(wParam, llh.pt, llh.mouseData);
-
                 bool handled = false;
+                fireMouseEvents(wParam, llh.pt, llh.mouseData, llh.flags, llh.time, llh.dwExtraInfo, ref handled);
+
                 if (MouseIntercepted != null)
                 {
                     MouseIntercepted((int)wParam, llh.pt, llh.mouseData, llh.flags, llh.time, llh.dwExtraInfo, ref handled);
@@ -239,7 +239,7 @@ namespace ManagedWinapi.Hooks
             return 0;
         }
 
-        private void fireMouseEvents(IntPtr wParam, POINT pt, int mouseData)
+        private void fireMouseEvents(IntPtr wParam, POINT pt, int mouseData, int flags, int time, IntPtr dwExtraInfo, ref bool handled)
         {
             const int WM_MOUSEMOVE = 0x200,
                 WM_LBUTTONDOWN = 0x201, WM_LBUTTONUP = 0x202,
@@ -252,53 +252,53 @@ namespace ManagedWinapi.Hooks
             {
                 case WM_MOUSEMOVE:
                     if (MouseMove != null)
-                        MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, pt.X, pt.Y, 0));
+                        MouseMove(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo), ref handled);
                     break;
 
                 case WM_LBUTTONDOWN:
                     if (MouseDown != null)
-                        MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, pt.X, pt.Y, 0));
+                        MouseDown(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Left), ref handled);
                     break;
                 case WM_LBUTTONUP:
                     if (MouseUp != null)
-                        MouseUp(this, new MouseEventArgs(MouseButtons.Left, 1, pt.X, pt.Y, 0));
+                        MouseUp(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Left), ref handled);
                     break;
 
                 case WM_RBUTTONDOWN:
                     if (MouseDown != null)
-                        MouseDown(this, new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
+                        MouseDown(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Right), ref handled);
                     break;
                 case WM_RBUTTONUP:
                     if (MouseUp != null)
-                        MouseUp(this, new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
+                        MouseUp(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Right), ref handled);
                     break;
 
                 case WM_MBUTTONDOWN:
                     if (MouseDown != null)
-                        MouseDown(this, new MouseEventArgs(MouseButtons.Middle, 1, pt.X, pt.Y, 0));
+                        MouseDown(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Middle), ref handled);
                     break;
                 case WM_MBUTTONUP:
                     if (MouseUp != null)
-                        MouseUp(this, new MouseEventArgs(MouseButtons.Middle, 1, pt.X, pt.Y, 0));
+                        MouseUp(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, MouseButtons.Middle), ref handled);
                     break;
 
                 case WM_MOUSEWHEEL:
                     if (MouseWheel != null)
-                        MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, pt.X, pt.Y, hiWord(mouseData)));
+                        MouseWheel(new LowLevelMouseMessage((int)wParam, pt, hiWord(mouseData), flags, time, dwExtraInfo), ref handled);
                     break;
 
                 case WM_XBUTTONDOWN:
                     if (MouseDown != null)
                     {
                         MouseButtons xbutton = hiWord(mouseData) == 1 ? MouseButtons.XButton1 : MouseButtons.XButton2;
-                        MouseDown(this, new MouseEventArgs(xbutton, 1, pt.X, pt.Y, 0));
+                        MouseDown(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, xbutton), ref handled);
                     }
                     break;
                 case WM_XBUTTONUP:
                     if (MouseUp != null)
                     {
                         MouseButtons xbutton = hiWord(mouseData) == 1 ? MouseButtons.XButton1 : MouseButtons.XButton2;
-                        MouseUp(this, new MouseEventArgs(xbutton, 1, pt.X, pt.Y, 0));
+                        MouseUp(new LowLevelMouseMessage((int)wParam, pt, mouseData, flags, time, dwExtraInfo, xbutton), ref handled);
                     }
                     break;
             }
@@ -386,6 +386,8 @@ namespace ManagedWinapi.Hooks
         public abstract void ReplayEvent();
     }
 
+    public delegate void LowLevelMouseMessageCallback(LowLevelMouseMessage evt, ref bool handled);
+
     /// <summary>
     /// A message that has been intercepted by a low-level mouse hook
     /// </summary>
@@ -393,15 +395,17 @@ namespace ManagedWinapi.Hooks
     {
         private POINT pt;
         private int mouseData;
+        private readonly MouseButtons _button;
 
         /// <summary>
         /// Creates a new low-level mouse message.
         /// </summary>
-        public LowLevelMouseMessage(int msg, POINT pt, int mouseData, int flags, int time, IntPtr dwExtraInfo)
+        public LowLevelMouseMessage(int msg, POINT pt, int mouseData, int flags, int time, IntPtr dwExtraInfo, MouseButtons button = MouseButtons.None)
             : base(msg, flags, time, dwExtraInfo)
         {
             this.pt = pt;
             this.mouseData = mouseData;
+            _button = button;
         }
 
         /// <summary>
@@ -418,6 +422,14 @@ namespace ManagedWinapi.Hooks
         public int MouseData
         {
             get { return mouseData; }
+        }
+
+        public MouseButtons Button
+        {
+            get
+            {
+                return this._button;
+            }
         }
 
         /// <summary>
@@ -448,6 +460,10 @@ namespace ManagedWinapi.Hooks
                         return (uint)MouseEventFlagValues.MIDDLEDOWN;
                     case WM_MBUTTONUP:
                         return (uint)MouseEventFlagValues.MIDDLEUP;
+                    case WM_XBUTTONDOWN:
+                        return (uint)MouseEventFlagValues.XDOWN;
+                    case WM_XBUTTONUP:
+                        return (uint)MouseEventFlagValues.XUP;
                     case WM_MBUTTONDBLCLK:
                     case WM_RBUTTONDBLCLK:
                     case WM_LBUTTONDBLCLK:
@@ -480,7 +496,9 @@ namespace ManagedWinapi.Hooks
             RIGHTDOWN = 0x00000008,
             RIGHTUP = 0x00000010,
             WHEEL = 0x00000800,
-            HWHEEL = 0x00001000
+            HWHEEL = 0x00001000,
+            XDOWN = 0x0080,
+            XUP = 0x0100
         }
 
         const int WM_MOUSEMOVE = 0x200;
@@ -495,6 +513,8 @@ namespace ManagedWinapi.Hooks
         const int WM_MBUTTONDBLCLK = 0x209;
         const int WM_MOUSEWHEEL = 0x20A;
         const int WM_MOUSEHWHEEL = 0x020E;
+        const int WM_XBUTTONDOWN = 0x020B;
+        const int WM_XBUTTONUP = 0x020C;
         #endregion
     }
 

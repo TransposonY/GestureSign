@@ -4,6 +4,8 @@
     {
         Ready,
         Disabled,
-        Capturing
+        Capturing,
+        CapturingInvalid,
+        TriggerFired
     }
 }

@@ -47,29 +47,31 @@ namespace GestureSign.Daemon.Input
 
         #region Private Methods
 
-        private void LowLevelMouseHook_MouseUp(object sender, MouseEventArgs e)
+        private void LowLevelMouseHook_MouseUp(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if ((MouseActions)e.Button == AppConfig.DrawingButton)
+            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
+                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+                OnPointUp(args);
                 PointCapture.Instance.MouseCaptured = false;
-                OnPointUp(new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, e.Location) })));
+                handled = args.Handled;
             }
         }
 
-        private void LowLevelMouseHook_MouseMove(object sender, MouseEventArgs e)
+        private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if (PointCapture.Instance.State == CaptureState.Capturing)
-            {
-                OnPointMove(new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, e.Location) })));
-            }
+            var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+            OnPointMove(args);
         }
 
-        private void LowLevelMouseHook_MouseDown(object sender, MouseEventArgs e)
+        private void LowLevelMouseHook_MouseDown(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if ((MouseActions)e.Button == AppConfig.DrawingButton)
+            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
                 PointCapture.Instance.MouseCaptured = true;
-                OnPointDown(new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, e.Location) })));
+                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+                OnPointDown(args);
+                handled = args.Handled;
             }
         }
 
