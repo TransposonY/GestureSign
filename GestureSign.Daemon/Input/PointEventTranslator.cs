@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using ManagedWinapi.Hooks;
@@ -11,6 +10,8 @@ namespace GestureSign.Daemon.Input
     public class PointEventTranslator
     {
         private int _lastPointsCount;
+
+        public LowLevelMouseMessage OriginalMessage;
 
         internal PointEventTranslator(InputProvider inputProvider)
         {
@@ -51,7 +52,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
-                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
                 OnPointUp(args);
                 PointCapture.Instance.MouseCaptured = false;
                 handled = args.Handled;
@@ -60,7 +61,7 @@ namespace GestureSign.Daemon.Input
 
         private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+            var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
             OnPointMove(args);
         }
 
@@ -68,8 +69,9 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
+                OriginalMessage = mouseMessage;
                 PointCapture.Instance.MouseCaptured = true;
-                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }), mouseMessage);
+                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
                 OnPointDown(args);
                 handled = args.Handled;
             }

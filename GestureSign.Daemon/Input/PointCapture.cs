@@ -249,7 +249,7 @@ namespace GestureSign.Daemon.Input
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                _originalMessage = e.MouseMessage;
+                _originalMessage = ((PointEventTranslator)sender).OriginalMessage;
 
                 // Try to begin capture process, if capture started then don't notify other applications of a Point event, otherwise do
                 if (!TryBeginCapture(e.RawData))

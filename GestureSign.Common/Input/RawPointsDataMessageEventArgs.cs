@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ManagedWinapi.Hooks;
 
 namespace GestureSign.Common.Input
 {
@@ -8,10 +7,9 @@ namespace GestureSign.Common.Input
     {
         #region Constructors
 
-        public RawPointsDataMessageEventArgs(List<RawData> rawData, LowLevelMouseMessage mouseMessage = null)
+        public RawPointsDataMessageEventArgs(List<RawData> rawData)
         {
             this.RawData = rawData;
-            MouseMessage = mouseMessage;
         }
 
 
@@ -20,8 +18,6 @@ namespace GestureSign.Common.Input
         #region Public Properties
 
         public List<RawData> RawData { get; set; }
-
-        public LowLevelMouseMessage MouseMessage { get; set; }
 
         public bool Handled { get; set; }
 
