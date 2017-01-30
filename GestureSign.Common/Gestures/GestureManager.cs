@@ -181,14 +181,13 @@ namespace GestureSign.Common.Gestures
                 {
                     // Load gestures from file, create empty list if load failed
                     var gestures = FileManager.LoadObject<List<Gesture>>(
-                       Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                       "GestureSign", "Gestures.gest"), true);
+                       Path.Combine(AppConfig.ApplicationDataPath, "Gestures.gest"), true);
 
                     if (gestures != null)
                     {
                         if (gestures.Count != 0 && gestures[0].PointPatterns == null)
                         {
-                            List<LegacyGesture> legacyGestures = FileManager.LoadObject<List<LegacyGesture>>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.gest"), true);
+                            List<LegacyGesture> legacyGestures = FileManager.LoadObject<List<LegacyGesture>>(Path.Combine(AppConfig.ApplicationDataPath, "Gestures.gest"), true);
 
                             foreach (var gesture in legacyGestures)
                             {
@@ -220,7 +219,7 @@ namespace GestureSign.Common.Gestures
             try
             {
                 // Save gestures to file
-                bool flag = Configuration.FileManager.SaveObject(Gestures, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Gestures.gest"));
+                bool flag = Configuration.FileManager.SaveObject(Gestures, Path.Combine(AppConfig.ApplicationDataPath, "Gestures.gest"));
                 if (flag)
                 {
                     GestureSaved?.Invoke(this, EventArgs.Empty);

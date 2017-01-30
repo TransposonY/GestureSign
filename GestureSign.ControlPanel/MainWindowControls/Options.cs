@@ -296,7 +296,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign"));
+            Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
         }
 
         private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
@@ -360,7 +360,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {
-            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+            string logPath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
 
             StringBuilder result = new StringBuilder();
 

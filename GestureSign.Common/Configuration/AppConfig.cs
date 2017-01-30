@@ -14,9 +14,11 @@ namespace GestureSign.Common.Configuration
         static readonly System.Threading.Timer Timer;
         public static event EventHandler ConfigChanged;
 
-        private static readonly string Path;
+        private static readonly string ConfigPath;
 
         private static readonly ExeConfigurationFileMap ExeMap;
+
+        public static string ApplicationDataPath { get; }
 
         public static System.Drawing.Color VisualFeedbackColor
         {
@@ -165,16 +167,16 @@ namespace GestureSign.Common.Configuration
 #if uiAccess
             UiAccess = true;
 #endif
-            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
-            var configFolder = System.IO.Path.GetDirectoryName(Path);
+            ConfigPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
+            ApplicationDataPath = System.IO.Path.GetDirectoryName(ConfigPath);
 
-            if (!Directory.Exists(configFolder))
-                Directory.CreateDirectory(configFolder);
+            if (!Directory.Exists(ApplicationDataPath))
+                Directory.CreateDirectory(ApplicationDataPath);
 
             ExeMap = new ExeConfigurationFileMap
             {
-                ExeConfigFilename = Path,
-                RoamingUserConfigFilename = Path,
+                ExeConfigFilename = ConfigPath,
+                RoamingUserConfigFilename = ConfigPath,
                 LocalUserConfigFilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GestureSign\GestureSign.config")
             };
 
@@ -187,7 +189,7 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                FileManager.WaitFile(Path);
+                FileManager.WaitFile(ConfigPath);
 
                 _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
                 // ConfigurationManager.RefreshSection("appSettings");
@@ -207,7 +209,7 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                FileManager.WaitFile(Path);
+                FileManager.WaitFile(ConfigPath);
                 // Save the configuration file.    
                 _config.AppSettings.SectionInformation.ForceSave = true;
                 _config.Save(ConfigurationSaveMode.Modified);

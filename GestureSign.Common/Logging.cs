@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using GestureSign.Common.Configuration;
 
 namespace GestureSign.Common
 {
@@ -36,7 +37,7 @@ namespace GestureSign.Common
             bool result;
             try
             {
-                _logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.log");
+                _logFilePath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign.log");
                 CheckLogSize(_logFilePath);
                 var sw = new StreamWriterWithTimestamp(new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) { AutoFlush = true };
                 Console.SetOut(sw);

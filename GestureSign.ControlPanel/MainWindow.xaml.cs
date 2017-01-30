@@ -107,7 +107,7 @@ namespace GestureSign.ControlPanel
 
             if (dialogResult == MessageDialogResult.FirstAuxiliary)
             {
-                string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+                string logPath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
 
                 File.WriteAllText(logPath, result.ToString());
                 Process.Start("notepad.exe", logPath)?.WaitForInputIdle();

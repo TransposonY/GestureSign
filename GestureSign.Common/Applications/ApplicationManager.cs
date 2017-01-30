@@ -213,7 +213,7 @@ namespace GestureSign.Common.Applications
             bool notice = (bool)state;
             // Save application list
             bool flag = FileManager.SaveObject(
-                 _Applications, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign", "Actions.act"), true);
+                 _Applications, Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true);
             if (flag && notice) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
 
         }
@@ -225,9 +225,7 @@ namespace GestureSign.Common.Applications
                 // Load application list from file
                 _Applications =
                     FileManager.LoadObject<List<IApplication>>(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign",
-                            "Actions.act"),
-                        true, true);
+                        Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true, true);
                 return _Applications != null;
             });
         }
