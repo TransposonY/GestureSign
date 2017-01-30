@@ -119,12 +119,15 @@ namespace GestureSign.ControlPanel.Common
                         result.Append(streamReader.ReadToEnd());
                 }
             }
+            result.AppendLine();
+            result.AppendLine();
 
             EventLog logs = new EventLog { Log = "Application" };
 
             foreach (EventLogEntry entry in logs.Entries)
             {
-                if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source))
+                if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source) &&
+                    entry.Message.IndexOf("GestureSign", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     result.AppendLine(entry.TimeWritten.ToString(CultureInfo.InvariantCulture));
                     result.AppendLine(entry.Message.Replace("\n", "\r\n"));
