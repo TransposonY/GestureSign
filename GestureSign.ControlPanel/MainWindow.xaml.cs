@@ -107,10 +107,11 @@ namespace GestureSign.ControlPanel
 
             if (dialogResult == MessageDialogResult.FirstAuxiliary)
             {
-                string logPath = Path.Combine(Path.GetTempPath(), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+                string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
 
                 File.WriteAllText(logPath, result.ToString());
-                Process.Start("notepad.exe", logPath);
+                Process.Start("notepad.exe", logPath)?.WaitForInputIdle();
+                File.Delete(logPath);
 
                 dialogResult = this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
                     LocalizationProvider.Instance.GetTextValue("Options.SendLog"),

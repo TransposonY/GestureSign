@@ -36,7 +36,8 @@ namespace GestureSign.Common
             bool result;
             try
             {
-                _logFilePath = Path.Combine(Path.GetTempPath(), "GestureSign.log");
+                _logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.log");
+                CheckLogSize(_logFilePath);
                 var sw = new StreamWriterWithTimestamp(new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) { AutoFlush = true };
                 Console.SetOut(sw);
                 Console.SetError(sw);
@@ -55,6 +56,16 @@ namespace GestureSign.Common
             if (!(e is ObjectDisposedException))
             {
                 Console.WriteLine(e);
+                Console.WriteLine();
+            }
+        }
+
+        private static void CheckLogSize(string logPath)
+        {
+            if (File.Exists(logPath))
+            {
+                if (new FileInfo(logPath).Length > 1024 * 1024)
+                    File.Delete(logPath);
             }
         }
     }

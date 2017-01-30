@@ -360,7 +360,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {
-            string logPath = Path.Combine(Path.GetTempPath(), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
 
             StringBuilder result = new StringBuilder();
 
@@ -380,7 +380,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
             });
             await controller.CloseAsync();
 
-            Process.Start("notepad.exe", logPath);
+            Process.Start("notepad.exe", logPath)?.WaitForInputIdle();
+            File.Delete(logPath);
 
             var dialogResult =
                 UIHelper.GetParentWindow(this)
