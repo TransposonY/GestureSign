@@ -38,7 +38,7 @@ namespace GestureSign.Daemon.Surface
         #endregion
 
         #region Constructors
-
+        
         public SurfaceForm()
         {
             InitializeForm();
@@ -215,7 +215,12 @@ namespace GestureSign.Daemon.Surface
             _drawingPen.StartCap = _drawingPen.EndCap = LineCap.Round;
             _drawingPen.LineJoin = LineJoin.Round;
 
-            _shadowPen = new Pen(Color.FromArgb(30, 0, 0, 0), (_drawingPen.Width + 4f)) { EndCap = LineCap.Round, StartCap = LineCap.Round };
+            _shadowPen = new Pen(Color.FromArgb(30, 0, 0, 0), _drawingPen.Width + 4f)
+            {
+                EndCap = LineCap.Round,
+                StartCap = LineCap.Round,
+                LineJoin = LineJoin.Round
+            };
 
             _dirtyMarkerPen = (Pen)_shadowPen.Clone();
             _dirtyMarkerPen.Width *= 1.5f;
