@@ -20,7 +20,7 @@ namespace GestureSign.Daemon
     static class Program
     {
         private const string TouchInputProvider = "GestureSign_TouchInputProvider";
-        private static SurfaceForm _surfaceForm;
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -46,7 +46,7 @@ namespace GestureSign.Daemon
                         }
 
                         PointCapture.Instance.Load();
-                        _surfaceForm = new SurfaceForm();
+                        SurfaceForm.Instance.Load();
                         SynchronizationContext uiContext = SynchronizationContext.Current;
                         TriggerManager.Instance.Load(uiContext);
 

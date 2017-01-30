@@ -37,8 +37,19 @@ namespace GestureSign.Daemon.Surface
         private const byte AC_SRC_ALPHA = 0x01;
         #endregion
 
+        #region Public Instance Properties
+
+        public static SurfaceForm Instance { get; }
+
+        #endregion
+
         #region Constructors
-        
+
+        static SurfaceForm()
+        {
+            Instance = new SurfaceForm();
+        }
+
         public SurfaceForm()
         {
             InitializeForm();
@@ -108,6 +119,10 @@ namespace GestureSign.Daemon.Surface
 
         #region Public Methods
 
+        public new void Load()
+        {
+
+        }
 
         public void DrawSegments(List<List<Point>> points)
         {
