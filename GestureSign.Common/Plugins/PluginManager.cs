@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Input;
 
@@ -18,6 +19,7 @@ namespace GestureSign.Common.Plugins
         // Create variable to hold the only allowed instance of this class
         static readonly PluginManager _Instance = new PluginManager();
         List<IPluginInfo> _Plugins = new List<IPluginInfo>();
+        private Task _lastActionTask;
 
         #endregion
 
@@ -58,29 +60,49 @@ namespace GestureSign.Common.Plugins
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
                 return;
-            // Get action to be executed
-            IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(gestureName);
-            if (executableActions == null) return;
-            foreach (IAction executableAction in executableActions)
+
+            var action = new Action<object>(o =>
             {
-                // Exit if there is no action configured
-                if (executableAction == null || !executableAction.IsEnabled ||
-                    (mode == CaptureMode.UserDisabled &&
-                     !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
-                    !Compute(executableAction.Condition, points, contactIdentifiers))
-                    continue;
+                // Get action to be executed
+                IEnumerable<IAction> executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(gestureName);
+                if (executableActions == null) return;
+                foreach (IAction executableAction in executableActions)
+                {
+                    // Exit if there is no action configured
+                    if (executableAction == null || !executableAction.IsEnabled ||
+                        (mode == CaptureMode.UserDisabled &&
+                         !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
+                        !Compute(executableAction.Condition, points, contactIdentifiers))
+                        continue;
 
-                // Locate the plugin associated with this action
-                IPluginInfo pluginInfo = FindPluginByClassAndFilename(executableAction.PluginClass, executableAction.PluginFilename);
+                    // Locate the plugin associated with this action
+                    IPluginInfo pluginInfo = FindPluginByClassAndFilename(executableAction.PluginClass, executableAction.PluginFilename);
 
-                // Exit if there is no plugin available for action
-                if (pluginInfo == null)
-                    continue;
+                    // Exit if there is no plugin available for action
+                    if (pluginInfo == null)
+                        continue;
 
-                // Load action settings into plugin
-                pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
-                // Execute plugin process
-                pluginInfo.Plugin.Gestured(new PointInfo(firstCapturedPoints, points));
+                    // Load action settings into plugin
+                    pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
+                    // Execute plugin process
+                    pluginInfo.Plugin.Gestured(new PointInfo(firstCapturedPoints, points));
+                }
+            });
+
+            var observeExceptions = new Action<Task>(t =>
+            {
+                Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
+            });
+
+            if (_lastActionTask == null)
+            {
+                _lastActionTask = Task.Factory.StartNew(action, null);
+                _lastActionTask.ContinueWith(observeExceptions, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            else
+            {
+                _lastActionTask = _lastActionTask.ContinueWith(action);
+                _lastActionTask.ContinueWith(observeExceptions, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 
