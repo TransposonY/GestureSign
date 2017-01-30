@@ -22,6 +22,7 @@ namespace GestureSign.Daemon.Filtration
 
         public PointerInputTargetWindow()
         {
+            CreateHandle();
             ResetIdPool();
             NativeMethods.InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
         }
@@ -73,9 +74,9 @@ namespace GestureSign.Daemon.Filtration
             }
         }
 
-        protected override void OnHandleCreated(EventArgs e)
+        protected sealed override void CreateHandle()
         {
-            base.OnHandleCreated(e);
+            base.CreateHandle();
             ChangeToMessageOnlyWindow();
         }
 
