@@ -54,34 +54,13 @@ namespace GestureSign.ControlPanel
                     }
                 }
 
-                bool createdNewDaemon;
-                using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
-                {
-                }
-                if (createdNewDaemon)
-                {
-                    using (Process daemon = new Process())
-                    {
-                        daemon.StartInfo.FileName = path;
-
-                        //daemon.StartInfo.UseShellExecute = false;
-                        if (IsAdministrator())
-                            daemon.StartInfo.Verb = "runas";
-                        daemon.StartInfo.CreateNoWindow = false;
-                        daemon.Start();
-                    }
-                }
+                StartDaemon(path);
 
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                 if (createdNew)
                 {
-                    var systemAccent = UIHelper.GetSystemAccent();
-                    if (systemAccent != null)
-                    {
-                        var accent = ThemeManager.GetAccent(systemAccent);
-                        ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
-                    }
+                    SetCustomAccent();
 
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
@@ -108,11 +87,42 @@ namespace GestureSign.ControlPanel
 
         }
 
+        private void StartDaemon(string daemonPath)
+        {
+            bool createdNewDaemon;
+            using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
+            {
+            }
+            if (createdNewDaemon)
+            {
+                using (Process daemon = new Process())
+                {
+                    daemon.StartInfo.FileName = daemonPath;
+
+                    //daemon.StartInfo.UseShellExecute = false;
+                    if (IsAdministrator())
+                        daemon.StartInfo.Verb = "runas";
+                    daemon.StartInfo.CreateNoWindow = false;
+                    daemon.Start();
+                }
+            }
+        }
+
         private bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private void SetCustomAccent()
+        {
+            var systemAccent = UIHelper.GetSystemAccent();
+            if (systemAccent != null)
+            {
+                var accent = ThemeManager.GetAccent(systemAccent);
+                ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
+            }
         }
 
         private void LoadLanguageData()
