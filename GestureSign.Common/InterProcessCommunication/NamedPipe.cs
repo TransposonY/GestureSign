@@ -110,6 +110,10 @@ namespace GestureSign.Common.InterProcessCommunication
                        }
                        return true;
                    }
+                   catch (IOException)
+                   {
+                       return false;
+                   }
                    catch (Exception e)
                    {
                        Logging.LogException(e);
