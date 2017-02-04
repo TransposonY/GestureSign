@@ -11,7 +11,8 @@ namespace GestureSign.Daemon.Input
     {
         private int _lastPointsCount;
 
-        public LowLevelMouseMessage OriginalMessage;
+        public LowLevelMouseMessage LastDownMessage;
+        public LowLevelMouseMessage LastUpMessage;
 
         internal PointEventTranslator(InputProvider inputProvider)
         {
@@ -52,6 +53,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
+                LastUpMessage = mouseMessage;
                 var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
                 OnPointUp(args);
                 PointCapture.Instance.MouseCaptured = false;
@@ -69,7 +71,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
-                OriginalMessage = mouseMessage;
+                LastDownMessage = mouseMessage;
                 PointCapture.Instance.MouseCaptured = true;
                 var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
                 OnPointDown(args);

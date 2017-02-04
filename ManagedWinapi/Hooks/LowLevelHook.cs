@@ -479,7 +479,7 @@ namespace ManagedWinapi.Hooks
         /// </summary>
         public override void ReplayEvent()
         {
-            Cursor.Position = Point;
+            //Cursor.Position = Point;
             if (MouseEventFlags != 0)
                 KeyboardKey.InjectMouseEvent(MouseEventFlags, 0, 0, (uint)mouseData >> 16, new UIntPtr((ulong)ExtraInfo.ToInt64()));
         }

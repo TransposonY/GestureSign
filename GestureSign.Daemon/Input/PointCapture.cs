@@ -46,8 +46,6 @@ namespace GestureSign.Daemon.Input
 
         private bool _gestureTimeout;
 
-        LowLevelMouseMessage _originalMessage = null;
-
         #endregion
 
         #region PInvoke 
@@ -249,8 +247,6 @@ namespace GestureSign.Daemon.Input
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                _originalMessage = ((PointEventTranslator)sender).OriginalMessage;
-
                 // Try to begin capture process, if capture started then don't notify other applications of a Point event, otherwise do
                 if (!TryBeginCapture(e.RawData))
                 {
@@ -289,9 +285,12 @@ namespace GestureSign.Daemon.Input
             {
                 State = CaptureState.Disabled;
 
-                _originalMessage?.ReplayEvent();
+                var pointEventTranslator = (PointEventTranslator)sender;
+                pointEventTranslator.LastDownMessage?.ReplayEvent();
+                pointEventTranslator.LastUpMessage?.ReplayEvent();
 
                 State = CaptureState.Ready;
+                e.Handled = Mode != CaptureMode.UserDisabled;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
             else if (State == CaptureState.TriggerFired)
