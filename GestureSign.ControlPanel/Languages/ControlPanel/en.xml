@@ -172,7 +172,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
       Exist similar gesture, clicking 'Overwrite' will replace existing gesture.
     </ExistingGesture>
     <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
-    <StackUpGesture>Stack Up</StackUpGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
     <Reset>Reset</Reset>
     <HotKey>HotKey</HotKey>

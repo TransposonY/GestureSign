@@ -91,7 +91,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 var hotkey = ((Gesture)_oldGesture).Hotkey;
                 if (hotkey != null)
                     HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
-                DrawGestureTextBlock.Visibility = ResetButton.Visibility = StackUpGestureButton.Visibility = Visibility.Collapsed;
+                DrawGestureTextBlock.Visibility = ResetButton.Visibility = Visibility.Collapsed;
 
                 txtGestureName.Focus();
                 txtGestureName.SelectAll();
@@ -137,7 +137,6 @@ namespace GestureSign.ControlPanel.Dialogs
             imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
 
             await SetTrainingState(false);
-            StackUpGestureButton.IsEnabled = _currentPointPatterns.Length < 3;
             txtGestureName.Focus();
         }
 
@@ -152,10 +151,13 @@ namespace GestureSign.ControlPanel.Dialogs
             txtGestureName.Clear();
         }
 
-        private async void StackUpGestureButton_Click(object sender, RoutedEventArgs e)
+        private async void imgGestureThumbnail_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            await NamedPipe.SendMessageAsync("StackUpGesture", "GestureSignDaemon");
-            await SetTrainingState(true);
+            if (e.ClickCount == 2 && _oldGesture == null && _currentPointPatterns?.Length < 3)
+            {
+                await NamedPipe.SendMessageAsync("StackUpGesture", "GestureSignDaemon");
+                await SetTrainingState(true);
+            }
         }
 
         #region Private Methods
@@ -165,13 +167,13 @@ namespace GestureSign.ControlPanel.Dialogs
             if (state)
             {
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
-                StackUpGestureButton.IsEnabled = ResetButton.IsEnabled = false;
+                ResetButton.Visibility = Visibility.Collapsed;
                 return await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
             else
             {
                 DrawGestureTextBlock.Visibility = Visibility.Collapsed;
-                ResetButton.IsEnabled = true;
+                ResetButton.Visibility = Visibility.Visible;
                 return await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
             }
         }
