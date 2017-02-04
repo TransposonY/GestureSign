@@ -599,6 +599,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ToggleAllActionsCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
         }
 
+        private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationDialog applicationDialog = new ApplicationDialog(true);
+            applicationDialog.ShowDialog();
+        }
+
         private void EditApplication_Click(object sender, RoutedEventArgs e)
         {
             if (lstAvailableApplication.SelectedItem != null)
