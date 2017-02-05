@@ -154,7 +154,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (MouseActions)GetValue(nameof(DrawingButton), 0x200000);
+                return (MouseActions)GetValue(nameof(DrawingButton), 0);
             }
             set
             {
