@@ -48,7 +48,7 @@
                                          Value="True">
                                     <Setter TargetName="Border"
                                             Property="Background"
-                                            Value="{DynamicResource AccentColorBrush4}" />
+                                            Value="{DynamicResource AccentColorBrush3}" />
                                     <Setter Property="Foreground"
                                             Value="{DynamicResource AccentSelectedColorBrush}" />
                                 </Trigger>
@@ -69,17 +69,6 @@
                                             Value="{DynamicResource GrayBrush7}" />
                                     <Setter Property="Foreground"
                                             Value="{DynamicResource AccentSelectedColorBrush}" />
-                                </MultiTrigger>
-                                <MultiTrigger>
-                                    <MultiTrigger.Conditions>
-                                        <Condition Property="IsSelected"
-                                                   Value="True" />
-                                        <Condition Property="Selector.IsSelectionActive"
-                                                   Value="True" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter TargetName="Border"
-                                            Property="Background"
-                                            Value="{DynamicResource AccentColorBrush3}" />
                                 </MultiTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
