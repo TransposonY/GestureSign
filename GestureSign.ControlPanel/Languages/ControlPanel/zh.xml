@@ -149,6 +149,7 @@ http://transposony.coding.me/GestureSign/
     <Details>详细信息</Details>
     <ImportGesture>导入手势文件</ImportGesture>
     <ExportGestures>导出手势数据</ExportGestures>
+    <GestureGroupHeader>{0}指手势 ({1}个)</GestureGroupHeader>
     <MouseActions>
       <None>未设置</None>
       <WheelForward>向前滚动</WheelForward>

@@ -121,6 +121,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\GroupHeaderConverter.cs" />
+    <Compile Include="Converters\GestureGroupConverter.cs" />
+    <Compile Include="Converters\GestureImageConverter.cs" />
     <Compile Include="ViewModel\MouseActionDescription.cs" />
     <Compile Include="Common\ErrorReport.cs" />
     <Compile Include="Converters\Application2VisibilityConverter.cs" />

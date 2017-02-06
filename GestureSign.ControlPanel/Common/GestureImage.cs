@@ -68,7 +68,7 @@ namespace GestureSign.ControlPanel.Common
 
                 color.A = (byte)(0xFF - i * 0x55);
                 SolidColorBrush brush = new SolidColorBrush(color);
-                Pen drawingPen = new Pen(brush, 3 + i * 2) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+                Pen drawingPen = new Pen(brush, size.Height / 20 + i * 1.5) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
 
                 if (pointPatterns[i].Points == null) return null;
                 for (int j = 0; j < pointPatterns[i].Points.Count; j++)

@@ -143,6 +143,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Details>Details</Details>
     <ImportGesture>Import Gestures...</ImportGesture>
     <ExportGestures>Export Gestures...</ExportGestures>
+    <GestureGroupHeader>{0} Finger(s) Gesture  ( {1} )</GestureGroupHeader>
     <MouseActions>
       <None>None</None>
       <WheelForward>Wheel Forward</WheelForward>

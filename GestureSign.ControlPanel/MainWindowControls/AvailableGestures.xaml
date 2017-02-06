@@ -5,14 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
+             xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="450">
     <UserControl.Resources>
+        <converters:GestureImageConverter x:Key="GestureImageConverter" />
+        <converters:GestureGroupConverter x:Key="GestureGroupConverter" />
+        <converters:GroupHeaderConverter x:Key="GroupHeaderConverter" />
         <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                             x:Key="GestureItemProvider"
                             IsAsynchronous="True">
         </ObjectDataProvider>
+        <CollectionViewSource x:Key="GestureViewSource"
+                              Source="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="PointPattern"
+                                          Converter="{StaticResource GestureGroupConverter}" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
         <ItemsPanelTemplate x:Key="IconPanelTemplate">
             <WrapPanel IsItemsHost="True" />
         </ItemsPanelTemplate>
@@ -20,7 +31,7 @@
             <StackPanel Width="260"
                         Height="95"
                         Margin="0,5">
-                <Image Source="{Binding Path=Image}"
+                <Image Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=65}"
                        Margin="5,5,5,0"
                        HorizontalAlignment="Center"
                        Width="Auto"
@@ -37,12 +48,12 @@
             <GridViewColumn Header="{localization:LocalisedText Gesture.Header}">
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
-                        <Image Height="40"
+                        <Image Height="45"
                                MaxWidth="220"
                                Margin="5"
                                Stretch="Uniform"
                                StretchDirection="DownOnly"
-                               Source="{Binding Path=Image}" />
+                               Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=45}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
@@ -60,7 +71,7 @@
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
         <ListView x:Name="lstAvailableGestures"
-                  ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
+                  ItemsSource="{Binding Source={StaticResource GestureViewSource}}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   SelectionChanged="lstAvailableGestures_SelectionChanged"
                   BorderThickness="0"
@@ -85,6 +96,44 @@
                     </Style.Triggers>
                 </Style>
             </ListView.Style>
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="True"
+                                                  Padding="0"
+                                                  BorderThickness="0">
+                                            <Expander.Header>
+                                                <DockPanel>
+                                                    <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
+                                                               Margin="5,0,0,0"
+                                                               HorizontalAlignment="Center"
+                                                               DockPanel.Dock="Top">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource GroupHeaderConverter}">
+                                                                <Binding  Path="Name"
+                                                                          Mode="OneWay" />
+                                                                <Binding  Path="ItemCount"
+                                                                          Mode="OneWay" />
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </DockPanel>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListBox.GroupStyle>
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="ViewMenuItem"
@@ -94,12 +143,12 @@
                                   Header="{localization:LocalisedText Gesture.LargeIcons}"
                                   FontSize="16"
                                   IsCheckable="True"
-                                  IsChecked="True"
                                   Click="ViewMenuItem_Click" />
                         <MenuItem x:Name="DetailsMenuItem"
                                   Header="{localization:LocalisedText Gesture.Details}"
                                   FontSize="16"
                                   IsCheckable="True"
+                                  IsChecked="True"
                                   Click="ViewMenuItem_Click" />
                     </MenuItem>
                     <Separator />
