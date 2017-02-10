@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
-using GestureSign.Common;
-using GestureSign.Common.Plugins;
 using System.Drawing;
 using System.Threading.Tasks;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.PointPatterns;
 using GestureSign.Common.Input;
@@ -121,14 +118,9 @@ namespace GestureSign.Common.Gestures
 
         public static event EventHandler OnLoadGesturesCompleted;
         // Define events to allow other classes to subscribe to
-        public static event GestureEventHandler GestureEdited;
         public static event EventHandler GestureSaved;
         // Define protected method to notifiy subscribers of events
 
-        protected virtual void OnGestureEdited(GestureEventArgs e)
-        {
-            if (GestureEdited != null) GestureEdited(this, e);
-        }
         #endregion
 
         #region Private Methods
@@ -299,17 +291,13 @@ namespace GestureSign.Common.Gestures
             return GetNewestGestureSample(this.GestureName);
         }
 
-        public void DeleteGesture(string gestureName)
+        public void DeleteGesture(string gestureName, bool trimGesture = true)
         {
             _Gestures.RemoveAll(g => g.Name.Trim() == gestureName.Trim());
+            if (trimGesture)
+                ApplicationManager.Instance.TrimGesture();
         }
 
-        public void RenameGesture(string gestureName, string newGestureName)
-        {
-            _Gestures.Find(g => g.Name == gestureName).Name = newGestureName;
-
-            OnGestureEdited(new GestureEventArgs(gestureName, newGestureName));
-        }
         #endregion
     }
 }

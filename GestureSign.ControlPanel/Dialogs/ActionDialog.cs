@@ -120,7 +120,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void NewGestureButton_Click(object sender, RoutedEventArgs e)
         {
-            GestureDefinition gestureDefinition = new GestureDefinition();
+            GestureDefinition gestureDefinition = new GestureDefinition(true);
             var result = gestureDefinition.ShowDialog();
 
             if (result != null && result.Value)

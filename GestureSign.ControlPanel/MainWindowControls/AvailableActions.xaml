@@ -7,7 +7,6 @@
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
-             xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
@@ -15,8 +14,10 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
-            <converters:VisibilityConverter x:Key="VisibilityConverter"></converters:VisibilityConverter>
             <converters:Application2VisibilityConverter x:Key="Application2VisibilityConverter" />
+            <converters:GestureImageConverter x:Key="GestureImageConverter" />
+            <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter"
+                                                    GestureImageConverter="{StaticResource GestureImageConverter}" />
             <Canvas x:Key="Chevron-Up"
                     Width="24"
                     Height="24">
@@ -86,10 +87,6 @@
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="GestureName" />
                 </CollectionViewSource.GroupDescriptions>
-                <CollectionViewSource.SortDescriptions>
-                    <componentModel:SortDescription PropertyName="GestureName"
-                                                    Direction="Ascending" />
-                </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="ApplicationViewSource"
                                   Source="{Binding Source={StaticResource ApplicationItemProvider},Path=ApplicationItems}">
@@ -337,159 +334,6 @@
                                           ContentSource="Content" />
                     </Border>
                 </ControlTemplate>
-
-                <Style TargetType="{x:Type ComboBox}"
-                       BasedOn="{StaticResource {x:Type ComboBox}}">
-                    <Setter Property="Foreground"
-                            Value="{StaticResource AccentSelectedColorBrush}" />
-                    <Setter Property="BorderBrush"
-                            Value="{StaticResource HighlightBrush}" />
-                    <Setter Property="Background"
-                            Value="White" />
-                    <Setter Property="SnapsToDevicePixels"
-                            Value="true" />
-                    <!--<Setter Property="OverridesDefaultStyle" Value="true"/>-->
-                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                            Value="Auto" />
-                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                            Value="Auto" />
-                    <Setter Property="ScrollViewer.CanContentScroll"
-                            Value="False" />
-                    <Setter Property="FontWeight"
-                            Value="Bold" />
-                    <Setter Property="MinWidth"
-                            Value="50" />
-                    <Setter Property="MinHeight"
-                            Value="32" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ComboBox">
-                                <Grid>
-                                    <ToggleButton Name="ToggleButton"
-                                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                                  Background="{TemplateBinding Background}"
-                                                  Foreground="{TemplateBinding Foreground}"
-                                                  Focusable="false"
-                                                  IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
-                                                  ClickMode="Press">
-                                        <ToggleButton.Style>
-                                            <Style  TargetType="ToggleButton">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ToggleButton">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition />
-                                                                </Grid.ColumnDefinitions>
-                                                                <Border x:Name="Border"
-                                                                        Grid.ColumnSpan="2"
-                                                                        CornerRadius="0"
-                                                                        Background="{TemplateBinding Background}"
-                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                        BorderThickness="1,1,1,1" />
-                                                                <Border Grid.Column="0"
-                                                                        CornerRadius="0"
-                                                                        Background="Transparent"
-                                                                        BorderBrush="Transparent"
-                                                                        BorderThickness="10" />
-                                                            </Grid>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsEnabled"
-                                                                         Value="False">
-                                                                    <Setter TargetName="Border"
-                                                                            Property="BorderBrush"
-                                                                            Value="Transparent" />
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
-                                    <ContentPresenter Name="ContentSite"
-                                                      IsHitTestVisible="False"
-                                                      Content="{TemplateBinding SelectionBoxItem}"
-                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                      VerticalAlignment="Center"
-                                                      HorizontalAlignment="Center"
-                                                      Margin="0,0,10,0" />
-                                    <TextBox x:Name="PART_EditableTextBox"
-                                             Style="{x:Null}"
-                                             HorizontalAlignment="Center"
-                                             VerticalAlignment="Center"
-                                             Focusable="True"
-                                             Visibility="Collapsed"
-                                             IsReadOnly="{TemplateBinding IsReadOnly}">
-                                        <TextBox.Template>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <Border x:Name="PART_ContentHost"
-                                                        Focusable="True" />
-                                            </ControlTemplate>
-                                        </TextBox.Template>
-                                    </TextBox>
-                                    <Popup Name="Popup"
-                                           Placement="Bottom"
-                                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                                           AllowsTransparency="True"
-                                           Focusable="False"
-                                           PopupAnimation="Slide">
-                                        <Grid Name="DropDown"
-                                              SnapsToDevicePixels="True"
-                                              MinWidth="{TemplateBinding ActualWidth}"
-                                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                            <Border x:Name="DropDownBorder"
-                                                    Background="White"
-                                                    BorderThickness="2"
-                                                    BorderBrush="Gray" />
-                                            <ScrollViewer Margin="4,6,4,6"
-                                                          SnapsToDevicePixels="True">
-                                                <StackPanel IsItemsHost="True"
-                                                            KeyboardNavigation.DirectionalNavigation="Contained" />
-                                            </ScrollViewer>
-                                        </Grid>
-                                    </Popup>
-
-                                </Grid>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="HasItems"
-                                             Value="false">
-                                        <Setter TargetName="DropDownBorder"
-                                                Property="MinHeight"
-                                                Value="95" />
-                                    </Trigger>
-                                    <Trigger Property="IsGrouping"
-                                             Value="true">
-                                        <Setter Property="ScrollViewer.CanContentScroll"
-                                                Value="false" />
-                                    </Trigger>
-                                    <Trigger SourceName="Popup"
-                                             Property="Popup.AllowsTransparency"
-                                             Value="true">
-                                        <Setter TargetName="DropDownBorder"
-                                                Property="CornerRadius"
-                                                Value="0" />
-                                        <Setter TargetName="DropDownBorder"
-                                                Property="Margin"
-                                                Value="0,2,0,0" />
-                                    </Trigger>
-                                    <Trigger Property="IsEditable"
-                                             Value="true">
-                                        <Setter Property="IsTabStop"
-                                                Value="false" />
-                                        <Setter TargetName="PART_EditableTextBox"
-                                                Property="Visibility"
-                                                Value="Visible" />
-                                        <Setter TargetName="ContentSite"
-                                                Property="Visibility"
-                                                Value="Hidden" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
                 <Style x:Key="ShowBorderStyle"
                        TargetType="{x:Type Border}">
                     <Style.Triggers>
@@ -559,51 +403,53 @@
                                             </Expander.Template>
                                             <Expander.Header>
                                                 <StackPanel>
-                                                    <ComboBox x:Name="availableGesturesComboBox"
-                                                              ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
-                                                              IsEnabled="{Binding  ElementName=GestureExpander,Path=IsExpanded}"
-                                                              HorizontalContentAlignment="Left"
-                                                              HorizontalAlignment="Center"
-                                                              VerticalContentAlignment="Center"
-                                                              VerticalAlignment="Center"
-                                                              Width="210"
-                                                              BorderThickness="0"
-                                                              Height="85"
-                                                              IsEditable="False"
-                                                              IsReadOnly="True"
-                                                              Background="{x:Null}"
-                                                              SelectionChanged="availableGesturesComboBox_SelectionChanged"
-                                                              IsDropDownOpen="False"
-                                                              ScrollViewer.IsDeferredScrollingEnabled="True"
-                                                              MaxDropDownHeight="512"
-                                                              MaxWidth="280"
-                                                              MinWidth="210"
-                                                              Loaded="availableGesturesComboBox_Loaded"
-                                                              Margin="0">
-                                                        <ComboBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Image Source="{Binding Image}"
-                                                                           Height="65"
-                                                                           Stretch="Uniform"
-                                                                           StretchDirection="DownOnly"
-                                                                           Width="200"
-                                                                           HorizontalAlignment="Stretch" />
-                                                                    <TextBlock TextWrapping="Wrap"
-                                                                               Text="{Binding Name}"
-                                                                               Margin="0"
-                                                                               VerticalAlignment="Center"
-                                                                               HorizontalAlignment="Stretch" />
-                                                                </StackPanel>
-                                                            </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
-                                                    <TextBlock Text="{Binding Name}"
+                                                    <Button x:Name="GestureButton"
+                                                            IsEnabled="{Binding ElementName=GestureExpander,Path=IsExpanded}"
+                                                            HorizontalContentAlignment="Center"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalContentAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Width="200"
+                                                            BorderThickness="1"
+                                                            Height="85"
+                                                            Background="{x:Null}"
+                                                            Click="GestureButton_Click"
+                                                            BorderBrush="{StaticResource AccentColorBrush3}">
+                                                        <Image x:Name="GestureImage"
+                                                               Height="65"
+                                                               Stretch="Uniform"
+                                                               StretchDirection="DownOnly">
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
+                                                                              ConverterParameter="65">
+                                                                    <Binding Source="{StaticResource GestureItemProvider}"
+                                                                             Path="PatternMap"
+                                                                             Mode="OneWay" />
+                                                                    <Binding  Path="Name"
+                                                                              Mode="OneWay" />
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </Button>
+                                                    <TextBlock Text="{localization:LocalisedText Action.DrawGesture}"
                                                                Margin="0,-48.5,0,0"
-                                                               Visibility="{Binding ElementName=availableGesturesComboBox,Path=SelectedIndex,Converter={StaticResource VisibilityConverter},Mode=OneWay}"
                                                                HorizontalAlignment="Center"
                                                                FontWeight="Bold"
-                                                               IsHitTestVisible="False" />
+                                                               IsHitTestVisible="False">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility"
+                                                                        Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ElementName=GestureImage,Path=Source}"
+                                                                                 Value="{x:Null}">
+                                                                        <Setter Property="Visibility"
+                                                                                Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
                                                 </StackPanel>
                                             </Expander.Header>
                                             <Expander.Content>

@@ -3,13 +3,12 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
-using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.ControlPanel.ViewModel;
 using ManagedWinapi;
@@ -36,40 +35,50 @@ namespace GestureSign.ControlPanel.Dialogs
             GestureManager.Instance.GestureName = gesture.Name;
         }
 
+        public GestureDefinition(bool selectGesture)
+        : this()
+        {
+            _selectGesture = selectGesture;
+        }
+
         private Gesture _oldGesture;
-        private string _similarGestureName;
+        private Gesture _similarGesture;
         private PointPattern[] _currentPointPatterns;
         private Color _color;
-
-        public static event EventHandler GesturesChanged;
+        private bool _selectGesture;
 
         public string GestureName { get; set; }
 
-        public string SimilarGestureName
+        public Gesture SimilarGesture
         {
-            get { return _similarGestureName; }
+            get { return _similarGesture; }
             set
             {
-                _similarGestureName = value;
-                if (string.IsNullOrEmpty(_similarGestureName))
+                _similarGesture = value;
+                if (value == null)
                 {
                     cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Save");
-                    ExistingGestureImage.Visibility = ExistingTextBlock.Visibility = Visibility.Collapsed;
+                    UseExistingButton.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Overwrite");
-                    var gesture = GestureManager.Instance.GetNewestGestureSample(_similarGestureName);
-                    if (gesture != null)
-                        ExistingGestureImage.Source = GestureImage.CreateImage(gesture.PointPatterns, new Size(65, 65), _color);
 
-                    ExistingGestureImage.Visibility = ExistingTextBlock.Visibility = Visibility.Visible;
-                    txtGestureName.Text = _similarGestureName;
+                    ExistingGestureImage.Source = GestureImage.CreateImage(value.PointPatterns, new Size(65, 65), _color);
+                    var hotkey = value.Hotkey;
+                    if (hotkey != null)
+                        HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
+                    MouseActionComboBox.SelectedValue = value.MouseAction;
+
+                    ExistingGestureImage.Visibility = Visibility.Visible;
+                    UseExistingButton.Visibility = _selectGesture ? Visibility.Visible : Visibility.Collapsed;
+
+                    GestureName = value.Name;
                 }
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (MouseActionDescription.DescriptionDict.ContainsKey(AppConfig.DrawingButton))
                 DrawingButtonTextBlock.Text = MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + "  +  ";
@@ -80,75 +89,67 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (_oldGesture == null)
             {
-                NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
-                Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Title");
+                await SetTrainingState(true);
+                Title = _selectGesture
+                    ? LocalizationProvider.Instance.GetTextValue("GestureDefinition.SelectGesture")
+                    : LocalizationProvider.Instance.GetTextValue("GestureDefinition.NewGesture");
             }
             else
             {
                 MouseActionComboBox.SelectedValue = _oldGesture.MouseAction;
-                Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Rename");
-                txtGestureName.Text = _oldGesture.Name; //this.txtGestureName.Text
+                Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Edit");
+                GestureName = _oldGesture.Name; //this.txtGestureName.Text
                 var hotkey = ((Gesture)_oldGesture).Hotkey;
                 if (hotkey != null)
                     HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
-                DrawGestureTextBlock.Visibility = ResetButton.Visibility = Visibility.Collapsed;
-
-                txtGestureName.Focus();
-                txtGestureName.SelectAll();
             }
         }
 
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            //Non-renaming mode
-            if (_oldGesture == null)
-                await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
+            await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
         }
 
-
-        private void cmdDone_Click(object sender, RoutedEventArgs e)
+        private void UseExistingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SaveGesture())
+            if (SaveGesture(_similarGesture.Name, _similarGesture.PointPatterns))
             {
                 DialogResult = true;
                 Close();
             }
-            else txtGestureName.Focus();
         }
 
-        private void cmdCancel_Click(object sender, RoutedEventArgs e)
+        private void cmdDone_Click(object sender, RoutedEventArgs e)
         {
-            Close();
-        }
+            //merge similar gesture
+            if (_oldGesture != null && _similarGesture != null && _oldGesture.Name != _similarGesture.Name)
+            {
+                GestureManager.Instance.DeleteGesture(_similarGesture.Name, false);
+                ApplicationManager.Instance.RenameGesture(_oldGesture.Name, _similarGesture.Name);
+            }
 
-        private void txtGestureName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string newGestureName = txtGestureName.Text.Trim();
-            if (_oldGesture?.Name == newGestureName || SimilarGestureName == newGestureName) return;
-
-            txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            if (SaveGesture(_oldGesture != null ? _oldGesture.Name : GestureName, _currentPointPatterns))
+            {
+                DialogResult = true;
+                Close();
+            }
         }
 
         private async void MessageProcessor_GotNewGesture(object sender, Gesture e)
         {
-            SimilarGestureName = e.Name;
+            string similarGestureName = e.Name;
+            SimilarGesture = (Gesture)GestureManager.Instance.GetNewestGestureSample(similarGestureName);
+
             _currentPointPatterns = e.PointPatterns;
             imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
 
             await SetTrainingState(false);
-            txtGestureName.Focus();
         }
 
         private async void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             await SetTrainingState(true);
-
-            SimilarGestureName = null;
-            _currentPointPatterns = null;
-            imgGestureThumbnail.Source = null;
-
-            txtGestureName.Clear();
         }
 
         private async void imgGestureThumbnail_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -166,6 +167,11 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (state)
             {
+                SimilarGesture = null;
+                _currentPointPatterns = null;
+                imgGestureThumbnail.Source = null;
+                GestureName = string.Empty;
+
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
                 ResetButton.Visibility = Visibility.Collapsed;
                 return await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
@@ -178,23 +184,20 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private bool SaveGesture()
+        private bool SaveGesture(string newName, PointPattern[] newPointPatterns)
         {
-            string newGestureName = txtGestureName.Text.Trim();
+            if (newPointPatterns == null || newPointPatterns.Length == 0)
+                return false;
 
-            if (string.IsNullOrEmpty(newGestureName))
+            if (string.IsNullOrEmpty(newName))
             {
-                txtGestureName.Clear();
-                return false;
+                newName = GetNewName();
             }
-
-            if (_currentPointPatterns == null || _currentPointPatterns.Length == 0)
-                return false;
 
             var newGesture = new Gesture()
             {
-                Name = newGestureName,
-                PointPatterns = _currentPointPatterns,
+                Name = newName,
+                PointPatterns = newPointPatterns,
                 MouseAction = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None,
                 Hotkey = HotKeyTextBox.HotKey != null ?
                   new Hotkey()
@@ -204,52 +207,27 @@ namespace GestureSign.ControlPanel.Dialogs
                   } : null
             };
 
-            if (_oldGesture != null)
+            if (GestureManager.Instance.GestureExists(newName))
             {
-                //Edit gesture
-                if (_oldGesture.Equals(newGesture)) return true;
-                if (!_oldGesture.Name.Equals(newGestureName) && GestureManager.Instance.GestureExists(newGestureName))
-                {
-                    txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                    return false;
-                }
-                GestureManager.Instance.RenameGesture(_oldGesture.Name, newGestureName);
-                GestureManager.Instance.DeleteGesture(newGestureName);
-                GestureManager.Instance.AddGesture(newGesture);
+                GestureManager.Instance.DeleteGesture(newName, false);
             }
-            else
-            {
-                if (String.IsNullOrEmpty(SimilarGestureName))
-                {
-                    if (GestureManager.Instance.GestureExists(newGestureName))
-                    {
-                        txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                        return false;
-                    }
-                    // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(newGesture);
-                }
-                else
-                {
-                    if (Array.Exists(GestureManager.Instance.Gestures, g => g.Name == newGestureName && g.Name != SimilarGestureName))
-                    {
-                        txtGestureName.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                        return false;
-                    }
+            GestureManager.Instance.AddGesture(newGesture);
 
-                    if (SimilarGestureName != newGestureName)
-                        GestureManager.Instance.RenameGesture(SimilarGestureName, newGestureName);
-
-                    GestureManager.Instance.DeleteGesture(newGestureName);
-                    // Add new gesture to gesture manager
-                    GestureManager.Instance.AddGesture(newGesture);
-                }
-            }
-            GestureManager.Instance.GestureName = newGestureName;
+            GestureManager.Instance.GestureName = newName;
             GestureManager.Instance.SaveGestures();
 
-            GesturesChanged?.Invoke(this, new EventArgs());
             return true;
+        }
+
+        private string GetNewName()
+        {
+            int i = 0;
+            string newName;
+            do
+            {
+                newName = i++.ToString();
+            } while (GestureManager.Instance.GestureExists(newName));
+            return newName;
         }
 
         #endregion

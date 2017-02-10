@@ -129,11 +129,12 @@ http://transposony.coding.me/GestureSign/
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
     <ExportAllActions>导出所有动作</ExportAllActions>
+    <DrawGesture>请点击以设置手势</DrawGesture>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteActionConfirm>确定要删除这个动作吗？</DeleteActionConfirm>
       <DeleteAppConfirm>确定删除程序 "{0}" 吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
-      <NoAssociationAction>无关联动作</NoAssociationAction>
+      <NoAssociationAction>请双击编辑此动作</NoAssociationAction>
       <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
       <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
@@ -173,20 +174,18 @@ http://transposony.coding.me/GestureSign/
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Title>添加手势</Title>
-    <Rename>重命名</Rename>
-    <ExistingGesture>
-      已存在以下相似手势，点击“覆盖”将覆盖旧手势
-    </ExistingGesture>
-    <GestureNameWatermark>请输入手势图案名称</GestureNameWatermark>
+    <NewGesture>添加手势</NewGesture>
+    <SelectGesture>选择手势</SelectGesture>
+    <Edit>编辑手势</Edit>
+    <UseExisting>使用已有手势</UseExisting>
+    <ExistingGesture>已存在以下相似的手势：
+可以点击“覆盖”来覆盖旧手势</ExistingGesture>
+    <UseExistingGesture>或者直接使用现有的手势</UseExistingGesture>
     <DrawGesture>请画出手势</DrawGesture>
     <Reset>重置</Reset>
     <HotKey>快捷键</HotKey>
     <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
     <Mouse>鼠标键</Mouse>
-    <Messages>
-      <GestureExists>输入的手势名称{0}已存在，请重新输入一个手势名称</GestureExists>
-    </Messages>
   </GestureDefinition>
   <Ignored>
     <Header>忽略</Header>

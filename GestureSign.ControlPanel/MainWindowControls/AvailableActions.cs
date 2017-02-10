@@ -9,15 +9,11 @@ using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace GestureSign.ControlPanel.MainWindowControls
@@ -66,8 +62,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     lstAvailableApplication.ScrollIntoView(e.Application);
                 }
             };
-            AvailableGestures.GestureChanged += (o, e) => { RefreshActions(true); };
-            GestureDefinition.GesturesChanged += (o, e) => { RefreshActions(true); };
+
             ApplicationManager.ApplicationChanged += (o, e) =>
             {
                 lstAvailableApplication.SelectedItem = e.Application;
@@ -322,64 +317,47 @@ namespace GestureSign.ControlPanel.MainWindowControls
             return false;
         }
 
-        private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            ComboBox comboBox = sender as ComboBox;
-
-            if (comboBox != null)
-            {
-                var stackPanel = VisualTreeHelper.GetParent(comboBox);
-                string groupName = (VisualTreeHelper.GetChild(stackPanel, 1) as TextBlock)?.Text;
-                if (groupName == null) return;
-
-                foreach (GestureItem item in comboBox.Items)
-                {
-                    if (item.Name == groupName)
-                    {
-                        comboBox.SelectedIndex = comboBox.Items.IndexOf(item);
-                        return;
-                    }
-                }
-            }
-        }
-
-
-        private void availableGesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void GestureButton_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            ComboBox availableGesturesComboBox = sender as ComboBox;
-            if (availableGesturesComboBox != null &&
-                (!availableGesturesComboBox.IsDropDownOpen || e.AddedItems.Count == 0))
-                return;
 
-            Expander expander = UIHelper.GetParentDependencyObject<Expander>(availableGesturesComboBox);
-            if (expander == null) return;
+            GestureDefinition gestureDialog = new GestureDefinition(true);
+            var result = gestureDialog.ShowDialog();
 
-            var firstListBoxItem = UIHelper.FindVisualChild<ListBoxItem>(expander);
-            if (firstListBoxItem == null) return;
-            var listBoxItemParent = UIHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
-            if (listBoxItemParent == null) return;
-            var listBoxItems = listBoxItemParent.Children;
-            string newGestureName = ((GestureItem)e.AddedItems[0]).Name;
-            ActionInfo ai = null;
-            foreach (ListBoxItem listBoxItem in listBoxItems)
+            if (result != null && result.Value)
             {
-                ai = listBoxItem.Content as ActionInfo;
-                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                if (ai != null && newGestureName != ai.GestureName)
-                {
-                    if (app != null)
-                    {
-                        IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
-                        ai.GestureName = action.GestureName = newGestureName;
+                var newGesture = gestureDialog.SimilarGesture == null ? GestureManager.Instance.GestureName : gestureDialog.SimilarGesture.Name;
 
-                        ApplicationManager.Instance.SaveApplications();
+                var gestureButton = (Button)sender;
+
+                Expander expander = UIHelper.GetParentDependencyObject<Expander>(gestureButton);
+                if (expander == null) return;
+                var firstListBoxItem = UIHelper.FindVisualChild<ListBoxItem>(expander);
+                if (firstListBoxItem == null) return;
+                var listBoxItemParent = UIHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
+                if (listBoxItemParent == null) return;
+                var listBoxItems = listBoxItemParent.Children;
+
+                ActionInfo ai = null;
+                foreach (ListBoxItem listBoxItem in listBoxItems)
+                {
+                    ai = listBoxItem.Content as ActionInfo;
+                    IApplication app = lstAvailableApplication.SelectedItem as IApplication;
+                    if (ai != null)
+                    {
+                        if (app != null)
+                        {
+                            IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
+                            ai.GestureName = action.GestureName = newGesture;
+
+                            ApplicationManager.Instance.SaveApplications();
+                        }
                     }
+                    else return;
                 }
-                else return;
+                RefreshGroup(newGesture);
+                SelectAction(ai);
             }
-            RefreshGroup(newGestureName);
-            SelectAction(ai);
         }
 
         private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)

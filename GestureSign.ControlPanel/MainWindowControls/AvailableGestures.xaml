@@ -57,8 +57,6 @@
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
-            <GridViewColumn Header="{localization:LocalisedText Gesture.Name}"
-                            DisplayMemberBinding="{Binding Path=Name}" />
             <GridViewColumn Header="{localization:LocalisedText GestureDefinition.HotKey}"
                             DisplayMemberBinding="{Binding Path=HotKey}" />
             <GridViewColumn Header="{localization:LocalisedText GestureDefinition.Mouse}"

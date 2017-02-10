@@ -70,7 +70,6 @@ namespace GestureSign.Common.Applications
                     if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
                     FinishedLoading = true;
                 };
-            GestureManager.GestureEdited += GestureManager_GestureEdited;
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
             LoadApplications().ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
@@ -139,14 +138,6 @@ namespace GestureSign.Common.Applications
             RecognizedApplication = GetApplicationFromWindow(CaptureWindow);
         }
 
-        protected void GestureManager_GestureEdited(object sender, GestureEventArgs e)
-        {
-            GetGlobalApplication().Actions.FindAll(a => a.GestureName == e.GestureName).ForEach(a => a.GestureName = e.NewGestureName);
-
-            foreach (UserApplication uApp in Applications.OfType<UserApplication>())
-                uApp.Actions.FindAll(a => a.GestureName == e.GestureName).ForEach(a => a.GestureName = e.NewGestureName);
-            SaveApplications();
-        }
         #endregion
 
         #region Custom Events
@@ -196,6 +187,27 @@ namespace GestureSign.Common.Applications
         public void RemoveIgnoredApplications(string applicationName)
         {
             _Applications.RemoveAll(app => app is IgnoredApplication && app.Name.Equals(applicationName));
+        }
+
+        public void RenameGesture(string newName, string oldName)
+        {
+            _Applications.ForEach(app => app.Actions?.ForEach(action =>
+              {
+                  if (action.GestureName.Equals(oldName))
+                      action.GestureName = newName;
+              }));
+
+            SaveApplications();
+        }
+
+        public void TrimGesture()
+        {
+            _Applications.ForEach(app => app?.Actions?.ForEach(a =>
+            {
+                if (!GestureManager.Instance.GestureExists(a.GestureName))
+                    a.GestureName = string.Empty;
+            }));
+            SaveApplications();
         }
 
         public bool SaveApplications()

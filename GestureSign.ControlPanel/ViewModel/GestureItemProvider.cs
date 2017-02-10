@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -10,9 +12,12 @@ using ManagedWinapi.Hooks;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
-    public class GestureItemProvider
+    public class GestureItemProvider : INotifyPropertyChanged
     {
         private static ObservableCollection<GestureItem> _gestureItems;
+        private static event EventHandler<string> GlobalPropertyChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         static GestureItemProvider()
         {
@@ -25,10 +30,27 @@ namespace GestureSign.ControlPanel.ViewModel
             if (GestureManager.FinishedLoading) Update();
         }
 
+        public GestureItemProvider()
+        {
+            PatternMap = GestureManager.FinishedLoading ? GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern) : new Dictionary<string, PointPattern[]>();
+            GlobalPropertyChanged += (sender, propertyName) =>
+            {
+                PatternMap = GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern);
+                OnPropertyChanged(propertyName);
+            };
+        }
+
         public static ObservableCollection<GestureItem> GestureItems
         {
             get { return _gestureItems; }
             set { _gestureItems = value; }
+        }
+
+        public Dictionary<string, PointPattern[]> PatternMap { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private static void Update()
@@ -53,6 +75,7 @@ namespace GestureSign.ControlPanel.ViewModel
                 };
                 GestureItems.Add(newItem);
             }
+            GlobalPropertyChanged?.Invoke(typeof(GestureItemProvider), nameof(PatternMap));
         }
     }
 }

@@ -4,12 +4,11 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
-                      xmlns:validationRules="clr-namespace:GestureSign.ControlPanel.ValidationRules"
                       xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       BorderThickness="1"
                       Height="325.145"
-                      Width="353.077"
+                      Width="354"
                       Loaded="Window_Loaded"
                       Closing="Window_Closing"
                       ResizeMode="NoResize"
@@ -33,7 +32,8 @@
                                FontWeight="Bold"
                                Margin="12,10,12,9"
                                Text="{localization:LocalisedText GestureDefinition.DrawGesture}"
-                               HorizontalAlignment="Center" />
+                               HorizontalAlignment="Center"
+                               Visibility="Collapsed" />
                     <Button x:Name="ResetButton"
                             Content="{localization:LocalisedText GestureDefinition.Reset}"
                             Style="{DynamicResource SquareButtonStyle}"
@@ -44,8 +44,7 @@
                             Click="ResetButton_Click"
                             controls:ControlsHelper.ContentCharacterCasing="Normal"
                             Focusable="False"
-                            Margin="0,10,0,0"
-                            Visibility="Collapsed" />
+                            Margin="0,10,0,0" />
                     <Image x:Name="imgGestureThumbnail"
                            Height="65"
                            Margin="0,10,0,0"
@@ -56,7 +55,33 @@
                                FontSize="14"
                                Margin="12,0"
                                Text="{localization:LocalisedText GestureDefinition.ExistingGesture}"
-                               Visibility="Collapsed" />
+                               Visibility="{Binding ElementName=ExistingGestureImage,Path=Visibility}" />
+                    <TextBlock TextWrapping="Wrap"
+                               FontSize="14"
+                               Margin="12,0"
+                               Text="{localization:LocalisedText GestureDefinition.UseExistingGesture}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock"
+                                   BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ElementName=UseExistingButton,Path=Visibility}"
+                                                       Value="Visible" />
+                                            <Condition Binding="{Binding ElementName=UseExistingButton,Path=Visibility}"
+                                                       Value="Visible" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <Image x:Name="ExistingGestureImage"
                            Height="65"
                            StretchDirection="DownOnly"
@@ -96,32 +121,15 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <TextBox x:Name="txtGestureName"
-                 controls:TextBoxHelper.Watermark="{localization:LocalisedText GestureDefinition.GestureNameWatermark}"
-                 TextWrapping="Wrap"
-                 FontSize="14"
-                 Margin="20,10,20,0"
-                 TextChanged="txtGestureName_TextChanged">
-            <TextBox.Text>
-                <Binding ElementName="GestureDefinition1"
-                         Path="GestureName"
-                         Mode="OneWayToSource"
-                         UpdateSourceTrigger="Explicit">
-                    <Binding.ValidationRules>
-                        <validationRules:GestureNameValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <Grid  Margin="0,10,0,0"
+        <Grid  Margin="0,20,0,0"
                Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button x:Name="cmdCancel"
                     Content="{localization:LocalisedText Common.Cancel}"
-                    Click="cmdCancel_Click"
                     IsCancel="True"
                     Focusable="False"
                     FontSize="14" />
@@ -132,6 +140,14 @@
                     FontSize="14"
                     IsDefault="True"
                     Grid.Column="1" />
+            <Button x:Name="UseExistingButton"
+                    Content="{localization:LocalisedText GestureDefinition.UseExisting}"
+                    Click="UseExistingButton_Click"
+                    Focusable="False"
+                    FontSize="14"
+                    Grid.Column="2"
+                    Visibility="Collapsed"
+                    Width="118" />
         </Grid>
 
     </StackPanel>

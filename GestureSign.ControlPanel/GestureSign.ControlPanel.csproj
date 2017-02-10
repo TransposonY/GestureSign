@@ -121,6 +121,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\GestureButtonImageConverter.cs" />
     <Compile Include="Converters\GroupHeaderConverter.cs" />
     <Compile Include="Converters\GestureGroupConverter.cs" />
     <Compile Include="Converters\GestureImageConverter.cs" />
@@ -132,7 +133,6 @@
     <Compile Include="Converters\MatchStringConverter.cs" />
     <Compile Include="Converters\ApplicationListHeaderConverter.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
-    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Common\ActionInfo.cs" />
     <Compile Include="Dialogs\ApplicationDialog.xaml.cs">
       <DependentUpon>ApplicationDialog.xaml</DependentUpon>
@@ -179,7 +179,6 @@
       <DependentUpon>RuningApplicationsFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\SliderTools.cs" />
-    <Compile Include="ValidationRules\GestureNameValidationRule.cs" />
     <Compile Include="ViewModel\ApplicationItemProvider.cs" />
     <Compile Include="ViewModel\GestureItemProvider.cs" />
     <Page Include="Dialogs\ApplicationDialog.xaml">

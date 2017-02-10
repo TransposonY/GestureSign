@@ -123,11 +123,12 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>
     <ExportAllActions>Export All Actions...</ExportAllActions>
+    <DrawGesture>Click to draw a gesture</DrawGesture>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteActionConfirm>Are you sure?</DeleteActionConfirm>
       <DeleteAppConfirm>Are you sure to delete "{0}"? All actions in this application will be deleted</DeleteAppConfirm>
-      <NoAssociationAction>No Association Action</NoAssociationAction>
+      <NoAssociationAction>Double Click to edit this action</NoAssociationAction>
       <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
       <ReplaceConfirm>There is already a {0} action in {0}.Replace it?</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
@@ -167,20 +168,18 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Title>New Gesture</Title>
-    <Rename>Rename</Rename>
-    <ExistingGesture>
-      Exist similar gesture, clicking 'Overwrite' will replace existing gesture.
-    </ExistingGesture>
-    <GestureNameWatermark>Please enter gesture name</GestureNameWatermark>
+    <NewGesture>New Gesture</NewGesture>
+    <SelectGesture>Select Gesture</SelectGesture>
+    <Edit>Edit Gesture</Edit>
+    <UseExisting>Use Existing</UseExisting>
+    <ExistingGesture>Exist following similar gesture:
+You can Overwrite the existing gesture</ExistingGesture>
+    <UseExistingGesture>Or Use Existing gesture directly</UseExistingGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
     <Reset>Reset</Reset>
     <HotKey>HotKey</HotKey>
     <HotKeyWatermark>Enter hot key</HotKeyWatermark>
     <Mouse>Mouse</Mouse>
-    <Messages>
-      <GestureExists>The Gesture Name "{0}" already exists, please provide a different Gesture Name</GestureExists>
-    </Messages>
   </GestureDefinition>
   <Ignored>
     <Header>Ignored</Header>

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
-using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
@@ -23,10 +18,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
     /// </summary>
     public partial class AvailableGestures : UserControl
     {
-
-        public static event EventHandler GestureChanged;
-
-
         public AvailableGestures()
         {
             InitializeComponent();
@@ -65,8 +56,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
                     GestureManager.Instance.DeleteGesture(listItem.Name);
-                if (GestureChanged != null)
-                    GestureChanged(this, new EventArgs());
 
                 GestureManager.Instance.SaveGestures();
             }

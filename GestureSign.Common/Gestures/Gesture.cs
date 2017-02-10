@@ -38,7 +38,7 @@ namespace GestureSign.Common.Gestures
         public bool Equals(Gesture other)
         {
             if (other == null) return false;
-            return Name != null && Name.Equals(other.Name) && Hotkey != null && Hotkey.Equals(other.Hotkey);
+            return Name != null && Name.Equals(other.Name) && Hotkey != null && Hotkey.Equals(other.Hotkey) && MouseAction == other.MouseAction;
         }
 
         #endregion
