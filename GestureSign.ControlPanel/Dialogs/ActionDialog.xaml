@@ -5,11 +5,10 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
-                      xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
                       mc:Ignorable="d"
                       x:Class="GestureSign.ControlPanel.Dialogs.ActionDialog"
-                      Title="{localization:LocalisedText ActionDialog.AddActionTitle}"
-                      Width="700"
+                      Title="{localization:LocalisedText ActionDialog.EditActionTitle}"
+                      Width="390"
                       WindowStyle="ToolWindow"
                       Loaded="MetroWindow_Loaded"
                       SizeToContent="Height"
@@ -22,51 +21,7 @@
                       ResizeMode="CanMinimize">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
-            <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
-            <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
-                                x:Key="GestureItemProvider">
-            </ObjectDataProvider>
-            <ObjectDataProvider ObjectType="{x:Type viewModel:ApplicationItemProvider}"
-                                x:Key="ApplicationItemProvider">
-            </ObjectDataProvider>
-            <Style x:Key="NewButtonStyle"
-                   TargetType="Button">
-                <Setter Property="Foreground"
-                        Value="{StaticResource HighlightBrush}" />
-                <Setter Property="Background"
-                        Value="{StaticResource IdealForegroundColorBrush}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border SnapsToDevicePixels="True"
-                                    BorderThickness="1"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    Background="{TemplateBinding Background}">
-                                <ContentPresenter HorizontalAlignment="Stretch"
-                                                  VerticalAlignment="Stretch" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver"
-                                         Value="True">
-                                    <Setter Property="BorderBrush"
-                                            Value="{StaticResource AccentColorBrush3}" />
-                                    <Setter Property="Background"
-                                            Value="{StaticResource AccentColorBrush3}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed"
-                                         Value="True">
-                                    <Setter Property="Background"
-                                            Value="{StaticResource AccentColorBrush}" />
-                                    <Setter Property="Foreground"
-                                            Value="{StaticResource IdealForegroundColorBrush}" />
-                                    <Setter Property="BorderBrush"
-                                            Value="{StaticResource AccentColorBrush}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+            <converters:GestureImageConverter x:Key="GestureImageConverter" />
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
@@ -76,337 +31,126 @@
                              Position="Bottom"
                              CloseButtonVisibility="Collapsed"
                              IsPinned="False"
-                             Height="75">
+                             Height="{Binding ElementName=MessageFlyoutText,Path=Height}">
                 <TextBlock x:Name="MessageFlyoutText"
                            FontSize="16"
                            TextWrapping="Wrap"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center"
+                           Margin="0,10" />
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350" />
-            <ColumnDefinition Width="350" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="35" />
-        </Grid.RowDefinitions>
-        <StackPanel Margin="10,0,0,0">
-            <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.SelectApp}"
-                       FontSize="24" />
-            <ComboBox x:Name="cmbExistingApplication"
-                      ItemsSource="{Binding Source={StaticResource ApplicationItemProvider},Path=ApplicationItems}"
-                      DisplayMemberPath="Name"
-                      FontSize="14"
-                      Margin="10,10,51,0" />
-            <Button x:Name="NewApplicationButton"
-                    Style="{StaticResource NewButtonStyle}"
-                    BorderBrush="{StaticResource AccentColorBrush4}"
-                    Width="36"
-                    Height="27"
-                    HorizontalAlignment="Right"
-                    Margin="0,-27,10,0"
-                    Click="NewApplicationButton_Click">
-                <Rectangle Width="18"
-                           Height="18"
-                           Fill="{StaticResource HighlightBrush}">
-                    <Rectangle.OpacityMask>
-                        <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource PlusIcon}" />
-                    </Rectangle.OpacityMask>
-                </Rectangle>
-            </Button>
-            <TextBlock Text="{localization:LocalisedText ActionDialog.MatchUsing}"
-                       FontSize="14"
-                       FontWeight="Bold"
-                       Margin="10,5,0,0" />
-            <TextBlock Text="{Binding SelectedItem.MatchUsing, Converter={StaticResource MatchUsingToStringConverter}, ElementName=cmbExistingApplication}"
-                       FontSize="14"
-                       Margin="10,5,0,0" />
-            <TextBlock Text="{localization:LocalisedText ActionDialog.MatchString}"
-                       FontSize="14"
-                       FontWeight="Bold"
-                       Margin="10,5,0,0" />
-            <TextBlock Text="{Binding SelectedItem.MatchString, ElementName=cmbExistingApplication}"
-                       FontSize="14"
-                       Margin="10,5,0,0" />
-            <TextBlock Text="{localization:LocalisedText ActionDialog.Condition}"
-                       FontSize="24"
-                       Margin="0,10,0,0"
-                       HorizontalAlignment="Left" />
-            <TextBox x:Name="ConditionTextBox"
-                     FontSize="14"
-                     Margin="10,10,10,0"
-                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.Default}"
-                     PreviewMouseUp="ConditionTextBox_PreviewMouseUp" />
-            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
-                       FontSize="24"
-                       Margin="0,5,0,0"
-                       HorizontalAlignment="Left" />
-            <ComboBox x:Name="availableGesturesComboBox"
-                      ItemsSource="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}"
-                      Loaded="availableGesturesComboBox_Loaded"
-                      HorizontalContentAlignment="Left"
-                      HorizontalAlignment="Left"
-                      VerticalContentAlignment="Center"
-                      Margin="25,10,5,0"
-                      VerticalAlignment="Center"
-                      BorderThickness="0"
-                      Height="80"
-                      IsEditable="False"
-                      IsReadOnly="True"
-                      IsDropDownOpen="False"
-                      ScrollViewer.IsDeferredScrollingEnabled="True"
-                      MaxDropDownHeight="512"
-                      MaxWidth="300"
-                      Width="250">
-                <!--<ComboBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel IsVirtualizing="True"  VirtualizationMode="Recycling"  >
-                                    </VirtualizingStackPanel>
-                                </ItemsPanelTemplate>
-                            </ComboBox.ItemsPanel>-->
-                <ComboBox.Resources>
-                    <Style TargetType="{x:Type ComboBox}"
-                           BasedOn="{StaticResource {x:Type ComboBox}}">
-                        <Setter Property="Foreground"
-                                Value="{StaticResource AccentSelectedColorBrush}" />
-                        <Setter Property="Background"
-                                Value="White" />
-                        <Setter Property="SnapsToDevicePixels"
-                                Value="true" />
-                        <!--<Setter Property="OverridesDefaultStyle" Value="true"/>-->
-                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                                Value="Auto" />
-                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                                Value="Auto" />
-                        <Setter Property="ScrollViewer.CanContentScroll"
-                                Value="False" />
-                        <Setter Property="FontWeight"
-                                Value="Bold" />
-                        <Setter Property="MinWidth"
-                                Value="50" />
-                        <Setter Property="MinHeight"
-                                Value="32" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ComboBox}">
-                                    <Grid>
-                                        <ToggleButton x:Name="ToggleButton"
-                                                      BorderBrush="{TemplateBinding BorderBrush}"
-                                                      Background="{TemplateBinding Background}"
-                                                      Foreground="{TemplateBinding Foreground}"
-                                                      Grid.Column="2"
-                                                      Focusable="false"
-                                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                      ClickMode="Press">
-                                            <ToggleButton.Style>
-                                                <Style  TargetType="{x:Type ToggleButton}">
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <Border x:Name="Border"
-                                                                            Grid.ColumnSpan="2"
-                                                                            CornerRadius="0"
-                                                                            Background="{TemplateBinding Background}"
-                                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                                            BorderThickness="1" />
-                                                                    <Border Grid.Column="0"
-                                                                            CornerRadius="0"
-                                                                            Background="Transparent"
-                                                                            BorderBrush="Transparent"
-                                                                            BorderThickness="10" />
-                                                                </Grid>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsEnabled"
-                                                                             Value="False">
-                                                                        <Setter TargetName="Border"
-                                                                                Property="Background"
-                                                                                Value="LightGray" />
-                                                                        <Setter TargetName="Border"
-                                                                                Property="BorderBrush"
-                                                                                Value="Gray" />
-                                                                        <Setter Property="Foreground"
-                                                                                Value="Gray" />
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </ToggleButton.Style>
-                                        </ToggleButton>
-                                        <ContentPresenter x:Name="ContentSite"
-                                                          IsHitTestVisible="False"
-                                                          Content="{TemplateBinding SelectionBoxItem}"
-                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                          Margin="10,3,30,3"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Center" />
-                                        <TextBox x:Name="PART_EditableTextBox"
-                                                 Style="{x:Null}"
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center"
-                                                 Margin="3,3,23,3"
-                                                 Focusable="True"
-                                                 Visibility="Hidden"
-                                                 IsReadOnly="{TemplateBinding IsReadOnly}">
-                                            <TextBox.Template>
-                                                <ControlTemplate TargetType="{x:Type TextBox}">
-                                                    <Border x:Name="PART_ContentHost"
-                                                            Focusable="True" />
-                                                </ControlTemplate>
-                                            </TextBox.Template>
-                                        </TextBox>
-                                        <Popup x:Name="Popup"
-                                               Placement="Bottom"
-                                               IsOpen="{TemplateBinding IsDropDownOpen}"
-                                               AllowsTransparency="True"
-                                               Focusable="False"
-                                               PopupAnimation="Slide">
-                                            <Grid x:Name="DropDown"
-                                                  SnapsToDevicePixels="True"
-                                                  MinWidth="{TemplateBinding ActualWidth}"
-                                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                                <Border x:Name="DropDownBorder"
-                                                        Background="White"
-                                                        BorderThickness="2"
-                                                        BorderBrush="Gray" />
-                                                <ScrollViewer Margin="4,6,4,6"
-                                                              SnapsToDevicePixels="True">
-                                                    <StackPanel IsItemsHost="True"
-                                                                KeyboardNavigation.DirectionalNavigation="Contained" />
-                                                </ScrollViewer>
-                                            </Grid>
-                                        </Popup>
-
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="HasItems"
-                                                 Value="false">
-                                            <Setter TargetName="DropDownBorder"
-                                                    Property="MinHeight"
-                                                    Value="95" />
-                                        </Trigger>
-                                        <Trigger Property="IsGrouping"
-                                                 Value="true">
-                                            <Setter Property="ScrollViewer.CanContentScroll"
-                                                    Value="false" />
-                                        </Trigger>
-                                        <Trigger SourceName="Popup"
-                                                 Property="AllowsTransparency"
-                                                 Value="true">
-                                            <Setter TargetName="DropDownBorder"
-                                                    Property="CornerRadius"
-                                                    Value="0" />
-                                            <Setter TargetName="DropDownBorder"
-                                                    Property="Margin"
-                                                    Value="0,2,0,0" />
-                                        </Trigger>
-                                        <Trigger Property="IsEditable"
-                                                 Value="true">
-                                            <Setter Property="IsTabStop"
-                                                    Value="false" />
-                                            <Setter TargetName="PART_EditableTextBox"
-                                                    Property="Visibility"
-                                                    Value="Visible" />
-                                            <Setter TargetName="ContentSite"
-                                                    Property="Visibility"
-                                                    Value="Hidden" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-
-
-                </ComboBox.Resources>
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Image}"
-                                   Height="65"
-                                   Stretch="Uniform"
-                                   StretchDirection="DownOnly"
-                                   Width="200"
-                                   HorizontalAlignment="Stretch" />
-                            <TextBlock TextWrapping="Wrap"
-                                       Text="{Binding Name}"
-                                       Margin="0"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Stretch" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button x:Name="NewGestureButton"
-                    Style="{StaticResource NewButtonStyle}"
-                    BorderBrush="{StaticResource AccentColorBrush4}"
-                    Margin="0,-80,25,10"
-                    Width="36"
-                    HorizontalAlignment="Right"
-                    Click="NewGestureButton_Click"
-                    Height="80"
-                    MinHeight="25">
-                <Rectangle Width="24"
-                           Height="24"
-                           Fill="{StaticResource HighlightBrush}">
-                    <Rectangle.OpacityMask>
-                        <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource PlusIcon}" />
-                    </Rectangle.OpacityMask>
-                </Rectangle>
-            </Button>
-        </StackPanel>
-        <StackPanel Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="0,0,10,0">
-            <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}"
-                       FontSize="24" />
-            <ComboBox x:Name="cmbPlugins"
-                      Margin="10"
-                      DisplayMemberPath="DisplayText"
-                      SelectionChanged="cmbPlugins_SelectionChanged"
-                      FontSize="14"
-                      MaxDropDownHeight="300" />
-            <ContentControl x:Name="SettingsContent"
-                            Margin="5,10,5,5" />
-            <TextBlock TextWrapping="Wrap"
-                       Text="{localization:LocalisedText ActionDialog.ActionName}"
-                       FontWeight="Bold"
-                       FontSize="14"
-                       HorizontalAlignment="Left"
-                       Margin="10,20,0,0" />
-            <TextBox x:Name="TxtActionName"
-                     controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
-                     FontSize="14"
-                     MaxLines="3"
-                     MaxLength="80"
-                     Margin="10,5,10,10" />
-        </StackPanel>
-        <Button x:Name="cmdCancel"
-                Content="{localization:LocalisedText Common.Cancel}"
-                Click="cmdCancel_Click"
-                FontSize="14"
-                Grid.Row="2"
-                Grid.Column="0" />
-        <Button x:Name="cmdDone"
-                Content="{localization:LocalisedText Common.Save}"
-                Click="cmdDone_Click"
-                IsDefault="True"
-                FontSize="14"
-                Grid.Row="2"
-                Grid.Column="1" />
-        <!--<Line Canvas.Top="0" Stroke="{StaticResource AccentColorBrush}" Y2="444" Canvas.Left="350" Opacity="0.5" StrokeThickness="2"/>-->
-    </Grid>
+    <StackPanel>
+        <TabControl>
+            <TabItem Header="{localization:LocalisedText ActionDialog.Command}"
+                     controls:ControlsHelper.HeaderFontSize="18">
+                <StackPanel>
+                    <TextBlock Text="{localization:LocalisedText ActionDialog.SelectCommand}"
+                               FontSize="14"
+                               Margin="20,0,0,0"
+                               HorizontalAlignment="Left"
+                               FontWeight="Bold" />
+                    <ComboBox x:Name="cmbPlugins"
+                              Margin="20,10"
+                              DisplayMemberPath="DisplayText"
+                              SelectionChanged="cmbPlugins_SelectionChanged"
+                              FontSize="14"
+                              MaxDropDownHeight="300" />
+                    <ContentControl x:Name="SettingsContent"
+                                    Margin="20,10,20,5" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="{localization:LocalisedText Gesture.Header}"
+                     controls:ControlsHelper.HeaderFontSize="18">
+                <StackPanel>
+                    <TextBlock Text="{localization:LocalisedText ActionDialog.SelectGesture}"
+                               FontSize="14"
+                               Margin="20,0,0,0"
+                               HorizontalAlignment="Left"
+                               FontWeight="Bold" />
+                    <Button x:Name="GestureButton"
+                            HorizontalContentAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Width="240"
+                            BorderThickness="1"
+                            Height="85"
+                            Background="{x:Null}"
+                            Click="GestureButton_Click"
+                            BorderBrush="{StaticResource AccentColorBrush3}"
+                            Margin="0,10,0,0">
+                        <Image x:Name="GestureButtonImage"
+                               Source="{Binding CurrentGesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=65,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                               Height="65"
+                               Stretch="Uniform"
+                               StretchDirection="DownOnly" />
+                    </Button>
+                    <TextBlock Text="{localization:LocalisedText Action.DrawGesture}"
+                               Margin="0,-48.5,0,0"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=GestureButtonImage,Path=Source}"
+                                                 Value="{x:Null}">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="{localization:LocalisedText ActionDialog.Condition}"
+                     controls:ControlsHelper.HeaderFontSize="18">
+                <StackPanel>
+                    <TextBlock Text="{localization:LocalisedText ActionDialog.TriggerCondition}"
+                               FontSize="14"
+                               Margin="20,0,0,0"
+                               HorizontalAlignment="Left"
+                               FontWeight="Bold" />
+                    <TextBox x:Name="ConditionTextBox"
+                             FontSize="14"
+                             Margin="20,10,20,0"
+                             controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.Default}"
+                             PreviewMouseUp="ConditionTextBox_PreviewMouseUp" />
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <TextBlock TextWrapping="Wrap"
+                   Text="{localization:LocalisedText ActionDialog.ActionName}"
+                   FontWeight="Bold"
+                   FontSize="14"
+                   HorizontalAlignment="Left"
+                   Margin="20,20,0,0" />
+        <TextBox x:Name="TxtActionName"
+                 controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.ActionNameWatermark}"
+                 FontSize="14"
+                 MaxLines="3"
+                 MaxLength="80"
+                 Margin="20,5,20,10" />
+        <Grid Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="cmdCancel"
+                    Content="{localization:LocalisedText Common.Cancel}"
+                    FontSize="14"
+                    Grid.Column="0"
+                    IsCancel="True" />
+            <Button x:Name="cmdDone"
+                    Content="{localization:LocalisedText Common.Save}"
+                    Click="cmdDone_Click"
+                    IsDefault="True"
+                    FontSize="14"
+                    Grid.Column="1" />
+        </Grid>
+    </StackPanel>
 </controls:MetroWindow>
 

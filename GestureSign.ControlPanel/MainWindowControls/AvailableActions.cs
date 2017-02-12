@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace GestureSign.ControlPanel.MainWindowControls
@@ -33,7 +34,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public ObservableCollection<ActionInfo> ActionInfos { get; } = new ObservableCollection<ActionInfo>();
 
         private Task _addActionTask;
-        private bool _selecteNewestItem;
         private IApplication _cutActionSource;
         private IAction _actionClipboard;
 
@@ -41,26 +41,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             ActionDialog.ActionsChanged += (o, e) =>
             {
-                if (lstAvailableApplication.SelectedItem == e.Application)
+                var oldActionInfo =
+                      ActionInfos.FirstOrDefault(ai => ai.ActionName.Equals(e.Action.Name, StringComparison.Ordinal));
+                if (oldActionInfo != null)
                 {
-                    var oldActionInfo =
-                          ActionInfos.FirstOrDefault(ai => ai.ActionName.Equals(e.Action.Name, StringComparison.Ordinal));
-                    if (oldActionInfo != null)
-                    {
-                        int index = ActionInfos.IndexOf(oldActionInfo);
-                        var newActionInfo = Action2ActionInfo(e.Action);
-                        ActionInfos[index] = newActionInfo;
-                        RefreshGroup(e.Action.GestureName);
-                        SelectAction(newActionInfo);
-                    }
-                    else RefreshActions(false);
+                    int index = ActionInfos.IndexOf(oldActionInfo);
+                    var newActionInfo = Action2ActionInfo(e.Action);
+                    ActionInfos[index] = newActionInfo;
+                    RefreshGroup(e.Action.GestureName);
+                    SelectAction(newActionInfo.ActionName);
                 }
-                else
-                {
-                    _selecteNewestItem = true;
-                    lstAvailableApplication.SelectedItem = e.Application;
-                    lstAvailableApplication.ScrollIntoView(e.Application);
-                }
+                else RefreshPartialActions();
             };
 
             ApplicationManager.ApplicationChanged += (o, e) =>
@@ -71,6 +62,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         }
 
         private void cmdEditAction_Click(object sender, RoutedEventArgs e)
+        {
+            EditAction();
+        }
+
+        private void EditAction()
         {
             // Make sure at least one item is selected
             if (lstAvailableActions.SelectedItems.Count == 0) return;
@@ -133,7 +129,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selectedApp.RemoveAction(selectedApp.Actions.FirstOrDefault(a => a.Name.Equals(strActionName, StringComparison.Ordinal)));
 
             }
-            RefreshActions(false);
+            RefreshPartialActions();
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
         }
@@ -155,58 +151,78 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
         {
-            var ai = lstAvailableActions.SelectedItem as ActionInfo;
-            string gestureName = ai?.GestureName;
-            ActionDialog actionDialog = new ActionDialog(gestureName, lstAvailableApplication.SelectedItem as IApplication);
-            actionDialog.Show();
-        }
-
-        private void RefreshActions(bool refreshAll)
-        {
             var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApplication == null) return;
-            if (refreshAll)
-            {
-                Action<object> refreshAction = (o) =>
-                 {
-                     Dispatcher.Invoke(() => { ActionInfos.Clear(); }, DispatcherPriority.Loaded);
-                     AddActionsToGroup(selectedApplication.Actions);
-                 };
+            var ai = lstAvailableActions.SelectedItem as ActionInfo;
 
-                if (_addActionTask == null)
-                {
-                    _addActionTask = Task.Factory.StartNew(refreshAction, null);
-                }
-                else _addActionTask = _addActionTask.ContinueWith(refreshAction);
+            Applications.Action action = new Applications.Action()
+            {
+                Name = ApplicationManager.GetNextActionName(LocalizationProvider.Instance.GetTextValue("Action.NewAction"), selectedApplication)
+            };
+
+            ActionInfo actionInfo = Action2ActionInfo(action);
+            if (ai == null)
+            {
+                selectedApplication.AddAction(action);
+                ActionInfos.Add(actionInfo);
             }
             else
             {
-                _selecteNewestItem = true;
-                var newApp = selectedApplication.Actions.Where(a => !ActionInfos.Any(ai => ai.Equals(a))).ToList();
-                var deletedApp = ActionInfos.Where(ai => !selectedApplication.Actions.Any(ai.Equals)).ToList();
+                selectedApplication.Insert(ActionInfos.IndexOf(ai), action);
+                ActionInfos.Insert(ActionInfos.IndexOf(ai), actionInfo);
+            }
+            SelectAction(actionInfo.ActionName);
 
-                if (newApp.Count == 1 && deletedApp.Count == 1)
+            ApplicationManager.Instance.SaveApplications();
+        }
+
+        private void RefreshAllActions()
+        {
+            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApplication == null) return;
+
+            Action<object> refreshAction = (o) =>
+             {
+                 Dispatcher.Invoke(() => { ActionInfos.Clear(); }, DispatcherPriority.Loaded);
+                 AddActionsToGroup(selectedApplication.Actions);
+             };
+
+            _addActionTask = _addActionTask?.ContinueWith(refreshAction) ?? Task.Factory.StartNew(refreshAction, null);
+        }
+
+        private void RefreshPartialActions()
+        {
+            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApplication == null) return;
+
+            var newApp = selectedApplication.Actions.Where(a => !ActionInfos.Any(ai => ai.Equals(a))).ToList();
+            var deletedApp = ActionInfos.Where(ai => !selectedApplication.Actions.Any(ai.Equals)).ToList();
+
+            if (newApp.Count == 1 && deletedApp.Count == 1)
+            {
+                var newActionInfo = Action2ActionInfo(newApp[0]);
+                ActionInfos[ActionInfos.IndexOf(deletedApp[0])] = newActionInfo;
+                RefreshGroup(newApp[0].GestureName);
+                SelectAction(newActionInfo.ActionName);
+            }
+            else
+            {
+                foreach (ActionInfo ai in deletedApp)
+                    ActionInfos.Remove(ai);
+
+                if (newApp.Count != 0)
                 {
-                    var newActionInfo = Action2ActionInfo(newApp[0]);
-                    ActionInfos[ActionInfos.IndexOf(deletedApp[0])] = newActionInfo;
-                    RefreshGroup(newApp[0].GestureName);
-                    SelectAction(newActionInfo);
-                }
-                else
-                {
-                    foreach (ActionInfo ai in deletedApp)
-                        ActionInfos.Remove(ai);
                     AddActionsToGroup(newApp);
+                    SelectAction(newApp[0].Name);
                 }
             }
         }
 
         private void AddActionsToGroup(List<IAction> actions)
         {
-            ActionInfo actionInfo = null;
             foreach (var currentAction in actions)
             {
-                actionInfo = Action2ActionInfo(currentAction);
+                var actionInfo = Action2ActionInfo(currentAction);
 
                 var info = actionInfo;
                 Dispatcher.Invoke(() =>
@@ -214,19 +230,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     ActionInfos.Add(info);
                 }, DispatcherPriority.Input);
             }
-
-            if (actionInfo != null && _selecteNewestItem)
-                Dispatcher.Invoke(() =>
-                  {
-                      _selecteNewestItem = false;
-                      SelectAction(actionInfo);
-                  });
         }
 
         void RefreshGroup(string gestureName)
         {
             lstAvailableActions.SelectedItem = null;
-            var temp = ActionInfos.Where(ai => ai.GestureName.Equals(gestureName, StringComparison.Ordinal)).ToList();
+            var temp = ActionInfos.Where(ai => string.Equals(ai.GestureName, gestureName, StringComparison.Ordinal)).ToList();
             foreach (ActionInfo ai in temp)
             {
                 int i = ActionInfos.IndexOf(ai);
@@ -235,11 +244,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        void SelectAction(ActionInfo actionInfo)
+        void SelectAction(string actionName)
         {
-            lstAvailableActions.SelectedItem = actionInfo;
+            lstAvailableActions.SelectedValue = actionName;
             lstAvailableActions.UpdateLayout();
-            lstAvailableActions.ScrollIntoView(actionInfo);
+            lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem);
             EnableRelevantButtons();
         }
 
@@ -292,7 +301,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 MoveUpButton.IsEnabled = MoveDownButton.IsEnabled = false;
             else
             {
-                var actionInfoGroup = ActionInfos.Where(ai => ai.GestureName.Equals(selectedActionInfo.GestureName, StringComparison.Ordinal)).ToList();
+                var actionInfoGroup = ActionInfos.Where(ai => string.Equals(ai.GestureName, selectedActionInfo.GestureName, StringComparison.Ordinal)).ToList();
                 int index = actionInfoGroup.IndexOf(selectedActionInfo);
 
                 MoveUpButton.IsEnabled = index != 0;
@@ -338,25 +347,24 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (listBoxItemParent == null) return;
                 var listBoxItems = listBoxItemParent.Children;
 
+                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
                 ActionInfo ai = null;
-                foreach (ListBoxItem listBoxItem in listBoxItems)
+                if (app != null)
                 {
-                    ai = listBoxItem.Content as ActionInfo;
-                    IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                    if (ai != null)
+                    foreach (ListBoxItem listBoxItem in listBoxItems)
                     {
-                        if (app != null)
+                        ai = listBoxItem.Content as ActionInfo;
+                        if (ai != null)
                         {
                             IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
                             ai.GestureName = action.GestureName = newGesture;
 
                             ApplicationManager.Instance.SaveApplications();
                         }
+                        else return;
                     }
-                    else return;
                 }
                 RefreshGroup(newGesture);
-                SelectAction(ai);
             }
         }
 
@@ -558,7 +566,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 _actionClipboard = null;
             }
 
-            RefreshActions(false);
+            RefreshPartialActions();
 
             ApplicationManager.Instance.SaveApplications();
         }
@@ -566,7 +574,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            RefreshActions(true);
+            RefreshAllActions();
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApp == null)
             {
@@ -585,9 +593,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void EditApplication_Click(object sender, RoutedEventArgs e)
         {
-            if (lstAvailableApplication.SelectedItem != null)
+            EditApplication();
+        }
+
+        private void EditApplication()
+        {
+            var userapp = lstAvailableApplication.SelectedItem as UserApplication;
+            if (userapp != null)
             {
-                ApplicationDialog applicationDialog = new ApplicationDialog(lstAvailableApplication.SelectedItem as IApplication);
+                ApplicationDialog applicationDialog = new ApplicationDialog(userapp);
                 applicationDialog.ShowDialog();
             }
         }
@@ -617,21 +631,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             var selected = (lstAvailableActions.SelectedItem as ActionInfo);
             var actionInfoGroup =
-                  ActionInfos.Where(ai => ai.GestureName.Equals(selected.GestureName, StringComparison.Ordinal)).ToList();
+                  ActionInfos.Where(ai => string.Equals(ai.GestureName, selected.GestureName, StringComparison.Ordinal)).ToList();
             int index = actionInfoGroup.IndexOf(selected);
             if (index > 0)
             {
+                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
+
                 ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index - 1]));
                 RefreshGroup(selected.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
-
-                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-                if (selectedApplication == null) return;
-
                 int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
                 int lastIndex = selectedApplication.Actions.FindLastIndex(selectedIndex - 1,
-                    a => a.GestureName.Equals(selected.GestureName, StringComparison.Ordinal));
+                    a => string.Equals(a.GestureName, selected.GestureName, StringComparison.Ordinal));
 
                 var temp = selectedApplication.Actions[lastIndex];
                 selectedApplication.Actions[lastIndex] = selectedApplication.Actions[selectedIndex];
@@ -645,22 +658,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             var selected = (lstAvailableActions.SelectedItem as ActionInfo);
             var actionInfoGroup =
-                  ActionInfos.Where(ai => ai.GestureName.Equals(selected.GestureName, StringComparison.Ordinal)).ToList();
+                  ActionInfos.Where(ai => string.Equals(ai.GestureName, selected.GestureName, StringComparison.Ordinal)).ToList();
             int index = actionInfoGroup.IndexOf(selected);
             if (index + 1 < actionInfoGroup.Count)
             {
+                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
 
                 ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index + 1]));
                 RefreshGroup(selected.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
-
-                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-                if (selectedApplication == null) return;
-
                 int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
                 int nextIndex = selectedApplication.Actions.FindIndex(selectedIndex + 1,
-                    a => a.GestureName.Equals(selected.GestureName, StringComparison.Ordinal));
+                    a => string.Equals(a.GestureName, selected.GestureName, StringComparison.Ordinal));
 
                 var temp = selectedApplication.Actions[nextIndex];
                 selectedApplication.Actions[nextIndex] = selectedApplication.Actions[selectedIndex];
@@ -688,6 +699,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
             }
             catch { }
+        }
+
+        private void ListBoxItem_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var listBoxItem = (ListBoxItem)sender;
+            var listBox = UIHelper.GetParentDependencyObject<ListBox>(listBoxItem);
+            if (ReferenceEquals(listBox, lstAvailableActions))
+                EditAction();
+            else if (ReferenceEquals(listBox, lstAvailableApplication))
+                EditApplication();
         }
     }
 }

@@ -76,7 +76,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     </Messages>
   </ApplicationDialog>
   <ActionDialog>
-    <AddActionTitle>New Action</AddActionTitle>
     <EditActionTitle>Edit Action</EditActionTitle>
     <ActionName>Action Name</ActionName>
     <ActionNameWatermark>Please enter action name</ActionNameWatermark>
@@ -84,12 +83,11 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ApplicationTools>Drag and drop the crosshair on the window.Or click the right button to select the running applications.</ApplicationTools>
     <AppName>Application Name</AppName>
     <Icon>Icon</Icon>
-    <MatchUsing>Match Using</MatchUsing>
-    <MatchString>Match String</MatchString>
-    <SelectApp>Select Application</SelectApp>
+    <Command>Command</Command>
     <SelectCommand>Select Command</SelectCommand>
-    <SelectGesture>Select Gesture</SelectGesture>
-    <Condition>Triggering Condition</Condition>
+    <SelectGesture>Click to select a gesture</SelectGesture>
+    <Condition>Condition</Condition>
+    <TriggerCondition>Trigger Condition</TriggerCondition>
     <Default>Default</Default>
     <Messages>
       <ActionExistsTitle>Action Conflict</ActionExistsTitle>
@@ -110,6 +108,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
   </EditConditionDialog>
   <Action>
     <Header>Action</Header>
+    <NewAction>NewAction</NewAction>
     <ActionFile>Action File</ActionFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>

@@ -8,10 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
-using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
-using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 
 namespace GestureSign.ControlPanel.Dialogs
@@ -23,28 +21,11 @@ namespace GestureSign.ControlPanel.Dialogs
             InitializeComponent();
         }
 
-        //Add action by new gesture
-        public ActionDialog(string currentGestureName) : this()
-        {
-            _gestureName = currentGestureName;
-        }
-
-        //Add action by existing gesture
-        public ActionDialog(string currentGestureName, IApplication selectedApplication) : this(currentGestureName)
-        {
-            _selectedApplication = selectedApplication;
-        }
-
         //Edit action
         public ActionDialog(IAction selectedAction, IApplication selectedApplication) : this()
         {
-            Title = LocalizationProvider.Instance.GetTextValue("ActionDialog.EditActionTitle");
             _selectedApplication = selectedApplication;
             _currentAction = selectedAction;
-            if (_currentAction != null)
-            {
-                _gestureName = _currentAction.GestureName;
-            }
         }
 
         #region Private Instance Fields
@@ -53,7 +34,6 @@ namespace GestureSign.ControlPanel.Dialogs
         // Create variable to hold current selected plugin
         IPluginInfo _pluginInfo;
         IAction _currentAction;
-        string _gestureName;
 
         #endregion
 
@@ -63,22 +43,28 @@ namespace GestureSign.ControlPanel.Dialogs
 
         #endregion
 
+        #region Dependency Properties
+
+        public IGesture CurrentGesture
+        {
+            get { return (IGesture)GetValue(CurrentGestureProperty); }
+            set { SetValue(CurrentGestureProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentGestureProperty =
+            DependencyProperty.Register(nameof(CurrentGesture), typeof(IGesture), typeof(ActionDialog), new FrameworkPropertyMetadata(new Gesture()));
+
+
+        #endregion
 
         #region Events
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            ApplicationManager.ApplicationChanged += (o, ace) =>
-            {
-                cmbExistingApplication.SelectedItem = ace.Application;
-            };
-
-            cmbExistingApplication.SelectedItem = _selectedApplication ?? ApplicationManager.Instance.GetGlobalApplication();
             BindPlugins();
 
             if (_currentAction != null)
             {
-                //cmbExistingApplication.SelectedItem = ApplicationManager.Instance.CurrentApplication;
                 foreach (object comboItem in cmbPlugins.Items)
                 {
                     IPluginInfo pluginInfo = (IPluginInfo)comboItem;
@@ -90,12 +76,11 @@ namespace GestureSign.ControlPanel.Dialogs
                     }
                 }
                 ConditionTextBox.Text = _currentAction.Condition;
-            }
-        }
 
-        private void availableGesturesComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            SelectCurrentGesture(_gestureName);
+                var gesture = GestureManager.Instance.GetNewestGestureSample(_currentAction.GestureName);
+                if (gesture != null)
+                    CurrentGesture = gesture;
+            }
         }
 
         private void cmdDone_Click(object sender, RoutedEventArgs e)
@@ -113,34 +98,29 @@ namespace GestureSign.ControlPanel.Dialogs
             LoadPlugin((IPluginInfo)cmbPlugins.SelectedItem);
         }
 
-        private void cmdCancel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void NewGestureButton_Click(object sender, RoutedEventArgs e)
-        {
-            GestureDefinition gestureDefinition = new GestureDefinition(true);
-            var result = gestureDefinition.ShowDialog();
-
-            if (result != null && result.Value)
-            {
-                SelectCurrentGesture(GestureManager.Instance.GestureName);
-            }
-        }
-
-        private void NewApplicationButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationDialog applicationDialog = new ApplicationDialog(true);
-            applicationDialog.ShowDialog();
-        }
-
         private void ConditionTextBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             EditConditionDialog editConditionDialog = new EditConditionDialog(ConditionTextBox.Text);
             if (editConditionDialog.ShowDialog().Value)
             {
                 ConditionTextBox.Text = editConditionDialog.ConditionTextBox.Text;
+            }
+        }
+
+        private void GestureButton_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            GestureDefinition gestureDialog = new GestureDefinition(true);
+            var result = gestureDialog.ShowDialog();
+
+            if (result != null && result.Value)
+            {
+                var newGesture = gestureDialog.SimilarGesture == null
+                    ? GestureManager.Instance.GestureName
+                    : gestureDialog.SimilarGesture.Name;
+
+                CurrentGesture = GestureManager.Instance.GetNewestGestureSample(newGesture);
             }
         }
 
@@ -157,104 +137,45 @@ namespace GestureSign.ControlPanel.Dialogs
             return false;
         }
 
-        private void SelectCurrentGesture(string currentGesture)
-        {
-            if (currentGesture == null) return;
-
-            foreach (GestureItem item in availableGesturesComboBox.Items)
-            {
-                if (item.Name == currentGesture)
-                    availableGesturesComboBox.SelectedIndex = availableGesturesComboBox.Items.IndexOf(item);
-            }
-        }
-
         #endregion
 
         private bool SaveAction()
         {
-            if (_currentAction != null && cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
-            {
-                if (((IApplication)cmbExistingApplication.SelectedItem).Actions.Any(a => a.Name.Equals(TxtActionName.Text.Trim())))
-                {
-                    return
-                        ShowErrorMessage(
-                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                            String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                                TxtActionName.Text.Trim(), ((IApplication)cmbExistingApplication.SelectedItem).Name));
-                }
-            }
-            ApplicationManager.Instance.CurrentApplication = (IApplication)cmbExistingApplication.SelectedItem;
+            ApplicationManager.Instance.CurrentApplication = _selectedApplication;
 
-            if (availableGesturesComboBox.SelectedItem == null)
+            if (CurrentGesture == null)
                 return
                     ShowErrorMessage(
                         LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGestureTitle"),
                         LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoSelectedGesture"));
-            // Check if we're creating a new action
-            bool isNew = false;
-            if (_currentAction == null)
-            {
-                _currentAction = new Applications.Action();
-                isNew = true;
-            }
-            string newActionName = TxtActionName.Text.Trim();
 
+            string newActionName = TxtActionName.Text.Trim();
             if (String.IsNullOrEmpty(newActionName))
                 return
                     ShowErrorMessage(
                         LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionNameTitle"),
                         LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionName"));
 
-            if (isNew)
+            if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
             {
-                if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
+                if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _currentAction.Name)
                 {
-                    if (ApplicationManager.Instance.IsGlobalAction(newActionName))
-                    {
-                        _currentAction = null;
-                        return
-                            ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
-                                    newActionName));
-                    }
-                }
-                else
-                {
-                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)))
-                    {
-                        _currentAction = null;
-                        return
-                            ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                                    newActionName, ApplicationManager.Instance.CurrentApplication.Name));
-                    }
+                    return
+                        ShowErrorMessage(
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                            String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
+                                newActionName));
                 }
             }
             else
             {
-                if (ApplicationManager.Instance.CurrentApplication is GlobalApplication)
+                if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
                 {
-                    if (ApplicationManager.Instance.IsGlobalAction(newActionName) && newActionName != _currentAction.Name)
-                    {
-                        return
-                            ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsInGlobal"),
-                                    newActionName));
-                    }
-                }
-                else
-                {
-                    if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
-                    {
-                        return
-                            ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                                String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                                    newActionName, ApplicationManager.Instance.CurrentApplication.Name));
-                    }
+                    return
+                        ShowErrorMessage(
+                            LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
+                            String.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
+                                newActionName, ApplicationManager.Instance.CurrentApplication.Name));
                 }
             }
 
@@ -272,7 +193,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
 
             // Store new values
-            _currentAction.GestureName = (availableGesturesComboBox.SelectedItem as GestureItem).Name;
+            _currentAction.GestureName = CurrentGesture?.Name ?? string.Empty;
             _currentAction.Name = newActionName;
             _currentAction.PluginClass = _pluginInfo.Class;
             _currentAction.PluginFilename = _pluginInfo.Filename;
@@ -280,23 +201,9 @@ namespace GestureSign.ControlPanel.Dialogs
             _currentAction.Condition = ConditionTextBox.Text;
             _currentAction.IsEnabled = true;
 
-            if (isNew)
-            {
-                // Save new action to specific application
-                ApplicationManager.Instance.CurrentApplication.AddAction(_currentAction);
-            }
-            else
-            {
-                if (cmbExistingApplication.SelectedItem as IApplication != _selectedApplication)
-                {
-                    _selectedApplication.RemoveAction(_currentAction);
-                    ((IApplication)cmbExistingApplication.SelectedItem).AddAction(_currentAction);
-                }
-            }
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
-            if (ActionsChanged != null)
-                ActionsChanged(this, new ActionChangedEventArgs(ApplicationManager.Instance.CurrentApplication, _currentAction));
+            ActionsChanged?.Invoke(this, new ActionChangedEventArgs(ApplicationManager.Instance.CurrentApplication, _currentAction));
 
             return true;
         }
@@ -327,7 +234,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                TxtActionName.Text = GetNextActionName(_pluginInfo.Plugin.Name);
+                TxtActionName.Text = ApplicationManager.GetNextActionName(_pluginInfo.Plugin.Name, _selectedApplication);
                 _pluginInfo.Plugin.Deserialize("");
             }
             // Does the plugin have a graphical interface
@@ -337,15 +244,6 @@ namespace GestureSign.ControlPanel.Dialogs
             else
                 // There is no interface for this plugin, hide settings but leave action name input box
                 HideSettings();
-        }
-
-        private string GetNextActionName(string name, int i = 1)
-        {
-            var actionName = i == 1 ? name : String.Format("{0}({1})", name, i);
-            var selectedItem = cmbExistingApplication.SelectedItem;
-            if (selectedItem != null && (((IApplication)selectedItem).Actions.Exists(a => a.Name.Equals(actionName))))
-                return GetNextActionName(name, ++i);
-            return actionName;
         }
 
         private void ShowSettings(IPluginInfo pluginInfo)

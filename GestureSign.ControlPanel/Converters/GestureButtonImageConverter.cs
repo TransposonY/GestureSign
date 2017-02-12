@@ -14,6 +14,7 @@ namespace GestureSign.ControlPanel.Converters
         {
             var patternMap = (Dictionary<string, PointPattern[]>)values[0];
             string gestureName = (string)values[1];
+            if (gestureName == null) return null;
 
             PointPattern[] pattern = null;
             if (patternMap.ContainsKey(gestureName))

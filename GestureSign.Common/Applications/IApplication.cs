@@ -17,6 +17,7 @@ namespace GestureSign.Common.Applications
         string Group { get; set; }
 
         void AddAction(IAction Action);
+        void Insert(int index, IAction action);
         void RemoveAction(IAction Action);
         void RemoveAllActions(Predicate<IAction> Match);
         bool IsSystemWindowMatch(SystemWindow Window);

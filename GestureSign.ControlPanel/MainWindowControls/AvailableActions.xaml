@@ -33,6 +33,7 @@
 
             <Style TargetType="ListBoxItem"
                    BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_OnMouseDoubleClick"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -314,6 +315,7 @@
         <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
         <ListBox x:Name="lstAvailableActions"
                  ItemsSource="{Binding Source={StaticResource ActionsViewSource}}"
+                 SelectedValuePath="ActionName"
                  ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"

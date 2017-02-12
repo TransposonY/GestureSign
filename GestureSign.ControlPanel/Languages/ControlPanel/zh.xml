@@ -81,7 +81,6 @@ http://transposony.coding.me/GestureSign/
     </Messages>
   </ApplicationDialog>
   <ActionDialog>
-    <AddActionTitle>添加动作</AddActionTitle>
     <ActionName>动作名称</ActionName>
     <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
     <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
@@ -90,12 +89,11 @@ http://transposony.coding.me/GestureSign/
     <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
     <EditActionTitle>编辑动作</EditActionTitle>
     <Icon>图标</Icon>
-    <MatchUsing>匹配类型</MatchUsing>
-    <MatchString>匹配文本</MatchString>
-    <SelectApp>选择要控制的程序</SelectApp>
+    <Command>命令</Command>
     <SelectCommand>选择想执行的命令</SelectCommand>
-    <SelectGesture>选择手势</SelectGesture>
-    <Condition>触发条件</Condition>
+    <SelectGesture>点击选择手势</SelectGesture>
+    <Condition>条件</Condition>
+    <TriggerCondition>触发条件</TriggerCondition>
     <Default>默认</Default>
     <Messages>
       <ActionExistsTitle>此动作已存在</ActionExistsTitle>
@@ -116,6 +114,7 @@ http://transposony.coding.me/GestureSign/
   </EditConditionDialog>
   <Action>
     <Header>动作</Header>
+    <NewAction>新动作</NewAction>
     <ActionFile>动作文件</ActionFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} {1}程序</AppCount>

@@ -36,6 +36,11 @@ namespace GestureSign.Common.Applications
             _Actions.Add(Action);
         }
 
+        public void Insert(int index, IAction action)
+        {
+            _Actions.Insert(index, action);
+        }
+
         public virtual void RemoveAction(IAction Action)
         {
             _Actions.Remove(Action);
@@ -69,7 +74,7 @@ namespace GestureSign.Common.Applications
                     case MatchUsing.All:
                         return true;
                 }
-                
+
                 return IsRegEx ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase) : String.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
             }
             catch

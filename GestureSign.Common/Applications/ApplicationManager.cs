@@ -381,6 +381,16 @@ namespace GestureSign.Common.Applications
             return CaptureWindow;
         }
 
+        public static string GetNextActionName(string name, IApplication application, int number = 1)
+        {
+            if (application == null) throw new ArgumentNullException(nameof(application));
+
+            var actionName = number == 1 ? name : $"{name}({number})";
+            if (application.Actions.Exists(a => a.Name.Equals(actionName)))
+                return GetNextActionName(name, application, ++number);
+            return actionName;
+        }
+
         #endregion
 
         #region Private Methods
