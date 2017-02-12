@@ -7,7 +7,6 @@ using WindowsInput.Native;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using ManagedWinapi;
-using ManagedWinapi.Windows;
 
 namespace GestureSign.CorePlugins.HotKey
 {
@@ -145,9 +144,6 @@ namespace GestureSign.CorePlugins.HotKey
 
         public bool Gestured(PointInfo ActionPoint)
         {
-            if (ActionPoint.WindowHandle.ToInt64() != SystemWindow.ForegroundWindow.HWnd.ToInt64() &&
-                ActionPoint.Window != null)
-                SystemWindow.ForegroundWindow = ActionPoint.Window;
             try
             {
                 SendShortcutKeys(_Settings);

@@ -69,9 +69,6 @@ namespace GestureSign.CorePlugins.SendKeystrokes
         {
             try
             {
-                if (ActionPoint.WindowHandle.ToInt64() !=
-                    ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
-                    ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
                 if (_useSendInput)
                 {
                     InputSimulator simulator = new InputSimulator();

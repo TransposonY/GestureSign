@@ -49,9 +49,6 @@ namespace GestureSign.CorePlugins
 
         public bool Gestured(PointInfo actionPoint)
         {
-            if (actionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
-                ManagedWinapi.Windows.SystemWindow.ForegroundWindow = actionPoint.Window;
-
             actionPoint.Window.TopMost = !actionPoint.Window.TopMost;
 
             return true;

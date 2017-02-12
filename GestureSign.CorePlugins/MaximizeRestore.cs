@@ -3,91 +3,88 @@ using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins
 {
-	public class MaximizeRestore : IPlugin
-	{
-		#region Private Variables
+    public class MaximizeRestore : IPlugin
+    {
+        #region Private Variables
 
-		IHostControl _HostControl = null;
+        IHostControl _HostControl = null;
 
-		#endregion
+        #endregion
 
-		#region Public Properties
+        #region Public Properties
 
-		public string Name
-		{
+        public string Name
+        {
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MaximizeRestore.Name"); }
-		}
+        }
 
-		public string Description
-		{
+        public string Description
+        {
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.MaximizeRestore.Description"); }
-		}
+        }
 
-		public object GUI
-		{
-			get { return null; }
-		}
+        public object GUI
+        {
+            get { return null; }
+        }
 
-		public string Category
-		{
-			get { return "Windows"; }
-		}
+        public string Category
+        {
+            get { return "Windows"; }
+        }
 
-		public bool IsAction
-		{
-			get { return true; }
-		}
+        public bool IsAction
+        {
+            get { return true; }
+        }
 
-		#endregion
+        #endregion
 
-		#region Public Methods
+        #region Public Methods
 
-		public void Initialize()
-		{
+        public void Initialize()
+        {
 
-		}
+        }
 
-		public void ShowGUI(bool IsNew)
-		{
-			// Nothing to do here
-		}
+        public void ShowGUI(bool IsNew)
+        {
+            // Nothing to do here
+        }
 
-		public bool Gestured(Common.Plugins.PointInfo ActionPoint)
-		{
-			if (ActionPoint.WindowHandle.ToInt64() != ManagedWinapi.Windows.SystemWindow.ForegroundWindow.HWnd.ToInt64())
-				ManagedWinapi.Windows.SystemWindow.ForegroundWindow = ActionPoint.Window;
+        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        {
+            // Toggle window state
+            if (ActionPoint.Window.WindowState == System.Windows.Forms.FormWindowState.Maximized)
+                ActionPoint.Window.WindowState = System.Windows.Forms.FormWindowState.Normal;
+            else
+                ActionPoint.Window.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 
-			// Toggle window state
-			if (ActionPoint.Window.WindowState == System.Windows.Forms.FormWindowState.Maximized)
-				ActionPoint.Window.WindowState = System.Windows.Forms.FormWindowState.Normal;
-			else
-				ActionPoint.Window.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            return true;
+        }
 
-			return true;
-		}
-
-		public bool Deserialize(string SerializedData)
+        public bool Deserialize(string SerializedData)
         {
             return true;
-			// Nothing to do here
-		}
+            // Nothing to do here
+        }
 
-		public string Serialize()
-		{
-			// Nothing to serialize
-			return "";
-		}
+        public string Serialize()
+        {
+            // Nothing to serialize
+            return "";
+        }
 
-		#endregion
+        #endregion
 
-		#region Host Control
+        #region Host Control
 
-		public IHostControl HostControl
-		{
-			get { return _HostControl; }
-			set { _HostControl = value; }
-		}
+        public IHostControl HostControl
+        {
+            get { return _HostControl; }
+            set { _HostControl = value; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
