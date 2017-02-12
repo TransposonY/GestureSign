@@ -43,7 +43,9 @@ namespace GestureSign.Daemon
                                 PointCapture.Instance.Mode = CaptureMode.Training;
                                 break;
                             case "StopTraining":
-                                PointCapture.Instance.Mode = CaptureMode.Normal;
+                                PointCapture.Instance.StackUpGesture = false;
+                                if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
+                                    PointCapture.Instance.Mode = CaptureMode.Normal;
                                 break;
                             case "EnableCapture":
                                 PointCapture.Instance.EnablePointCapture();
