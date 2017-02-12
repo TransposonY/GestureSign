@@ -191,11 +191,16 @@ namespace GestureSign.Common.Plugins
             if (string.IsNullOrWhiteSpace(condition)) return true;
 
             string expression = GetExpression(condition, pointList, contactIdentifiers);
-
-            DataTable dataTable = new DataTable();
-            var result = dataTable.Compute(expression, null);
-
-            return result is DBNull || Convert.ToBoolean(result);
+            try
+            {
+                DataTable dataTable = new DataTable();
+                var result = dataTable.Compute(expression, null);
+                return result is DBNull || Convert.ToBoolean(result);
+            }
+            catch (EvaluateException)
+            {
+                return false;
+            }
         }
 
         private string GetExpression(string condition, List<List<Point>> pointList, List<int> contactIdentifiers)
