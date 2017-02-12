@@ -638,16 +638,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
                 if (selectedApplication == null) return;
 
-                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index - 1]));
+                var previousActionInfo = actionInfoGroup[index - 1];
+                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(previousActionInfo));
                 RefreshGroup(selected.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
                 int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
-                int lastIndex = selectedApplication.Actions.FindLastIndex(selectedIndex - 1,
-                    a => string.Equals(a.GestureName, selected.GestureName, StringComparison.Ordinal));
+                int previousActionIndex = selectedApplication.Actions.FindIndex(a => string.Equals(a.Name, previousActionInfo.ActionName, StringComparison.Ordinal));
 
-                var temp = selectedApplication.Actions[lastIndex];
-                selectedApplication.Actions[lastIndex] = selectedApplication.Actions[selectedIndex];
+                var temp = selectedApplication.Actions[previousActionIndex];
+                selectedApplication.Actions[previousActionIndex] = selectedApplication.Actions[selectedIndex];
                 selectedApplication.Actions[selectedIndex] = temp;
 
                 ApplicationManager.Instance.SaveApplications();
@@ -665,13 +665,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
                 if (selectedApplication == null) return;
 
-                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(actionInfoGroup[index + 1]));
+                var nextActionInfo = actionInfoGroup[index + 1];
+                ActionInfos.Move(ActionInfos.IndexOf(selected), ActionInfos.IndexOf(nextActionInfo));
                 RefreshGroup(selected.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
                 int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.ActionName, StringComparison.Ordinal));
-                int nextIndex = selectedApplication.Actions.FindIndex(selectedIndex + 1,
-                    a => string.Equals(a.GestureName, selected.GestureName, StringComparison.Ordinal));
+                int nextIndex = selectedApplication.Actions.FindIndex(a => string.Equals(a.Name, nextActionInfo.ActionName, StringComparison.Ordinal));
 
                 var temp = selectedApplication.Actions[nextIndex];
                 selectedApplication.Actions[nextIndex] = selectedApplication.Actions[selectedIndex];
