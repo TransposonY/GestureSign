@@ -15,6 +15,7 @@
         <StackPanel Margin="0,0,0.4,0">
             <StackPanel.Resources>
                 <ResourceDictionary>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
                     <Style TargetType="controls:ToggleSwitch"
                            BasedOn="{StaticResource {x:Type controls:ToggleSwitch}}">
                         <Setter Property="FontFamily"
@@ -161,20 +162,8 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        FontSize="14"
-                       Margin="0,0,0,5">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Visibility"
-                                Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=MouseSwitch,Path=IsChecked}"
-                                         Value="True">
-                                <Setter Property="Visibility"
-                                        Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
+                       Margin="0,0,0,5"
+                       Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
             </TextBlock>
             <ComboBox x:Name="DrawingButtonComboBox"
                       ItemsSource="{Binding Source={StaticResource MouseActionDescription},Path=DrawingDescription}"
@@ -184,21 +173,8 @@
                       Margin="0,5,0,15"
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key"
-                      DropDownClosed="DrawingButtonComboBox_DropDownClosed">
-                <ComboBox.Style>
-                    <Style TargetType="ComboBox"
-                           BasedOn="{StaticResource {x:Type ComboBox}}">
-                        <Setter Property="Visibility"
-                                Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=MouseSwitch,Path=IsChecked}"
-                                         Value="True">
-                                <Setter Property="Visibility"
-                                        Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ComboBox.Style>
+                      DropDownClosed="DrawingButtonComboBox_DropDownClosed"
+                      Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
             </ComboBox>
             <controls:ToggleSwitch x:Name="chkWindowsStartup"
                                    Header="{localization:LocalisedText Options.WindowsStartup.Header}"
