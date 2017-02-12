@@ -23,6 +23,9 @@ namespace GestureSign.Common.Configuration
             {
                 if (File.Exists(filePath))
                     WaitFile(filePath);
+
+                string backup = BackupFile(filePath);
+
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
@@ -35,6 +38,9 @@ namespace GestureSign.Common.Configuration
                     serializer.Serialize(sWrite, serializableObject);
                 }
                 //  File.WriteAllText(filePath, JsonConvert.SerializeObject(SerializableObject));
+
+                if (File.Exists(backup))
+                    File.Delete(backup);
                 return true;
             }
             catch (Exception ex)
@@ -76,7 +82,7 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        private static void BackupFile(string filePath)
+        private static string BackupFile(string filePath)
         {
             try
             {
@@ -85,10 +91,12 @@ namespace GestureSign.Common.Configuration
             DateTime.Now.ToString("yyMMddHHmmssffff") +
             Path.GetExtension(filePath));
                 File.Copy(filePath, backupFileName, true);
+                return backupFileName;
             }
             catch (Exception e)
             {
                 Logging.LogException(e);
+                return null;
             }
         }
 

@@ -135,6 +135,21 @@ namespace GestureSign.Common.Gestures
             return _Gestures != null;
         }
 
+        private bool LoadBackup()
+        {
+            var files = Directory.GetFiles(AppConfig.ApplicationDataPath, "Gestures*.gest");
+            foreach (var file in files)
+            {
+                var gestures = FileManager.LoadObject<List<IApplication>>(file, true);
+                if (gestures != null)
+                {
+                    _Gestures = gestures.Cast<IGesture>().ToList();
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion
 
         #region Public Methods
@@ -161,8 +176,9 @@ namespace GestureSign.Common.Gestures
                    result =>
                    {
                        if (!result)
-                           if (!LoadDefaults())
-                               _Gestures = new List<IGesture>();
+                           if (!LoadBackup())
+                               if (!LoadDefaults())
+                                   _Gestures = new List<IGesture>();
                        OnLoadGesturesCompleted?.Invoke(this, EventArgs.Empty);
                        FinishedLoading = true;
                    };

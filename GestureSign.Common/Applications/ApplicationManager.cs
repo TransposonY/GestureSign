@@ -65,8 +65,9 @@ namespace GestureSign.Common.Applications
                 result =>
                 {
                     if (!result)
-                        if (!LoadDefaults())
-                            _Applications = new List<IApplication>();
+                        if (!LoadBackup())
+                            if (!LoadDefaults())
+                                _Applications = new List<IApplication>();
                     if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
                     FinishedLoading = true;
                 };
@@ -252,6 +253,17 @@ namespace GestureSign.Common.Applications
                 return false; // No object, failed
 
             return true; // Success
+        }
+
+        private bool LoadBackup()
+        {
+            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*.act");
+            foreach (var file in actionfiles)
+            {
+                _Applications = FileManager.LoadObject<List<IApplication>>(file, true, true);
+                if (_Applications != null) return true;
+            }
+            return false;
         }
 
         public SystemWindow GetWindowFromPoint(Point point)
