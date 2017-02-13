@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
@@ -35,7 +36,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (result != null && result.Value)
             {
                 lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
-                lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem);
+                lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input, new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
             }
         }
 
@@ -70,7 +71,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (result != null && result.Value)
             {
                 lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
-                lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem);
+                lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input, new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
             }
         }
 
