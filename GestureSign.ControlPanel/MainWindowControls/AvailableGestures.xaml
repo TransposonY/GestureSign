@@ -28,21 +28,14 @@
             <WrapPanel IsItemsHost="True" />
         </ItemsPanelTemplate>
         <DataTemplate x:Key="IconTemplate">
-            <StackPanel Width="260"
-                        Height="95"
-                        Margin="0,5">
-                <Image Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=65}"
-                       Margin="5,5,5,0"
-                       HorizontalAlignment="Center"
-                       Width="Auto"
-                       Height="65"
+            <Grid Width="200"
+                  Height="70">
+                <Image Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=60}"
                        Stretch="Uniform"
-                       StretchDirection="DownOnly" />
-                <TextBlock Text="{Binding Name}"
-                           FontSize="12"
-                           HorizontalAlignment="Center"
-                           Margin="0" />
-            </StackPanel>
+                       StretchDirection="DownOnly"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+            </Grid>
         </DataTemplate>
         <GridView x:Key="GridView">
             <GridViewColumn Header="{localization:LocalisedText Gesture.Header}">
@@ -75,7 +68,8 @@
                   BorderThickness="0"
                   SelectedValuePath="Name">
             <ListView.Style>
-                <Style TargetType="ListView">
+                <Style TargetType="ListView"
+                       BasedOn="{StaticResource {x:Type ListView}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=LargeIconsMenuItem, Path=IsChecked}"
                                      Value="True">
@@ -160,6 +154,91 @@
                               FontSize="16" />
                 </ContextMenu>
             </ListView.ContextMenu>
+            <ListView.ItemContainerStyle>
+                <!--disable-mouseover-effects-->
+                <Style TargetType="{x:Type ListViewItem}"
+                       BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <Border x:Name="Bd"
+                                        Background="{TemplateBinding Background}"
+                                        SnapsToDevicePixels="true">
+                                    <Grid>
+                                        <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                            <GridViewRowPresenter.Resources>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=Foreground}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
+                                                                     Value="True">
+                                                            <Setter Property="Foreground"
+                                                                    Value="{DynamicResource AccentSelectedColorBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                                     Value="False">
+                                                            <Setter Property="Foreground"
+                                                                    Value="{DynamicResource GrayNormalBrush}" />
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                                           Value="False" />
+                                                                <Condition Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
+                                                                           Value="True" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <MultiDataTrigger.Setters>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource AccentSelectedColorBrush}" />
+                                                            </MultiDataTrigger.Setters>
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </GridViewRowPresenter.Resources>
+                                        </GridViewRowPresenter>
+                                        <ContentPresenter x:Name="contentPresenter"
+                                                          Visibility="Collapsed"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="GridView.ColumnCollection"
+                                             Value="{x:Null}">
+                                        <Setter TargetName="contentPresenter"
+                                                Property="Visibility"
+                                                Value="Visible" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected"
+                                             Value="true">
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource AccentSelectedColorBrush}" />
+                                        <Setter TargetName="Bd"
+                                                Property="Background"
+                                                Value="{DynamicResource AccentColorBrush2}" />
+                                    </Trigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsEnabled"
+                                                       Value="False" />
+                                            <Condition Property="IsSelected"
+                                                       Value="True" />
+                                        </MultiTrigger.Conditions>
+                                        <MultiTrigger.Setters>
+                                            <Setter TargetName="Bd"
+                                                    Property="Background"
+                                                    Value="{DynamicResource GrayBrush7}" />
+                                        </MultiTrigger.Setters>
+                                    </MultiTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
         <Button x:Name="NewGestureButton"
                 Style="{DynamicResource MetroCircleButtonStyle}"
