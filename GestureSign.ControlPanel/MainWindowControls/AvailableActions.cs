@@ -365,6 +365,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     }
                 }
                 RefreshGroup(newGesture);
+                SelectAction(ai?.ActionName);
             }
         }
 
