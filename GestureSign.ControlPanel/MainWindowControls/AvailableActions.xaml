@@ -50,7 +50,7 @@
                                          Value="True">
                                     <Setter TargetName="Border"
                                             Property="Background"
-                                            Value="{DynamicResource AccentColorBrush3}" />
+                                            Value="{DynamicResource AccentColorBrush2}" />
                                     <Setter Property="Foreground"
                                             Value="{DynamicResource AccentSelectedColorBrush}" />
                                 </Trigger>
