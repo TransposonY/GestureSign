@@ -707,9 +707,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var listBoxItem = (ListBoxItem)sender;
             var listBox = UIHelper.GetParentDependencyObject<ListBox>(listBoxItem);
             if (ReferenceEquals(listBox, lstAvailableActions))
-                EditAction();
+                Dispatcher.InvokeAsync(EditAction, DispatcherPriority.Input);
             else if (ReferenceEquals(listBox, lstAvailableApplication))
-                EditApplication();
+                Dispatcher.InvokeAsync(EditApplication, DispatcherPriority.Input);
         }
     }
 }
