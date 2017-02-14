@@ -136,12 +136,12 @@
                                   Header="{localization:LocalisedText Gesture.LargeIcons}"
                                   FontSize="16"
                                   IsCheckable="True"
+                                  IsChecked="True"
                                   Click="ViewMenuItem_Click" />
                         <MenuItem x:Name="DetailsMenuItem"
                                   Header="{localization:LocalisedText Gesture.Details}"
                                   FontSize="16"
                                   IsCheckable="True"
-                                  IsChecked="True"
                                   Click="ViewMenuItem_Click" />
                     </MenuItem>
                     <Separator />
@@ -159,6 +159,8 @@
                 <!--disable-mouseover-effects-->
                 <Style TargetType="{x:Type ListViewItem}"
                        BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <EventSetter Event="MouseDoubleClick"
+                                 Handler="ListViewItem_OnMouseDoubleClick" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ListViewItem}">

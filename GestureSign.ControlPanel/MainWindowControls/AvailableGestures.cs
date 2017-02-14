@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -63,16 +64,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         }
         private void btnEditGesture_Click(object sender, RoutedEventArgs e)
         {
-            // Make sure at least one item is selected
-            if (lstAvailableGestures.SelectedItems.Count == 0) return;
-
-            GestureDefinition gd = new GestureDefinition(GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name));
-            var result = gd.ShowDialog();
-            if (result != null && result.Value)
-            {
-                lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
-                lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input, new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
-            }
+            EditGesture();
         }
 
         private void ImportGestureMenuItem_Click(object sender, RoutedEventArgs e)
@@ -159,6 +151,28 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         if (current != null)
                             current.IsChecked = false;
                 }
+        }
+
+        private void ListViewItem_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Dispatcher.InvokeAsync(EditGesture, DispatcherPriority.Input);
+        }
+
+        private void EditGesture()
+        {
+            // Make sure at least one item is selected
+            if (lstAvailableGestures.SelectedItems.Count == 0) return;
+
+            GestureDefinition gd =
+                new GestureDefinition(
+                    GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name));
+            var result = gd.ShowDialog();
+            if (result != null && result.Value)
+            {
+                lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
+                lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input,
+                    new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
+            }
         }
     }
 }
