@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsInput;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
@@ -283,14 +284,29 @@ namespace GestureSign.Daemon.Input
             }
             else if (State == CaptureState.CapturingInvalid && MouseCaptured)
             {
-                State = CaptureState.Disabled;
+                if (Mode != CaptureMode.UserDisabled)
+                {
+                    State = CaptureState.Disabled;
 
-                var pointEventTranslator = (PointEventTranslator)sender;
-                pointEventTranslator.LastDownMessage?.ReplayEvent();
-                pointEventTranslator.LastUpMessage?.ReplayEvent();
+                    var observeExceptionsTask = new Action<Task>(t =>
+                    {
+                        State = CaptureState.Ready;
+                        Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
+                    });
 
-                State = CaptureState.Ready;
-                e.Handled = Mode != CaptureMode.UserDisabled;
+                    var clickAsync = Task.Factory.StartNew(delegate
+                    {
+                        InputSimulator ssSimulator = new InputSimulator();
+                        ssSimulator.Mouse.RightButtonClick();
+                        State = CaptureState.Ready;
+                    }).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
+
+                    e.Handled = true;
+                }
+                else
+                {
+                    State = CaptureState.Ready;
+                }
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
             else if (State == CaptureState.TriggerFired)

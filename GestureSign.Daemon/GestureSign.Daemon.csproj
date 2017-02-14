@@ -138,6 +138,10 @@
       <Project>{fbd3ec1e-47e2-4d2d-81c9-d6506125a09a}</Project>
       <Name>ManagedWinapi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WindowsInput\WindowsInput.csproj">
+      <Project>{3549cd6f-80f8-450f-b99e-cf0a736b1f2a}</Project>
+      <Name>WindowsInput</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
