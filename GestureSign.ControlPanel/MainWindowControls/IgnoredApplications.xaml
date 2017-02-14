@@ -31,6 +31,7 @@
         </Grid.RowDefinitions>
         <ListView x:Name="lstIgnoredApplications"
                   ItemsSource="{Binding Source={StaticResource IgnoredApplicationViewSource}}"
+                  ScrollViewer.PanningMode="VerticalOnly"
                   BorderThickness="0"
                   Margin="0"
                   SelectionChanged="lstIgnoredApplications_SelectionChanged">

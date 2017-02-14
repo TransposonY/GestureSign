@@ -64,6 +64,7 @@
         <ListView x:Name="lstAvailableGestures"
                   ItemsSource="{Binding Source={StaticResource GestureViewSource}}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.PanningMode="VerticalOnly"
                   SelectionChanged="lstAvailableGestures_SelectionChanged"
                   BorderThickness="0"
                   SelectedValuePath="Name">

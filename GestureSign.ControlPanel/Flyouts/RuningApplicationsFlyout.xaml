@@ -14,6 +14,7 @@
                  Position="Right"
                  IsPinned="False">
     <ListView x:Name="lstRunningApplications"
+              ScrollViewer.PanningMode="VerticalOnly"
               Margin="5,0,5,10"
               BorderThickness="0"
               SelectionChanged="lstRunningApplications_SelectionChanged">
