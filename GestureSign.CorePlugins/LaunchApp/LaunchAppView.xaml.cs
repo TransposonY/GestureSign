@@ -108,7 +108,7 @@ namespace GestureSign.CorePlugins.LaunchApp
                                         var appName = subKey?.GetValue("AppName");
                                         if (appName == null) continue;
                                         displayName = ExtractDisplayName(package, appName.ToString());
-                                        if (string.IsNullOrEmpty(displayName)) continue;
+                                        if (string.IsNullOrEmpty(displayName) || displayName.StartsWith("ms-resource:", StringComparison.Ordinal)) continue;
                                         model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
 
                                         logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
