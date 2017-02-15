@@ -6,7 +6,7 @@ namespace GestureSign.Common.Gestures
 {
     public interface IGestureManager
     {
-        void DeleteGesture(string gestureName, bool trimGesture);
+        void DeleteGesture(string gestureName);
         bool GestureExists(string gestureName);
         string GestureName { get; set; }
         IGesture[] Gestures { get; }

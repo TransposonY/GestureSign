@@ -307,11 +307,9 @@ namespace GestureSign.Common.Gestures
             return GetNewestGestureSample(this.GestureName);
         }
 
-        public void DeleteGesture(string gestureName, bool trimGesture = true)
+        public void DeleteGesture(string gestureName)
         {
             _Gestures.RemoveAll(g => g.Name.Trim() == gestureName.Trim());
-            if (trimGesture)
-                ApplicationManager.Instance.TrimGesture();
         }
 
         #endregion

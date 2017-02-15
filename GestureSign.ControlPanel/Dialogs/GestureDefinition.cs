@@ -1,9 +1,11 @@
-﻿using GestureSign.Common.Gestures;
+﻿using System;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -125,7 +127,7 @@ namespace GestureSign.ControlPanel.Dialogs
             //merge similar gesture
             if (_oldGesture != null && _similarGesture != null && _oldGesture.Name != _similarGesture.Name)
             {
-                GestureManager.Instance.DeleteGesture(_similarGesture.Name, false);
+                GestureManager.Instance.DeleteGesture(_similarGesture.Name);
                 ApplicationManager.Instance.RenameGesture(_oldGesture.Name, _similarGesture.Name);
             }
 
@@ -209,7 +211,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (GestureManager.Instance.GestureExists(newName))
             {
-                GestureManager.Instance.DeleteGesture(newName, false);
+                GestureManager.Instance.DeleteGesture(newName);
             }
             GestureManager.Instance.AddGesture(newGesture);
 
@@ -221,13 +223,20 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private string GetNewName()
         {
-            int i = 0;
+            Random random = new Random();
             string newName;
             do
             {
-                newName = i++.ToString();
+                newName = GetRandomString(random, 6);
             } while (GestureManager.Instance.GestureExists(newName));
             return newName;
+        }
+
+        private static string GetRandomString(Random random, int length)
+        {
+            string input = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var chars = Enumerable.Range(0, length).Select(x => input[random.Next(0, input.Length)]);
+            return new string(chars.ToArray());
         }
 
         #endregion
