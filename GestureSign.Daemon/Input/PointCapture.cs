@@ -244,7 +244,7 @@ namespace GestureSign.Daemon.Input
         {
             // Can we begin a new gesture capture
 
-            if (State == CaptureState.Ready || State == CaptureState.Capturing)
+            if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
@@ -270,7 +270,7 @@ namespace GestureSign.Daemon.Input
 
         protected async void PointEventTranslator_PointUp(object sender, RawPointsDataMessageEventArgs e)
         {
-            if (State == CaptureState.Capturing)
+            if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && !MouseCaptured)
             {
                 if (TemporarilyDisableCapture && Mode == CaptureMode.UserDisabled)
                 {
