@@ -21,23 +21,23 @@ namespace GestureSign.Daemon.Input
 
         #region Custom Events
 
-        public event EventHandler<RawPointsDataMessageEventArgs> PointDown;
+        public event EventHandler<InputPointsEventArgs> PointDown;
 
-        protected virtual void OnPointDown(RawPointsDataMessageEventArgs args)
+        protected virtual void OnPointDown(InputPointsEventArgs args)
         {
             if (PointDown != null) PointDown(this, args);
         }
 
-        public event EventHandler<RawPointsDataMessageEventArgs> PointUp;
+        public event EventHandler<InputPointsEventArgs> PointUp;
 
-        protected virtual void OnPointUp(RawPointsDataMessageEventArgs args)
+        protected virtual void OnPointUp(InputPointsEventArgs args)
         {
             if (PointUp != null) PointUp(this, args);
         }
 
-        public event EventHandler<RawPointsDataMessageEventArgs> PointMove;
+        public event EventHandler<InputPointsEventArgs> PointMove;
 
-        protected virtual void OnPointMove(RawPointsDataMessageEventArgs args)
+        protected virtual void OnPointMove(InputPointsEventArgs args)
         {
             if (PointMove != null) PointMove(this, args);
         }
@@ -50,16 +50,15 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
-                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
+                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
                 OnPointUp(args);
-                PointCapture.Instance.MouseCaptured = false;
                 handled = args.Handled;
             }
         }
 
         private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
+            var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
             OnPointMove(args);
         }
 
@@ -67,8 +66,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
-                PointCapture.Instance.MouseCaptured = true;
-                var args = new RawPointsDataMessageEventArgs(new List<RawData>(new[] { new RawData(true, 1, mouseMessage.Point) }));
+                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
                 OnPointDown(args);
                 handled = args.Handled;
             }
@@ -81,7 +79,7 @@ namespace GestureSign.Daemon.Input
             {
                 if (e.RawData.Count <= _lastPointsCount)
                 {
-                    OnPointUp(e);
+                    OnPointUp(new InputPointsEventArgs(e.RawData, Device.Touch));
                     _lastPointsCount = _lastPointsCount - releaseCount;
                 }
                 return;
@@ -91,15 +89,15 @@ namespace GestureSign.Daemon.Input
             {
                 if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
                 {
-                    OnPointMove(e);
+                    OnPointMove(new InputPointsEventArgs(e.RawData, Device.Touch));
                     return;
                 }
                 _lastPointsCount = e.RawData.Count;
-                OnPointDown(e);
+                OnPointDown(new InputPointsEventArgs(e.RawData, Device.Touch));
             }
             else if (e.RawData.Count == _lastPointsCount)
             {
-                OnPointMove(e);
+                OnPointMove(new InputPointsEventArgs(e.RawData, Device.Touch));
             }
         }
 

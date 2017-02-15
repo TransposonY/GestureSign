@@ -19,8 +19,6 @@ namespace GestureSign.Common.Input
 
         public List<RawData> RawData { get; set; }
 
-        public bool Handled { get; set; }
-
         #endregion
     }
 }

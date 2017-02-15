@@ -77,7 +77,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input\InputPoint.cs" />
     <Compile Include="Input\InputProvider.cs" />
+    <Compile Include="Input\InputPointsEventArgs.cs" />
     <Compile Include="Input\TouchInputProcessor.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\PointerInfo.cs" />
