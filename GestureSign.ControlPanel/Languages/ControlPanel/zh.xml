@@ -163,10 +163,8 @@ http://transposony.coding.me/GestureSign/
     <Messages>
       <DeleteConfirmTitle>删除手势</DeleteConfirmTitle>
       <DeleteGestureConfirm>确定删除这手势吗？</DeleteGestureConfirm>
-      <ReplaceConfirmTitle>已存在同名手势</ReplaceConfirmTitle>
-      <ReplaceConfirm>已经存在手势 {0} ，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
-      <ImportComplete>已添加 {0} 个手势</ImportComplete>
+      <ImportComplete>已忽略 {0} 个已存在的手势，添加了 {1} 新个手势</ImportComplete>
     </Messages>
   </Gesture>
   <RuningApplicationsFlyout>

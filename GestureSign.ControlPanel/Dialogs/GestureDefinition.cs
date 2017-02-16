@@ -193,7 +193,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (string.IsNullOrEmpty(newName))
             {
-                newName = GetNewName();
+                newName = GestureManager.GetNewGestureName();
             }
 
             var newGesture = new Gesture()
@@ -219,24 +219,6 @@ namespace GestureSign.ControlPanel.Dialogs
             GestureManager.Instance.SaveGestures();
 
             return true;
-        }
-
-        private string GetNewName()
-        {
-            Random random = new Random();
-            string newName;
-            do
-            {
-                newName = GetRandomString(random, 6);
-            } while (GestureManager.Instance.GestureExists(newName));
-            return newName;
-        }
-
-        private static string GetRandomString(Random random, int length)
-        {
-            string input = "abcdefghijklmnopqrstuvwxyz0123456789";
-            var chars = Enumerable.Range(0, length).Select(x => input[random.Next(0, input.Length)]);
-            return new string(chars.ToArray());
         }
 
         #endregion

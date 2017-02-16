@@ -157,10 +157,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteGestureConfirm>Are you sure?</DeleteGestureConfirm>
-      <ReplaceConfirmTitle>Gesture Conflict</ReplaceConfirmTitle>
-      <ReplaceConfirm>Gesture {0} is already existing,Replace it?</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
-      <ImportComplete>{0} gesture have been added</ImportComplete>
+      <ImportComplete>{0} similar gestures have been ignored, {1} new gesture have been added</ImportComplete>
     </Messages>
   </Gesture>
   <RuningApplicationsFlyout>

@@ -78,45 +78,47 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (ofdGestures.ShowDialog().Value)
             {
                 int addcount = 0;
+                int ignoredCount = 0;
 
-                var gestures =
-                        FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
+                var gestures = FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
                 var newGestures = gestures?.Cast<IGesture>().ToList();
+                var internalGestures = GestureManager.Instance.Gestures.ToList();
 
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)
                     {
+                        string matchName = null;
+                        List<IGesture> matchGestures = null;
+                        for (int i = 0; i < newGesture.PointPatterns.Length; i++)
+                        {
+                            matchName = GestureManager.Instance.GetGestureSetNameMatch(newGesture.PointPatterns[i].Points, matchGestures ?? internalGestures, i, out matchGestures);
+                        }
+                        if (matchName != null)
+                        {
+                            ignoredCount++;
+                            continue;
+                        }
+
                         if (GestureManager.Instance.GestureExists(newGesture.Name))
                         {
-                            var result =
-                                MessageBox.Show(
-                                    String.Format(
-                                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ReplaceConfirm"),
-                                        newGesture.Name),
-                                    LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ReplaceConfirmTitle"),
-                                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                            if (result == MessageBoxResult.Yes)
-                            {
-                                GestureManager.Instance.DeleteGesture(newGesture.Name);
-                                GestureManager.Instance.AddGesture(newGesture);
-                                addcount++;
-                            }
-                            else if (result == MessageBoxResult.Cancel) goto End;
+                            newGesture.Name = GestureManager.GetNewGestureName();
                         }
-                        else
-                        {
-                            GestureManager.Instance.AddGesture(newGesture);
-                            addcount++;
-                        }
+                        GestureManager.Instance.AddGesture(newGesture);
+                        addcount++;
                     }
-                End:
+
                 if (addcount != 0)
                 {
                     GestureManager.Instance.SaveGestures();
                 }
-                MessageBox.Show(
-                    String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
-                        addcount), LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"));
+                UIHelper.GetParentWindow(this).ShowModalMessageExternal(
+                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"),
+                        String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
+                            ignoredCount, addcount), settings: new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                                ColorScheme = MetroDialogColorScheme.Accented,
+                            });
             }
         }
 

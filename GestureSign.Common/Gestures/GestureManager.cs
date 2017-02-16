@@ -18,6 +18,7 @@ namespace GestureSign.Common.Gestures
         private const int ProbabilityThreshold = 80;
 
         private int _gestureLevel = 0;
+
         // Create variable to hold the only allowed instance of this class
         private static GestureManager _instance;
 
@@ -95,7 +96,7 @@ namespace GestureSign.Common.Gestures
             }
 
             var sourceGesture = _gestureLevel == 0 ? _Gestures : _gestureMatchResult;
-            GestureName = GetGestureSetNameMatch(e.Points, sourceGesture, out _gestureMatchResult);
+            GestureName = GetGestureSetNameMatch(e.Points, sourceGesture, _gestureLevel, out _gestureMatchResult);
 
             if (pointCapture.Mode != CaptureMode.Training)
             {
@@ -148,6 +149,13 @@ namespace GestureSign.Common.Gestures
                 }
             }
             return false;
+        }
+
+        private static string GetRandomString(Random random, int length)
+        {
+            string input = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var chars = Enumerable.Range(0, length).Select(x => input[random.Next(0, input.Length)]);
+            return new string(chars.ToArray());
         }
 
         #endregion
@@ -242,27 +250,22 @@ namespace GestureSign.Common.Gestures
             }
         }
 
-        public string GetGestureSetNameMatch(List<List<Point>> points, List<IGesture> sourceGestures, out List<IGesture> matchResult)//PointF[]
+        public string GetGestureSetNameMatch(List<List<Point>> points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matchResult)//PointF[]
         {
             if (points.Count == 0 || sourceGestures == null || sourceGestures.Count == 0)
             { matchResult = null; return null; }
             // Update gesture analyzer with latest gestures and get gesture match from current points array
             // Comparison results are sorted descending from highest to lowest probability
-            var gestures = sourceGestures.Where(g => g.PointPatterns.Length > _gestureLevel && g.PointPatterns[_gestureLevel].Points != null && g.PointPatterns[_gestureLevel].Points.Count == points.Count).ToList();
+            var gestures = sourceGestures.Where(g => g.PointPatterns.Length > sourceGestureLevel && g.PointPatterns[sourceGestureLevel].Points != null && g.PointPatterns[sourceGestureLevel].Points.Count == points.Count).ToList();
             List<PointPatternMatchResult>[] comparisonResults = new List<PointPatternMatchResult>[points.Count];
             for (int i = 0; i < points.Count; i++)
             {
-                gestureAnalyzer.PointPatternSet = gestures.Select(gesture => new PointPatternAnalyzer.PointsPatternSet(gesture.Name, gesture.PointPatterns[_gestureLevel].Points[i].ToArray()));
+                gestureAnalyzer.PointPatternSet = gestures.Select(gesture => new PointPatternAnalyzer.PointsPatternSet(gesture.Name, gesture.PointPatterns[sourceGestureLevel].Points[i].ToArray()));
                 comparisonResults[i] = new List<PointPatternMatchResult>(gestures.Count);
                 comparisonResults[i].AddRange(gestureAnalyzer.GetPointPatternMatchResults(points[i].ToArray()));
             }
 
-            List<int> numbers = new List<int>(gestures.Count);
-            for (int j = 0; j < gestures.Count; j++)
-            {
-                numbers.Add(j);
-            }
-
+            var numbers = Enumerable.Range(0, gestures.Count);
             numbers = comparisonResults.Aggregate(numbers, (current, matchResultsList) => current.Where(i => matchResultsList[i].Probability > ProbabilityThreshold).ToList());
 
             List<IGesture> result = new List<IGesture>();
@@ -271,7 +274,7 @@ namespace GestureSign.Common.Gestures
             foreach (var number in numbers)
             {
                 var gesture = gestures[number];
-                if (gesture.PointPatterns.Length > _gestureLevel + 1)
+                if (gesture.PointPatterns.Length > sourceGestureLevel + 1)
                 {
                     result.Add(gesture);
                 }
@@ -310,6 +313,17 @@ namespace GestureSign.Common.Gestures
         public void DeleteGesture(string gestureName)
         {
             _Gestures.RemoveAll(g => g.Name.Trim() == gestureName.Trim());
+        }
+
+        public static string GetNewGestureName()
+        {
+            Random random = new Random();
+            string newName;
+            do
+            {
+                newName = GetRandomString(random, 6);
+            } while (GestureManager.Instance.GestureExists(newName));
+            return newName;
         }
 
         #endregion
