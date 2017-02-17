@@ -21,10 +21,12 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
+                string backup = null;
                 if (File.Exists(filePath))
+                {
+                    backup = BackupFile(filePath);
                     WaitFile(filePath);
-
-                string backup = BackupFile(filePath);
+                }
 
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
