@@ -125,7 +125,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <DrawGesture>Click to draw a gesture</DrawGesture>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
-      <DeleteActionConfirm>Are you sure?</DeleteActionConfirm>
+      <DeleteActionConfirm>Are you sure you want to delete these {0} actions?</DeleteActionConfirm>
       <DeleteAppConfirm>Are you sure to delete "{0}"? All actions in this application will be deleted</DeleteAppConfirm>
       <NoAssociationAction>Double Click to edit this action</NoAssociationAction>
       <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>

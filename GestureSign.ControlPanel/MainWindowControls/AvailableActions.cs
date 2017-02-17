@@ -35,7 +35,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private Task _addActionTask;
         private IApplication _cutActionSource;
-        private IAction _actionClipboard;
+        private readonly List<IAction> _actionClipboard = new List<IAction>();
 
         private void UserControl_Initialized(object sender, EventArgs eArgs)
         {
@@ -105,7 +105,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             // Confirm user really wants to delete selected items
             if (UIHelper.GetParentWindow(this)
                     .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteConfirmTitle"),
-                        LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"),
+                      string.Format(LocalizationProvider.Instance.GetTextValue("Action.Messages.DeleteActionConfirm"), lstAvailableActions.SelectedItems.Count),
                         MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
@@ -294,7 +294,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void EnableRelevantButtons()
         {
-            cmdDelete.IsEnabled = cmdEdit.IsEnabled = lstAvailableActions.SelectedItems.Count == 1;
+            cmdDelete.IsEnabled = cmdEdit.IsEnabled = lstAvailableActions.SelectedItems.Count != 0;
 
             var selectedActionInfo = (lstAvailableActions.SelectedItem as ActionInfo);
             if (selectedActionInfo == null)
@@ -311,19 +311,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private bool SetClipboardAction()
         {
-            ActionInfo selectedItem = (ActionInfo)lstAvailableActions.SelectedItem;
-            if (selectedItem == null) return false;
-
+            _actionClipboard.Clear();
             IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
-
-            IAction selectedAction = currentApp?.Actions.Find(a => a.Name.Equals(selectedItem.ActionName, StringComparison.Ordinal));
-
-            if (selectedAction != null)
+            foreach (ActionInfo actionInfo in lstAvailableActions.SelectedItems)
             {
-                _actionClipboard = selectedAction;
-                return true;
+                if (actionInfo == null) continue;
+                IAction selectedAction = currentApp?.Actions.Find(a => a.Name.Equals(actionInfo.ActionName, StringComparison.Ordinal));
+
+                if (selectedAction != null)
+                {
+                    _actionClipboard.Add(selectedAction);
+                }
             }
-            return false;
+            return _actionClipboard.Count != 0;
         }
 
         private void GestureButton_Click(object sender, RoutedEventArgs e)
@@ -504,14 +504,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            PasteActionMenuItem2.IsEnabled = _actionClipboard != null;
+            PasteActionMenuItem2.IsEnabled = _actionClipboard.Count != 0;
 
             EditMenuItem.IsEnabled = DeleteMenuItem.IsEnabled = lstAvailableApplication.SelectedItem is UserApplication;
         }
 
         private void LstAvailableActions_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            PasteActionMenuItem.IsEnabled = _actionClipboard != null;
+            PasteActionMenuItem.IsEnabled = _actionClipboard.Count != 0;
             CopyActionMenuItem.IsEnabled = CutActionMenuItem.IsEnabled = lstAvailableActions.SelectedIndex != -1;
         }
 
@@ -529,42 +529,36 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void PasteActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (_actionClipboard == null) return;
+            if (_actionClipboard.Count == 0) return;
 
             var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (targetApplication == null) return;
 
-            if (targetApplication.Actions.Exists(a => a.Name.Equals(_actionClipboard.Name, StringComparison.Ordinal)))
+            foreach (var action in _actionClipboard)
             {
-                UIHelper.GetParentWindow(this)
-                    .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExistsTitle"),
-                        string.Format(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ActionExists"),
-                            _actionClipboard.Name, targetApplication.Name),
-                        MessageDialogStyle.Affirmative, new MetroDialogSettings()
-                        {
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                            ColorScheme = MetroDialogColorScheme.Accented,
-                        });
-                return;
-            }
+                Applications.Action newAction = new Applications.Action()
+                {
+                    ActionSettings = action.ActionSettings,
+                    GestureName = action.GestureName,
+                    IsEnabled = action.IsEnabled,
+                    Name = action.Name,
+                    PluginClass = action.PluginClass,
+                    PluginFilename = action.PluginFilename,
+                    Condition = action.Condition
+                };
 
-            Applications.Action newAction = new Applications.Action()
-            {
-                ActionSettings = _actionClipboard.ActionSettings,
-                GestureName = _actionClipboard.GestureName,
-                IsEnabled = _actionClipboard.IsEnabled,
-                Name = _actionClipboard.Name,
-                PluginClass = _actionClipboard.PluginClass,
-                PluginFilename = _actionClipboard.PluginFilename,
-                Condition = _actionClipboard.Condition
-            };
-            targetApplication.AddAction(newAction);
+                if (targetApplication.Actions.Exists(a => a.Name.Equals(newAction.Name, StringComparison.Ordinal)))
+                {
+                    newAction.Name = ApplicationManager.GetNextActionName(newAction.Name, targetApplication);
+                }
+                targetApplication.AddAction(newAction);
+                _cutActionSource?.RemoveAction(action);
+            }
 
             if (_cutActionSource != null)
             {
-                _cutActionSource.RemoveAction(_actionClipboard);
                 _cutActionSource = null;
-                _actionClipboard = null;
+                _actionClipboard.Clear();
             }
 
             RefreshPartialActions();
