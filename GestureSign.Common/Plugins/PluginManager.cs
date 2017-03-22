@@ -61,7 +61,7 @@ namespace GestureSign.Common.Plugins
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
                 return;
-
+            var pointInfo = new PointInfo(firstCapturedPoints, points);
             var action = new Action<object>(o =>
             {
                 // Get action to be executed
@@ -77,7 +77,10 @@ namespace GestureSign.Common.Plugins
                         continue;
 
                     if (executableActions.IndexOf(executableAction) == 0)
-                        ActivateTargetWindow(firstCapturedPoints, executableAction);
+                        ActivateTargetWindow(pointInfo.Window, executableAction);
+
+                    if (!WaitForInputIdle(pointInfo.Window, 1000))
+                        break;
 
                     // Locate the plugin associated with this action
                     IPluginInfo pluginInfo = FindPluginByClassAndFilename(executableAction.PluginClass, executableAction.PluginFilename);
@@ -89,7 +92,7 @@ namespace GestureSign.Common.Plugins
                     // Load action settings into plugin
                     pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
                     // Execute plugin process
-                    pluginInfo.Plugin.Gestured(new PointInfo(firstCapturedPoints, points));
+                    pluginInfo.Plugin.Gestured(pointInfo);
                 }
             });
 
@@ -232,7 +235,7 @@ namespace GestureSign.Common.Plugins
             return sb.ToString();
         }
 
-        private static void ActivateTargetWindow(List<Point> firstCapturedPoints, IAction executableAction)
+        private static void ActivateTargetWindow(SystemWindow targetWindow, IAction executableAction)
         {
             switch (executableAction.PluginClass)
             {
@@ -240,10 +243,22 @@ namespace GestureSign.Common.Plugins
                 case "GestureSign.CorePlugins.HotKey.HotKeyPlugin":
                 case "GestureSign.CorePlugins.ToggleWindowTopmost":
                 case "GestureSign.CorePlugins.SendKeystrokes.SendKeystrokes":
-                    var targetWindow = SystemWindow.FromPointEx(firstCapturedPoints[0].X, firstCapturedPoints[0].Y, true, false);
                     if (targetWindow?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
                         SystemWindow.ForegroundWindow = targetWindow;
                     break;
+            }
+        }
+
+        private static bool WaitForInputIdle(SystemWindow targetWindow, int timeout = 0)
+        {
+            try
+            {
+                var windowProcess = targetWindow.Process;
+                return windowProcess.WaitForInputIdle(timeout);
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
