@@ -85,7 +85,7 @@
                                Stretch="Uniform"
                                StretchDirection="DownOnly" />
                     </Button>
-                    <TextBlock Text="{localization:LocalisedText Action.DrawGesture}"
+                    <TextBlock Text="{localization:LocalisedText Action.SelectGesture}"
                                Margin="0,-48.5,0,0"
                                HorizontalAlignment="Center"
                                FontWeight="Bold"

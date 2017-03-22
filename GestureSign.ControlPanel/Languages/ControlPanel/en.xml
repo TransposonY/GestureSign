@@ -122,12 +122,12 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>
     <ExportAllActions>Export All Actions...</ExportAllActions>
-    <DrawGesture>Click to draw a gesture</DrawGesture>
+    <SelectGesture>(Click to select a gesture)</SelectGesture>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteActionConfirm>Are you sure you want to delete these {0} actions?</DeleteActionConfirm>
       <DeleteAppConfirm>Are you sure to delete "{0}"? All actions in this application will be deleted</DeleteAppConfirm>
-      <NoAssociationAction>Double Click to edit this action</NoAssociationAction>
+      <NoAssociationAction>(Double Click to edit this action)</NoAssociationAction>
       <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
       <ReplaceConfirm>There is already a {0} action in {0}.Replace it?</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
