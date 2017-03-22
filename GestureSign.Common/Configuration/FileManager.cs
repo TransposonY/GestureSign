@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using GestureSign.Common.Log;
 using Newtonsoft.Json;
 
 namespace GestureSign.Common.Configuration

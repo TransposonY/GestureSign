@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
-using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
-using GestureSign.Common;
+using GestureSign.Common.Log;
 
 namespace GestureSign.ControlPanel
 {
@@ -128,7 +126,7 @@ namespace GestureSign.ControlPanel
                     LocalizationProvider.Instance.GetTextValue("Options.Sending"));
                 controller.SetIndeterminate();
 
-                string exceptionMessage = await Task.Run(() => ErrorReport.SendMail("Error Log", result.ToString()));
+                string exceptionMessage = await Task.Run(() => ErrorReport.SendReports(result.ToString()));
 
                 await controller.CloseAsync();
 

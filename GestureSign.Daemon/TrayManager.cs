@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -9,6 +8,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.Common.Log;
 using GestureSign.Common.UI;
 using GestureSign.Daemon.Input;
 using GestureSign.Daemon.Properties;

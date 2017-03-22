@@ -234,6 +234,7 @@
     <Resource Include="MouseActions\crosshair.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="MouseActions\crosshair.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

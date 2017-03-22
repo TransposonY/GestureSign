@@ -11,6 +11,7 @@ using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using GestureSign.Common.Log;
 
 namespace GestureSign.Common.InterProcessCommunication
 {

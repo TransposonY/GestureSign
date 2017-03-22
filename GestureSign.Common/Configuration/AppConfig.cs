@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading;
 using System.IO;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Log;
 using ManagedWinapi.Hooks;
 
 namespace GestureSign.Common.Configuration

@@ -4,9 +4,9 @@ using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
-using GestureSign.Common;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.Common.Log;
 using Timer = System.Threading.Timer;
 
 namespace GestureSign.TouchInputProvider

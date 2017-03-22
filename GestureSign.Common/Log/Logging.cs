@@ -2,7 +2,7 @@
 using System.IO;
 using GestureSign.Common.Configuration;
 
-namespace GestureSign.Common
+namespace GestureSign.Common.Log
 {
     public class Logging
     {

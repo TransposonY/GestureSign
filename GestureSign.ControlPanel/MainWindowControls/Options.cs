@@ -12,6 +12,7 @@ using System.Windows.Media;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
 using Microsoft.Win32.TaskScheduler;
@@ -400,7 +401,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         LocalizationProvider.Instance.GetTextValue("Options.Sending"));
                 controller.SetIndeterminate();
 
-                string exceptionMessage = await System.Threading.Tasks.Task.Run(() => ErrorReport.SendMail("Error Log", result.ToString()));
+                string exceptionMessage = await System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(result.ToString()));
 
                 await controller.CloseAsync();
 

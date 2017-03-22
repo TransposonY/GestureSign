@@ -4,53 +4,35 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Net.Mail;
 using System.Text;
 using System.Windows;
-using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using Microsoft.Win32;
+using SharpRaven;
+using SharpRaven.Data;
 
-namespace GestureSign.ControlPanel.Common
+namespace GestureSign.Common.Log
 {
-    class ErrorReport
+    public class ErrorReport
     {
-        private const string Address = "gesturesignfeedback00@yahoo.com";
+        private const string Dsn = "https://a828c0c755fc493fa93c0f2ac7963e6d:4e74093b0f6a4a438a95b3bb85273e69@sentry.io/141461";
 
-        public static string SendMail(string subject, string content)
+        public static string SendReports(string content)
         {
-            MailMessage mail = new MailMessage(Address, Address)
+            string sendError = null;
+            var ravenClient = new RavenClient(Dsn)
             {
-                Subject = subject,
-                Body = content,
-                IsBodyHtml = false
+                ErrorOnCapture = e =>
+                {
+                    Logging.LogException(e);
+                    sendError = e.Message;
+                }
             };
 
-            SmtpClient client = new SmtpClient
-            {
-                // UseDefaultCredentials = false,
-                Credentials = new System.Net.NetworkCredential(Address, Int32.MaxValue.ToString()),
-                // Port = 25,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Host = "smtp.mail.yahoo.com",
-                EnableSsl = true,
-                Timeout = 36000,
-            };
-            // client.Port = 587
+            ravenClient.Capture(new SentryEvent(content));
 
-            try
-            {
-                client.Send(mail);
-                //client.SendAsync(mail, userState);
-
-                return null;
-            }
-            catch (SmtpException ex)
-            {
-                Logging.LogException(ex);
-                return ex.Message;
-            }
+            return sendError;
         }
 
         public static void OutputLog(ref StringBuilder result)

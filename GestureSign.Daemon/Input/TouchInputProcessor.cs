@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Pipes;
 using System.Threading;
-using GestureSign.Common;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Log;
 
 namespace GestureSign.Daemon.Input
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using GestureSign.Common.Log;
 using Newtonsoft.Json;
 
 namespace GestureSign.Common.Plugins

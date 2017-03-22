@@ -12,8 +12,8 @@ using System.Windows.Media;
 using System.Xml;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;
-using GestureSign.Common;
 using GestureSign.Common.Localization;
+using GestureSign.Common.Log;
 using Microsoft.Win32;
 
 namespace GestureSign.CorePlugins.LaunchApp
