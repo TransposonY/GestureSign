@@ -75,8 +75,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
 
         public bool Gestured(PointInfo actionPoint)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-
+            var tick = Environment.TickCount;
             do
             {
                 if (_settings.IsRegEx)
@@ -93,13 +92,11 @@ namespace GestureSign.CorePlugins.ActivateWindow
                     if (hWnd != IntPtr.Zero)
                     {
                         SystemWindow.ForegroundWindow = new SystemWindow(hWnd);
-                        sw.Stop();
                         return true;
                     }
                 }
                 Thread.Sleep(10);
-            } while (sw.ElapsedMilliseconds < _settings.Timeout);
-            sw.Stop();
+            } while (_settings.Timeout > 0 && Environment.TickCount - tick < _settings.Timeout);
             return false;
         }
 
