@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common;
 using GestureSign.Common.Configuration;
@@ -74,33 +73,27 @@ namespace GestureSign.Daemon
             _controlPanelMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.ControlPanel");
             _controlPanelMenuItem.Click += (o, e) =>
             {
-                bool createdSetting;
-                using (new Mutex(false, "GestureSignControlPanel", out createdSetting)) { }
-                if (createdSetting)
-                {
-                    string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                    if (File.Exists(path))
-                        using (Process daemon = new Process())
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                if (File.Exists(path))
+                    using (Process daemon = new Process())
+                    {
+                        try
                         {
-                            try
-                            {
-                                daemon.StartInfo.FileName = path;
+                            daemon.StartInfo.FileName = path;
 
-                                //daemon.StartInfo.UseShellExecute = false;
-                                daemon.Start();
-                                daemon.WaitForInputIdle(500);
-                            }
-                            catch (Exception exception)
-                            {
-                                Logging.LogException(exception);
-                                MessageBox.Show(exception.ToString(),
-                                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
-                            }
-
+                            //daemon.StartInfo.UseShellExecute = false;
+                            daemon.Start();
+                            daemon.WaitForInputIdle(500);
                         }
-                }
-                NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel");
+                        catch (Exception exception)
+                        {
+                            Logging.LogException(exception);
+                            MessageBox.Show(exception.ToString(),
+                                LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                        }
+
+                    }
             };
 
             _exitGestureSignMenuItem.Name = "ExitGestureSign";
