@@ -164,7 +164,6 @@ namespace GestureSign.Daemon
         void Application_ApplicationExit(object sender, EventArgs e)
         {
             if (_trayIcon != null) _trayIcon.Visible = false;
-            Environment.Exit(Environment.ExitCode);
         }
 
 
