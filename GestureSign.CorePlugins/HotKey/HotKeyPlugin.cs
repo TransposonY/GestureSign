@@ -148,9 +148,9 @@ namespace GestureSign.CorePlugins.HotKey
             {
                 SendShortcutKeys(_Settings);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                throw new UnauthorizedAccessException(LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.UnauthorizedAccessException"), exception);
+                ReleaseKeys(_Settings);
             }
             return true;
         }
@@ -328,6 +328,39 @@ namespace GestureSign.CorePlugins.HotKey
                 if (settings.Windows)
                     simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN).Sleep(30);
             }
+        }
+
+        private void ReleaseKeys(HotKeySettings settings)
+        {
+            if (settings == null)
+                return;
+
+            InputSimulator simulator = new InputSimulator();
+
+            // Modifier
+            if (settings.KeyCode != null)
+                foreach (var k in settings.KeyCode)
+                {
+                    if (!Enum.IsDefined(typeof(VirtualKeyCode), k.GetHashCode())) continue;
+
+                    var key = (VirtualKeyCode)k;
+                    simulator.Keyboard.KeyUp(key);
+                }
+            // Release Shift
+            if (settings.Shift)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
+
+            // Release Alt
+            if (settings.Alt)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU);
+
+            // Release Control
+            if (settings.Control)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
+
+            // Release Windows
+            if (settings.Windows)
+                simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
         }
 
         #endregion
