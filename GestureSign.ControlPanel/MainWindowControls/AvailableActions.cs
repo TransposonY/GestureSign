@@ -152,7 +152,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
         {
             var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-            if (selectedApplication == null) return;
+            if (selectedApplication == null)
+            {
+                lstAvailableApplication.SelectedIndex = 0;
+                selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
+            }
             var ai = lstAvailableActions.SelectedItem as ActionInfo;
 
             Applications.Action action = new Applications.Action()
@@ -168,8 +173,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
             else
             {
-                selectedApplication.Insert(ActionInfos.IndexOf(ai), action);
-                ActionInfos.Insert(ActionInfos.IndexOf(ai), actionInfo);
+                int actionIndex = ActionInfos.IndexOf(ai);
+                if (actionIndex + 1 == ActionInfos.Count)
+                {
+                    selectedApplication.AddAction(action);
+                    ActionInfos.Add(actionInfo);
+                }
+                else
+                {
+                    selectedApplication.Insert(actionIndex + 1, action);
+                    ActionInfos.Insert(actionIndex + 1, actionInfo);
+                }
             }
             SelectAction(actionInfo.ActionName);
 
