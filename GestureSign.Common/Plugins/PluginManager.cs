@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Input;
@@ -21,6 +22,7 @@ namespace GestureSign.Common.Plugins
         static readonly PluginManager _Instance = new PluginManager();
         List<IPluginInfo> _Plugins = new List<IPluginInfo>();
         private Task _lastActionTask;
+        private SynchronizationContext _mainContext;
 
         #endregion
 
@@ -61,7 +63,7 @@ namespace GestureSign.Common.Plugins
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
                 return;
-            var pointInfo = new PointInfo(firstCapturedPoints, points);
+            var pointInfo = new PointInfo(firstCapturedPoints, points, _mainContext);
             var action = new Action<object>(o =>
             {
                 // Get action to be executed
@@ -262,8 +264,9 @@ namespace GestureSign.Common.Plugins
 
         #region ILoadable Methods
 
-        public void Load(IHostControl host)
+        public void Load(IHostControl host, SynchronizationContext syncContext = null)
         {
+            _mainContext = syncContext;
             // Create empty list of plugins, then load as many as possible from plugin directory
             LoadPlugins(host);
 

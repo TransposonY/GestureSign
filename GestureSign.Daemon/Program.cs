@@ -63,7 +63,7 @@ namespace GestureSign.Daemon
                             _PluginManager = PluginManager.Instance,
                             _TrayManager = TrayManager.Instance
                         };
-                        PluginManager.Instance.Load(hostControl);
+                        PluginManager.Instance.Load(hostControl, uiContext);
                         TrayManager.Instance.Load();
 
                         NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor(uiContext));

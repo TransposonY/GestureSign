@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using ManagedWinapi.Windows;
 
 namespace GestureSign.Common.Plugins
@@ -16,10 +17,11 @@ namespace GestureSign.Common.Plugins
 
         #region Constructors
 
-        public PointInfo(List<Point> pointLocation, List<List<Point>> points)
+        public PointInfo(List<Point> pointLocation, List<List<Point>> points, SynchronizationContext syncContext)
         {
             _pointLocation = pointLocation;
             Points = points;
+            SyncContext = syncContext;
         }
 
         #endregion
@@ -40,6 +42,8 @@ namespace GestureSign.Common.Plugins
         public SystemWindow Window => _window ?? (_window = SystemWindow.FromPointEx(_pointLocation[0].X, _pointLocation[0].Y, true, false));
 
         public List<List<Point>> Points { get; set; }
+
+        public SynchronizationContext SyncContext { get; set; }
 
         #endregion
     }
