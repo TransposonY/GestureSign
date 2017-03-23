@@ -166,26 +166,38 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
 
             ActionInfo actionInfo = Action2ActionInfo(action);
-            if (ai == null)
+            Action<Task> addAction = task =>
             {
-                selectedApplication.AddAction(action);
-                ActionInfos.Add(actionInfo);
-            }
-            else
+                Dispatcher.Invoke(DispatcherPriority.Input, new Action(() =>
+                {
+                    if (ai == null)
+                    {
+                        selectedApplication.AddAction(action);
+                        ActionInfos.Add(actionInfo);
+                    }
+                    else
+                    {
+                        int actionIndex = ActionInfos.IndexOf(ai);
+                        if (actionIndex + 1 == ActionInfos.Count)
+                        {
+                            selectedApplication.AddAction(action);
+                            ActionInfos.Add(actionInfo);
+                        }
+                        else
+                        {
+                            selectedApplication.Insert(actionIndex + 1, action);
+                            ActionInfos.Insert(actionIndex + 1, actionInfo);
+                        }
+                    }
+                    SelectAction(actionInfo.ActionName);
+                }));
+            };
+
+            if (_addActionTask != null && !_addActionTask.IsCompleted)
             {
-                int actionIndex = ActionInfos.IndexOf(ai);
-                if (actionIndex + 1 == ActionInfos.Count)
-                {
-                    selectedApplication.AddAction(action);
-                    ActionInfos.Add(actionInfo);
-                }
-                else
-                {
-                    selectedApplication.Insert(actionIndex + 1, action);
-                    ActionInfos.Insert(actionIndex + 1, actionInfo);
-                }
+                _addActionTask.ContinueWith(addAction);
             }
-            SelectAction(actionInfo.ActionName);
+            else addAction.Invoke(null);
 
             ApplicationManager.Instance.SaveApplications();
         }
