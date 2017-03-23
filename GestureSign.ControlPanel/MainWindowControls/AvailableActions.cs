@@ -255,9 +255,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private ActionInfo Action2ActionInfo(IAction action)
         {
             string description;
-            string pluginName;
+            string pluginName = string.Empty;
             // Ensure this action has a plugin
-            if (PluginManager.Instance.PluginExists(action.PluginClass, action.PluginFilename))
+            if (string.IsNullOrEmpty(action.PluginClass) || string.IsNullOrEmpty(action.PluginFilename))
+            {
+                description = LocalizationProvider.Instance.GetTextValue("Action.Messages.DoubleClickToEditAction");
+            }
+            else if (PluginManager.Instance.PluginExists(action.PluginClass, action.PluginFilename))
             {
                 try
                 {
@@ -276,13 +280,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 catch
                 {
                     pluginName = string.Empty;
-                    description = LocalizationProvider.Instance.GetTextValue("Action.Messages.NoAssociationAction");
+                    description = LocalizationProvider.Instance.GetTextValue("Action.Messages.DoubleClickToEditAction");
                 }
             }
             else
             {
-                pluginName = String.Empty;
-                description = LocalizationProvider.Instance.GetTextValue("Action.Messages.NoAssociationAction");
+                description = string.Format(LocalizationProvider.Instance.GetTextValue("Action.Messages.NoAssociationAction"), action.PluginClass, action.PluginFilename);
             }
 
             return new ActionInfo(

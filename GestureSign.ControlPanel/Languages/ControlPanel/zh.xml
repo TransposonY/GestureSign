@@ -133,7 +133,8 @@ http://transposony.coding.me/GestureSign/
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteActionConfirm>确定要删除这 {0} 个动作吗？</DeleteActionConfirm>
       <DeleteAppConfirm>确定删除程序 "{0}" 吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
-      <NoAssociationAction>(双击以编辑此动作)</NoAssociationAction>
+      <NoAssociationAction>（未找到{1}中的{0}）</NoAssociationAction>
+      <DoubleClickToEditAction>(双击以编辑此动作)</DoubleClickToEditAction>
       <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
       <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
