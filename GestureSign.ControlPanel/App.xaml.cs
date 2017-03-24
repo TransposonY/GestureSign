@@ -11,9 +11,7 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.Common.Plugins;
-using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Localization;
-using MahApps.Metro;
 using Microsoft.Win32;
 
 namespace GestureSign.ControlPanel
@@ -60,8 +58,6 @@ namespace GestureSign.ControlPanel
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                 if (createdNew)
                 {
-                    SetCustomAccent();
-
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
 
@@ -113,16 +109,6 @@ namespace GestureSign.ControlPanel
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
-        private void SetCustomAccent()
-        {
-            var systemAccent = UIHelper.GetSystemAccent();
-            if (systemAccent != null)
-            {
-                var accent = ThemeManager.GetAccent(systemAccent);
-                ThemeManager.ChangeAppStyle(Current, accent, ThemeManager.GetAppTheme("BaseLight"));
-            }
         }
 
         private void LoadLanguageData()

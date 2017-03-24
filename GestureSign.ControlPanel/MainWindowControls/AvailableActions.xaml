@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
@@ -306,12 +307,15 @@
                 <Run Text="{Binding ElementName=lstAvailableApplication,Path=SelectedItem.(applications:IApplication.Name),Mode=OneWay}" />
                 <Run Text="{Binding ElementName=lstAvailableActions,Path=Items.Count,Mode=OneWay,StringFormat={localization:LocalisedText Action.ActionCount}}" />
             </TextBlock>
-            <CheckBox x:Name="ToggleAllActionsCheckBox"
-                      IsEnabled="False"
-                      Click="ToggleAllActionsCheckBox_Click"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Right"
-                      Margin="0,0,1,0" />
+            <controls:ToggleSwitch x:Name="ToggleAllActionsToggleSwitch"
+                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+                                   IsEnabled="False"
+                                   Click="ToggleAllActionsToggleSwitch_Click"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,15,0"
+                                   OffLabel=""
+                                   OnLabel="" />
         </Grid>
         <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
         <ListBox x:Name="lstAvailableActions"
@@ -510,12 +514,18 @@
                           Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
-                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="1"
-                                  IsChecked="{Binding Path=IsEnabled}"
-                                  Click="ActionCheckBox_Click"
-                                  HorizontalAlignment="Right" />
+                        <controls:ToggleSwitch  Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+                                                Click="ActionCheckBox_Click"
+                                                Grid.Column="1"
+                                                IsChecked="{Binding Path=IsEnabled}"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,0,0"
+                                                OffLabel=""
+                                                OnLabel="">
+                        </controls:ToggleSwitch>
                         <TextBlock Grid.Column="0"
                                    TextWrapping="NoWrap"
                                    Text="{Binding ActionName}"

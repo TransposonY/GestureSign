@@ -13,9 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using MahApps.Metro.Controls;
 
 namespace GestureSign.ControlPanel.MainWindowControls
 {
@@ -141,11 +141,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ActionCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            ActionInfo actionInfo = UIHelper.GetParentDependencyObject<ListBoxItem>(sender as CheckBox).Content as ActionInfo;
+            ActionInfo actionInfo = UIHelper.GetParentDependencyObject<ListBoxItem>(sender as ToggleSwitch).Content as ActionInfo;
             if (actionInfo == null) return;
             IApplication app = lstAvailableApplication.SelectedItem as IApplication;
             if (app == null) return;
-            ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, app.Name).IsEnabled = (sender as CheckBox).IsChecked.Value;
+            ApplicationManager.Instance.GetAnyDefinedAction(actionInfo.ActionName, app.Name).IsEnabled = (sender as ToggleSwitch).IsChecked.Value;
             ApplicationManager.Instance.SaveApplications();
         }
 
@@ -602,11 +602,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApp == null)
             {
-                ToggleAllActionsCheckBox.IsEnabled = false;
+                ToggleAllActionsToggleSwitch.IsEnabled = false;
                 return;
             }
-            ToggleAllActionsCheckBox.IsEnabled = true;
-            ToggleAllActionsCheckBox.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
+            ToggleAllActionsToggleSwitch.IsEnabled = true;
+            ToggleAllActionsToggleSwitch.IsChecked = selectedApp.Actions.All(a => a.IsEnabled);
         }
 
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
@@ -705,21 +705,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private void ToggleAllActionsCheckBox_Click(object sender, RoutedEventArgs e)
+        private void ToggleAllActionsToggleSwitch_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var toggleButton = ((ToggleButton)sender);
+                var toggleSwitch = ((ToggleSwitch)sender);
 
                 IApplication app = lstAvailableApplication.SelectedItem as IApplication;
                 if (app == null) return;
 
-                app.Actions.ForEach(a => a.IsEnabled = toggleButton.IsChecked.Value);
+                app.Actions.ForEach(a => a.IsEnabled = toggleSwitch.IsChecked.Value);
                 ApplicationManager.Instance.SaveApplications();
 
                 foreach (ActionInfo ai in ActionInfos)
                 {
-                    ai.IsEnabled = toggleButton.IsChecked.Value;
+                    ai.IsEnabled = toggleSwitch.IsChecked.Value;
                 }
             }
             catch { }
