@@ -165,18 +165,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 Name = ApplicationManager.GetNextActionName(LocalizationProvider.Instance.GetTextValue("Action.NewAction"), selectedApplication)
             };
 
-            ActionInfo actionInfo = Action2ActionInfo(action);
             Action<Task> addAction = task =>
             {
                 Dispatcher.Invoke(DispatcherPriority.Input, new Action(() =>
                 {
                     if (ai == null)
                     {
+                        ActionInfo actionInfo = Action2ActionInfo(action);
                         selectedApplication.AddAction(action);
                         ActionInfos.Add(actionInfo);
                     }
                     else
                     {
+                        action.GestureName = ai.GestureName;
+                        ActionInfo actionInfo = Action2ActionInfo(action);
+
                         int actionIndex = ActionInfos.IndexOf(ai);
                         if (actionIndex + 1 == ActionInfos.Count)
                         {
@@ -189,7 +192,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             ActionInfos.Insert(actionIndex + 1, actionInfo);
                         }
                     }
-                    SelectAction(actionInfo.ActionName);
+                    SelectAction(action.Name);
                 }));
             };
 
