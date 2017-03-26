@@ -83,7 +83,6 @@ namespace GestureSign.Daemon
 
                             //daemon.StartInfo.UseShellExecute = false;
                             daemon.Start();
-                            daemon.WaitForInputIdle(500);
                         }
                         catch (Exception exception)
                         {
