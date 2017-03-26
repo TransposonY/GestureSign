@@ -56,14 +56,14 @@ namespace GestureSign.CorePlugins.LaunchApp
                 var sid = currentUser.User.ToString();
 
                 var packageManager = new PackageManager();
-                var packages = packageManager.FindPackagesForUser(sid);
+                var packages = packageManager.FindPackagesForUserWithPackageTypes(sid, PackageTypes.Main).ToList();
 
                 if (Environment.OSVersion.Version.Major == 10)
                 {
                     var appXInfos = GetAppXInfosFromReg();
                     if (appXInfos == null || appXInfos.Count == 0) return;
 
-                    foreach (var package in packages.Where(package => !package.IsFramework))
+                    foreach (var package in packages)
                     {
                         using (
                             var key =
@@ -106,9 +106,9 @@ namespace GestureSign.CorePlugins.LaunchApp
                                     using (var subKey = key.OpenSubKey(appUserModelId))
                                     {
                                         var appName = subKey?.GetValue("AppName");
-                                        if (appName == null) continue;
-                                        displayName = ExtractDisplayName(package, appName.ToString());
-                                        if (string.IsNullOrEmpty(displayName) || displayName.StartsWith("ms-resource:", StringComparison.Ordinal)) continue;
+                                        if (appName != null)
+                                            displayName = ExtractDisplayName(package, appName.ToString());
+                                        if (string.IsNullOrEmpty(displayName) || displayName.Contains("ms-resource:")) continue;
                                         model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
 
                                         logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
@@ -122,7 +122,7 @@ namespace GestureSign.CorePlugins.LaunchApp
                 }
                 else
                 {
-                    foreach (var package in packages.Where(package => !package.IsFramework))
+                    foreach (var package in packages)
                     {
                         string displayName, logo, backgroundColor;
                         if (
