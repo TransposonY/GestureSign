@@ -325,23 +325,13 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.CanContentScroll="False"
+                 ScrollViewer.ScrollChanged="LstAvailableActions_OnScrollChanged"
                  Grid.Row="0"
                  Grid.Column="1"
                  BorderBrush="{StaticResource AccentColorBrush}"
                  Margin="0,27,0,0"
                  SelectionMode="Extended">
             <ListBox.Resources>
-                <ControlTemplate x:Key="ExpanderButton"
-                                 TargetType="{x:Type ToggleButton}">
-                    <Border x:Name="ExpanderButtonBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter x:Name="HeaderContent"
-                                          ContentSource="Content" />
-                    </Border>
-                </ControlTemplate>
                 <Style x:Key="ShowBorderStyle"
                        TargetType="{x:Type Border}">
                     <Style.Triggers>
@@ -379,16 +369,70 @@
                                                         <Border x:Name="HeaderSite"
                                                                 BorderThickness="1,1,1,1"
                                                                 BorderBrush="{StaticResource AccentColorBrush}">
-                                                            <ToggleButton x:Name="ExpanderButton"
-                                                                          DockPanel.Dock="Left"
-                                                                          Content="{TemplateBinding Header}"
-                                                                          IsChecked="{Binding Path=IsExpanded,                                               
-                                                            RelativeSource={RelativeSource TemplatedParent}}"
-                                                                          OverridesDefaultStyle="True"
-                                                                          Template="{StaticResource ExpanderButton}"
-                                                                          Padding="0"
-                                                                          BorderThickness="0"
-                                                                          Background="{StaticResource GrayBrush10}" />
+                                                            <Button x:Name="ExpanderGestureButton"
+                                                                    Click="GestureButton_Click"
+                                                                    VerticalContentAlignment="Top"
+                                                                    HorizontalContentAlignment="Center"
+                                                                    DockPanel.Dock="Left"
+                                                                    OverridesDefaultStyle="True"
+                                                                    Width="200"
+                                                                    Padding="0"
+                                                                    BorderThickness="0"
+                                                                    Background="{StaticResource GrayBrush10}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                                        <Border x:Name="ExpanderButtonBorder"
+                                                                                Background="{TemplateBinding Background}"
+                                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                                Padding="{TemplateBinding Padding}">
+                                                                            <ContentPresenter x:Name="HeaderContent"
+                                                                                              ContentSource="Content" />
+                                                                        </Border>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                                <Grid x:Name="GestureImageGrid"
+                                                                      VerticalAlignment="Top"
+                                                                      Height="85">
+                                                                    <TextBlock Text="{localization:LocalisedText Action.SelectGesture}"
+                                                                               HorizontalAlignment="Center"
+                                                                               FontWeight="Bold"
+                                                                               IsHitTestVisible="False"
+                                                                               VerticalAlignment="Center"
+                                                                               Panel.ZIndex="10">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Visibility"
+                                                                                        Value="Collapsed" />
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding ElementName=GestureImage,Path=Source}"
+                                                                                                 Value="{x:Null}">
+                                                                                        <Setter Property="Visibility"
+                                                                                                Value="Visible" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                    <Image x:Name="GestureImage"
+                                                                           Height="65"
+                                                                           Stretch="Uniform"
+                                                                           StretchDirection="DownOnly"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center">
+                                                                        <Image.Source>
+                                                                            <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
+                                                                                          ConverterParameter="65">
+                                                                                <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                         Path="PatternMap"
+                                                                                         Mode="OneWay" />
+                                                                                <Binding  Path="Name"
+                                                                                          Mode="OneWay" />
+                                                                            </MultiBinding>
+                                                                        </Image.Source>
+                                                                    </Image>
+                                                                </Grid>
+                                                            </Button>
                                                         </Border>
                                                         <Border x:Name="ExpanderSite"
                                                                 Style="{StaticResource ShowBorderStyle}"
@@ -409,57 +453,6 @@
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
                                             </Expander.Template>
-                                            <Expander.Header>
-                                                <StackPanel>
-                                                    <Button x:Name="GestureButton"
-                                                            IsEnabled="{Binding ElementName=GestureExpander,Path=IsExpanded}"
-                                                            HorizontalContentAlignment="Center"
-                                                            HorizontalAlignment="Center"
-                                                            VerticalContentAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            Width="200"
-                                                            BorderThickness="1"
-                                                            Height="85"
-                                                            Background="{x:Null}"
-                                                            Click="GestureButton_Click"
-                                                            BorderBrush="{StaticResource AccentColorBrush3}">
-                                                        <Image x:Name="GestureImage"
-                                                               Height="65"
-                                                               Stretch="Uniform"
-                                                               StretchDirection="DownOnly">
-                                                            <Image.Source>
-                                                                <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
-                                                                              ConverterParameter="65">
-                                                                    <Binding Source="{StaticResource GestureItemProvider}"
-                                                                             Path="PatternMap"
-                                                                             Mode="OneWay" />
-                                                                    <Binding  Path="Name"
-                                                                              Mode="OneWay" />
-                                                                </MultiBinding>
-                                                            </Image.Source>
-                                                        </Image>
-                                                    </Button>
-                                                    <TextBlock Text="{localization:LocalisedText Action.SelectGesture}"
-                                                               Margin="0,-48.5,0,0"
-                                                               HorizontalAlignment="Center"
-                                                               FontWeight="Bold"
-                                                               IsHitTestVisible="False">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="Visibility"
-                                                                        Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding ElementName=GestureImage,Path=Source}"
-                                                                                 Value="{x:Null}">
-                                                                        <Setter Property="Visibility"
-                                                                                Value="Visible" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
-                                                </StackPanel>
-                                            </Expander.Header>
                                             <Expander.Content>
                                                 <ItemsPresenter />
                                             </Expander.Content>

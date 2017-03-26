@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 
@@ -137,6 +138,26 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void lstAvailableActions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             EnableRelevantButtons();
+        }
+
+        private void LstAvailableActions_OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            HitTestResult hitTest = VisualTreeHelper.HitTest(lstAvailableActions, new Point(5, 5));
+            var element = hitTest.VisualHit as UIElement;
+            if (element != null)
+            {
+                Rect bounds = element.TransformToAncestor(lstAvailableActions).TransformBounds(new Rect(0.0, 0.0, element.RenderSize.Width, element.RenderSize.Height));
+                var gestureImageContainer = UIHelper.FindVisualChild<Grid>(element);
+                if (gestureImageContainer == null) return;
+                if (bounds.Top < 0)
+                {
+                    var topMargin = -bounds.Top + gestureImageContainer.ActualHeight > element.RenderSize.Height
+                        ? element.RenderSize.Height - gestureImageContainer.ActualHeight
+                        : Math.Abs(bounds.Top);
+                    gestureImageContainer.Margin = new Thickness(0, topMargin, 0, 0);
+                }
+                else gestureImageContainer.Margin = new Thickness(0);
+            }
         }
 
         private void ActionCheckBox_Click(object sender, RoutedEventArgs e)
