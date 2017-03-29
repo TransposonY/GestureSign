@@ -8,5 +8,6 @@ namespace GestureSign.ControlPanel.Common
         public PointPattern[] PointPattern { get; set; }
         public string HotKey { get; set; }
         public string MouseAction { get; set; }
+        public string Applications { get; set; }
     }
 }

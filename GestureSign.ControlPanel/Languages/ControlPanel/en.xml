@@ -146,6 +146,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ImportGesture>Import Gestures...</ImportGesture>
     <ExportGestures>Export Gestures...</ExportGestures>
     <GestureGroupHeader>{0} Finger(s) Gesture  ( {1} )</GestureGroupHeader>
+    <Applications>Applications</Applications>
     <MouseActions>
       <None>None</None>
       <WheelForward>Wheel Forward</WheelForward>

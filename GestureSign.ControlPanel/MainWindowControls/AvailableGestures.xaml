@@ -54,6 +54,8 @@
                             DisplayMemberBinding="{Binding Path=HotKey}" />
             <GridViewColumn Header="{localization:LocalisedText GestureDefinition.Mouse}"
                             DisplayMemberBinding="{Binding Path=MouseAction}" />
+            <GridViewColumn Header="{localization:LocalisedText Gesture.Applications}"
+                            DisplayMemberBinding="{Binding Path=Applications}" />
         </GridView>
     </UserControl.Resources>
     <Grid>

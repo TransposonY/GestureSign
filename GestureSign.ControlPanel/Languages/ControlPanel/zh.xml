@@ -152,6 +152,7 @@ http://transposony.coding.me/GestureSign/
     <ImportGesture>导入手势文件</ImportGesture>
     <ExportGestures>导出手势数据</ExportGestures>
     <GestureGroupHeader>{0}指手势 ({1}个)</GestureGroupHeader>
+    <Applications>程序</Applications>
     <MouseActions>
       <None>未设置</None>
       <WheelForward>向前滚动</WheelForward>
@@ -176,7 +177,6 @@ http://transposony.coding.me/GestureSign/
     <SelectGesture>选择手势</SelectGesture>
     <Edit>编辑手势</Edit>
     <ExistingGesture>已保存有相似的手势，是否使用该手势？</ExistingGesture>
-    <overGesture>点击“确定”使用现有的相似手势？</overGesture>
     <DrawGesture>请画出手势</DrawGesture>
     <Redraw>重画</Redraw>
     <HotKey>快捷键</HotKey>

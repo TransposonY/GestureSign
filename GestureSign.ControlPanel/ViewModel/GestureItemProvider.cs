@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
@@ -62,12 +63,22 @@ namespace GestureSign.ControlPanel.ViewModel
 
             // Get all available gestures from gesture manager
             IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.PointPatterns?.Max(p => p.Points.Count));
+            var apps = ApplicationManager.Instance.GetAvailableUserApplications().Union(ApplicationManager.Instance.GetAllGlobalApplication()).ToList();
 
             foreach (var g in results)
             {
                 var gesture = (Gesture)g;
+                string result = string.Empty;
+                foreach (IApplication application in apps)
+                {
+                    if (application.Actions.Exists(a => a.GestureName == gesture.Name))
+                        result += $" {application.Name},";
+                }
+                result = result.TrimEnd(',');
+
                 GestureItem newItem = new GestureItem()
                 {
+                    Applications = result,
                     MouseAction = gesture.MouseAction == MouseActions.None ? string.Empty : MouseActionDescription.DescriptionDict[gesture.MouseAction],
                     PointPattern = gesture.PointPatterns,
                     Name = gesture.Name,
