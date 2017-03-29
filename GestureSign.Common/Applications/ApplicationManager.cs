@@ -187,14 +187,14 @@ namespace GestureSign.Common.Applications
 
         public void RemoveIgnoredApplications(string applicationName)
         {
-            _Applications.RemoveAll(app => app is IgnoredApplication && app.Name.Equals(applicationName));
+            _Applications.RemoveAll(app => app is IgnoredApplication && app.Name == applicationName);
         }
 
         public void RenameGesture(string newName, string oldName)
         {
             _Applications.ForEach(app => app.Actions?.ForEach(action =>
               {
-                  if (action.GestureName.Equals(oldName))
+                  if (action.GestureName == oldName)
                       action.GestureName = newName;
               }));
 
@@ -301,8 +301,8 @@ namespace GestureSign.Common.Applications
         public IAction GetAnyDefinedAction(string actionName, string applicationName)
         {
             IApplication app = GetGlobalApplication().Name == applicationName ? GetGlobalApplication() : GetExistingUserApplication(applicationName);
-            if (app != null && app.Actions.Exists(a => a.Name.Equals(actionName)))
-                return app.Actions.Find(a => a.Name.Equals(actionName));
+            if (app != null && app.Actions.Exists(a => a.Name == actionName))
+                return app.Actions.Find(a => a.Name == actionName);
 
             return null;
         }
@@ -398,7 +398,7 @@ namespace GestureSign.Common.Applications
             if (application == null) throw new ArgumentNullException(nameof(application));
 
             var actionName = number == 1 ? name : $"{name}({number})";
-            if (application.Actions.Exists(a => a.Name.Equals(actionName)))
+            if (application.Actions.Exists(a => a.Name == actionName))
                 return GetNextActionName(name, application, ++number);
             return actionName;
         }

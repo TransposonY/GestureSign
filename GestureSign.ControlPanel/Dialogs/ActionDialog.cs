@@ -165,7 +165,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name.Equals(newActionName)) && newActionName != _currentAction.Name)
+                if (ApplicationManager.Instance.CurrentApplication.Actions.Any(a => a.Name == newActionName) && newActionName != _currentAction.Name)
                 {
                     return
                         ShowErrorMessage(

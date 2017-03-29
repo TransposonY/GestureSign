@@ -460,7 +460,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                             var existingApp = ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
                             foreach (IAction newAction in newApp.Actions)
                             {
-                                if (existingApp.Actions.Exists(action => action.Name.Equals(newAction.Name)))
+                                if (existingApp.Actions.Exists(action => action.Name == newAction.Name))
                                 {
                                     var result =
                                         MessageBox.Show(
@@ -471,7 +471,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                             MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                     if (result == MessageBoxResult.Yes)
                                     {
-                                        existingApp.Actions.RemoveAll(ac => ac.Name.Equals(newAction.Name));
+                                        existingApp.Actions.RemoveAll(ac => ac.Name == newAction.Name);
                                         existingApp.AddAction(newAction);
                                         addcount++;
                                     }

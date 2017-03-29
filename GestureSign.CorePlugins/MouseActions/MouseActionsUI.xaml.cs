@@ -110,7 +110,7 @@ namespace GestureSign.CorePlugins.MouseActions
                     else if (num > 10000) if (textBox != null) textBox.Text = 10000.ToString();
                     return;
                 }
-                if (textBox.Text.Equals("-")) return;
+                if ("-".Equals(textBox.Text)) return;
                 textBox.Text = textBox.Text.Remove(offset, change[0].AddedLength);
                 textBox.Select(offset, 0);
             }

@@ -258,7 +258,7 @@ namespace GestureSign.ControlPanel.Dialogs
                             string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflict"), matchString, sameApp));
                     }
 
-                    if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.ApplicationExists(name))
+                    if (name != _currentApplication.Name && ApplicationManager.Instance.ApplicationExists(name))
                     {
                         return ShowErrorMessage(
                             LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
@@ -275,7 +275,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
                 if (_currentApplication != null)
                 {
-                    if (!name.Equals(_currentApplication.Name) && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+                    if (name != _currentApplication.Name && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name == name))
                     {
                         return ShowErrorMessage(
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
@@ -283,7 +283,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     }
                     ApplicationManager.Instance.RemoveApplication(_currentApplication);
                 }
-                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name.Equals(name)))
+                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name == name))
                 {
                     return ShowErrorMessage(
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
