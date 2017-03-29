@@ -185,6 +185,8 @@ namespace GestureSign.ControlPanel.Dialogs
                 SimilarGesture = null;
                 _currentPointPatterns = null;
                 imgGestureThumbnail.Source = null;
+                MouseActionComboBox.SelectedItem = null;
+                HotKeyTextBox.HotKey = null;
 
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
                 RedrawButton.Visibility = Visibility.Collapsed;
