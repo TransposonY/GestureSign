@@ -23,6 +23,9 @@ namespace GestureSign.ControlPanel.Dialogs
     /// </summary>
     public partial class GestureDefinition : MetroWindow
     {
+        /// <summary>
+        /// Select Gesture
+        /// </summary>
         public GestureDefinition()
         {
             InitializeComponent();
@@ -37,19 +40,10 @@ namespace GestureSign.ControlPanel.Dialogs
             GestureManager.Instance.GestureName = gesture.Name;
         }
 
-        public GestureDefinition(bool selectGesture)
-        : this()
-        {
-            _selectGesture = selectGesture;
-        }
-
         private Gesture _oldGesture;
         private Gesture _similarGesture;
         private PointPattern[] _currentPointPatterns;
         private Color _color;
-        private bool _selectGesture;
-
-        public string GestureName { get; set; }
 
         public Gesture SimilarGesture
         {
@@ -59,23 +53,26 @@ namespace GestureSign.ControlPanel.Dialogs
                 _similarGesture = value;
                 if (value == null)
                 {
+                    imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
                     cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Save");
-                    UseExistingButton.Visibility = ExistingGestureImage.Visibility = Visibility.Collapsed;
+                    ExistingTextBlock.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.Overwrite");
+                    cmdDone.Content = LocalizationProvider.Instance.GetTextValue("Common.OK");
 
-                    ExistingGestureImage.Source = GestureImage.CreateImage(value.PointPatterns, new Size(65, 65), _color);
+                    if (_oldGesture?.Name == value.Name)
+                        imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
+                    else
+                    {
+                        ExistingTextBlock.Visibility = Visibility.Visible;
+                        imgGestureThumbnail.Source = GestureImage.CreateImage(value.PointPatterns, new Size(65, 65), _color);
+                    }
                     var hotkey = value.Hotkey;
                     if (hotkey != null)
                         HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
                     MouseActionComboBox.SelectedValue = value.MouseAction;
 
-                    ExistingGestureImage.Visibility = Visibility.Visible;
-                    UseExistingButton.Visibility = _selectGesture ? Visibility.Visible : Visibility.Collapsed;
-
-                    GestureName = value.Name;
                 }
             }
         }
@@ -92,15 +89,12 @@ namespace GestureSign.ControlPanel.Dialogs
             if (_oldGesture == null)
             {
                 await SetTrainingState(true);
-                Title = _selectGesture
-                    ? LocalizationProvider.Instance.GetTextValue("GestureDefinition.SelectGesture")
-                    : LocalizationProvider.Instance.GetTextValue("GestureDefinition.NewGesture");
+                Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.SelectGesture");
             }
             else
             {
                 MouseActionComboBox.SelectedValue = _oldGesture.MouseAction;
                 Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Edit");
-                GestureName = _oldGesture.Name; //this.txtGestureName.Text
                 var hotkey = ((Gesture)_oldGesture).Hotkey;
                 if (hotkey != null)
                     HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
@@ -113,25 +107,47 @@ namespace GestureSign.ControlPanel.Dialogs
             await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
         }
 
-        private void UseExistingButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (SaveGesture(_similarGesture.Name, _similarGesture.PointPatterns))
-            {
-                DialogResult = true;
-                Close();
-            }
-        }
-
         private void cmdDone_Click(object sender, RoutedEventArgs e)
         {
-            //merge similar gesture
-            if (_oldGesture != null && _similarGesture != null && _oldGesture.Name != _similarGesture.Name)
+            string gestureName;
+            PointPattern[] newPatterns;
+            if (_oldGesture != null)
             {
-                GestureManager.Instance.DeleteGesture(_similarGesture.Name);
-                ApplicationManager.Instance.RenameGesture(_oldGesture.Name, _similarGesture.Name);
+                //merge similar gesture
+                if (_similarGesture != null)
+                {
+                    if (_oldGesture.Name == _similarGesture.Name)
+                    {
+                        newPatterns = _currentPointPatterns;
+                    }
+                    else
+                    {
+                        GestureManager.Instance.DeleteGesture(_similarGesture.Name);
+                        ApplicationManager.Instance.RenameGesture(_oldGesture.Name, _similarGesture.Name);
+                        newPatterns = _similarGesture.PointPatterns;
+                    }
+                }
+                else
+                {
+                    newPatterns = _currentPointPatterns;
+                }
+                gestureName = _oldGesture.Name;
+            }
+            else
+            {
+                if (_similarGesture != null)
+                {
+                    gestureName = _similarGesture.Name;
+                    newPatterns = _similarGesture.PointPatterns;
+                }
+                else
+                {
+                    newPatterns = _currentPointPatterns;
+                    gestureName = null;
+                }
             }
 
-            if (SaveGesture(_oldGesture != null ? _oldGesture.Name : GestureName, _currentPointPatterns))
+            if (SaveGesture(gestureName, newPatterns))
             {
                 DialogResult = true;
                 Close();
@@ -140,16 +156,13 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private async void MessageProcessor_GotNewGesture(object sender, Gesture e)
         {
-            string similarGestureName = e.Name;
-            SimilarGesture = (Gesture)GestureManager.Instance.GetNewestGestureSample(similarGestureName);
-
             _currentPointPatterns = e.PointPatterns;
-            imgGestureThumbnail.Source = GestureImage.CreateImage(_currentPointPatterns, new Size(65, 65), _color);
+            SimilarGesture = (Gesture)GestureManager.Instance.GetNewestGestureSample(e.Name);
 
             await SetTrainingState(false);
         }
 
-        private async void ResetButton_Click(object sender, RoutedEventArgs e)
+        private async void RedrawButton_Click(object sender, RoutedEventArgs e)
         {
             await SetTrainingState(true);
         }
@@ -172,16 +185,15 @@ namespace GestureSign.ControlPanel.Dialogs
                 SimilarGesture = null;
                 _currentPointPatterns = null;
                 imgGestureThumbnail.Source = null;
-                GestureName = string.Empty;
 
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
-                ResetButton.Visibility = Visibility.Collapsed;
+                RedrawButton.Visibility = Visibility.Collapsed;
                 return await NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
             else
             {
                 DrawGestureTextBlock.Visibility = Visibility.Collapsed;
-                ResetButton.Visibility = Visibility.Visible;
+                RedrawButton.Visibility = Visibility.Visible;
                 return await NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
             }
         }

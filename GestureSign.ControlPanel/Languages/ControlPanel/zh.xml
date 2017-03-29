@@ -172,15 +172,12 @@ http://transposony.coding.me/GestureSign/
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <NewGesture>添加手势</NewGesture>
     <SelectGesture>选择手势</SelectGesture>
     <Edit>编辑手势</Edit>
-    <UseExisting>使用已有手势</UseExisting>
-    <ExistingGesture>已存在以下相似的手势：
-可以点击“覆盖”来覆盖旧手势</ExistingGesture>
-    <UseExistingGesture>或者直接使用现有的手势</UseExistingGesture>
+    <ExistingGesture>已保存有相似的手势，是否使用该手势？</ExistingGesture>
+    <overGesture>点击“确定”使用现有的相似手势？</overGesture>
     <DrawGesture>请画出手势</DrawGesture>
-    <Reset>重置</Reset>
+    <Redraw>重画</Redraw>
     <HotKey>快捷键</HotKey>
     <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
     <Mouse>鼠标键</Mouse>

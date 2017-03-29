@@ -414,12 +414,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     }
             }
 
-            GestureDefinition gestureDialog = new GestureDefinition(true);
+            GestureDefinition gestureDialog = new GestureDefinition();
             var result = gestureDialog.ShowDialog();
 
             if (result != null && result.Value)
             {
-                var newGesture = gestureDialog.SimilarGesture == null ? GestureManager.Instance.GestureName : gestureDialog.SimilarGesture.Name;
+                var newGesture = GestureManager.Instance.GestureName;
 
                 IApplication app = lstAvailableApplication.SelectedItem as IApplication;
                 if (app != null)

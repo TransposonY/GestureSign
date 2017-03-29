@@ -243,22 +243,6 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Button x:Name="NewGestureButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,120,10"
-                Grid.Row="1"
-                Click="NewGestureButton_Click">
-            <Rectangle Width="20"
-                       Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource PlusIcon}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
         <Button x:Name="btnDelGesture"
                 Style="{DynamicResource MetroCircleButtonStyle}"
                 HorizontalAlignment="Right"

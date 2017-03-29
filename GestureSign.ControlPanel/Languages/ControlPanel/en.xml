@@ -166,15 +166,11 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <NewGesture>New Gesture</NewGesture>
     <SelectGesture>Select Gesture</SelectGesture>
     <Edit>Edit Gesture</Edit>
-    <UseExisting>Use Existing</UseExisting>
-    <ExistingGesture>Exist following similar gesture:
-You can Overwrite the existing gesture</ExistingGesture>
-    <UseExistingGesture>Or Use Existing gesture directly</UseExistingGesture>
+    <ExistingGesture>Exist similar gesture.Use it?</ExistingGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
-    <Reset>Reset</Reset>
+    <Redraw>Redraw</Redraw>
     <HotKey>HotKey</HotKey>
     <HotKeyWatermark>Enter hot key</HotKeyWatermark>
     <Mouse>Mouse</Mouse>
