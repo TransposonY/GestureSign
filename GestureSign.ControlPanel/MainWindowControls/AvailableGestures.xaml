@@ -68,6 +68,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.PanningMode="VerticalOnly"
                   SelectionChanged="lstAvailableGestures_SelectionChanged"
+                  GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   BorderThickness="0"
                   SelectedValuePath="Name">
             <ListView.Style>

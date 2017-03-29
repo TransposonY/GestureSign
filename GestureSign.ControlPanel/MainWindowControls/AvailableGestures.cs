@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GestureSign.Common.Configuration;
@@ -147,6 +149,33 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void ListViewItem_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Dispatcher.InvokeAsync(EditGesture, DispatcherPriority.Input);
+        }
+
+        private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction = ListSortDirection.Ascending;
+
+            if (headerClicked != null)
+            {
+                if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+                {
+                    string header = (headerClicked.Column.DisplayMemberBinding as Binding)?.Path.Path;
+                    ICollectionView dataView = CollectionViewSource.GetDefaultView(lstAvailableGestures.ItemsSource);
+                    if (dataView.SortDescriptions.Count != 0)
+                    {
+                        var lastDirection = dataView.SortDescriptions[0].Direction;
+                        direction = lastDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                        dataView.SortDescriptions.Clear();
+                    }
+                    if (header != null)
+                    {
+                        SortDescription sd = new SortDescription(header, direction);
+                        dataView.SortDescriptions.Add(sd);
+                    }
+                    dataView.Refresh();
+                }
+            }
         }
 
         private void EditGesture()
