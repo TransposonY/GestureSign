@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -302,6 +303,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
             EnableRelevantButtons();
         }
 
+        private void SelectActions(List<ActionInfo> actions)
+        {
+            foreach (var action in actions)
+            {
+                lstAvailableActions.SelectedItems.Add(action);
+            }
+            lstAvailableActions.UpdateLayout();
+            lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem);
+        }
+
         private ActionInfo Action2ActionInfo(IAction action)
         {
             string description;
@@ -383,6 +394,26 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             e.Handled = true;
 
+            List<ActionInfo> actionInfoList = new List<ActionInfo>();
+            var groupItem = UIHelper.GetParentDependencyObject<GroupItem>((Button)sender);
+            foreach (ActionInfo actionInfo in lstAvailableActions.SelectedItems)
+            {
+                var listItem = lstAvailableActions.ItemContainerGenerator.ContainerFromItem(actionInfo);
+                if (ReferenceEquals(UIHelper.GetParentDependencyObject<GroupItem>(listItem), groupItem))
+                    actionInfoList.Add(actionInfo);
+            }
+
+            if (actionInfoList.Count == 0)
+            {
+                var collectionViewGroup = groupItem.Content as CollectionViewGroup;
+                if (collectionViewGroup != null)
+                    foreach (ActionInfo item in collectionViewGroup.Items)
+                    {
+                        lstAvailableActions.SelectedItems.Add(item);
+                        actionInfoList.Add(item);
+                    }
+            }
+
             GestureDefinition gestureDialog = new GestureDefinition(true);
             var result = gestureDialog.ShowDialog();
 
@@ -390,35 +421,18 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var newGesture = gestureDialog.SimilarGesture == null ? GestureManager.Instance.GestureName : gestureDialog.SimilarGesture.Name;
 
-                var gestureButton = (Button)sender;
-
-                Expander expander = UIHelper.GetParentDependencyObject<Expander>(gestureButton);
-                if (expander == null) return;
-                var firstListBoxItem = UIHelper.FindVisualChild<ListBoxItem>(expander);
-                if (firstListBoxItem == null) return;
-                var listBoxItemParent = UIHelper.GetParentDependencyObject<StackPanel>(firstListBoxItem);
-                if (listBoxItemParent == null) return;
-                var listBoxItems = listBoxItemParent.Children;
-
                 IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                ActionInfo ai = null;
                 if (app != null)
                 {
-                    foreach (ListBoxItem listBoxItem in listBoxItems)
+                    foreach (ActionInfo ai in actionInfoList)
                     {
-                        ai = listBoxItem.Content as ActionInfo;
-                        if (ai != null)
-                        {
-                            IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
-                            ai.GestureName = action.GestureName = newGesture;
-
-                            ApplicationManager.Instance.SaveApplications();
-                        }
-                        else return;
+                        IAction action = app.Actions.First(a => a.Name.Equals(ai.ActionName, StringComparison.Ordinal));
+                        ai.GestureName = action.GestureName = newGesture;
                     }
+                    ApplicationManager.Instance.SaveApplications();
+                    RefreshGroup(newGesture);
+                    SelectActions(actionInfoList);
                 }
-                RefreshGroup(newGesture);
-                SelectAction(ai?.ActionName);
             }
         }
 
