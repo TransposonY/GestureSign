@@ -118,14 +118,18 @@ namespace GestureSign.ControlPanel
                 LocalizationProviderEx.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
             }
 
-            Current.Resources.Remove("DefaultFlowDirection");
-            Current.Resources.Add("DefaultFlowDirection", LocalizationProviderEx.Instance.FlowDirection);
-            Current.Resources.Remove("DefaultFont");
-            Current.Resources.Add("DefaultFont", LocalizationProviderEx.Instance.Font);
-            Current.Resources.Remove("HeaderFontFamily");
-            Current.Resources.Add("HeaderFontFamily", LocalizationProviderEx.Instance.Font);
-            Current.Resources.Remove("ContentFontFamily");
-            Current.Resources.Add("ContentFontFamily", LocalizationProviderEx.Instance.Font);
+            Current.Resources["DefaultFlowDirection"] = LocalizationProviderEx.Instance.FlowDirection;
+            var font = LocalizationProviderEx.Instance.Font;
+            var headerFontFamily = LocalizationProviderEx.Instance.HeaderFontFamily;
+            if (font != null)
+                Current.Resources["DefaultFont"] =
+                    Current.Resources["ContentFontFamily"] =
+                    Current.Resources["ToggleSwitchFontFamily"] =
+                    Current.Resources["ToggleSwitchHeaderFontFamily"] =
+                    Current.Resources["ToggleSwitchFontFamily.Win10"] =
+                    Current.Resources["ToggleSwitchHeaderFontFamily.Win10"] = font;
+            if (headerFontFamily != null)
+                Current.Resources["HeaderFontFamily"] = headerFontFamily;
         }
 
         private bool CheckIfApplicationRunAsAdmin()

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Language DisplayName="English" Culture="en" Version="0.13">
   <Font>Segoe UI, Lucida Sans Unicode, Verdana</Font>
+  <HeaderFontFamily>Segoe UI Light, Lucida Sans Unicode, Verdana</HeaderFontFamily>
   <IsRightToLeft>False</IsRightToLeft>
   <Title>GestureSign Control Panel</Title>
   <Messages>

@@ -29,6 +29,16 @@ namespace GestureSign.ControlPanel.Localization
             }
         }
 
+        public FontFamily HeaderFontFamily
+        {
+            get
+            {
+                if (Texts.ContainsKey(nameof(HeaderFontFamily)))
+                    return new FontFamily(Texts[nameof(HeaderFontFamily)]);
+                return null;
+            }
+        }
+
         public new static LocalizationProviderEx Instance
         {
             get { return _instance ?? (_instance = new LocalizationProviderEx()); }

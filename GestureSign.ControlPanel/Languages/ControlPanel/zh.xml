@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Language DisplayName="中文" Culture="zh-CN" Version="0.13">
   <Font>Microsoft YaHei UI</Font>
+  <HeaderFontFamily>Microsoft YaHei UI Light</HeaderFontFamily>
   <IsRightToLeft>False</IsRightToLeft>
   <Title>设置</Title>
   <Messages>
