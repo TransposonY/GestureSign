@@ -26,7 +26,8 @@ namespace GestureSign.ControlPanel.ViewModel
 
             GestureManager.GestureSaved += (o, e) => { Update(); };
 
-            GestureManager.OnLoadGesturesCompleted += (o, e) => { Application.Current.Dispatcher.Invoke(Update); };
+            GestureManager.OnLoadGesturesCompleted += (o, e) => { if (ApplicationManager.FinishedLoading) Application.Current.Dispatcher.Invoke(Update); };
+            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { if (GestureManager.FinishedLoading) Application.Current.Dispatcher.Invoke(Update); };
 
             if (GestureManager.FinishedLoading) Update();
         }
