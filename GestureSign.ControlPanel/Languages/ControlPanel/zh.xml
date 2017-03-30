@@ -220,7 +220,6 @@ http://transposony.coding.me/GestureSign/
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
     <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
-    <Timeout>手势超时 (毫秒)</Timeout>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
     <WindowsStartup>

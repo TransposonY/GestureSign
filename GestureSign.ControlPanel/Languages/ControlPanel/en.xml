@@ -214,7 +214,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
     <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
-    <Timeout>Gesture Timeout (ms)</Timeout>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
     <WindowsStartup>
