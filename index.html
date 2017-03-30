@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>GestureSign - Free gesture recognition software for Windows</title>
+    <meta name="description" content="GestureSign is a gesture recognition software for Windows tablet. You can automate repetitive tasks by simply drawing a gesture with your fingers and mouse.">
+    <meta name="author" content="TransposonY">
+    <meta name="keywords" content="windows,free,gesture,software,touchscreen,mouse,opensource">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GestureSign">
+    <meta property="og:url" content="http://transposony.github.io/GestureSign/">
+    <meta property="og:site_name" content="GestureSign">
+    <meta property="og:description" content="GestureSign - Free gesture recognition software for Windows">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="GestureSign">
+    <meta name="twitter:description" content="GestureSign - Free gesture recognition software for Windows">
+    <link rel="stylesheet" href="./dist/docute.css">
+    <link rel="icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" href="./apple.jpg">
+    <link rel="apple-touch-icon-precomposed" href="./apple.jpg">
+</head>
+<body>
+    <!-- don't remove this part start -->
+    <div id="app">Loading...</div>
+    <!-- load the docute client library -->
+    <script src="./dist/docute.js"></script>
+    <script>
+        docute.init({
+            repo: 'TransposonY/GestureSign',
+            'edit-link': 'https://github.com/TransposonY/GestureSign/blob/gh-pages',
+            nav: {
+                default: [
+                    {
+                        title: 'Home', path: '/'
+                    },
+                    {
+                        title: 'Download', path: '/download'
+                    }
+                ]
+            }
+        })
+    </script>
+    <script>
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+        ga('create', 'UA-93255213-2', 'auto');
+        ga('send', 'pageview');
+        docute.router.afterEach(function (to) {
+            ga('set', 'page', to.fullPath);
+            ga('send', 'pageview');
+        });
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    <!-- don't remove this part end -->
+</body>
+</html>
