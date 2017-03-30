@@ -28,6 +28,11 @@ namespace GestureSign.CorePlugins
             get { return null; }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return true; }
+        }
+
         public string Category
         {
             get { return "Windows"; }

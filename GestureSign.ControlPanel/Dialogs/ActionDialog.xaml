@@ -106,7 +106,7 @@
                     </TextBlock>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="{localization:LocalisedText ActionDialog.Condition}"
+            <TabItem Header="{localization:LocalisedText ActionDialog.Advanced}"
                      controls:ControlsHelper.HeaderFontSize="18">
                 <StackPanel>
                     <TextBlock Text="{localization:LocalisedText ActionDialog.TriggerCondition}"
@@ -119,6 +119,11 @@
                              Margin="20,10,20,0"
                              controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.Default}"
                              PreviewMouseUp="ConditionTextBox_PreviewMouseUp" />
+                    <CheckBox x:Name="ActivateWindowCheckBox"
+                              Margin="20,30,0,0"
+                              FontSize="14"
+                              HorizontalAlignment="Left"
+                              Content="{localization:LocalisedText ActionDialog.ActivateWindow}" />
                 </StackPanel>
             </TabItem>
         </TabControl>

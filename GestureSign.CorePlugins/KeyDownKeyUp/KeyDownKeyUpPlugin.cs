@@ -47,6 +47,11 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
             get { return _GUI ?? (_GUI = CreateGui()); }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public KeyDownKeyUpUI TypedGUI
         {
             get { return (KeyDownKeyUpUI)GUI; }

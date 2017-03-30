@@ -49,6 +49,11 @@ namespace GestureSign.CorePlugins.ActivateWindow
             get { return _gui ?? (_gui = CreateGUI()); }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public ActivateWindowUI TypedGUI
         {
             get { return (ActivateWindowUI)GUI; }

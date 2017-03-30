@@ -87,7 +87,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Command>Command</Command>
     <SelectCommand>Select Command</SelectCommand>
     <SelectGesture>Click to select a gesture</SelectGesture>
-    <Condition>Condition</Condition>
+    <ActivateWindow>Activate Target Window</ActivateWindow>
+    <Advanced>Advanced</Advanced>
     <TriggerCondition>Trigger Condition</TriggerCondition>
     <Default>Default</Default>
     <Messages>

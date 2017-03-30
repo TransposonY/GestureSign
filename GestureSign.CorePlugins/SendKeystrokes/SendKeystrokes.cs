@@ -49,6 +49,11 @@ namespace GestureSign.CorePlugins.SendKeystrokes
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return true; }
+        }
+
         public SendKeystrokesControl TypedGUI
         {
             get { return (SendKeystrokesControl)GUI; }

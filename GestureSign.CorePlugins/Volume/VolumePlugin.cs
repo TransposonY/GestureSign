@@ -43,6 +43,11 @@ namespace GestureSign.CorePlugins.Volume
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public Volume TypedGUI
         {
             get { return (Volume)GUI; }

@@ -196,6 +196,9 @@ namespace GestureSign.ControlPanel.Dialogs
             _currentAction.ActionSettings = _pluginInfo.Plugin.Serialize();
             _currentAction.Condition = ConditionTextBox.Text;
             _currentAction.IsEnabled = true;
+            _currentAction.ActivateWindow = ActivateWindowCheckBox.IsChecked != null &&
+                                            ActivateWindowCheckBox.IsChecked.Value ==
+                                            _pluginInfo.Plugin.ActivateWindowDefault ? null : ActivateWindowCheckBox.IsChecked;
 
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
@@ -224,12 +227,15 @@ namespace GestureSign.ControlPanel.Dialogs
             // Set action name
             if (IsPluginMatch(_currentAction, selectedPlugin.Class, selectedPlugin.Filename))
             {
+                ActivateWindowCheckBox.IsChecked = _currentAction.ActivateWindow ?? _pluginInfo.Plugin.ActivateWindowDefault;
+
                 TxtActionName.Text = _currentAction.Name;
                 // Load action settings or no settings
                 _pluginInfo.Plugin.Deserialize(_currentAction.ActionSettings);
             }
             else
             {
+                ActivateWindowCheckBox.IsChecked = _pluginInfo.Plugin.ActivateWindowDefault;
                 TxtActionName.Text = ApplicationManager.GetNextActionName(_pluginInfo.Plugin.Name, _selectedApplication);
                 _pluginInfo.Plugin.Deserialize("");
             }

@@ -78,6 +78,12 @@ namespace GestureSign.CorePlugins.TouchKeyboard
                 return _GUI;
             }
         }
+
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public TouchKeyboardUI TypedGUI
         {
             get { return (TouchKeyboardUI)GUI; }

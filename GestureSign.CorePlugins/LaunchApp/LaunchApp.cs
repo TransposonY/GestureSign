@@ -52,6 +52,11 @@ namespace GestureSign.CorePlugins.LaunchApp
 
         public object GUI => _gui ?? (_gui = CreateGui());
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public string Category => LocalizationProvider.Instance.GetTextValue("CorePlugins.LaunchApp.Category");
 
         public bool IsAction => true;

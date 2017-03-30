@@ -93,7 +93,8 @@ http://transposony.coding.me/GestureSign/
     <Command>命令</Command>
     <SelectCommand>选择想执行的命令</SelectCommand>
     <SelectGesture>点击选择手势</SelectGesture>
-    <Condition>条件</Condition>
+    <ActivateWindow>激活目标窗口</ActivateWindow>
+    <Advanced>高级</Advanced>
     <TriggerCondition>触发条件</TriggerCondition>
     <Default>默认</Default>
     <Messages>

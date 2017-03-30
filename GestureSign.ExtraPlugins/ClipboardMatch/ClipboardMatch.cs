@@ -47,6 +47,11 @@ namespace GestureSign.ExtraPlugins.ClipboardMatch
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public ClipboardMatchControl TypedGUI
         {
             get { return (ClipboardMatchControl)GUI; }

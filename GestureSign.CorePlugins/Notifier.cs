@@ -3,60 +3,65 @@ using GestureSign.Common.Plugins;
 
 namespace GestureSign.CorePlugins
 {
-	public class Notifier : IPlugin
-	{
-		#region IPlugin Members
+    public class Notifier : IPlugin
+    {
+        #region IPlugin Members
 
-		public string Name
-		{
+        public string Name
+        {
             get { return "Notifier"; }
-		}
+        }
 
-		public string Description
-		{
+        public string Description
+        {
             get { return "Notifies user of performed actions"; }
-		}
+        }
 
         public object GUI
-		{
-			get { return null; }
-		}
+        {
+            get { return null; }
+        }
 
-		public string Category
-		{
-			get { return "Common"; }
-		}
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
 
-		public bool IsAction
-		{
-			get { return false; }
-		}
+        public string Category
+        {
+            get { return "Common"; }
+        }
 
-		public void Initialize()
-		{
+        public bool IsAction
+        {
+            get { return false; }
+        }
+
+        public void Initialize()
+        {
             //HostControl.GestureManager.GestureRecognized += (o, e) =>
             //    {
             //        //MessageBox.Show(String.Format("You drew a '{0}'", e.GestureName));
             //    };
-		}
+        }
 
-		public bool Gestured(PointInfo ActionPoint)
-		{
-			return true;
-		}
-
-		public bool Deserialize(string SerializedData)
+        public bool Gestured(PointInfo ActionPoint)
         {
-            return true;			
-		}
+            return true;
+        }
 
-		public string Serialize()
-		{
-			return String.Empty;
-		}
+        public bool Deserialize(string SerializedData)
+        {
+            return true;
+        }
 
-		public IHostControl HostControl { get; set; }
+        public string Serialize()
+        {
+            return String.Empty;
+        }
 
-		#endregion
-	}
+        public IHostControl HostControl { get; set; }
+
+        #endregion
+    }
 }

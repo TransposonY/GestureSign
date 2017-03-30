@@ -32,6 +32,10 @@ namespace GestureSign.Applications
 
         [DataMember]
         public string Condition { get; set; }
+
+        [DataMember]
+        public bool? ActivateWindow { get; set; }
+
         #endregion
     }
 }

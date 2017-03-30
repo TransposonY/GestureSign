@@ -4,78 +4,83 @@ using GestureSign.Common.Localization;
 namespace GestureSign.CorePlugins
 {
     public class TemporarilyDisable : IPlugin
-	{
-		#region Private Variables
+    {
+        #region Private Variables
 
-		IHostControl _HostControl = null;
+        IHostControl _HostControl = null;
 
-		#endregion
+        #endregion
 
-		#region IAction Properties
+        #region IAction Properties
 
-		public string Name
-		{
+        public string Name
+        {
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Name"); }
-		}
+        }
 
-		public string Description
-		{
+        public string Description
+        {
             get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.TemporarilyDisable.Description"); }
-		}
+        }
 
-		public object GUI
-		{
-			get { return null; }
-		}
+        public object GUI
+        {
+            get { return null; }
+        }
 
-		public string Category
-		{
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
+        public string Category
+        {
             get { return "GestureSign"; }
-		}
+        }
 
-		public bool IsAction
-		{
-			get { return true; }
-		}
+        public bool IsAction
+        {
+            get { return true; }
+        }
 
-		#endregion
+        #endregion
 
-		#region IAction Methods
+        #region IAction Methods
 
-		public void Initialize()
-		{
+        public void Initialize()
+        {
 
-		}
+        }
 
-		public bool Gestured(PointInfo ActionPoint)
-		{
-		    _HostControl.PointCapture.TemporarilyDisableCapture = true;
-			_HostControl.TrayManager.ToggleDisableGestures();
-			return true;
-		}
-
-		public bool Deserialize(string SerializedData)
-		{
+        public bool Gestured(PointInfo ActionPoint)
+        {
+            _HostControl.PointCapture.TemporarilyDisableCapture = true;
+            _HostControl.TrayManager.ToggleDisableGestures();
             return true;
-			// Nothing to deserialize
-		}
+        }
 
-		public string Serialize()
-		{
-			// Nothing to serialize, send empty string
-			return "";
-		}
-        
-		#endregion
+        public bool Deserialize(string SerializedData)
+        {
+            return true;
+            // Nothing to deserialize
+        }
 
-		#region Host Control
+        public string Serialize()
+        {
+            // Nothing to serialize, send empty string
+            return "";
+        }
 
-		public IHostControl HostControl
-		{
-			get { return _HostControl; }
-			set { _HostControl = value; }
-		}
+        #endregion
 
-		#endregion
-	}
+        #region Host Control
+
+        public IHostControl HostControl
+        {
+            get { return _HostControl; }
+            set { _HostControl = value; }
+        }
+
+        #endregion
+    }
 }

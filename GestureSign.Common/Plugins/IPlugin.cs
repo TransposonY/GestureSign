@@ -9,6 +9,7 @@
         string Description { get; }
         bool IsAction { get; }
         object GUI { get; }
+        bool ActivateWindowDefault { get; }
 
         #endregion
 

@@ -11,5 +11,6 @@ namespace GestureSign.Common.Applications
         string PluginFilename { get; set; }
         bool IsEnabled { get; set; }
         string Condition { get; set; }
+        bool? ActivateWindow { get; set; }
     }
 }

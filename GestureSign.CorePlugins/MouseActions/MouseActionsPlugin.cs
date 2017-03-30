@@ -36,6 +36,11 @@ namespace GestureSign.CorePlugins.MouseActions
             get { return _gui ?? (_gui = CreateGUI()); }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public MouseActionsUI TypedGUI
         {
             get { return (MouseActionsUI)GUI; }

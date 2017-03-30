@@ -46,6 +46,11 @@ namespace GestureSign.CorePlugins.Delay
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public DelayUI TypedGUI
         {
             get { return (DelayUI)GUI; }

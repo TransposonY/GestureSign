@@ -51,6 +51,11 @@ namespace GestureSign.CorePlugins.HotKey
             get { return _GUI ?? (_GUI = CreateGUI()); }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return true; }
+        }
+
         public HotKey TypedGUI
         {
             get { return (HotKey)GUI; }

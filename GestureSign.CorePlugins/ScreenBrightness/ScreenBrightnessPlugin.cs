@@ -52,6 +52,11 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public ScreenBrightnessUI TypedGUI
         {
             get { return (ScreenBrightnessUI)GUI; }

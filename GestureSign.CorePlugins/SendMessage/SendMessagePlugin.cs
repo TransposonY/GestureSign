@@ -62,6 +62,12 @@ namespace GestureSign.CorePlugins.SendMessage
         {
             get { return _gui ?? (_gui = CreateGUI()); }
         }
+
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Public Methods

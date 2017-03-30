@@ -78,9 +78,6 @@ namespace GestureSign.Common.Plugins
                         !Compute(executableAction.Condition, points, contactIdentifiers))
                         continue;
 
-                    if (executableActions.IndexOf(executableAction) == 0)
-                        ActivateTargetWindow(pointInfo.Window, executableAction);
-
                     if (!WaitForInputIdle(pointInfo.Window, 1000))
                         break;
 
@@ -90,6 +87,14 @@ namespace GestureSign.Common.Plugins
                     // Exit if there is no plugin available for action
                     if (pluginInfo == null)
                         continue;
+
+                    if (executableActions.IndexOf(executableAction) == 0)
+                    {
+                        if (executableAction.ActivateWindow == null && pluginInfo.Plugin.ActivateWindowDefault ||
+                        executableAction.ActivateWindow.HasValue && executableAction.ActivateWindow.Value)
+                            if (pointInfo.Window?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
+                                SystemWindow.ForegroundWindow = pointInfo.Window;
+                    }
 
                     // Load action settings into plugin
                     pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
@@ -231,20 +236,6 @@ namespace GestureSign.Common.Plugins
                 sb.Replace(variable, contactIdentifiers[i - 1].ToString());
             }
             return sb.ToString();
-        }
-
-        private static void ActivateTargetWindow(SystemWindow targetWindow, IAction executableAction)
-        {
-            switch (executableAction.PluginClass)
-            {
-                case "GestureSign.CorePlugins.MaximizeRestore":
-                case "GestureSign.CorePlugins.HotKey.HotKeyPlugin":
-                case "GestureSign.CorePlugins.ToggleWindowTopmost":
-                case "GestureSign.CorePlugins.SendKeystrokes.SendKeystrokes":
-                    if (targetWindow?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
-                        SystemWindow.ForegroundWindow = targetWindow;
-                    break;
-            }
         }
 
         private static bool WaitForInputIdle(SystemWindow targetWindow, int timeout = 0)

@@ -38,6 +38,11 @@ namespace GestureSign.CorePlugins.RunCommand
             }
         }
 
+        public bool ActivateWindowDefault
+        {
+            get { return false; }
+        }
+
         public RunCommand TypedGUI
         {
             get { return (RunCommand)GUI; }
