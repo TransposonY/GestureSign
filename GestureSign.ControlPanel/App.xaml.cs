@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
+using Windows.Management.Deployment;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -53,6 +55,34 @@ namespace GestureSign.ControlPanel
                 }
 
                 StartDaemon(path);
+
+                if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
+                {
+                    using (var currentUser = WindowsIdentity.GetCurrent())
+                    {
+                        if (currentUser.User != null)
+                        {
+                            var sid = currentUser.User.ToString();
+                            PackageManager packageManager = new PackageManager();
+                            var storeVersion = packageManager.FindPackagesForUserWithPackageTypes(sid, "41908Transpy.GestureSign", "CN=AF41F066-0041-4D13-9D95-9DAB66112B0A", PackageTypes.Main).FirstOrDefault();
+                            if (storeVersion != null)
+                            {
+                                using (Process explorer = new Process
+                                {
+                                    StartInfo =
+                                    {
+                                        FileName = "explorer.exe", Arguments = @"shell:AppsFolder\" + "41908Transpy.GestureSign_f441wk0cxr8zc!GestureSign"
+                                    }
+                                })
+                                {
+                                    explorer.Start();
+                                }
+                                Current.Shutdown();
+                                return;
+                            }
+                        }
+                    }
+                }
 
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
