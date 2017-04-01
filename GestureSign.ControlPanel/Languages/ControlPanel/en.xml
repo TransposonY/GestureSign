@@ -30,14 +30,16 @@ Continue to run?
   </Common>
   <About>
     <Header>About</Header>
-    <Help>Open the help page</Help>
+    <Homepage>Homepage</Homepage>
+    <HomepageUrl>http://transposony.github.io/GestureSign/</HomepageUrl>
+    <Store>Windows Store Version</Store>
+    <StoreUrl>ms-windows-store://pdp/?productid=9n45wqvk2qqw</StoreUrl>
     <HelpPageUrl>http://transposony.github.io/GestureSign/</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
     <Information>Author:TransposonY
 Translator:TransposonY
 Email:ccfyzh@gmail.com
-Page:http://transposony.github.io/GestureSign/
     </Information>
   </About>
   <ApplicationDialog>

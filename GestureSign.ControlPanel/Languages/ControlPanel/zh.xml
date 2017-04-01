@@ -32,8 +32,11 @@
   </Common>
   <About>
     <Header>关于</Header>
-    <Help>打开帮助页面</Help>
-    <HelpPageUrl>http://transposony.coding.me/GestureSign/</HelpPageUrl>
+    <Homepage>打开官网</Homepage>
+    <HomepageUrl>http://transposony.coding.me/GestureSign/</HomepageUrl>
+    <Store>Windows应用商店版</Store>
+    <StoreUrl>ms-windows-store://pdp/?productid=9n45wqvk2qqw</StoreUrl>
+    <HelpPageUrl>http://transposony.coding.me/GestureSign/#/guide</HelpPageUrl>
     <Version>版本：  </Version>
     <ReleaseDate>发布时间：  </ReleaseDate>
     <Information>作者:   TransposonY
@@ -41,8 +44,6 @@
 553078206@qq.com
 交流群：576981420
 
-项目主页:
-http://transposony.coding.me/GestureSign/
     </Information>
   </About>
   <ApplicationDialog>

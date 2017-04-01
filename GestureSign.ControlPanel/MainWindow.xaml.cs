@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
@@ -47,7 +48,10 @@ namespace GestureSign.ControlPanel
         {
             try
             {
-                Process.Start(LocalizationProvider.Instance.GetTextValue("About.HelpPageUrl"));
+                var commandSource = sender as ICommandSource;
+                var uri = commandSource?.CommandParameter as string;
+                if (uri != null)
+                    Process.Start(uri);
             }
             catch (Exception exception)
             {

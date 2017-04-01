@@ -30,6 +30,7 @@
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
             <Button Click="Hyperlink_Click"
+                    CommandParameter="{localization:LocalisedText About.HelpPageUrl}"
                     Margin="0,0,20,0">
                 <Rectangle Width="12"
                            Height="18"
@@ -66,13 +67,20 @@
                     <StackPanel>
                         <TextBlock TextWrapping="Wrap"
                                    Text="GestureSign"
-                                   Margin="10,10,0,0"
+                                   Margin="15,10,0,0"
                                    FontWeight="Bold"
                                    FontSize="16" />
                         <TextBlock HorizontalAlignment="Left"
                                    FontSize="14"
-                                   Margin="10,10,0,0">
-                            <Hyperlink Click="Hyperlink_Click"><Run Text="{localization:LocalisedText About.Help}" />
+                                   Margin="15,10,0,0">
+                            <Hyperlink Click="Hyperlink_Click"
+                                       CommandParameter="{localization:LocalisedText About.HomepageUrl}">
+                                <Run Text="{localization:LocalisedText About.Homepage}" />
+                            </Hyperlink> 
+                            <Run Text="/" />
+                            <Hyperlink Click="Hyperlink_Click"
+                                       CommandParameter="{localization:LocalisedText About.StoreUrl}">
+                                <Run Text="{localization:LocalisedText About.Store}" />
                             </Hyperlink>
                         </TextBlock>
                         <TextBox x:Name="AboutTextBox"
