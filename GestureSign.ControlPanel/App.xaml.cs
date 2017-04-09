@@ -62,8 +62,6 @@ namespace GestureSign.ControlPanel
                     }
                 }
 
-                StartDaemon(path);
-
                 if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
                 {
                     using (var currentUser = WindowsIdentity.GetCurrent())
@@ -91,6 +89,8 @@ namespace GestureSign.ControlPanel
                         }
                     }
                 }
+
+                StartDaemon(path);
 
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
