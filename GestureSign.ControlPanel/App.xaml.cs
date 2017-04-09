@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using Windows.Management.Deployment;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
@@ -14,6 +16,7 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.Common.Plugins;
 using GestureSign.ControlPanel.Localization;
+using ManagedWinapi.Windows;
 using Microsoft.Win32;
 
 namespace GestureSign.ControlPanel
@@ -23,6 +26,11 @@ namespace GestureSign.ControlPanel
     /// </summary>
     public partial class App : Application
     {
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
+        private const int SW_RESTORE = 9;
+
         Mutex mutex;
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -99,8 +107,9 @@ namespace GestureSign.ControlPanel
                 }
                 else
                 {
-                    NamedPipe.SendMessageAsync("MainWindow", "GestureSignControlPanel").Wait();
-                    Current.Shutdown();
+                    ShowControlPanel();
+                    // use Dispatcher to resolve exception 0xc0020001
+                    Current.Dispatcher.InvokeAsync(() => Current.Shutdown(), DispatcherPriority.ApplicationIdle);
                 }
 
             }
@@ -177,6 +186,32 @@ namespace GestureSign.ControlPanel
 
             return controlPanelRecord != null && controlPanelRecord.ToUpper().Contains("RUNASADMIN") ||
                    daemonRecord != null && daemonRecord.ToUpper().Contains("RUNASADMIN");
+        }
+
+        private bool ShowControlPanel()
+        {
+            Process current = Process.GetCurrentProcess();
+            var controlPanelProcesses = Process.GetProcessesByName(current.ProcessName);
+
+            if (controlPanelProcesses.Length > 1)
+            {
+                foreach (Process process in controlPanelProcesses)
+                {
+                    if (process.Id != current.Id)
+                    {
+                        var window = new SystemWindow(process.MainWindowHandle);
+
+                        if (window.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                        {
+                            ShowWindowAsync(process.MainWindowHandle, SW_RESTORE);
+                        }
+                        SystemWindow.ForegroundWindow = window;
+                        break;
+                    }
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

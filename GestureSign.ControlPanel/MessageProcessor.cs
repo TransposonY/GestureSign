@@ -33,22 +33,6 @@ namespace GestureSign.ControlPanel
                         {
                             switch (message)
                             {
-                                case "MainWindow":
-                                    {
-
-                                        foreach (Window win in Application.Current.Windows)
-                                        {
-                                            if (win.GetType() == typeof(MainWindow))
-                                            {
-                                                win.Activate();
-                                                return;
-                                            }
-                                        }
-                                        MainWindow mw = new MainWindow();
-                                        mw.Show();
-                                        mw.Activate();
-                                        break;
-                                    }
                                 case "Exit":
                                     {
                                         Application.Current.Shutdown();
