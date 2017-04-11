@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
@@ -29,7 +30,7 @@ namespace GestureSign.ControlPanel
 
             if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
             {
-                SendLog();
+                this.Dispatcher.InvokeAsync(SendLog, DispatcherPriority.Input);
             }
         }
 
