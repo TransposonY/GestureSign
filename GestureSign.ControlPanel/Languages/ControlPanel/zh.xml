@@ -184,6 +184,7 @@
     <HotKey>快捷键</HotKey>
     <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
     <Mouse>鼠标键</Mouse>
+    <MouseGestureNotEnabled>请先在选项中打开鼠标手势</MouseGestureNotEnabled>
   </GestureDefinition>
   <Ignored>
     <Header>忽略</Header>

@@ -179,6 +179,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <HotKey>HotKey</HotKey>
     <HotKeyWatermark>Enter hot key</HotKeyWatermark>
     <Mouse>Mouse</Mouse>
+    <MouseGestureNotEnabled>Please enable mouse gestures in Options</MouseGestureNotEnabled>
   </GestureDefinition>
   <Ignored>
     <Header>Ignored</Header>

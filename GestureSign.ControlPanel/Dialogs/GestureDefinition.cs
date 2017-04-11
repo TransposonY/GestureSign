@@ -81,6 +81,8 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (MouseActionDescription.DescriptionDict.ContainsKey(AppConfig.DrawingButton))
                 DrawingButtonTextBlock.Text = MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + "  +  ";
+            MouseNotEnabledTextBlock.Visibility = AppConfig.DrawingButton == MouseActions.None ? Visibility.Visible : Visibility.Collapsed;
+
             _color = (Color)Application.Current.Resources["HighlightColor"];
 
             if (_currentPointPatterns != null)

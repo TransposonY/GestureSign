@@ -74,8 +74,16 @@
             </TabItem>
             <TabItem Header="{localization:LocalisedText GestureDefinition.Mouse}"
                      controls:ControlsHelper.HeaderFontSize="18">
-                <StackPanel Height="50"
-                            Orientation="Horizontal">
+                <DockPanel Height="60">
+                    <TextBlock x:Name="MouseNotEnabledTextBlock"
+                               Text="{localization:LocalisedText GestureDefinition.MouseGestureNotEnabled}"
+                               FontSize="14"
+                               VerticalAlignment="Center"
+                               DockPanel.Dock="Top"
+                               FontWeight="Bold"
+                               Visibility="Collapsed"
+                               HorizontalAlignment="Left"
+                               Margin="20,0,0,0" />
                     <TextBlock x:Name="DrawingButtonTextBlock"
                                FontSize="14"
                                Margin="20,0,0,0"
@@ -88,7 +96,7 @@
                               MaxWidth="150"
                               Margin="10,0"
                               VerticalAlignment="Center" />
-                </StackPanel>
+                </DockPanel>
             </TabItem>
         </TabControl>
         <Grid  Margin="0,20,0,0"
