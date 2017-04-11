@@ -5,9 +5,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
@@ -21,9 +19,7 @@ using ManagedWinapi.Hooks;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using File = System.IO.File;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
-using TextBox = System.Windows.Controls.TextBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace GestureSign.ControlPanel.MainWindowControls
@@ -392,14 +388,27 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton")
                             });
 
+            string message = null;
             while (dialogResult == MessageDialogResult.Affirmative)
             {
+                var sendReportTask = System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                if (message == null)
+                    message =
+                        UIHelper.GetParentWindow(this)
+                            .ShowModalInputExternal(LocalizationProvider.Instance.GetTextValue("Options.Feedback"),
+                                LocalizationProvider.Instance.GetTextValue("Options.FeedbackTip")) ?? string.Empty;
+
                 controller = await UIHelper.GetParentWindow(this)
                     .ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
                         LocalizationProvider.Instance.GetTextValue("Options.Sending"));
                 controller.SetIndeterminate();
 
-                string exceptionMessage = await System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                string exceptionMessage = await sendReportTask;
+                if (!string.IsNullOrEmpty(message))
+                {
+                    var msg = message;
+                    await System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(msg));
+                }
 
                 await controller.CloseAsync();
 

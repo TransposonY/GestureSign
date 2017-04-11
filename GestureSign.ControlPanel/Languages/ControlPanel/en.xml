@@ -212,6 +212,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <SendSuccessTitle>Log Send Success</SendSuccessTitle>
     <SendSuccess>Thank you!The logs were sent successfully!</SendSuccess>
     <SendFailed>Send Failed</SendFailed>
+    <Feedback>Feedback</Feedback>
+    <FeedbackTip>Description about the exception</FeedbackTip>
     <Retry>Retry</Retry>
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>

@@ -124,13 +124,25 @@ namespace GestureSign.ControlPanel
                     });
             }
 
+            string message = null;
             while (dialogResult == MessageDialogResult.Affirmative)
             {
+                var sendReportTask = Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                if (message == null)
+                    message = this.ShowModalInputExternal(
+                        LocalizationProvider.Instance.GetTextValue("Options.Feedback"),
+                        LocalizationProvider.Instance.GetTextValue("Options.FeedbackTip")) ?? string.Empty;
+
                 controller = await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
-                    LocalizationProvider.Instance.GetTextValue("Options.Sending"));
+                   LocalizationProvider.Instance.GetTextValue("Options.Sending"));
                 controller.SetIndeterminate();
 
-                string exceptionMessage = await Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                string exceptionMessage = await sendReportTask;
+                if (!string.IsNullOrEmpty(message))
+                {
+                    var msg = message;
+                    await Task.Run(() => ErrorReport.SendReports(msg));
+                }
 
                 await controller.CloseAsync();
 

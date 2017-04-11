@@ -217,6 +217,8 @@
     <SendSuccessTitle>发送成功</SendSuccessTitle>
     <SendSuccess>错误日志发送成功！</SendSuccess>
     <SendFailed>发送失败</SendFailed>
+    <Feedback>反馈</Feedback>
+    <FeedbackTip>提供更多信息（比如怎样触发异常）将有助于作者更快解决问题</FeedbackTip>
     <Retry>重试</Retry>
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
