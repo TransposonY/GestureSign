@@ -17,12 +17,14 @@ namespace GestureSign.TouchInputProvider
 
         private List<RawData> _outputTouchs = new List<RawData>(1);
         private int _requiringContactCount;
+        private HashSet<IntPtr> _validHandles = new HashSet<IntPtr>();
 
         public event RawPointsDataMessageEventHandler PointsIntercepted;
 
         public MessageWindow()
         {
             RegisterDevices();
+            EnumerateDevices();
         }
 
         private void RegisterDevices()
@@ -37,6 +39,60 @@ namespace GestureSign.TouchInputProvider
             if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
             {
                 throw new ApplicationException("Failed to register raw input device(s).");
+            }
+        }
+
+        private void EnumerateDevices()
+        {
+            uint deviceCount = 0;
+            int dwSize = Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICELIST));
+
+            if (NativeMethods.GetRawInputDeviceList(IntPtr.Zero, ref deviceCount, (uint)dwSize) == 0)
+            {
+                IntPtr pRawInputDeviceList = Marshal.AllocHGlobal((int)(dwSize * deviceCount));
+                try
+                {
+                    _validHandles.Clear();
+
+                    NativeMethods.GetRawInputDeviceList(pRawInputDeviceList, ref deviceCount, (uint)dwSize);
+
+                    for (int i = 0; i < deviceCount; i++)
+                    {
+                        uint pcbSize = 0;
+
+                        NativeMethods.RAWINPUTDEVICELIST rid = (NativeMethods.RAWINPUTDEVICELIST)Marshal.PtrToStructure(
+                            new IntPtr(pRawInputDeviceList.ToInt64() + dwSize * i),
+                            typeof(NativeMethods.RAWINPUTDEVICELIST));
+
+                        if (rid.dwType == NativeMethods.RIM_TYPEHID)
+                        {
+                            NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
+
+                            if (pcbSize > 0)
+                            {
+                                IntPtr pData = Marshal.AllocHGlobal((int)pcbSize);
+                                try
+                                {
+                                    NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
+                                    string deviceName = Marshal.PtrToStringAnsi(pData);
+
+                                    if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
+                                        continue;
+
+                                    _validHandles.Add(rid.hDevice);
+                                }
+                                finally
+                                { Marshal.FreeHGlobal(pData); }
+                            }
+                        }
+                    }
+                }
+                finally
+                { Marshal.FreeHGlobal(pRawInputDeviceList); }
+            }
+            else
+            {
+                throw new ApplicationException("Error!");
             }
         }
 
@@ -59,6 +115,13 @@ namespace GestureSign.TouchInputProvider
                 case NativeMethods.WM_INPUT:
                     {
                         ProcessInputCommand(message.LParam);
+                        break;
+                    }
+                case NativeMethods.WM_INPUT_DEVICE_CHANGE:
+                    {
+                        //GIDC_ARRIVAL=1
+                        if (message.WParam.ToInt32() == 1)
+                            EnumerateDevices();
                         break;
                     }
             }
@@ -106,6 +169,8 @@ namespace GestureSign.TouchInputProvider
                                      (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTHEADER))) == dwSize)
                 {
                     NativeMethods.RAWINPUT raw = (NativeMethods.RAWINPUT)Marshal.PtrToStructure(buffer, typeof(NativeMethods.RAWINPUT));
+
+                    if (!_validHandles.Contains(raw.header.hDevice)) return;
 
                     GetCurrentScreenOrientation();
 
