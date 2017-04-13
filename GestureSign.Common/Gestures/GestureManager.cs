@@ -256,7 +256,11 @@ namespace GestureSign.Common.Gestures
             { matchResult = null; return null; }
             // Update gesture analyzer with latest gestures and get gesture match from current points array
             // Comparison results are sorted descending from highest to lowest probability
-            var gestures = sourceGestures.Where(g => g.PointPatterns.Length > sourceGestureLevel && g.PointPatterns[sourceGestureLevel].Points != null && g.PointPatterns[sourceGestureLevel].Points.Count == points.Count).ToList();
+            var gestures =
+                sourceGestures.Where(g =>
+                        g.PointPatterns != null && g.PointPatterns.Length > sourceGestureLevel &&
+                        g.PointPatterns[sourceGestureLevel].Points != null &&
+                        g.PointPatterns[sourceGestureLevel].Points.Count == points.Count).ToList();
             List<PointPatternMatchResult>[] comparisonResults = new List<PointPatternMatchResult>[points.Count];
             for (int i = 0; i < points.Count; i++)
             {
