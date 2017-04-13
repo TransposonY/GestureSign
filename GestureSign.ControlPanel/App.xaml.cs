@@ -44,7 +44,8 @@ namespace GestureSign.ControlPanel
                 if (!File.Exists(path))
                 {
                     MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
-                        LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                        LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK,
+                        MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
                     Current.Shutdown();
                     return;
                 }
@@ -53,7 +54,7 @@ namespace GestureSign.ControlPanel
                 {
                     var result = MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CompatWarning"),
                      LocalizationProvider.Instance.GetTextValue("Messages.CompatWarningTitle"), MessageBoxButton.YesNo,
-                     MessageBoxImage.Warning);
+                     MessageBoxImage.Warning, MessageBoxResult.No, MessageBoxOptions.DefaultDesktopOnly);
 
                     if (result == MessageBoxResult.No)
                     {
@@ -116,7 +117,7 @@ namespace GestureSign.ControlPanel
             catch (Exception exception)
             {
                 Logging.LogException(exception);
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
                 Current.Shutdown();
             }
 
