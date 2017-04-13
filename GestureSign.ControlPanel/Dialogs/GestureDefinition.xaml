@@ -24,7 +24,7 @@
                             ObjectType="{x:Type viewModel:MouseActionDescription}" />
     </controls:MetroWindow.Resources>
     <StackPanel>
-        <TabControl>
+        <TabControl x:Name="GestureTabControl">
             <TabItem controls:ControlsHelper.HeaderFontSize="18"
                      Header="{localization:LocalisedText Gesture.Header}">
                 <StackPanel>

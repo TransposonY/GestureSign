@@ -149,6 +149,12 @@ namespace GestureSign.ControlPanel.Dialogs
                 }
             }
 
+            if (newPatterns == null || newPatterns.Length == 0)
+            {
+                GestureTabControl.SelectedIndex = 0;
+                return;
+            }
+
             if (SaveGesture(gestureName, newPatterns))
             {
                 DialogResult = true;
@@ -204,9 +210,6 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private bool SaveGesture(string newName, PointPattern[] newPointPatterns)
         {
-            if (newPointPatterns == null || newPointPatterns.Length == 0)
-                return false;
-
             if (string.IsNullOrEmpty(newName))
             {
                 newName = GestureManager.GetNewGestureName();
