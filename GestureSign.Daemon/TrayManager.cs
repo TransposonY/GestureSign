@@ -101,6 +101,8 @@ namespace GestureSign.Daemon
             _exitGestureSignMenuItem.Click += async (o, e) =>
             {
                 await NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel", false);
+                // try to fix exception 0xc0020001
+                Application.DoEvents();
                 Application.Exit();
             };
         }
