@@ -245,6 +245,7 @@
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>
+      <TaskUserDisabled>开机启动已被用户禁用，请先在任务管理器中启用。</TaskUserDisabled>
     </Messages>
   </Options>
   <CorePlugins>

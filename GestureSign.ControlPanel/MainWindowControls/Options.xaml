@@ -163,14 +163,13 @@
                       DropDownClosed="DrawingButtonComboBox_DropDownClosed"
                       Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
             </ComboBox>
-            <controls:ToggleSwitch x:Name="chkWindowsStartup"
+            <controls:ToggleSwitch x:Name="StartupSwitch"
                                    Header="{localization:LocalisedText Options.WindowsStartup.Header}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Margin="0,10"
                                    FontSize="14"
-                                   Checked="chkWindowsStartup_Checked"
-                                   Unchecked="chkWindowsStartup_Unchecked"
+                                   Click="StartupSwitch_OnClick"
                                    Width="300"
                                    FontWeight="Bold" />
             <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"

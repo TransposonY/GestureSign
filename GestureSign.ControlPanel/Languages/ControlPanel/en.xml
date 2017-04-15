@@ -240,6 +240,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>
+      <TaskUserDisabled>The task has been disabled by user, please enable it in the Startup section of Task Manager. </TaskUserDisabled>
     </Messages>
   </Options>
   <CorePlugins>

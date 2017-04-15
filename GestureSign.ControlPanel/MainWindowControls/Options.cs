@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Principal;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -13,7 +11,6 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
-using Microsoft.Win32.TaskScheduler;
 using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Hooks;
 using Application = System.Windows.Application;
@@ -43,11 +40,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 // Try to load saved settings
                 //  Common.Configuration.AppConfig.Reload();
+                CheckStartupStatus();
 
                 _VisualFeedbackColor = AppConfig.VisualFeedbackColor;
                 VisualFeedbackWidthSlider.Value = AppConfig.VisualFeedbackWidth;
                 MinimumPointDistanceSlider.Value = AppConfig.MinimumPointDistance;
-                chkWindowsStartup.IsChecked = GetStartupStatus();
                 OpacitySlider.Value = AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = AppConfig.IsOrderByLocation;
                 ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
@@ -143,36 +140,38 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         }
 
-
-
-        private bool GetStartupStatus()
+        private async void CheckStartupStatus()
         {
-            string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
             try
             {
-                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+                if (!AppConfig.UiAccess)
                 {
-                    WindowsPrincipal principal = new WindowsPrincipal(identity);
-                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                    switch (startupTask.State)
                     {
-                        // Get the service on the local machine
-                        using (TaskService ts = new TaskService())
-                        {
-                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
-                            return tasks.Count != 0 || File.Exists(lnkPath);
-                        }
+                        case Windows.ApplicationModel.StartupTaskState.Disabled:
+                            StartupSwitch.IsChecked = false;
+                            break;
+                        case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
+                            StartupSwitch.IsChecked = false;
+                            break;
+                        case Windows.ApplicationModel.StartupTaskState.Enabled:
+                            StartupSwitch.IsChecked = true;
+                            break;
                     }
-                    else return File.Exists(lnkPath);
+                }
+                else
+                {
+                    string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                                     "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+                    StartupSwitch.IsChecked = File.Exists(lnkPath);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
             }
         }
-
 
         private int GetAlphaPercentage(double Alpha)
         {
@@ -196,81 +195,51 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private void chkWindowsStartup_Checked(object sender, RoutedEventArgs e)
+        private async void StartupSwitch_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+                if (StartupSwitch.IsChecked != null && StartupSwitch.IsChecked.Value)
                 {
-                    WindowsPrincipal principal = new WindowsPrincipal(identity);
-                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
-                    {
-                        // Get the service on the local machine
-                        using (TaskService ts = new TaskService())
-                        {
-                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
-
-                            if (tasks.Count == 0)
-                            {
-                                // Create a new task definition and assign properties
-                                TaskDefinition td = ts.NewTask();
-                                td.Settings.MultipleInstances = TaskInstancesPolicy.StopExisting;
-                                td.Settings.DisallowStartIfOnBatteries = false;
-                                td.RegistrationInfo.Description = "Launch GestureSign when user login";
-
-                                td.Principal.RunLevel = TaskRunLevel.Highest;
-
-                                LogonTrigger lt = new LogonTrigger { Enabled = true };
-                                td.Triggers.Add(lt);
-                                // Create an action that will launch Notepad whenever the trigger fires
-                                td.Actions.Add(new ExecAction(
-                                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe"), null, AppDomain.CurrentDomain.BaseDirectory));
-
-                                // Register the task in the root folder
-                                ts.RootFolder.RegisterTaskDefinition(TaskName, td);
-                            }
-                        }
-                    }
-                    else
+                    if (AppConfig.UiAccess)
                     {
                         string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                            "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+                                         "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
 
                         CreateLnk(lnkPath);
                     }
-                }
-            }
-            catch (Exception ex)
-            { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
-
-        }
-
-        private void chkWindowsStartup_Unchecked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
-                {
-                    WindowsPrincipal principal = new WindowsPrincipal(identity);
-                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
-                    {  // Get the service on the local machine
-                        using (TaskService ts = new TaskService())
+                    else
+                    {
+                        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                        if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
                         {
-                            var tasks = ts.RootFolder.GetTasks(new Regex(TaskName));
-
-                            if (tasks.Count != 0)
+                            var state = await startupTask.RequestEnableAsync();
+                            if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
                             {
-                                ts.RootFolder.DeleteTask(TaskName);
+                                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Options.Messages.TaskUserDisabled"), LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                                StartupSwitch.IsChecked = false;
                             }
                         }
                     }
+                }
+                else
+                {
+                    if (AppConfig.UiAccess)
+                    {
+                        string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                                         "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
 
-                    string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                      "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-
-                    if (File.Exists(lnkPath))
-                        File.Delete(lnkPath);
-
+                        if (File.Exists(lnkPath))
+                            File.Delete(lnkPath);
+                    }
+                    else
+                    {
+                        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                        if (startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled)
+                        {
+                            startupTask.Disable();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
