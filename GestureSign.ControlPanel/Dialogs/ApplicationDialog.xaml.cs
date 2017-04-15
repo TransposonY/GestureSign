@@ -85,13 +85,13 @@ namespace GestureSign.ControlPanel.Dialogs
                     .Distinct()
                     .OrderBy(g => g);
 
-            BlockTouchInputSlider.IsEnabled = AppConfig.UiAccess;
+            LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility = LimitNumberOfFingersTextBlock.Visibility =
+                        ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
+                            GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
+                                _isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
             BlockTouchInputSlider.Visibility = BlockTouchInputInfoTextBlock.Visibility = BlockTouchInputTextBlock.Visibility =
-                LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility = LimitNumberOfFingersTextBlock.Visibility =
-                            ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
-                                GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
-                                    _isUserApp ? Visibility.Visible : Visibility.Collapsed;
+                    AppConfig.UiAccess && _isUserApp ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void MatchStringTextBox_OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
