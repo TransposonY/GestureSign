@@ -140,32 +140,34 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         }
 
+#if ConvertedDesktopApp
+
         private async void CheckStartupStatus()
         {
             try
             {
-                if (!AppConfig.UiAccess)
+                var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                switch (startupTask.State)
                 {
-                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                    switch (startupTask.State)
-                    {
-                        case Windows.ApplicationModel.StartupTaskState.Disabled:
-                            StartupSwitch.IsChecked = false;
-                            break;
-                        case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
-                            StartupSwitch.IsChecked = false;
-                            break;
-                        case Windows.ApplicationModel.StartupTaskState.Enabled:
-                            StartupSwitch.IsChecked = true;
-                            break;
-                    }
+                    case Windows.ApplicationModel.StartupTaskState.Disabled:
+                        StartupSwitch.IsChecked = false;
+                        break;
+                    case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
+                        StartupSwitch.IsChecked = false;
+                        break;
+                    case Windows.ApplicationModel.StartupTaskState.Enabled:
+                        StartupSwitch.IsChecked = true;
+                        break;
                 }
-                else
-                {
-                    string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                     "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-                    StartupSwitch.IsChecked = File.Exists(lnkPath);
-                }
+#else
+        private void CheckStartupStatus()
+        {
+            try
+            {
+                string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+                StartupSwitch.IsChecked = File.Exists(lnkPath);
+#endif
             }
             catch (Exception ex)
             {
@@ -195,56 +197,62 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
+#if ConvertedDesktopApp
+
         private async void StartupSwitch_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (StartupSwitch.IsChecked != null && StartupSwitch.IsChecked.Value)
                 {
-                    if (AppConfig.UiAccess)
+                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                    if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
                     {
-                        string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                         "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-
-                        CreateLnk(lnkPath);
-                    }
-                    else
-                    {
-                        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                        if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
+                        var state = await startupTask.RequestEnableAsync();
+                        if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
                         {
-                            var state = await startupTask.RequestEnableAsync();
-                            if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
-                            {
-                                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Options.Messages.TaskUserDisabled"), LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                                StartupSwitch.IsChecked = false;
-                            }
+                            MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Options.Messages.TaskUserDisabled"), LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                            StartupSwitch.IsChecked = false;
                         }
                     }
                 }
                 else
                 {
-                    if (AppConfig.UiAccess)
+                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
+                    if (startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled)
                     {
-                        string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                         "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-
-                        if (File.Exists(lnkPath))
-                            File.Delete(lnkPath);
-                    }
-                    else
-                    {
-                        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                        if (startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled)
-                        {
-                            startupTask.Disable();
-                        }
+                        startupTask.Disable();
                     }
                 }
             }
             catch (Exception ex)
             { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
         }
+
+#else
+
+        private void StartupSwitch_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
+                                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+
+                if (StartupSwitch.IsChecked != null && StartupSwitch.IsChecked.Value)
+                {
+                    CreateLnk(lnkPath);
+                }
+                else
+                {
+                    if (File.Exists(lnkPath))
+                        File.Delete(lnkPath);
+                }
+            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+#endif
 
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
         {
