@@ -14,11 +14,11 @@ using SharpRaven.Data;
 
 namespace GestureSign.Common.Log
 {
-    public class ErrorReport
+    public class Feedback
     {
         private const string Dsn = "https://a828c0c755fc493fa93c0f2ac7963e6d:4e74093b0f6a4a438a95b3bb85273e69@sentry.io/141461";
 
-        public static string SendReports(string content)
+        public static string Send(string content, bool isInfo = false)
         {
             string sendError = null;
             var ravenClient = new RavenClient(Dsn)
@@ -30,7 +30,7 @@ namespace GestureSign.Common.Log
                 }
             };
 
-            ravenClient.Capture(new SentryEvent(content));
+            ravenClient.Capture(new SentryEvent(content) { Level = isInfo ? ErrorLevel.Info : ErrorLevel.Error });
 
             return sendError;
         }

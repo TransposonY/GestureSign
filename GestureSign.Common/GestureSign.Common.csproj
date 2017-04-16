@@ -121,7 +121,7 @@
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
     <Compile Include="Localization\LocalisedTextExtension.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
-    <Compile Include="Log\ErrorReport.cs" />
+    <Compile Include="Log\Feedback.cs" />
     <Compile Include="Log\Logging.cs" />
     <Compile Include="Plugins\HostControl.cs" />
     <Compile Include="Plugins\IPlugin.cs" />

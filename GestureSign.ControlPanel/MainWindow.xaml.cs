@@ -104,7 +104,7 @@ namespace GestureSign.ControlPanel
             StringBuilder result = new StringBuilder();
             await Task.Run(() =>
             {
-                ErrorReport.OutputLog(ref result);
+                Feedback.OutputLog(ref result);
             });
             await controller.CloseAsync();
 
@@ -128,7 +128,7 @@ namespace GestureSign.ControlPanel
             string message = null;
             while (dialogResult == MessageDialogResult.Affirmative)
             {
-                var sendReportTask = Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                var sendReportTask = Task.Run(() => Feedback.Send(result.ToString()));
                 if (message == null)
                     message = this.ShowModalInputExternal(
                         LocalizationProvider.Instance.GetTextValue("Options.Feedback"),
@@ -142,7 +142,7 @@ namespace GestureSign.ControlPanel
                 if (!string.IsNullOrEmpty(message))
                 {
                     var msg = message;
-                    await Task.Run(() => ErrorReport.SendReports(msg));
+                    await Task.Run(() => Feedback.Send(msg, true));
                 }
 
                 await controller.CloseAsync();

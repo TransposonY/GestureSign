@@ -345,7 +345,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                ErrorReport.OutputLog(ref result);
+                Feedback.OutputLog(ref result);
 
                 File.WriteAllText(logPath, result.ToString());
 
@@ -368,7 +368,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             string message = null;
             while (dialogResult == MessageDialogResult.Affirmative)
             {
-                var sendReportTask = System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(result.ToString()));
+                var sendReportTask = System.Threading.Tasks.Task.Run(() => Feedback.Send(result.ToString()));
                 if (message == null)
                     message =
                         UIHelper.GetParentWindow(this)
@@ -384,7 +384,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (!string.IsNullOrEmpty(message))
                 {
                     var msg = message;
-                    await System.Threading.Tasks.Task.Run(() => ErrorReport.SendReports(msg));
+                    await System.Threading.Tasks.Task.Run(() => Feedback.Send(msg, true));
                 }
 
                 await controller.CloseAsync();
