@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +10,7 @@ using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using GestureSign.Common.Log;
+using GestureSign.ControlPanel.Dialogs;
 
 namespace GestureSign.ControlPanel
 {
@@ -110,13 +110,10 @@ namespace GestureSign.ControlPanel
 
             if (dialogResult == MessageDialogResult.FirstAuxiliary)
             {
-                string logPath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
+                LogWindow logWin = new LogWindow(result.ToString());
+                logWin.Show();
 
-                File.WriteAllText(logPath, result.ToString());
-                Process.Start("notepad.exe", logPath)?.WaitForInputIdle();
-                File.Delete(logPath);
-
-                dialogResult = this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
+                dialogResult = await this.ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
                     LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
                     MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                     {

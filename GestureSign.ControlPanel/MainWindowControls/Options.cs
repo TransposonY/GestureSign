@@ -10,6 +10,7 @@ using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Common;
+using GestureSign.ControlPanel.Dialogs;
 using IWshRuntimeLibrary;
 using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Hooks;
@@ -332,8 +333,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {
-            string logPath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".log");
-
             StringBuilder result = new StringBuilder();
 
             var controller =
@@ -346,18 +345,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
             await System.Threading.Tasks.Task.Run(() =>
             {
                 Feedback.OutputLog(ref result);
-
-                File.WriteAllText(logPath, result.ToString());
-
             });
             await controller.CloseAsync();
 
-            Process.Start("notepad.exe", logPath)?.WaitForInputIdle();
-            File.Delete(logPath);
+            LogWindow logWin = new LogWindow(result.ToString());
+            logWin.Show();
 
             var dialogResult =
-                UIHelper.GetParentWindow(this)
-                        .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
+              await UIHelper.GetParentWindow(this)
+                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
                             LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
                             MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
                             {

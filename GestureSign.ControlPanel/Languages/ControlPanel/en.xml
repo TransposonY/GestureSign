@@ -221,6 +221,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
+    <ErrorReport>Error Report</ErrorReport>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

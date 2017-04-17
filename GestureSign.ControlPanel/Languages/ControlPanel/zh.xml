@@ -226,6 +226,7 @@
     <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
+    <ErrorReport>错误报告</ErrorReport>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>
