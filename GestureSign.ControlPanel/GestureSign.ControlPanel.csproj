@@ -270,8 +270,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Properties\app.common.manifest" />
-    <None Include="Properties\app.uiAccessRelease.manifest" />
     <None Include="Properties\app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -360,13 +358,8 @@
     <Error Condition="!Exists('..\packages\UwpDesktop.10.0.14393.3\build\portable-net45+uap\UwpDesktop.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UwpDesktop.10.0.14393.3\build\portable-net45+uap\UwpDesktop.targets'))" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>del "$(ProjectDir)\Properties\app.manifest"
-
-if "$(ConfigurationName)"=="uiAccessRelease" (
-  copy "$(ProjectDir)\Properties\app.uiAccessRelease.manifest" "$(ProjectDir)\Properties\app.manifest"
-) else (
-  copy "$(ProjectDir)\Properties\app.common.manifest" "$(ProjectDir)\Properties\app.manifest"
-)</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
