@@ -36,7 +36,9 @@ namespace GestureSign.Daemon
                     //Application.SetCompatibleTextRenderingDefault(false);
                     try
                     {
+#if !ConvertedDesktopApp
                         Application.ThreadException += Application_ThreadException;
+#endif
                         Logging.OpenLogFile();
 
                         if ("Built-in".Equals(AppConfig.CultureName) ||
@@ -85,6 +87,7 @@ namespace GestureSign.Daemon
             }
         }
 
+#if !ConvertedDesktopApp
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             DialogResult result = DialogResult.Abort;
@@ -112,6 +115,7 @@ namespace GestureSign.Daemon
             if (result == DialogResult.Abort)
                 Application.Exit();
         }
+#endif
 
         private static bool StartTouchInputProvider()
         {
