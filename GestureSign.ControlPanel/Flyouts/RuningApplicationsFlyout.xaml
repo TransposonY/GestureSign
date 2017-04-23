@@ -37,7 +37,7 @@
                                 <TextBlock  Text="{Binding Path=WindowFilename}"
                                             Margin="0,5,0,2" />
                                 <TextBlock  Text="{Binding Path=WindowTitle}"
-                                            Foreground="{StaticResource AccentColorBrush}" />
+                                            Foreground="{StaticResource HighlightBrush}" />
                             </StackPanel>
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
