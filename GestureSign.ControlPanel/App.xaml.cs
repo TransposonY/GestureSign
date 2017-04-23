@@ -105,6 +105,8 @@ namespace GestureSign.ControlPanel
                     ApplicationManager.Instance.Load(null);
 
                     NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
+
+                    mainWindow.Activate();
                 }
                 else
                 {
