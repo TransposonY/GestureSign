@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
@@ -43,7 +44,7 @@ namespace GestureSign.ControlPanel.Flyouts
 
         private void RefreshApplications()
         {
-            this.lstRunningApplications.Items.Clear();
+            lstRunningApplications.Dispatcher.InvokeAsync(() => lstRunningApplications.Items.Clear(), DispatcherPriority.Input);
             //    this.lstRunningApplications.ItemsSource = await GetValidWindows();
             ThreadPool.QueueUserWorkItem(new WaitCallback(GetValidWindows));
             //await GetValidWindows();
@@ -51,45 +52,61 @@ namespace GestureSign.ControlPanel.Flyouts
 
         private void GetValidWindows(object s)
         {
+            var processInfoMap = new Dictionary<uint, string>();
+            using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, Name FROM Win32_Process"))
+            using (var results = searcher.Get())
+            {
+                foreach (var item in results)
+                {
+                    var id = item["ProcessID"];
+                    var name = item["Name"] as string;
+
+                    if (name != null)
+                    {
+                        processInfoMap.Add((uint)id, name);
+                    }
+                }
+            }
+
             // Get valid running windows
             var windows = SystemWindow.AllToplevelWindows.Where
-                     (
-                         w => w.Visible &&	// Must be a visible windows
-                         w.Title != "" &&	// Must have a window title
-                         IsProcessAccessible(w.Process) &&
-                        Path.GetDirectoryName(w.Process.ProcessName) != Process.GetCurrentProcess().ProcessName &&	// Must not be a GestureSign window
+                (
+                    w => w.Visible && // Must be a visible windows
+                         w.Title != "" && // Must have a window title
+                         processInfoMap.ContainsKey((uint)w.ProcessId) &&
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
 
-            Thread.Sleep(400);
             foreach (SystemWindow sWind in windows)
             {
-                var icon = Imaging.CreateBitmapSourceFromHIcon(sWind.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                SystemWindow realWindow = sWind;
+                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(realWindow.ClassName))
+                {
+                    realWindow = sWind.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
+                    if (realWindow == null) continue;
+                }
+
+                var pid = (uint)realWindow.ProcessId;
+                if (!processInfoMap.ContainsKey(pid)) continue;
+
+                var icon = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                 icon.Freeze();
+
                 ApplicationListViewItem lItem = new ApplicationListViewItem
                 {
-                    WindowClass = sWind.ClassName,
-                    WindowTitle = sWind.Title,
-                    WindowFilename = Path.GetFileName(sWind.Process.MainModule.FileName),
+                    WindowClass = realWindow.ClassName,
+                    WindowTitle = realWindow.Title,
+                    WindowFilename = processInfoMap[pid],
                     ApplicationIcon = icon
                 };
+
                 //lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
-                this.lstRunningApplications.Dispatcher.BeginInvoke(new Action(() =>
+                this.lstRunningApplications.Dispatcher.InvokeAsync(new Action(() =>
                {
                    this.lstRunningApplications.Items.Add(lItem);
-               }));
+               }), DispatcherPriority.Input);
             }
 
-        }
-
-        private bool IsProcessAccessible(Process Process)
-        {
-            try
-            {
-                ProcessModule module = Process.MainModule;
-                return true;
-            }
-            catch { return false; }
         }
 
         #endregion

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -22,6 +24,7 @@ namespace GestureSign.ControlPanel.Dialogs
     {
         private IApplication _currentApplication;
         private bool _isUserApp;
+        private Dictionary<uint, string> _processInfoMap;
 
         public ApplicationListViewItem ApplicationListViewItem
         {
@@ -119,16 +122,12 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void ChCrosshair_OnCrosshairDragging(object sender, MouseEventArgs e)
         {
-            Point cursorPosition; //(e.OriginalSource as Image).PointToScreen(e.GetPosition(null));
-            GetCursorPos(out cursorPosition);
-            SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
-
-            // Set MatchUsings
-            MatchUsing muCustom = matchUsingRadio.MatchUsing;
-            // Which screen are we changing
+            var window = GetTargetWindow();
             try
             {
-                switch (muCustom)
+                // Set application name from filename
+                ApplicationNameTextBox.Text = GetDescription(window);
+                switch (matchUsingRadio.MatchUsing)
                 {
                     case MatchUsing.WindowClass:
                         MatchStringTextBox.Text = window.ClassName;
@@ -139,17 +138,20 @@ namespace GestureSign.ControlPanel.Dialogs
 
                         break;
                     case MatchUsing.ExecutableFilename:
-                        MatchStringTextBox.Text = window.Process.MainModule.ModuleName;//.FileName;
+                        MatchStringTextBox.Text = GetProcessFilename((uint)window.ProcessId);
                         MatchStringTextBox.SelectionStart = MatchStringTextBox.Text.Length;
                         break;
                 }
-                // Set application name from filename
-                ApplicationNameTextBox.Text = window.Process.MainModule.FileVersionInfo.FileDescription;
             }
             catch (Exception ex)
             {
                 MatchStringTextBox.Text = LocalizationProvider.Instance.GetTextValue("Messages.Error") + "：" + ex.Message;
             }
+        }
+
+        private void chCrosshair_CrosshairDragged(object sender, MouseButtonEventArgs e)
+        {
+            _processInfoMap = null;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -184,6 +186,66 @@ namespace GestureSign.ControlPanel.Dialogs
         #endregion
 
         #region Private Methods
+
+        private string GetDescription(SystemWindow window)
+        {
+            try
+            {
+                return window.Process.MainModule.FileVersionInfo.FileDescription;
+            }
+            catch (Exception)
+            {
+                return window.Title;
+            }
+        }
+
+        private string GetProcessFilename(uint pid)
+        {
+            if (_processInfoMap == null)
+            {
+                _processInfoMap = new Dictionary<uint, string>();
+                using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, Name FROM Win32_Process"))
+                using (var results = searcher.Get())
+                {
+                    foreach (var item in results)
+                    {
+                        var id = item["ProcessID"];
+                        var name = item["Name"] as string;
+
+                        if (name != null)
+                        {
+                            _processInfoMap.Add((uint)id, name);
+                        }
+                    }
+                }
+            }
+
+            if (_processInfoMap.ContainsKey(pid))
+                return _processInfoMap[pid];
+            return null;
+        }
+
+        private SystemWindow GetTargetWindow()
+        {
+            Point cursorPosition; //(e.OriginalSource as Image).PointToScreen(e.GetPosition(null));
+            GetCursorPos(out cursorPosition);
+
+            SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(window.ClassName))
+                {
+                    var realWindow = window.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
+                    if (realWindow != null)
+                        return realWindow;
+                }
+                return window;
+            }
+            catch (Exception)
+            {
+                return window;
+            }
+        }
 
         private bool ShowErrorMessage(string title, string message)
         {
@@ -297,6 +359,5 @@ namespace GestureSign.ControlPanel.Dialogs
         }
 
         #endregion
-
     }
 }

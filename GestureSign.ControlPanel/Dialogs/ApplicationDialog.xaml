@@ -147,6 +147,7 @@
                               HorizontalAlignment="Right"
                               Height="36"
                               Width="36"
+                              CrosshairDragged="chCrosshair_CrosshairDragged"
                               CrosshairDragging="ChCrosshair_OnCrosshairDragging"
                               Margin="0,0,20,0" />
             <TextBlock HorizontalAlignment="Left"

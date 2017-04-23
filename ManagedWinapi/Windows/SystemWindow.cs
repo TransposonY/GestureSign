@@ -812,6 +812,20 @@ namespace ManagedWinapi.Windows
             return IsChild(ancestor._hwnd, _hwnd);
         }
 
+        public int ProcessId
+        {
+            get
+            {
+                if (_cachedProcess != null)
+                {
+                    return _cachedProcess.Id;
+                }
+                int pid;
+                GetWindowThreadProcessId(HWnd, out pid);
+                return pid;
+            }
+        }
+
         private Process _cachedProcess = null;
 
         /// <summary>
