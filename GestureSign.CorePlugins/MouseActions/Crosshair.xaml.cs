@@ -23,11 +23,8 @@ namespace GestureSign.CorePlugins.MouseActions
         public Crosshair()
         {
             InitializeComponent();
-            // dragger.Source = imgCrosshair;
-            using (MemoryStream memStream = new MemoryStream(Properties.Resources.crosshair))
-            {
-                _myCursor = new System.Windows.Input.Cursor(memStream);
-            }
+            // use file path to avoid System.IO.IOException caused by GetTempFileName in System.Windows.Input.Cursor.LoadFromStream
+            _myCursor = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\crosshair.cur"));
         }
 
         // Flag: Has Dispose already been called?

@@ -15,18 +15,15 @@ namespace GestureSign.ControlPanel.Common
         BitmapImage imgCrosshair = new BitmapImage(new Uri(@"../../Resources/crosshair.ico", UriKind.Relative));
 
         public event EventHandler<MouseButtonEventArgs> CrosshairDragged;
-        
+
         public event EventHandler<MouseEventArgs> CrosshairDragging;
 
         bool isMove = false;//是否需要移动
         public Crosshair()
         {
             InitializeComponent();
-            // dragger.Source = imgCrosshair;
-            using (MemoryStream memStream = new MemoryStream(Properties.Resources.crosshair))
-            {
-                myCursor = new System.Windows.Input.Cursor(memStream);
-            }
+            // use file path to avoid System.IO.IOException caused by GetTempFileName in System.Windows.Input.Cursor.LoadFromStream
+            myCursor = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\crosshair.cur"));
         }
 
         // Flag: Has Dispose already been called?

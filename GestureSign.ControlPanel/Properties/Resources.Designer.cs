@@ -61,25 +61,16 @@ namespace GestureSign.ControlPanel.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] crosshair {
-            get {
-                object obj = ResourceManager.GetObject("crosshair", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;0.13&quot;&gt;
         ///  &lt;Font&gt;Segoe UI, Lucida Sans Unicode, Verdana&lt;/Font&gt;
+        ///  &lt;HeaderFontFamily&gt;Segoe UI Light, Lucida Sans Unicode, Verdana&lt;/HeaderFontFamily&gt;
         ///  &lt;IsRightToLeft&gt;False&lt;/IsRightToLeft&gt;
         ///  &lt;Title&gt;GestureSign Control Panel&lt;/Title&gt;
         ///  &lt;Messages&gt;
-        ///    &lt;AlreadyRunning&gt;GestureSign Control Panel is already running.&lt;/AlreadyRunning&gt;
-        ///    &lt;AlreadyRunningTitle&gt;Reminder&lt;/AlreadyRunningTitle&gt;
-        ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.&lt;/Cannot [rest of string was truncated]&quot;;.
+        ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.&lt;/CannotFindDaemonMessage&gt;
+        ///    &lt;Error&gt;Error&lt;/Error&gt;
+        ///    &lt;Compa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string en {
             get {

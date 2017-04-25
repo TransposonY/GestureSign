@@ -59,15 +59,5 @@ namespace GestureSign.CorePlugins.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] crosshair {
-            get {
-                object obj = ResourceManager.GetObject("crosshair", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
