@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using GestureSign.Common.Configuration;
 using GestureSign.Daemon.Native;
 
 namespace GestureSign.Daemon.Filtration
@@ -19,12 +20,12 @@ namespace GestureSign.Daemon.Filtration
         private bool _pointMoved;
         private int _screenWidth;
         private int _screenHeight;
+        private bool _isInitialized = false;
 
         public PointerInputTargetWindow()
         {
             CreateHandle();
             ResetIdPool();
-            NativeMethods.InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
         }
 
         public int BlockTouchInputThreshold
@@ -56,7 +57,14 @@ namespace GestureSign.Daemon.Filtration
             {
                 if (value)
                 {
-                    if (_isRegistered) return;
+                    if (_isRegistered || !AppConfig.UiAccess) return;
+
+                    if (!_isInitialized)
+                    {
+                        NativeMethods.InitializeTouchInjection(10, TOUCH_FEEDBACK.NONE);
+                        _isInitialized = true;
+                    }
+
                     if (NativeMethods.RegisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
                     {
                         NativeMethods.AccSetRunningUtilityState(Handle, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE);
