@@ -243,7 +243,9 @@ namespace GestureSign.CorePlugins.LaunchApp
 
         private string GetDisplayIconPath(string dir, string logo)
         {
-            logo = logo.TrimEnd('}').Split('?')[1];
+            var ss = logo.TrimEnd('}').Split('?');
+            if (ss.Length < 2) return null;
+            logo = ss[1];
 
             Uri uri;
             if (!Uri.TryCreate(logo, UriKind.Absolute, out uri))
