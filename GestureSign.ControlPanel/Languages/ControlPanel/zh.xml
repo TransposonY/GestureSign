@@ -19,7 +19,7 @@
     </FindNewErrorLog>
   </Messages>
   <Common>
-    <AllApplications>(全局)</AllApplications>
+    <GlobalActions>(全局动作)</GlobalActions>
     <Cancel>取消</Cancel>
     <FileName>文件名</FileName>
     <No>否</No>

@@ -17,7 +17,7 @@ Continue to run?
     <FindNewErrorLog>Find new error log.You can help me track and fix problems by sending these error logs.</FindNewErrorLog>
   </Messages>
   <Common>
-    <AllApplications>(Global)</AllApplications>
+    <GlobalActions>(Global Actions)</GlobalActions>
     <Cancel>Cancel</Cancel>
     <FileName>File Name</FileName>
     <No>No</No>

@@ -8,7 +8,7 @@ namespace GestureSign.Common.Applications
 
         public override string Name
         {
-            get { return LocalizationProvider.Instance.GetTextValue("Common.AllApplications"); ; }
+            get { return LocalizationProvider.Instance.GetTextValue("Common.GlobalActions"); ; }
             //set { /* Set only exists for deserialization purposes */ }
         }
 

@@ -16,7 +16,7 @@ namespace GestureSign.ControlPanel.Converters
             switch (mu)
             {
                 case MatchUsing.All:
-                    return LocalizationProvider.Instance.GetTextValue("Common.AllApplications");
+                    return LocalizationProvider.Instance.GetTextValue("Common.GlobalActions");
                 case MatchUsing.ExecutableFilename:
                     return LocalizationProvider.Instance.GetTextValue("Common.FileName");
                 case MatchUsing.WindowClass:
