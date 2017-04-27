@@ -82,10 +82,10 @@ namespace GestureSign.CorePlugins.LaunchApp
                                 if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
                                     continue;
 
-                                var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                                if (convertFromString != null)
+                                var color = ColorConverter.ConvertFromString(backgroundColor);
+                                if (color != null)
                                 {
-                                    model.BackgroundColor = new SolidColorBrush((Color)convertFromString);
+                                    model.BackgroundColor = (Color)color == Colors.Transparent ? SystemParameters.WindowGlassBrush : new SolidColorBrush((Color)color);
                                     model.BackgroundColor.Freeze();
                                 }
 
@@ -133,12 +133,12 @@ namespace GestureSign.CorePlugins.LaunchApp
                         displayName = ExtractDisplayName(package.InstalledLocation.Path, package.Id.Name, displayName);
                         logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
 
-                        var convertFromString = ColorConverter.ConvertFromString(backgroundColor);
-                        if (convertFromString == null) continue;
+                        var color = ColorConverter.ConvertFromString(backgroundColor);
+                        if (color == null) continue;
                         var model = new Model
                         {
                             AppInfo = new KeyValuePair<string, string>(GetAppUserModelId(package.Id.FullName), displayName),
-                            BackgroundColor = new SolidColorBrush((Color)convertFromString),
+                            BackgroundColor = (Color)color == Colors.Transparent ? SystemParameters.WindowGlassBrush : new SolidColorBrush((Color)color),
                             Logo = logo
                         };
                         model.BackgroundColor.Freeze();

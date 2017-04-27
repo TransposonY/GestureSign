@@ -145,15 +145,13 @@
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <StackPanel Background="{DynamicResource HighlightBrush}">
-                            <StackPanel Background="{Binding BackgroundColor}">
-                                <Image Source="{Binding Logo}"
-                                       Height="50"
-                                       Stretch="Uniform"
-                                       StretchDirection="DownOnly"
-                                       Width="50"
-                                       HorizontalAlignment="Stretch" />
-                            </StackPanel>
+                        <StackPanel Background="{Binding BackgroundColor}">
+                            <Image Source="{Binding Logo}"
+                                   Height="50"
+                                   Stretch="Uniform"
+                                   StretchDirection="DownOnly"
+                                   Width="50"
+                                   HorizontalAlignment="Stretch" />
                         </StackPanel>
                         <TextBlock TextWrapping="Wrap"
                                    Text="{Binding AppInfo.Value}"
