@@ -350,6 +350,7 @@
       <Description>运行指定的命令或程序</Description>
       <Category>运行</Category>
       <Command>命令</Command>
+      <InsertVariable>插入变量</InsertVariable>
       <Browse>浏览..</Browse>
       <ShowCMD>显示CMD窗口</ShowCMD>
     </RunCommand>

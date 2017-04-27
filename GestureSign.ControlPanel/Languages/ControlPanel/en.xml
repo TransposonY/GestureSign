@@ -345,6 +345,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
       <Description>Runs a specified command or program</Description>
       <Category>Run</Category>
       <Command>Command</Command>
+      <InsertVariable>Insert Variable</InsertVariable>
       <Browse>Browse...</Browse>
       <ShowCMD>Show CMD Window</ShowCMD>
     </RunCommand>

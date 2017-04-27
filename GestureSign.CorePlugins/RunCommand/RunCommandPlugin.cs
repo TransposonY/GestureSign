@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 
@@ -67,9 +69,50 @@ namespace GestureSign.CorePlugins.RunCommand
 
         }
 
-        public bool Gestured(PointInfo ActionPoint)
+        public bool Gestured(PointInfo pointInfo)
         {
-            Thread newThread = new Thread(new ParameterizedThreadStart(ExecuteCommand));
+            Thread newThread = new Thread(new ParameterizedThreadStart(delegate
+            {
+                if (_Settings == null) return;
+
+                // Catch any errors (i.e. bad command, bad filename, bad anything)
+                try
+                {
+                    string clipboardString = string.Empty;
+                    pointInfo.SyncContext.Send(state =>
+                    {
+                        IDataObject iData = Clipboard.GetDataObject();
+                        if (iData != null && iData.GetDataPresent(DataFormats.Text))
+                        {
+                            clipboardString = (string)iData.GetData(DataFormats.Text);
+                        }
+                    }, null);
+
+                    using (Process process = new Process())
+                    {
+                        process.StartInfo.FileName = "cmd.exe";
+                        process.StartInfo.Arguments = $"{(_Settings.ShowCmd ? "/K " : "/C ")}\"{string.Join(" & ", _Settings.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))}\"";
+                        process.StartInfo.WindowStyle = _Settings.ShowCmd ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
+                        process.StartInfo.CreateNoWindow = !_Settings.ShowCmd;
+                        process.StartInfo.UseShellExecute = false;
+
+                        process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_X", pointInfo.PointLocation.First().X.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_Y", pointInfo.PointLocation.First().Y.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_X", pointInfo.Points[0].Last().X.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_Y", pointInfo.Points[0].Last().Y.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_ClassName", pointInfo.Window.ClassName);
+                        process.StartInfo.EnvironmentVariables.Add("GS_Title", pointInfo.Window.Title);
+                        process.StartInfo.EnvironmentVariables.Add("GS_PID", pointInfo.Window.ProcessId.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_WindowHandle", pointInfo.WindowHandle.ToString());
+                        process.StartInfo.EnvironmentVariables.Add("GS_Clipboard", clipboardString);
+                        process.Start();
+                    }
+                }
+                catch
+                {
+                    // Errors are stupid
+                }
+            }));
             newThread.Start(_Settings);
 
             return true;
@@ -101,28 +144,6 @@ namespace GestureSign.CorePlugins.RunCommand
             newGUI.Loaded += (o, e) => { TypedGUI.Settings = _Settings; };
 
             return newGUI;
-        }
-
-        private void ExecuteCommand(object Settings)
-        {
-            // Cast object parameter as RunCommandSettings object
-            RunCommandSettings rcSettings = Settings as RunCommandSettings;
-            if (rcSettings == null) return;
-
-            // Catch any errors (i.e. bad command, bad filename, bad anything)
-            try
-            {
-                Process Process = new Process();
-                // Expand environment variable to support %SYSTEMROOT%, etc.
-                Process.StartInfo.FileName = "cmd.exe";
-                Process.StartInfo.Arguments = (rcSettings.ShowCmd ? "/K " : "/C ") + string.Join(" & ", rcSettings.Command.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
-                Process.StartInfo.WindowStyle = rcSettings.ShowCmd ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
-                Process.Start();
-            }
-            catch
-            {
-                // Errors are stupid
-            }
         }
 
         #endregion

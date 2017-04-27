@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.CorePlugins.RunCommand
 {
@@ -68,5 +58,34 @@ namespace GestureSign.CorePlugins.RunCommand
         //{
         //    return !System.IO.Path.GetInvalidPathChars().Any(fnc => path.Contains(fnc)) && path != String.Empty;
         //}
+
+        private void VariableComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (VariableComboBox.SelectedIndex < 1) return;
+
+            string variable = $"%GS_{VariableComboBox.Text}%";
+            int caretIndex = txtCommand.CaretIndex;
+            txtCommand.Text = txtCommand.Text.Insert(caretIndex, variable);
+            txtCommand.CaretIndex = caretIndex + variable.Length;
+
+            VariableComboBox.SelectedIndex = 0;
+            txtCommand.Focus();
+        }
+
+        private void VariableComboBox_OnInitialized(object sender, EventArgs e)
+        {
+            VariableComboBox.Items.Add(LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.InsertVariable"));
+
+            VariableComboBox.Items.Add("Clipboard");
+            VariableComboBox.Items.Add("WindowHandle");
+            VariableComboBox.Items.Add("PID");
+            VariableComboBox.Items.Add("Title");
+            VariableComboBox.Items.Add("ClassName");
+            VariableComboBox.Items.Add("StartPoint_X");
+            VariableComboBox.Items.Add("StartPoint_Y");
+            VariableComboBox.Items.Add("EndPoint_X");
+            VariableComboBox.Items.Add("EndPoint_Y");
+            VariableComboBox.SelectedIndex = 0;
+        }
     }
 }
