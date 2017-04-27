@@ -59,7 +59,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ApplicationManager.ApplicationChanged += (o, e) =>
             {
                 lstAvailableApplication.SelectedItem = e.Application;
-                lstAvailableApplication.ScrollIntoView(e.Application);
+                lstAvailableApplication.Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(e.Application), DispatcherPriority.Input);
             };
         }
 
