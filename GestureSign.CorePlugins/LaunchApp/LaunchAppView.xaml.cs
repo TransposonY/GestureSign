@@ -96,9 +96,12 @@ namespace GestureSign.CorePlugins.LaunchApp
                                     displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
                                     if (string.IsNullOrEmpty(displayName)) continue;
 
-                                    logo = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
-
-                                    model.Logo = logo;
+                                    var logoPath = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
+                                    if (string.IsNullOrEmpty(logoPath))
+                                    {
+                                        logoPath = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
+                                    }
+                                    model.Logo = logoPath;
                                     model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
                                 }
                                 else
@@ -236,9 +239,13 @@ namespace GestureSign.CorePlugins.LaunchApp
                 }
             }
 
-            var localized = Path.Combine(dir, "en-us", logo); //TODO: How determine if culture parameter is necessary?
+            var localized = Path.Combine(dir, "en-us", logo);
+            if (localized == null) return null;
             localized = Path.Combine(dir, Path.ChangeExtension(localized, "scale-100.png"));
-            return localized;
+            if (File.Exists(localized))
+                return localized;
+
+            return null;
         }
 
         private string GetDisplayIconPath(string dir, string logo)
