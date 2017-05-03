@@ -153,9 +153,10 @@ namespace GestureSign.CorePlugins.HotKey
             {
                 SendShortcutKeys(_Settings);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 ReleaseKeys(_Settings);
+                throw new UnauthorizedAccessException(LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.UnauthorizedAccessException"), exception);
             }
             return true;
         }
