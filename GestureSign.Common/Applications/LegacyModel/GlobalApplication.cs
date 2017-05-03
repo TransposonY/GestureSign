@@ -1,8 +1,10 @@
-﻿using GestureSign.Common.Localization;
+﻿using System;
+using GestureSign.Common.Localization;
 
 namespace GestureSign.Common.Applications
 {
-    public class GlobalApplication : ApplicationBase
+    [Obsolete("Please use GestureSign.Common.Applications.GlobalApp instead.")]
+    public class GlobalApplication : LegacyApplicationBase
     {
         #region IApplication Properties
 

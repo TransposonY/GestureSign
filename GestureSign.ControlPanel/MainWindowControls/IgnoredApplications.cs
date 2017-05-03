@@ -24,7 +24,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void btnDeleteIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
-            var ignoredApps = lstIgnoredApplications.SelectedItems.Cast<IgnoredApplication>().ToList();
+            var ignoredApps = lstIgnoredApplications.SelectedItems.Cast<IgnoredApp>().ToList();
             foreach (var app in ignoredApps)
             {
                 ApplicationManager.Instance.RemoveApplication(app);
@@ -34,7 +34,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void btnEditIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
-            IgnoredApplication ia = this.lstIgnoredApplications.SelectedItem as IgnoredApplication;
+            var ia = this.lstIgnoredApplications.SelectedItem as IgnoredApp;
             if (ia == null) return;
 
             ApplicationDialog applicationDialog = new ApplicationDialog(ia);
@@ -60,21 +60,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void EnabledIgnoredAppCheckBoxs_Click(object sender, RoutedEventArgs e)
         {
             bool isChecked = (sender as CheckBox).IsChecked.Value;
-            foreach (IgnoredApplication ia in this.lstIgnoredApplications.Items)
+            foreach (IgnoredApp ia in this.lstIgnoredApplications.Items)
                 ia.IsEnabled = isChecked;
         }
 
         private void IgnoredAppCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             (ApplicationManager.Instance.Applications.Find(app => app.Name == ((CheckBox)sender).Tag as string)
-                as IgnoredApplication).IsEnabled = true;
+                as IgnoredApp).IsEnabled = true;
             ApplicationManager.Instance.SaveApplications();
         }
 
         private void IgnoredAppCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             (ApplicationManager.Instance.Applications.Find(app => app.Name == ((CheckBox)sender).Tag as string)
-                as IgnoredApplication).IsEnabled = false;
+                as IgnoredApp).IsEnabled = false;
             ApplicationManager.Instance.SaveApplications();
         }
 
@@ -94,7 +94,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (newApps != null)
                     foreach (IApplication newApp in newApps)
                     {
-                        if (newApp is IgnoredApplication &&
+                        if (newApp is IgnoredApp &&
                             !ApplicationManager.Instance.ApplicationExists(newApp.Name))
                         {
                             ApplicationManager.Instance.AddApplication(newApp);
@@ -124,7 +124,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
             if (sfdApplications.ShowDialog().Value)
             {
-                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => (app is IgnoredApplication)).ToList(), sfdApplications.FileName, true);
+                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => app is IgnoredApp).ToList(), sfdApplications.FileName, true);
             }
         }
     }

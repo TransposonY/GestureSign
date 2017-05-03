@@ -85,19 +85,24 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Applications\Action.cs" />
+    <Compile Include="Applications\LegacyModel\Action.cs" />
     <Compile Include="Applications\ActionChangedEventArgs.cs" />
+    <Compile Include="Applications\LegacyModel\LegacyApplicationBase.cs" />
     <Compile Include="Applications\ApplicationBase.cs" />
     <Compile Include="Applications\ApplicationChangedEventArgs.cs" />
     <Compile Include="Applications\ApplicationChangedEventHandler.cs" />
     <Compile Include="Applications\ApplicationManager.cs" />
-    <Compile Include="Applications\GlobalApplication.cs" />
+    <Compile Include="Applications\LegacyModel\GlobalApplication.cs" />
+    <Compile Include="Applications\ICommand.cs" />
     <Compile Include="Applications\IAction.cs" />
     <Compile Include="Applications\IApplication.cs" />
-    <Compile Include="Applications\IgnoredApplication.cs" />
+    <Compile Include="Applications\LegacyModel\IgnoredApplication.cs" />
     <Compile Include="Applications\MatchUsing.cs" />
     <Compile Include="Applications\IApplicationManager.cs" />
-    <Compile Include="Applications\UserApplication.cs" />
+    <Compile Include="Applications\GlobalApp.cs" />
+    <Compile Include="Applications\IgnoredApp.cs" />
+    <Compile Include="Applications\UserApp.cs" />
+    <Compile Include="Applications\LegacyModel\UserApplication.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\FileManager.cs" />
     <Compile Include="Gestures\Gesture.cs" />
@@ -123,6 +128,8 @@
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Log\Feedback.cs" />
     <Compile Include="Log\Logging.cs" />
+    <Compile Include="Applications\Command.cs" />
+    <Compile Include="Applications\Action.cs" />
     <Compile Include="Plugins\HostControl.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />

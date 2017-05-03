@@ -86,9 +86,9 @@
                                 x:Key="ApplicationItemProvider">
             </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
-                                  Source="{Binding ActionInfos}">
+                                  Source="{Binding CommandInfos}">
                 <CollectionViewSource.GroupDescriptions>
-                    <PropertyGroupDescription PropertyName="GestureName" />
+                    <PropertyGroupDescription PropertyName="Action.GestureName" />
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="ApplicationViewSource"
@@ -320,7 +320,7 @@
         <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
         <ListBox x:Name="lstAvailableActions"
                  ItemsSource="{Binding Source={StaticResource ActionsViewSource}}"
-                 SelectedValuePath="ActionName"
+                 SelectedValuePath="CommandName"
                  ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
@@ -510,7 +510,7 @@
                             <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
                         <controls:ToggleSwitch  Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                                Click="ActionCheckBox_Click"
+                                                Click="CommandCheckBox_Click"
                                                 Grid.Column="1"
                                                 IsChecked="{Binding Path=IsEnabled}"
                                                 HorizontalAlignment="Right"
@@ -521,7 +521,7 @@
                         </controls:ToggleSwitch>
                         <TextBlock Grid.Column="0"
                                    TextWrapping="NoWrap"
-                                   Text="{Binding ActionName}"
+                                   Text="{Binding CommandName}"
                                    Margin="5,25,0,0"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
@@ -571,7 +571,7 @@
                 VerticalAlignment="Bottom"
                 Height="50"
                 Width="50"
-                Click="cmdEditAction_Click"
+                Click="cmdEditCommand_Click"
                 Margin="0,0,65,10"
                 Grid.Row="2"
                 Grid.Column="1"
@@ -592,7 +592,7 @@
                 Height="50"
                 Width="50"
                 Margin="0,0,10,10"
-                Click="cmdDeleteAction_Click"
+                Click="cmdDeleteCommand_Click"
                 Grid.Row="2"
                 Grid.Column="1"
                 IsEnabled="False">

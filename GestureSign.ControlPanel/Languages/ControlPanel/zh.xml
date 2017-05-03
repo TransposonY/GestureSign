@@ -28,7 +28,6 @@
     <WindowClass>窗口类</WindowClass>
     <WindowTitle>窗口标题</WindowTitle>
     <Yes>是</Yes>
-    <Overwrite>覆盖</Overwrite>
   </Common>
   <About>
     <Header>关于</Header>
@@ -86,29 +85,34 @@
     <ActionName>动作名称</ActionName>
     <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
     <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
-    <ApplicationTools>将左侧图标拖至想控制的程序窗口或点击右侧按钮选择运行中的程序</ApplicationTools>
-    <AppName>程序名称</AppName>
-    <AppNameWatermark>请输入要控制的程序名称</AppNameWatermark>
     <EditActionTitle>编辑动作</EditActionTitle>
     <Icon>图标</Icon>
-    <Command>命令</Command>
-    <SelectCommand>选择想执行的命令</SelectCommand>
     <SelectGesture>点击选择手势</SelectGesture>
     <ActivateWindow>激活目标窗口</ActivateWindow>
     <Advanced>高级</Advanced>
     <TriggerCondition>触发条件</TriggerCondition>
+    <KeyboardHotKey>键盘快捷键</KeyboardHotKey>
+    <HotKeyWatermark>为该动作指定一个快捷键</HotKeyWatermark>
+    <HotKey>快捷键</HotKey>
+    <MouseHotKey>鼠标快捷键</MouseHotKey>
+    <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
     <Default>默认</Default>
     <Messages>
-      <ActionExistsTitle>此动作已存在</ActionExistsTitle>
-      <ActionExists>动作 “{0}”已经存在于 {1}</ActionExists>
-      <ActionExistsInGlobal>在全局动作中已存在 “{0}” </ActionExistsInGlobal>
-      <NoSelectedGestureTitle>手势未定义</NoSelectedGestureTitle>
-      <NoSelectedGesture>未选择手势，请先选择一个手势</NoSelectedGesture>
       <NoActionNameTitle>无动作名</NoActionNameTitle>
       <NoActionName>未填写动作名称，请先为该动作命名</NoActionName>
       <ConditionError>条件错误</ConditionError>
     </Messages>
   </ActionDialog>
+  <CommandDialog>
+    <EditCommandTitle>编辑命令</EditCommandTitle>
+    <SelectCommand>选择命令</SelectCommand>
+    <CommandName>命令名称</CommandName>
+    <CommandNameWatermark>请为该命令命名</CommandNameWatermark>
+    <Messages>
+      <NoCommandNameTitle>无命令名</NoCommandNameTitle>
+      <NoCommandName>请为该命令命名</NoCommandName>
+    </Messages>
+  </CommandDialog>
   <EditConditionDialog>
     <Title>编辑条件</Title>
     <Variables>变量</Variables>
@@ -118,6 +122,7 @@
   <Action>
     <Header>动作</Header>
     <NewAction>新动作</NewAction>
+    <NewCommand>新命令</NewCommand>
     <ActionFile>动作文件</ActionFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} {1}程序</AppCount>
@@ -134,10 +139,10 @@
     <SelectGesture>(请点击以设置手势)</SelectGesture>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
-      <DeleteActionConfirm>确定要删除这 {0} 个动作吗？</DeleteActionConfirm>
+      <DeleteCommandConfirm>确定要删除这 {0} 个命令吗？</DeleteCommandConfirm>
       <DeleteAppConfirm>确定删除程序 "{0}" 吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
       <NoAssociationAction>（未找到{1}中的{0}）</NoAssociationAction>
-      <DoubleClickToEditAction>(双击以编辑此动作)</DoubleClickToEditAction>
+      <DoubleClickToEditCommand>(双击以编辑此命令)</DoubleClickToEditCommand>
       <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
       <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>
@@ -147,7 +152,6 @@
   <Gesture>
     <Header>手势</Header>
     <GestureFile>手势文件</GestureFile>
-    <Name>名称</Name>
     <View>查看</View>
     <LargeIcons>大图标</LargeIcons>
     <Details>详细信息</Details>
@@ -181,10 +185,6 @@
     <ExistingGesture>已保存有相似的手势，是否使用该手势？</ExistingGesture>
     <DrawGesture>请画出手势</DrawGesture>
     <Redraw>重画</Redraw>
-    <HotKey>快捷键</HotKey>
-    <HotKeyWatermark>可为该手势指定一个快捷键</HotKeyWatermark>
-    <Mouse>鼠标键</Mouse>
-    <MouseGestureNotEnabled>请先在选项中打开鼠标手势</MouseGestureNotEnabled>
   </GestureDefinition>
   <Ignored>
     <Header>忽略</Header>

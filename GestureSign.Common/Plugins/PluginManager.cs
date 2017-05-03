@@ -72,34 +72,37 @@ namespace GestureSign.Common.Plugins
                 foreach (IAction executableAction in executableActions)
                 {
                     // Exit if there is no action configured
-                    if (executableAction == null || !executableAction.IsEnabled ||
-                        (mode == CaptureMode.UserDisabled &&
-                         !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(executableAction.PluginClass)) ||
-                        !Compute(executableAction.Condition, points, contactIdentifiers))
+                    if (executableAction?.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
                         continue;
 
-                    if (!WaitForInputIdle(pointInfo.Window, 1000))
-                        break;
-
-                    // Locate the plugin associated with this action
-                    IPluginInfo pluginInfo = FindPluginByClassAndFilename(executableAction.PluginClass, executableAction.PluginFilename);
-
-                    // Exit if there is no plugin available for action
-                    if (pluginInfo == null)
-                        continue;
-
-                    if (executableActions.IndexOf(executableAction) == 0)
+                    foreach (var command in executableAction.Commands)
                     {
-                        if (executableAction.ActivateWindow == null && pluginInfo.Plugin.ActivateWindowDefault ||
-                        executableAction.ActivateWindow.HasValue && executableAction.ActivateWindow.Value)
-                            if (pointInfo.Window?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
-                                SystemWindow.ForegroundWindow = pointInfo.Window;
-                    }
+                        if (command == null || !command.IsEnabled || (mode == CaptureMode.UserDisabled && !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(command.PluginClass)))
+                            continue;
 
-                    // Load action settings into plugin
-                    pluginInfo.Plugin.Deserialize(executableAction.ActionSettings);
-                    // Execute plugin process
-                    pluginInfo.Plugin.Gestured(pointInfo);
+                        if (!WaitForInputIdle(pointInfo.Window, 1000))
+                            break;
+
+                        // Locate the plugin associated with this action
+                        IPluginInfo pluginInfo = FindPluginByClassAndFilename(command.PluginClass, command.PluginFilename);
+
+                        // Exit if there is no plugin available for action
+                        if (pluginInfo == null)
+                            continue;
+
+                        if (executableAction.Commands.IndexOf(command) == 0)
+                        {
+                            if (executableAction.ActivateWindow == null && pluginInfo.Plugin.ActivateWindowDefault ||
+                            executableAction.ActivateWindow.HasValue && executableAction.ActivateWindow.Value)
+                                if (pointInfo.Window?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
+                                    SystemWindow.ForegroundWindow = pointInfo.Window;
+                        }
+
+                        // Load action settings into plugin
+                        pluginInfo.Plugin.Deserialize(command.CommandSettings);
+                        // Execute plugin process
+                        pluginInfo.Plugin.Gestured(pointInfo);
+                    }
                 }
             });
 

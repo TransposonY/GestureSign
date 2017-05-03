@@ -227,8 +227,8 @@ namespace GestureSign.Daemon.Input
             var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
             if (apps != null)
             {
-                var userAppList = apps.Where(application => application is UserApplication).Cast<UserApplication>();
-                var userApplications = userAppList as IList<UserApplication> ?? userAppList.ToList();
+                var userAppList = apps.Where(application => application is UserApp).Cast<UserApp>();
+                var userApplications = userAppList as IList<UserApp> ?? userAppList.ToList();
 
                 int maxBlockTouchInputThreshold = userApplications.Max(app => app.BlockTouchInputThreshold);
 

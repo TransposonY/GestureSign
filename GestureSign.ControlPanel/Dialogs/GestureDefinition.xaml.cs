@@ -1,20 +1,14 @@
-﻿using System;
-using GestureSign.Common.Gestures;
+﻿using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
-using GestureSign.ControlPanel.ViewModel;
-using ManagedWinapi;
-using ManagedWinapi.Hooks;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -68,10 +62,6 @@ namespace GestureSign.ControlPanel.Dialogs
                         ExistingTextBlock.Visibility = Visibility.Visible;
                         imgGestureThumbnail.Source = GestureImage.CreateImage(value.PointPatterns, new Size(65, 65), _color);
                     }
-                    var hotkey = value.Hotkey;
-                    if (hotkey != null)
-                        HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
-                    MouseActionComboBox.SelectedValue = value.MouseAction;
 
                 }
             }
@@ -79,10 +69,6 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (MouseActionDescription.DescriptionDict.ContainsKey(AppConfig.DrawingButton))
-                DrawingButtonTextBlock.Text = MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + "  +  ";
-            MouseNotEnabledTextBlock.Visibility = AppConfig.DrawingButton == MouseActions.None ? Visibility.Visible : Visibility.Collapsed;
-
             _color = (Color)Application.Current.Resources["HighlightColor"];
 
             if (_currentPointPatterns != null)
@@ -95,11 +81,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                MouseActionComboBox.SelectedValue = _oldGesture.MouseAction;
                 Title = LocalizationProvider.Instance.GetTextValue("GestureDefinition.Edit");
-                var hotkey = ((Gesture)_oldGesture).Hotkey;
-                if (hotkey != null)
-                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
             }
         }
 
@@ -151,7 +133,6 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (newPatterns == null || newPatterns.Length == 0)
             {
-                GestureTabControl.SelectedIndex = 0;
                 return;
             }
 
@@ -193,8 +174,6 @@ namespace GestureSign.ControlPanel.Dialogs
                 SimilarGesture = null;
                 _currentPointPatterns = null;
                 imgGestureThumbnail.Source = null;
-                MouseActionComboBox.SelectedItem = null;
-                HotKeyTextBox.HotKey = null;
 
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
                 RedrawButton.Visibility = Visibility.Collapsed;
@@ -219,13 +198,6 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 Name = newName,
                 PointPatterns = newPointPatterns,
-                MouseAction = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None,
-                Hotkey = HotKeyTextBox.HotKey != null ?
-                  new Hotkey()
-                  {
-                      KeyCode = KeyInterop.VirtualKeyFromKey(HotKeyTextBox.HotKey.Key),
-                      ModifierKeys = (int)HotKeyTextBox.HotKey.ModifierKeys
-                  } : null
             };
 
             if (GestureManager.Instance.GestureExists(newName))

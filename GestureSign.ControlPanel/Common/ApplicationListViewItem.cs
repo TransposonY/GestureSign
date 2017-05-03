@@ -4,7 +4,7 @@ using GestureSign.Common.Applications;
 namespace GestureSign.ControlPanel.Common
 {
 
-    public class ApplicationListViewItem 
+    public class ApplicationListViewItem
     {
         #region Public Properties
 
@@ -21,7 +21,7 @@ namespace GestureSign.ControlPanel.Common
 
         public IApplication ToUserApplication(MatchUsing MatchUsing)
         {
-            UserApplication userApplication = new UserApplication();
+            var userApplication = new UserApp();
 
             userApplication.Name = ApplicationName;
             userApplication.MatchUsing = MatchUsing;

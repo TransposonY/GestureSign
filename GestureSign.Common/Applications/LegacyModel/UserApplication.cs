@@ -6,7 +6,8 @@ using System.Runtime.Serialization;
 
 namespace GestureSign.Common.Applications
 {
-    public class UserApplication : ApplicationBase
+    [Obsolete("Please use GestureSign.Common.Applications.UserApp instead.")]
+    public class UserApplication : LegacyApplicationBase
     {
         private int _limitNumberOfFingers;
 

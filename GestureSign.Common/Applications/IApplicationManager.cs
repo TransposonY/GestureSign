@@ -16,7 +16,7 @@ namespace GestureSign.Common.Applications
         IEnumerable<IApplication> GetApplicationFromPoint(Point testPoint);
         IApplication[] GetApplicationFromWindow(SystemWindow Window, bool userApplicationOnly);
         IApplication[] GetAvailableUserApplications();
-        IEnumerable<IAction> GetEnabledDefinedAction(string GestureName, IEnumerable<IApplication> Application, bool UseGlobal);
+        IEnumerable<IAction> GetDefinedAction(string GestureName, IEnumerable<IApplication> Application, bool UseGlobal);
         IApplication GetExistingUserApplication(string ApplicationName);
         IApplication GetGlobalApplication();
         SystemWindow GetWindowFromPoint(Point Point);

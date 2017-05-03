@@ -138,6 +138,9 @@
     <Compile Include="Converters\GroupHeaderConverter.cs" />
     <Compile Include="Converters\GestureGroupConverter.cs" />
     <Compile Include="Converters\GestureImageConverter.cs" />
+    <Compile Include="Dialogs\ActionDialog.xaml.cs">
+      <DependentUpon>ActionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
@@ -148,7 +151,7 @@
     <Compile Include="Converters\MatchStringConverter.cs" />
     <Compile Include="Converters\ApplicationListHeaderConverter.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
-    <Compile Include="Common\ActionInfo.cs" />
+    <Compile Include="ViewModel\CommandInfo.cs" />
     <Compile Include="Dialogs\ApplicationDialog.xaml.cs">
       <DependentUpon>ApplicationDialog.xaml</DependentUpon>
     </Compile>
@@ -162,8 +165,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ActionDialog.cs">
-      <DependentUpon>ActionDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\CommandDialog.xaml.cs">
+      <DependentUpon>CommandDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\ApplicationListViewItem.cs" />
     <Compile Include="MainWindowControls\AvailableActions.cs">
@@ -184,7 +187,7 @@
     <Compile Include="Common\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\GestureDefinition.cs">
+    <Compile Include="Dialogs\GestureDefinition.xaml.cs">
       <DependentUpon>GestureDefinition.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindowControls\Options.cs">
@@ -196,6 +199,10 @@
     <Compile Include="Common\SliderTools.cs" />
     <Compile Include="ViewModel\ApplicationItemProvider.cs" />
     <Compile Include="ViewModel\GestureItemProvider.cs" />
+    <Page Include="Dialogs\ActionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\ApplicationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -220,7 +227,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Dialogs\ActionDialog.xaml">
+    <Page Include="Dialogs\CommandDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

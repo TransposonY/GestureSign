@@ -66,8 +66,9 @@ namespace GestureSign.Common.Applications
                 {
                     if (!result)
                         if (!LoadBackup())
-                            if (!LoadDefaults())
-                                _Applications = new List<IApplication>();
+                            if (!LoadLegacy())
+                                if (!LoadDefaults())
+                                    _Applications = new List<IApplication>();
                     if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
                     FinishedLoading = true;
                 };
@@ -107,7 +108,7 @@ namespace GestureSign.Common.Applications
 
             foreach (IApplication app in RecognizedApplication)
             {
-                UserApplication userApplication = app as UserApplication;
+                var userApplication = app as UserApp;
                 if (userApplication != null)
                 {
                     maxThreshold = userApplication.BlockTouchInputThreshold > maxThreshold ? userApplication.BlockTouchInputThreshold : maxThreshold;
@@ -120,7 +121,7 @@ namespace GestureSign.Common.Applications
                 }
                 else
                 {
-                    IgnoredApplication ignoredApplication = app as IgnoredApplication;
+                    var ignoredApplication = app as IgnoredApp;
                     if (ignoredApplication != null && ignoredApplication.IsEnabled)
                     {
                         e.Cancel = true;
@@ -187,7 +188,7 @@ namespace GestureSign.Common.Applications
 
         public void RemoveIgnoredApplications(string applicationName)
         {
-            _Applications.RemoveAll(app => app is IgnoredApplication && app.Name == applicationName);
+            _Applications.RemoveAll(app => app is IgnoredApp && app.Name == applicationName);
         }
 
         public void RenameGesture(string newName, string oldName)
@@ -226,7 +227,7 @@ namespace GestureSign.Common.Applications
             bool notice = (bool)state;
             // Save application list
             bool flag = FileManager.SaveObject(
-                 _Applications, Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true);
+                 _Applications, Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true);
             if (flag && notice) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
 
         }
@@ -238,14 +239,14 @@ namespace GestureSign.Common.Applications
                 // Load application list from file
                 _Applications =
                     FileManager.LoadObject<List<IApplication>>(
-                        Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true, true);
+                        Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true, true);
                 return _Applications != null;
             });
         }
 
         private bool LoadDefaults()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Actions.act");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Actions.gsa");
 
             _Applications = FileManager.LoadObject<List<IApplication>>(path, true, true);
             // Ensure we got an object back
@@ -257,7 +258,7 @@ namespace GestureSign.Common.Applications
 
         private bool LoadBackup()
         {
-            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*.act");
+            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*.gsa");
             foreach (var file in actionfiles)
             {
                 _Applications = FileManager.LoadObject<List<IApplication>>(file, true, true);
@@ -278,8 +279,8 @@ namespace GestureSign.Common.Applications
                 return new[] { GetGlobalApplication() };
             }
             IApplication[] definedApplications = userApplicationOnly
-                ? FindMatchApplications(Applications.Where(a => a is UserApplication), Window)
-                : FindMatchApplications(Applications.Where(a => !(a is GlobalApplication)), Window);
+                ? FindMatchApplications(Applications.Where(a => a is UserApp), Window)
+                : FindMatchApplications(Applications.Where(a => !(a is GlobalApp)), Window);
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
@@ -295,7 +296,7 @@ namespace GestureSign.Common.Applications
 
         public IEnumerable<IAction> GetRecognizedDefinedAction(string GestureName)
         {
-            return GetEnabledDefinedAction(GestureName, RecognizedApplication, true);
+            return GetDefinedAction(GestureName, RecognizedApplication, true);
         }
 
         public IAction GetAnyDefinedAction(string actionName, string applicationName)
@@ -307,7 +308,7 @@ namespace GestureSign.Common.Applications
             return null;
         }
 
-        public IEnumerable<IAction> GetEnabledDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
+        public IEnumerable<IAction> GetDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
         {
             if (application == null)
             {
@@ -315,7 +316,7 @@ namespace GestureSign.Common.Applications
             }
             // Attempt to retrieve an action on the application passed in
             IEnumerable<IAction> finalAction =
-                application.Where(app => !(app is IgnoredApplication)).SelectMany(app => app.Actions.Where(a => a.IsEnabled && a.GestureName.Equals(gestureName, StringComparison.Ordinal)));
+                application.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName));
             // If there is was no action found on given application, try to get an action for global application
             if (!finalAction.Any() && useGlobal)
                 finalAction = GetGlobalApplication().Actions.Where(a => a.GestureName == gestureName);
@@ -326,12 +327,12 @@ namespace GestureSign.Common.Applications
 
         public IApplication GetExistingUserApplication(string ApplicationName)
         {
-            return Applications.FirstOrDefault(a => a is UserApplication && a.Name == ApplicationName.Trim());
+            return Applications.FirstOrDefault(a => a is UserApp && a.Name == ApplicationName.Trim());
         }
 
         public bool IsGlobalAction(string ActionName)
         {
-            return _Applications.Exists(a => a is GlobalApplication && a.Actions.Any(ac => ac.Name == ActionName.Trim()));
+            return _Applications.Exists(a => a is GlobalApp && a.Actions.Any(ac => ac.Name == ActionName.Trim()));
         }
 
         public bool ApplicationExists(string ApplicationName)
@@ -341,31 +342,31 @@ namespace GestureSign.Common.Applications
 
         public IApplication[] GetAvailableUserApplications()
         {
-            return Applications.Where(a => a is UserApplication).OrderBy(a => a.Name).Cast<UserApplication>().ToArray();
+            return Applications.Where(a => a is UserApp).OrderBy(a => a.Name).ToArray();
         }
 
-        public IEnumerable<IgnoredApplication> GetIgnoredApplications()
+        public IEnumerable<IgnoredApp> GetIgnoredApplications()
         {
-            return Applications.Where(a => a is IgnoredApplication).OrderBy(a => a.Name).Cast<IgnoredApplication>();
+            return Applications.Where(a => a is IgnoredApp).OrderBy(a => a.Name).Cast<IgnoredApp>();
         }
 
         public IApplication GetGlobalApplication()
         {
             if (_Applications == null)
             {
-                _Applications = new List<IApplication> { new GlobalApplication { Group = String.Empty } };
+                _Applications = new List<IApplication> { new GlobalApp { Group = String.Empty } };
             }
-            else if (!_Applications.Exists(a => a is GlobalApplication))
-                _Applications.Add(new GlobalApplication() { Group = String.Empty });
+            else if (!_Applications.Exists(a => a is GlobalApp))
+                _Applications.Add(new GlobalApp() { Group = String.Empty });
 
-            return _Applications.FirstOrDefault(a => a is GlobalApplication);
+            return _Applications.FirstOrDefault(a => a is GlobalApp);
         }
 
         public IEnumerable<IApplication> GetAllGlobalApplication()
         {
-            if (!_Applications.Exists(a => a is GlobalApplication))
-                _Applications.Add(new GlobalApplication() { Group = String.Empty });
-            return _Applications.Where(a => a is GlobalApplication);
+            if (!_Applications.Exists(a => a is GlobalApp))
+                _Applications.Add(new GlobalApp() { Group = String.Empty });
+            return _Applications.Where(a => a is GlobalApp);
         }
         public void RemoveGlobalAction(string ActionName)
         {
@@ -393,14 +394,14 @@ namespace GestureSign.Common.Applications
             return CaptureWindow;
         }
 
-        public static string GetNextActionName(string name, IApplication application, int number = 1)
+        public static string GetNextCommandName(string name, IAction action, int number = 1)
         {
-            if (application == null) throw new ArgumentNullException(nameof(application));
+            if (action == null) throw new ArgumentNullException(nameof(action));
 
-            var actionName = number == 1 ? name : $"{name}({number})";
-            if (application.Actions.Exists(a => a.Name == actionName))
-                return GetNextActionName(name, application, ++number);
-            return actionName;
+            var newName = number == 1 ? name : $"{name}({number})";
+            if (action.Commands.Exists(a => a.Name == newName))
+                return GetNextCommandName(name, action, ++number);
+            return newName;
         }
 
         #endregion
@@ -499,6 +500,84 @@ namespace GestureSign.Common.Applications
             return useRegEx
                 ? Regex.IsMatch(windowMatchString, compareMatchString, RegexOptions.Singleline | RegexOptions.IgnoreCase)
                 : string.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private bool LoadLegacy()
+        {
+            var legacyApps = FileManager.LoadObject<List<LegacyApplicationBase>>(Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true, true);
+            if (legacyApps == null) return false;
+            _Applications = new List<IApplication>();
+            foreach (var app in legacyApps)
+            {
+                var legacyUserApp = app as UserApplication;
+                if (legacyUserApp != null)
+                {
+                    var newApp = new UserApp()
+                    {
+                        Actions = ConvertLegacyActions(legacyUserApp.Actions),
+                        BlockTouchInputThreshold = legacyUserApp.BlockTouchInputThreshold,
+                        LimitNumberOfFingers = legacyUserApp.LimitNumberOfFingers,
+                        Group = legacyUserApp.Group,
+                        IsRegEx = legacyUserApp.IsRegEx,
+                        MatchString = legacyUserApp.MatchString,
+                        MatchUsing = legacyUserApp.MatchUsing,
+                        Name = legacyUserApp.Name
+                    };
+                    _Applications.Add(newApp);
+                    continue;
+                }
+
+                var legacyIgnoredApp = app as IgnoredApplication;
+                if (legacyIgnoredApp != null)
+                {
+                    var newApp = new IgnoredApp(legacyIgnoredApp.Name, legacyIgnoredApp.MatchUsing, legacyIgnoredApp.MatchString, legacyIgnoredApp.IsRegEx, legacyIgnoredApp.IsEnabled);
+                    _Applications.Add(newApp);
+                    continue;
+                }
+
+                var legacyGlobalApp = app as GlobalApplication;
+                if (legacyGlobalApp != null)
+                {
+                    IApplication newApp = new GlobalApp()
+                    {
+                        Actions = ConvertLegacyActions(legacyGlobalApp.Actions)
+                    };
+                    _Applications.Add(newApp);
+                    continue;
+                }
+            }
+
+            return true;
+        }
+
+        private List<IAction> ConvertLegacyActions(List<GestureSign.Applications.Action> legacyActions)
+        {
+            if (legacyActions == null) return null;
+            List<IAction> newActions = new List<IAction>();
+            foreach (var grouping in legacyActions.GroupBy(a => a.GestureName))
+            {
+                IAction newAction = new Action()
+                {
+                    ActivateWindow = grouping.First().ActivateWindow,
+                    Condition = grouping.First().Condition,
+                    GestureName = grouping.Key,
+                    Name = grouping.First().Name,
+                    Commands = new List<ICommand>()
+                };
+                foreach (var legacyAction in grouping)
+                {
+                    newAction.Commands.Add(new Command
+                    {
+                        CommandSettings = legacyAction.ActionSettings,
+                        IsEnabled = legacyAction.IsEnabled,
+                        Name = legacyAction.Name,
+                        PluginClass = legacyAction.PluginClass,
+                        PluginFilename = legacyAction.PluginFilename
+                    });
+                }
+                newActions.Add(newAction);
+            }
+            return newActions;
         }
 
         #endregion

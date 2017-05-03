@@ -51,7 +51,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
             Title = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.EditApplication");
 
-            _isUserApp = _currentApplication is UserApplication;
+            _isUserApp = _currentApplication is UserApp;
         }
 
         public ApplicationDialog(bool addUserApp) : this()
@@ -69,7 +69,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (_currentApplication != null)
             {
-                var currentApplication = _currentApplication as UserApplication;
+                var currentApplication = _currentApplication as UserApp;
                 if (currentApplication != null)
                 {
                     GroupComboBox.Text = _currentApplication.Group;
@@ -280,7 +280,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationName"));
                 }
 
-                var newApplication = new UserApplication
+                var newApplication = new UserApp
                 {
                     BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
                     LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
@@ -294,7 +294,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 if (_currentApplication == null)
                 {
                     //Add new UserApplication
-                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApplication>(matchUsingRadio.MatchUsing, matchString);
+                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString);
                     if (sameMatchApplications.Length != 0)
                     {
                         string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
@@ -311,7 +311,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 }
                 else
                 {
-                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApplication>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
+                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
                     if (sameMatchApplications.Length != 0)
                     {
                         string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
@@ -352,7 +352,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExists"));
                 }
 
-                ApplicationManager.Instance.AddApplication(new IgnoredApplication(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
+                ApplicationManager.Instance.AddApplication(new IgnoredApp(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
             }
             ApplicationManager.Instance.SaveApplications();
             return true;

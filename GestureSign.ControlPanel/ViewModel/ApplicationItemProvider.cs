@@ -10,11 +10,11 @@ namespace GestureSign.ControlPanel.ViewModel
         static ApplicationItemProvider()
         {
             ApplicationItems = new ObservableCollection<IApplication>();
-            IgnoredApplicationItems = new ObservableCollection<IgnoredApplication>();
+            IgnoredApplicationItems = new ObservableCollection<IgnoredApp>();
 
             ApplicationManager.ApplicationChanged += (o, e) =>
             {
-                if (e.Application is IgnoredApplication)
+                if (e.Application is IgnoredApp)
                     UpdateIgnoredApplicationItems();
                 else
                     UpdateApplicationItems();
@@ -35,7 +35,7 @@ namespace GestureSign.ControlPanel.ViewModel
 
         public static ObservableCollection<IApplication> ApplicationItems { get; set; }
 
-        public static ObservableCollection<IgnoredApplication> IgnoredApplicationItems { get; set; }
+        public static ObservableCollection<IgnoredApp> IgnoredApplicationItems { get; set; }
 
         private static void UpdateApplicationItems()
         {
@@ -44,7 +44,7 @@ namespace GestureSign.ControlPanel.ViewModel
             else
                 ApplicationItems.Clear();
 
-            var userApplications = ApplicationManager.Instance.Applications.Where(app => (app is UserApplication)).OrderBy(app => app.Name);
+            var userApplications = ApplicationManager.Instance.Applications.Where(app => (app is UserApp)).OrderBy(app => app.Name);
             var globalApplication = ApplicationManager.Instance.GetAllGlobalApplication();
 
             foreach (var app in globalApplication.Union(userApplications))
@@ -56,7 +56,7 @@ namespace GestureSign.ControlPanel.ViewModel
         private static void UpdateIgnoredApplicationItems()
         {
             if (IgnoredApplicationItems == null)
-                IgnoredApplicationItems = new ObservableCollection<IgnoredApplication>();
+                IgnoredApplicationItems = new ObservableCollection<IgnoredApp>();
             else
                 IgnoredApplicationItems.Clear();
 

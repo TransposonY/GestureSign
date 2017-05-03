@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
-
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace GestureSign.Common.Applications
 {
-	public class IgnoredApplication : ApplicationBase, INotifyPropertyChanged
+	public class IgnoredApp : ApplicationBase, INotifyPropertyChanged
 	{
 		#region Contructors
 
-		protected IgnoredApplication()
+		protected IgnoredApp()
 		{
 
 		}
 
-		public IgnoredApplication(string Name, MatchUsing MatchUsing, string MatchString, bool IsRegEx,bool isEnabled)
+		public IgnoredApp(string Name, MatchUsing MatchUsing, string MatchString, bool IsRegEx,bool isEnabled)
 		{
 			this.Name = Name;
 			this.MatchUsing = MatchUsing;

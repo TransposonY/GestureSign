@@ -10,7 +10,7 @@ namespace GestureSign.ControlPanel.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            UserApplication userApplication = values[0] as UserApplication;
+            var userApplication = values[0] as UserApp;
             bool selected = (bool)values[1];
             return userApplication != null && selected ? Visibility.Visible : Visibility.Hidden;
         }

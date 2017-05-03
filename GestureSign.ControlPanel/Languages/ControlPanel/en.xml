@@ -26,7 +26,6 @@ Continue to run?
     <WindowClass>Class</WindowClass>
     <WindowTitle>Title</WindowTitle>
     <Yes>Yes</Yes>
-    <Overwrite>Overwrite</Overwrite>
   </Common>
   <About>
     <Header>About</Header>
@@ -83,27 +82,33 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ActionName>Action Name</ActionName>
     <ActionNameWatermark>Please enter action name</ActionNameWatermark>
     <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
-    <ApplicationTools>Drag and drop the crosshair on the window.Or click the right button to select the running applications.</ApplicationTools>
-    <AppName>Application Name</AppName>
     <Icon>Icon</Icon>
-    <Command>Command</Command>
-    <SelectCommand>Select Command</SelectCommand>
     <SelectGesture>Click to select a gesture</SelectGesture>
     <ActivateWindow>Activate Target Window</ActivateWindow>
     <Advanced>Advanced</Advanced>
     <TriggerCondition>Trigger Condition</TriggerCondition>
+    <KeyboardHotKey>Keyboard HotKey</KeyboardHotKey>
+    <HotKeyWatermark>Enter hot key</HotKeyWatermark>
+    <HotKey>HotKey</HotKey>
+    <MouseHotKey>Mouse HotKey</MouseHotKey>
+    <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
     <Default>Default</Default>
     <Messages>
-      <ActionExistsTitle>Action Conflict</ActionExistsTitle>
-      <ActionExists>Action "{0}" is already defined for {1}</ActionExists>
-      <ActionExistsInGlobal>Action "{0}" is already defined as a global action</ActionExistsInGlobal>
-      <NoSelectedGestureTitle>No Gesture Specified</NoSelectedGestureTitle>
-      <NoSelectedGesture>Please select a gesture</NoSelectedGesture>
       <NoActionNameTitle>No Action Name</NoActionNameTitle>
       <NoActionName>Please provide a name for this action</NoActionName>
       <ConditionError>Condition Error</ConditionError>
     </Messages>
   </ActionDialog>
+  <CommandDialog>
+    <EditCommandTitle>Edit Command</EditCommandTitle>
+    <SelectCommand>Select Command</SelectCommand>
+    <CommandName>Command Name</CommandName>
+    <CommandNameWatermark>Please enter Command name</CommandNameWatermark>
+    <Messages>
+      <NoCommandNameTitle>No Command Name</NoCommandNameTitle>
+      <NoCommandName>Please provide a name for this Command</NoCommandName>
+    </Messages>
+  </CommandDialog>
   <EditConditionDialog>
     <Title>Edit Condition</Title>
     <Variables>Variables</Variables>
@@ -112,7 +117,8 @@ Or click the button below to select the running applications.</GetMatchStringTip
   </EditConditionDialog>
   <Action>
     <Header>Action</Header>
-    <NewAction>NewAction</NewAction>
+    <NewAction>New Action</NewAction>
+    <NewCommand>New Command</NewCommand>
     <ActionFile>Action File</ActionFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
@@ -129,10 +135,10 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <SelectGesture>(Click to select a gesture)</SelectGesture>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
-      <DeleteActionConfirm>Are you sure you want to delete these {0} actions?</DeleteActionConfirm>
+      <DeleteCommandConfirm>Are you sure you want to delete these {0} Commands?</DeleteCommandConfirm>
       <DeleteAppConfirm>Are you sure to delete "{0}"? All actions in this application will be deleted</DeleteAppConfirm>
       <NoAssociationAction>( Can not find {0} in {1} )</NoAssociationAction>
-      <DoubleClickToEditAction>( Double Click to edit this action )</DoubleClickToEditAction>
+      <DoubleClickToEditCommand>( Double Click to edit this Command )</DoubleClickToEditCommand>
       <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
       <ReplaceConfirm>There is already a {0} action in {0}.Replace it?</ReplaceConfirm>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
@@ -142,7 +148,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
   <Gesture>
     <Header>Gesture</Header>
     <GestureFile>Gesture File</GestureFile>
-    <Name>Name</Name>
     <View>View</View>
     <LargeIcons>Large icons</LargeIcons>
     <Details>Details</Details>
@@ -176,10 +181,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ExistingGesture>Exist similar gesture.Use it?</ExistingGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
     <Redraw>Redraw</Redraw>
-    <HotKey>HotKey</HotKey>
-    <HotKeyWatermark>Enter hot key</HotKeyWatermark>
-    <Mouse>Mouse</Mouse>
-    <MouseGestureNotEnabled>Please enable mouse gestures in Options</MouseGestureNotEnabled>
   </GestureDefinition>
   <Ignored>
     <Header>Ignored</Header>
