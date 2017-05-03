@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Log;
 using Newtonsoft.Json;
 
@@ -32,7 +34,11 @@ namespace GestureSign.Common.Configuration
                 // Open json file
                 using (StreamWriter sWrite = new StreamWriter(filePath))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
+                    JsonSerializer serializer = new JsonSerializer
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DefaultValueHandling = DefaultValueHandling.Ignore
+                    };
                     if (typeName)
                     {
                         serializer.TypeNameHandling = TypeNameHandling.Objects;
@@ -63,8 +69,12 @@ namespace GestureSign.Common.Configuration
 
                 string json = File.ReadAllText(filePath);
                 return JsonConvert.DeserializeObject<T>(json, typeName
-                        ? new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects }
-                        : new JsonSerializerSettings());
+                    ? new JsonSerializerSettings()
+                    {
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        Converters = new List<JsonConverter>() { new ActionConverter(), new CommandConverter() }
+                    }
+                    : new JsonSerializerSettings());
             }
             catch (Exception e)
             {

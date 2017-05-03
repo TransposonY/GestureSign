@@ -15,4 +15,12 @@ namespace GestureSign.Common.Applications
 
         #endregion
     }
+
+    public class CommandConverter : CustomCreationConverter<ICommand>
+    {
+        public override ICommand Create(Type objectType)
+        {
+            return new Command();
+        }
+    }
 }

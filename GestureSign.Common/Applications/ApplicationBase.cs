@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using ManagedWinapi.Windows;
+using Newtonsoft.Json;
 
 namespace GestureSign.Common.Applications
 {
@@ -18,7 +20,10 @@ namespace GestureSign.Common.Applications
         public virtual MatchUsing MatchUsing { get; set; }
         public virtual string MatchString { get; set; }
         public virtual bool IsRegEx { get; set; }
+        [DefaultValue("")]
         public virtual string Group { get; set; }
+
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.None)]
         public virtual List<IAction> Actions
         {
             get { return _Actions; }
