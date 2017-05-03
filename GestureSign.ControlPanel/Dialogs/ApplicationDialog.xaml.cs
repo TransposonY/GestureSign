@@ -269,8 +269,7 @@ namespace GestureSign.ControlPanel.Dialogs
             string name;
             if (_isUserApp)
             {
-                string groupName = GroupComboBox.Text ?? String.Empty;
-                groupName = groupName.Trim();
+                string groupName = string.IsNullOrWhiteSpace(GroupComboBox.Text) ? null : GroupComboBox.Text.Trim();
 
                 name = ApplicationNameTextBox.Text.Trim();
                 if (string.IsNullOrWhiteSpace(name))
