@@ -4,12 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.ControlPanel.Common;
-using MahApps.Metro.Controls;
-using ManagedWinapi.Hooks;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
@@ -80,10 +77,8 @@ namespace GestureSign.ControlPanel.ViewModel
                 GestureItem newItem = new GestureItem()
                 {
                     Applications = result,
-                    MouseAction = gesture.MouseAction == MouseActions.None ? string.Empty : MouseActionDescription.DescriptionDict[gesture.MouseAction],
                     PointPattern = gesture.PointPatterns,
                     Name = gesture.Name,
-                    HotKey = gesture.Hotkey != null ? new HotKey(KeyInterop.KeyFromVirtualKey(gesture.Hotkey.KeyCode), (ModifierKeys)gesture.Hotkey.ModifierKeys).ToString() : string.Empty
                 };
                 GestureItems.Add(newItem);
             }
