@@ -265,16 +265,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             cmdDelete.IsEnabled = cmdEdit.IsEnabled = lstAvailableActions.SelectedItems.Count != 0;
 
-            var selectedActionInfo = (lstAvailableActions.SelectedItem as CommandInfo);
-            if (selectedActionInfo == null)
+            var selectedInfo = (lstAvailableActions.SelectedItem as CommandInfo);
+            if (selectedInfo == null)
                 MoveUpButton.IsEnabled = MoveDownButton.IsEnabled = false;
             else
             {
-                var actionInfoGroup = CommandInfos.Where(ai => string.Equals(ai.Action.GestureName, selectedActionInfo.Action.GestureName, StringComparison.Ordinal)).ToList();
-                int index = actionInfoGroup.IndexOf(selectedActionInfo);
+                int index = CommandInfos.Where(ci => ci.Action == selectedInfo.Action).ToList().IndexOf(selectedInfo);
 
-                MoveUpButton.IsEnabled = index != 0;
-                MoveDownButton.IsEnabled = index != actionInfoGroup.Count - 1;
+                MoveUpButton.IsEnabled = index > 0;
+                MoveDownButton.IsEnabled = index < selectedInfo.Action.Commands.Count - 1;
             }
         }
 
@@ -612,54 +611,46 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void MoveUpButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            var actionInfoGroup =
-                  CommandInfos.Where(ai => string.Equals(ai.Action.GestureName, selected.Action.GestureName, StringComparison.Ordinal)).ToList();
-            int index = actionInfoGroup.IndexOf(selected);
-            if (index > 0)
+            var infoGroup = CommandInfos.Where(ci => ci.Action == selected.Action).ToList();
+            int selectedInfoIndex = infoGroup.IndexOf(selected);
+            if (selectedInfoIndex > 0)
             {
-                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-                if (selectedApplication == null) return;
-
-                var previousActionInfo = actionInfoGroup[index - 1];
-                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(previousActionInfo));
+                var previousInfo = infoGroup[selectedInfoIndex - 1];
+                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(previousInfo));
                 RefreshGroup(selected.Action.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
-                int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.CommandName, StringComparison.Ordinal));
-                int previousActionIndex = selectedApplication.Actions.FindIndex(a => string.Equals(a.Name, previousActionInfo.CommandName, StringComparison.Ordinal));
-
-                var temp = selectedApplication.Actions[previousActionIndex];
-                selectedApplication.Actions[previousActionIndex] = selectedApplication.Actions[selectedIndex];
-                selectedApplication.Actions[selectedIndex] = temp;
-
-                ApplicationManager.Instance.SaveApplications();
+                int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
+                if (commandIndex > 0)
+                {
+                    var temp = selected.Action.Commands[commandIndex - 1];
+                    selected.Action.Commands[commandIndex - 1] = selected.Action.Commands[commandIndex];
+                    selected.Action.Commands[commandIndex] = temp;
+                    ApplicationManager.Instance.SaveApplications();
+                }
             }
         }
 
         private void MoveDownButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            var actionInfoGroup =
-                  CommandInfos.Where(ai => string.Equals(ai.Action.GestureName, selected.Action.GestureName, StringComparison.Ordinal)).ToList();
-            int index = actionInfoGroup.IndexOf(selected);
-            if (index + 1 < actionInfoGroup.Count)
+            var infoGroup = CommandInfos.Where(ci => ci.Action == selected.Action).ToList();
+            int selectedInfoIndex = infoGroup.IndexOf(selected);
+            if (selectedInfoIndex + 1 < infoGroup.Count)
             {
-                IApplication selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-                if (selectedApplication == null) return;
-
-                var nextActionInfo = actionInfoGroup[index + 1];
-                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(nextActionInfo));
+                var nextInfo = infoGroup[selectedInfoIndex + 1];
+                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(nextInfo));
                 RefreshGroup(selected.Action.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
-                int selectedIndex = selectedApplication.Actions.FindIndex(a => a.Name.Equals(selected.CommandName, StringComparison.Ordinal));
-                int nextIndex = selectedApplication.Actions.FindIndex(a => string.Equals(a.Name, nextActionInfo.CommandName, StringComparison.Ordinal));
-
-                var temp = selectedApplication.Actions[nextIndex];
-                selectedApplication.Actions[nextIndex] = selectedApplication.Actions[selectedIndex];
-                selectedApplication.Actions[selectedIndex] = temp;
-
-                ApplicationManager.Instance.SaveApplications();
+                int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
+                if (commandIndex + 1 < selected.Action.Commands.Count)
+                {
+                    var temp = selected.Action.Commands[commandIndex + 1];
+                    selected.Action.Commands[commandIndex + 1] = selected.Action.Commands[commandIndex];
+                    selected.Action.Commands[commandIndex] = temp;
+                    ApplicationManager.Instance.SaveApplications();
+                }
             }
         }
 
