@@ -121,8 +121,10 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 if (_similarGesture != null)
                 {
-                    gestureName = _similarGesture.Name;
-                    newPatterns = _similarGesture.PointPatterns;
+                    GestureManager.Instance.GestureName = _similarGesture.Name;
+                    DialogResult = true;
+                    Close();
+                    return;
                 }
                 else
                 {
