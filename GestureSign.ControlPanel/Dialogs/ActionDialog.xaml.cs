@@ -151,9 +151,10 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ConditionError"), exception.Message);
             }
-
-            if (CurrentGesture?.Name == _sourceAction.GestureName)
-                NewAction = _sourceAction;
+            // Move command to existing action
+            var sameAction = _sourceApplication.Actions.Find(a => a.GestureName == CurrentGesture?.Name);
+            if (sameAction != null)
+                NewAction = sameAction;
             else
                 _sourceApplication.AddAction(NewAction);
 
