@@ -13,6 +13,6 @@ namespace GestureSign.Common.Applications
         bool? ActivateWindow { get; set; }
         List<ICommand> Commands { get; set; }
         Hotkey Hotkey { get; set; }
-        MouseActions MouseAction { get; set; }
+        MouseActions MouseHotkey { get; set; }
     }
 }

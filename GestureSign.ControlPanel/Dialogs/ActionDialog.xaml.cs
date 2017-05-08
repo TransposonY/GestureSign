@@ -74,7 +74,7 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 ActionNameTextBox.Text = _sourceAction.Name;
                 ConditionTextBox.Text = _sourceAction.Condition;
-                MouseActionComboBox.SelectedValue = _sourceAction.MouseAction;
+                MouseActionComboBox.SelectedValue = _sourceAction.MouseHotkey;
                 ActivateWindowCheckBox.IsChecked = _sourceAction.ActivateWindow;
 
                 var gesture = GestureManager.Instance.GetNewestGestureSample(_sourceAction.GestureName);
@@ -163,7 +163,7 @@ namespace GestureSign.ControlPanel.Dialogs
             NewAction.ActivateWindow = ActivateWindowCheckBox.IsChecked;
             NewAction.GestureName = CurrentGesture?.Name ?? string.Empty;
             NewAction.Name = newActionName;
-            NewAction.MouseAction = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None;
+            NewAction.MouseHotkey = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None;
             NewAction.Hotkey = HotKeyTextBox.HotKey != null
                 ? new Hotkey()
                 {

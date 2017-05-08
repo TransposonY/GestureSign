@@ -122,7 +122,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (element != null)
             {
                 Rect bounds = element.TransformToAncestor(lstAvailableActions).TransformBounds(new Rect(0.0, 0.0, element.RenderSize.Width, element.RenderSize.Height));
-                var gestureImageContainer = UIHelper.FindVisualChild<Grid>(element);
+                var gestureImageContainer = element.FindChild<Grid>("GestureImageGrid");
                 if (gestureImageContainer == null) return;
                 if (bounds.Top < 0)
                 {
@@ -288,17 +288,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
             return _commandClipboard.Count != 0;
         }
 
-        private void GestureButton_Click(object sender, RoutedEventArgs e)
+        private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
 
             List<CommandInfo> infoList = new List<CommandInfo>();
             var groupItem = UIHelper.GetParentDependencyObject<GroupItem>((Button)sender);
-            foreach (CommandInfo actionInfo in lstAvailableActions.SelectedItems)
+            foreach (CommandInfo info in lstAvailableActions.SelectedItems)
             {
-                var listItem = lstAvailableActions.ItemContainerGenerator.ContainerFromItem(actionInfo);
+                var listItem = lstAvailableActions.ItemContainerGenerator.ContainerFromItem(info);
                 if (ReferenceEquals(UIHelper.GetParentDependencyObject<GroupItem>(listItem), groupItem))
-                    infoList.Add(actionInfo);
+                    infoList.Add(info);
             }
 
             if (infoList.Count == 0)
@@ -390,7 +390,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-                End:
+            End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.AddApplicationRange(newApplications);

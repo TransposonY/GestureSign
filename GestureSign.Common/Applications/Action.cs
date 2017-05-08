@@ -26,7 +26,7 @@ namespace GestureSign.Common.Applications
 
         public Hotkey Hotkey { get; set; }
 
-        public MouseActions MouseAction { get; set; }
+        public MouseActions MouseHotkey { get; set; }
 
         #endregion
     }
