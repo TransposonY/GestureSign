@@ -68,7 +68,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 int index = CommandInfos.IndexOf(selectedItem);
                 var newActionInfo = CommandInfo.FromCommand(selectedCommand, selectedItem.Action);
                 CommandInfos[index] = newActionInfo;
-                RefreshGroup(newActionInfo.Action.GestureName);
                 SelectCommand(newActionInfo);
             }
         }
@@ -231,18 +230,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             _addCommandTask = _addCommandTask?.ContinueWith(refreshAction) ?? Task.Factory.StartNew(refreshAction, null);
         }
 
-        void RefreshGroup(string gestureName)
-        {
-            lstAvailableActions.SelectedItem = null;
-            var temp = CommandInfos.Where(ci => string.Equals(ci.Action.GestureName, gestureName, StringComparison.Ordinal)).ToList();
-            foreach (CommandInfo ai in temp)
-            {
-                int i = CommandInfos.IndexOf(ai);
-                CommandInfos.Remove(ai);
-                CommandInfos.Insert(i, ai);
-            }
-        }
-
         void SelectCommand(CommandInfo info)
         {
             lstAvailableActions.SelectedItem = info;
@@ -321,16 +308,22 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var newAction = actionDialog.NewAction;
 
-                foreach (CommandInfo info in infoList)
-                {
-                    newAction.Commands.Add(info.Command);
-                    sourceAction.Commands.Remove(info.Command);
+                if (newAction != sourceAction)
+                    foreach (CommandInfo info in infoList)
+                    {
+                        sourceAction.Commands.Remove(info.Command);
+                        newAction.Commands.Add(info.Command);
 
-                    info.Action = newAction;
-                }
+                        info.Action = newAction;
+                    }
+
+                var temp = CommandInfos.Where(ci => ci.Action == newAction).ToList();
+                temp.ForEach(ci => CommandInfos.Remove(ci));
+                newAction.Commands.ForEach(com => CommandInfos.Add(temp.Find(ci => ci.Command == com)));
+
                 selectedApplication.Actions.RemoveAll(a => a.Commands == null || a.Commands.Count == 0);
                 ApplicationManager.Instance.SaveApplications();
-                RefreshGroup(newAction.GestureName);
+
                 SelectActions(infoList);
             }
         }
@@ -617,7 +610,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var previousInfo = infoGroup[selectedInfoIndex - 1];
                 CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(previousInfo));
-                RefreshGroup(selected.Action.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
                 int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
@@ -640,7 +632,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var nextInfo = infoGroup[selectedInfoIndex + 1];
                 CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(nextInfo));
-                RefreshGroup(selected.Action.GestureName);
                 lstAvailableActions.SelectedItem = selected;
 
                 int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
