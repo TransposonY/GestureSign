@@ -13,8 +13,9 @@ namespace GestureSign.ControlPanel.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             var patternMap = (Dictionary<string, PointPattern[]>)values[0];
-            string gestureName = (string)values[1];
-            if (gestureName == null) return null;
+            string gestureName = values[1] as string;
+            if (gestureName == null)
+                return null;
 
             PointPattern[] pattern = null;
             if (patternMap.ContainsKey(gestureName))
