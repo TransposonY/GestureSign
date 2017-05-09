@@ -68,7 +68,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 int index = CommandInfos.IndexOf(selectedItem);
                 var newActionInfo = CommandInfo.FromCommand(selectedCommand, selectedItem.Action);
                 CommandInfos[index] = newActionInfo;
-                SelectCommand(newActionInfo);
+                SelectCommands(newActionInfo);
             }
         }
 
@@ -191,7 +191,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         else
                             CommandInfos.Insert(infoIndex + 1, newInfo);
                     }
-                    SelectCommand(newInfo);
+                    SelectCommands(newInfo);
                 }, DispatcherPriority.Input);
             };
 
@@ -230,22 +230,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
             _addCommandTask = _addCommandTask?.ContinueWith(refreshAction) ?? Task.Factory.StartNew(refreshAction, null);
         }
 
-        void SelectCommand(CommandInfo info)
+        void SelectCommands(params CommandInfo[] infos)
         {
-            lstAvailableActions.SelectedItem = info;
-            lstAvailableActions.UpdateLayout();
-            lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem);
-            EnableRelevantButtons();
-        }
-
-        private void SelectActions(List<CommandInfo> actions)
-        {
-            foreach (var action in actions)
+            lstAvailableActions.SelectedItems.Clear();
+            foreach (var info in infos)
             {
-                lstAvailableActions.SelectedItems.Add(action);
+                lstAvailableActions.SelectedItems.Add(info);
             }
             lstAvailableActions.UpdateLayout();
-            lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem);
+            Dispatcher.InvokeAsync(() => lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem), DispatcherPriority.Background);
         }
 
         private void EnableRelevantButtons()
@@ -324,7 +317,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selectedApplication.Actions.RemoveAll(a => a.Commands == null || a.Commands.Count == 0);
                 ApplicationManager.Instance.SaveApplications();
 
-                SelectActions(infoList);
+                SelectCommands(infoList.ToArray());
             }
         }
 
@@ -610,7 +603,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var previousInfo = infoGroup[selectedInfoIndex - 1];
                 CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(previousInfo));
-                lstAvailableActions.SelectedItem = selected;
+                SelectCommands(selected);
 
                 int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
                 if (commandIndex > 0)
@@ -632,7 +625,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var nextInfo = infoGroup[selectedInfoIndex + 1];
                 CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(nextInfo));
-                lstAvailableActions.SelectedItem = selected;
+                SelectCommands(selected);
 
                 int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
                 if (commandIndex + 1 < selected.Action.Commands.Count)
