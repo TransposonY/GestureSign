@@ -70,21 +70,7 @@ namespace GestureSign.ControlPanel.Dialogs
             if (AppConfig.DrawingButton == MouseActions.None)
                 MouseHotKeyTextBlock.Text += LocalizationProvider.Instance.GetTextValue("ActionDialog.MouseGestureNotEnabled");
 
-            if (_sourceAction != null)
-            {
-                ActionNameTextBox.Text = _sourceAction.Name;
-                ConditionTextBox.Text = _sourceAction.Condition;
-                MouseActionComboBox.SelectedValue = _sourceAction.MouseHotkey;
-                ActivateWindowCheckBox.IsChecked = _sourceAction.ActivateWindow;
-
-                var gesture = GestureManager.Instance.GetNewestGestureSample(_sourceAction.GestureName);
-                if (gesture != null)
-                    CurrentGesture = gesture;
-
-                var hotkey = _sourceAction.Hotkey;
-                if (hotkey != null)
-                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
-            }
+            SetValue(_sourceAction);
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -114,13 +100,37 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (result != null && result.Value)
             {
-                CurrentGesture = GestureManager.Instance.GetNewestGestureSample(GestureManager.Instance.GestureName);
+                var existingAction = _sourceApplication.Actions.Find(a => a.GestureName == GestureManager.Instance.GestureName);
+                if (existingAction != null)
+                {
+                    SetValue(existingAction);
+                }
+                else CurrentGesture = GestureManager.Instance.GetNewestGestureSample(GestureManager.Instance.GestureName);
             }
         }
 
         #endregion
 
         #region Private Instance Fields
+
+        private void SetValue(IAction action)
+        {
+            if (action != null)
+            {
+                ActionNameTextBox.Text = action.Name;
+                ConditionTextBox.Text = action.Condition;
+                MouseActionComboBox.SelectedValue = action.MouseHotkey;
+                ActivateWindowCheckBox.IsChecked = action.ActivateWindow;
+
+                var gesture = GestureManager.Instance.GetNewestGestureSample(action.GestureName);
+                if (gesture != null)
+                    CurrentGesture = gesture;
+
+                var hotkey = action.Hotkey;
+                if (hotkey != null)
+                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
+            }
+        }
 
         private bool ShowErrorMessage(string title, string message)
         {
