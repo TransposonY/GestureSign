@@ -8,6 +8,8 @@
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
@@ -86,10 +88,15 @@
                                 x:Key="ApplicationItemProvider">
             </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
-                                  Source="{Binding CommandInfos}">
+                                  Source="{Binding CommandInfos}"
+                                  Culture="{x:Static globalization:CultureInfo.CurrentCulture}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Action" />
                 </CollectionViewSource.GroupDescriptions>
+                <CollectionViewSource.SortDescriptions>
+                    <componentmodel:SortDescription PropertyName="Action.Name"
+                                                    Direction="Ascending" />
+                </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="ApplicationViewSource"
                                   Source="{Binding Source={StaticResource ApplicationItemProvider},Path=ApplicationItems}">
