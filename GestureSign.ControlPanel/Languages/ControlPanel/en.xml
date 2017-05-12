@@ -9,8 +9,6 @@
     <Error>Error</Error>
     <CompatWarning>Application detect that it is set the compatibility to run as administrator(right click/properties/compatibility/Run this program as an administrator).
 This may lead to function failure(e.g. Start application at Windows startup).
-
-Continue to run?
     </CompatWarning>
     <CompatWarningTitle>Warning</CompatWarningTitle>
     <ShowLog>Show Log...</ShowLog>

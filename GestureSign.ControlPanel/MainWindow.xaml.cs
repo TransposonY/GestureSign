@@ -1,16 +1,20 @@
-﻿using System;
+﻿using GestureSign.Common.Configuration;
+using GestureSign.Common.Localization;
+using GestureSign.Common.Log;
+using GestureSign.ControlPanel.Dialogs;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using GestureSign.Common.Configuration;
-using GestureSign.Common.Localization;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using GestureSign.Common.Log;
-using GestureSign.ControlPanel.Dialogs;
 
 namespace GestureSign.ControlPanel
 {
@@ -26,12 +30,26 @@ namespace GestureSign.ControlPanel
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            if (CheckIfApplicationRunAsAdmin())
+            {
+                var result = MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CompatWarning"),
+                 LocalizationProvider.Instance.GetTextValue("Messages.CompatWarningTitle"), MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+            }
+            StartDaemon();
             SetAboutInfo();
 
             if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
             {
                 this.Dispatcher.InvokeAsync(SendLog, DispatcherPriority.Input);
             }
+
+            GestureSign.Common.Gestures.GestureManager.Instance.Load(null);
+            GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
+            GestureSign.Common.Applications.ApplicationManager.Instance.Load(null);
+
+            GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
+
+            Activate();
         }
 
         private void SetAboutInfo()
@@ -161,6 +179,60 @@ namespace GestureSign.ControlPanel
                         });
                 }
             }
+        }
+
+        private bool CheckIfApplicationRunAsAdmin()
+        {
+            string controlPanelRecord;
+            string daemonRecord;
+            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
+            {
+                string controlPanelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+
+                controlPanelRecord = layers?.GetValue(controlPanelPath) as string;
+                daemonRecord = layers?.GetValue(daemonPath) as string;
+            }
+
+            return controlPanelRecord != null && controlPanelRecord.ToUpper().Contains("RUNASADMIN") ||
+                   daemonRecord != null && daemonRecord.ToUpper().Contains("RUNASADMIN");
+        }
+
+        private void StartDaemon()
+        {
+            string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+            if (!File.Exists(daemonPath))
+            {
+                MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
+                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK,
+                    MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+                return;
+            }
+
+            bool createdNewDaemon;
+            using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
+            {
+            }
+            if (createdNewDaemon)
+            {
+                using (Process daemon = new Process())
+                {
+                    daemon.StartInfo.FileName = daemonPath;
+
+                    //daemon.StartInfo.UseShellExecute = false;
+                    if (IsAdministrator())
+                        daemon.StartInfo.Verb = "runas";
+                    daemon.StartInfo.CreateNoWindow = false;
+                    daemon.Start();
+                }
+            }
+        }
+
+        private bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using GestureSign.Common.Configuration;
+using GestureSign.Common.Log;
+using GestureSign.ControlPanel.Localization;
+using ManagedWinapi.Windows;
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -8,16 +11,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Windows.Management.Deployment;
-using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
-using GestureSign.Common.Gestures;
-using GestureSign.Common.InterProcessCommunication;
-using GestureSign.Common.Localization;
-using GestureSign.Common.Log;
-using GestureSign.Common.Plugins;
-using GestureSign.ControlPanel.Localization;
-using ManagedWinapi.Windows;
-using Microsoft.Win32;
 
 namespace GestureSign.ControlPanel
 {
@@ -39,29 +32,6 @@ namespace GestureSign.ControlPanel
             {
                 Logging.OpenLogFile();
                 LoadLanguageData();
-
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
-                if (!File.Exists(path))
-                {
-                    MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
-                        LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK,
-                        MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
-                    Current.Shutdown();
-                    return;
-                }
-
-                if (CheckIfApplicationRunAsAdmin())
-                {
-                    var result = MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CompatWarning"),
-                     LocalizationProvider.Instance.GetTextValue("Messages.CompatWarningTitle"), MessageBoxButton.YesNo,
-                     MessageBoxImage.Warning, MessageBoxResult.No, MessageBoxOptions.DefaultDesktopOnly);
-
-                    if (result == MessageBoxResult.No)
-                    {
-                        Current.Shutdown();
-                        return;
-                    }
-                }
 
                 if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
                 {
@@ -91,22 +61,12 @@ namespace GestureSign.ControlPanel
                     }
                 }
 
-                StartDaemon(path);
-
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                 if (createdNew)
                 {
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
-
-                    GestureManager.Instance.Load(null);
-                    PluginManager.Instance.Load(null);
-                    ApplicationManager.Instance.Load(null);
-
-                    NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
-
-                    mainWindow.Activate();
                 }
                 else
                 {
@@ -123,34 +83,6 @@ namespace GestureSign.ControlPanel
                 Current.Shutdown();
             }
 
-        }
-
-        private void StartDaemon(string daemonPath)
-        {
-            bool createdNewDaemon;
-            using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
-            {
-            }
-            if (createdNewDaemon)
-            {
-                using (Process daemon = new Process())
-                {
-                    daemon.StartInfo.FileName = daemonPath;
-
-                    //daemon.StartInfo.UseShellExecute = false;
-                    if (IsAdministrator())
-                        daemon.StartInfo.Verb = "runas";
-                    daemon.StartInfo.CreateNoWindow = false;
-                    daemon.Start();
-                }
-            }
-        }
-
-        private bool IsAdministrator()
-        {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         private void LoadLanguageData()
@@ -172,23 +104,6 @@ namespace GestureSign.ControlPanel
                     Current.Resources["ToggleSwitchHeaderFontFamily.Win10"] = font;
             if (headerFontFamily != null)
                 Current.Resources["HeaderFontFamily"] = headerFontFamily;
-        }
-
-        private bool CheckIfApplicationRunAsAdmin()
-        {
-            string controlPanelRecord;
-            string daemonRecord;
-            using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
-            {
-                string controlPanelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
-
-                controlPanelRecord = layers?.GetValue(controlPanelPath) as string;
-                daemonRecord = layers?.GetValue(daemonPath) as string;
-            }
-
-            return controlPanelRecord != null && controlPanelRecord.ToUpper().Contains("RUNASADMIN") ||
-                   daemonRecord != null && daemonRecord.ToUpper().Contains("RUNASADMIN");
         }
 
         private bool ShowControlPanel()
