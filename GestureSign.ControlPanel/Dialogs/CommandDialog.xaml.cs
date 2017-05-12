@@ -108,6 +108,11 @@ namespace GestureSign.ControlPanel.Dialogs
             _currentCommand.CommandSettings = _pluginInfo.Plugin.Serialize();
             _currentCommand.IsEnabled = true;
 
+            if (string.IsNullOrWhiteSpace(_selectedAction.Name))
+            {
+                _selectedAction.Name = newCommandName;
+            }
+
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
 

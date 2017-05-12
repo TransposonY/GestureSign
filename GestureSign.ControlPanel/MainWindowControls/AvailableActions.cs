@@ -68,8 +68,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 int index = CommandInfos.IndexOf(selectedItem);
                 var newActionInfo = CommandInfo.FromCommand(selectedCommand, selectedItem.Action);
                 CommandInfos[index] = newActionInfo;
+                RefreshActionGroup(newActionInfo.Action);
                 SelectCommands(newActionInfo);
             }
+        }
+
+        private void RefreshActionGroup(IAction action)
+        {
+            var temp = CommandInfos.Where(ci => ci.Action == action).ToList();
+            temp.ForEach(ci => CommandInfos.Remove(ci));
+            action.Commands.ForEach(com => CommandInfos.Add(temp.Find(ci => ci.Command == com)));
         }
 
         private void cmdDeleteCommand_Click(object sender, RoutedEventArgs e)
@@ -166,7 +174,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     {
                         var newAction = new GestureSign.Common.Applications.Action
                         {
-                            Name = LocalizationProvider.Instance.GetTextValue("Action.NewAction"),
                             Commands = new List<ICommand>()
                         };
                         newAction.Commands.Add(newCommand);
@@ -309,10 +316,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                         info.Action = newAction;
                     }
-
-                var temp = CommandInfos.Where(ci => ci.Action == newAction).ToList();
-                temp.ForEach(ci => CommandInfos.Remove(ci));
-                newAction.Commands.ForEach(com => CommandInfos.Add(temp.Find(ci => ci.Command == com)));
+                RefreshActionGroup(newAction);
 
                 selectedApplication.Actions.RemoveAll(a => a.Commands == null || a.Commands.Count == 0);
                 ApplicationManager.Instance.SaveApplications();
@@ -376,7 +380,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }
                     }
                 }
-            End:
+                End:
                 if (addcount != 0)
                 {
                     ApplicationManager.Instance.AddApplicationRange(newApplications);

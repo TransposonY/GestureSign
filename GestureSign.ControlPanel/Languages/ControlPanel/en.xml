@@ -92,8 +92,6 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
     <Default>Default</Default>
     <Messages>
-      <NoActionNameTitle>No Action Name</NoActionNameTitle>
-      <NoActionName>Please provide a name for this action</NoActionName>
       <ConditionError>Condition Error</ConditionError>
     </Messages>
   </ActionDialog>

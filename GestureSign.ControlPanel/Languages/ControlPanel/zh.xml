@@ -96,8 +96,6 @@
     <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
     <Default>默认</Default>
     <Messages>
-      <NoActionNameTitle>无动作名</NoActionNameTitle>
-      <NoActionName>未填写动作名称，请先为该动作命名</NoActionName>
       <ConditionError>条件错误</ConditionError>
     </Messages>
   </ActionDialog>

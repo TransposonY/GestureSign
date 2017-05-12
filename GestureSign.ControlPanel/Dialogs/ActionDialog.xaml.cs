@@ -132,13 +132,6 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private bool SaveAction()
         {
-            string newActionName = ActionNameTextBox.Text.Trim();
-            if (string.IsNullOrEmpty(newActionName))
-                return
-                    ShowErrorMessage(
-                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionNameTitle"),
-                        LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.NoActionName"));
-
             try
             {
                 var regex = new Regex("finger_[0-9]+_start_[XY]?|finger_[0-9]+_end_[XY]?|finger_[0-9]+_ID");
@@ -162,7 +155,7 @@ namespace GestureSign.ControlPanel.Dialogs
             NewAction.Condition = string.IsNullOrWhiteSpace(ConditionTextBox.Text) ? null : ConditionTextBox.Text;
             NewAction.ActivateWindow = ActivateWindowCheckBox.IsChecked;
             NewAction.GestureName = CurrentGesture?.Name ?? string.Empty;
-            NewAction.Name = newActionName;
+            NewAction.Name = ActionNameTextBox.Text.Trim();
             NewAction.MouseHotkey = (MouseActions?)MouseActionComboBox.SelectedValue ?? MouseActions.None;
             NewAction.Hotkey = HotKeyTextBox.HotKey != null
                 ? new Hotkey()
