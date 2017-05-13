@@ -58,6 +58,8 @@ namespace GestureSign.Common.Log
             {
                 Console.WriteLine(e);
                 Console.WriteLine();
+                if (e.InnerException != null)
+                    LogException(e.InnerException);
             }
         }
 
