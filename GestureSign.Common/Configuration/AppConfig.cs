@@ -12,14 +12,14 @@ namespace GestureSign.Common.Configuration
     public class AppConfig
     {
         static System.Configuration.Configuration _config;
-        static readonly System.Threading.Timer Timer;
+        static Timer Timer;
         public static event EventHandler ConfigChanged;
 
-        private static readonly string ConfigPath;
+        private static string ConfigPath;
 
-        private static readonly ExeConfigurationFileMap ExeMap;
+        private static ExeConfigurationFileMap ExeMap;
 
-        public static string ApplicationDataPath { get; }
+        public static string ApplicationDataPath { private set; get; }
 
         public static System.Drawing.Color VisualFeedbackColor
         {
@@ -163,7 +163,7 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        static AppConfig()
+        public static void Initialize()
         {
 #if uiAccess
             UiAccess = true;
@@ -183,7 +183,6 @@ namespace GestureSign.Common.Configuration
 
             _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
             Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
-
         }
 
         public static void Reload()

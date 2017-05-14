@@ -39,6 +39,7 @@ namespace GestureSign.Daemon
 #if !ConvertedDesktopApp
                         Application.ThreadException += Application_ThreadException;
 #endif
+                        AppConfig.Initialize();
                         Logging.OpenLogFile();
 
                         if ("Built-in".Equals(AppConfig.CultureName) ||

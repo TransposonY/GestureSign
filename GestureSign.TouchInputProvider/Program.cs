@@ -35,6 +35,7 @@ namespace GestureSign.TouchInputProvider
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
 
+                        Common.Configuration.AppConfig.Initialize();
                         Logging.OpenLogFile();
 
                         if (!Connect()) return;
