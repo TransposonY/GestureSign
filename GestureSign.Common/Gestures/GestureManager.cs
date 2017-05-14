@@ -46,13 +46,15 @@ namespace GestureSign.Common.Gestures
             }
         }
 
+        public Task LoadingTask { get; }
+
         #endregion
 
         #region Constructors
 
         protected GestureManager()
         {
-            LoadGestures();
+            LoadingTask = LoadGestures();
             // Instantiate gesture analyzer using gestures loaded from file
             gestureAnalyzer = new PointPatternAnalyzer();//Gestures
         }
@@ -65,8 +67,6 @@ namespace GestureSign.Common.Gestures
         {
             get { return _instance ?? (_instance = new GestureManager()); }
         }
-
-        public static bool FinishedLoading { get; set; }
 
         #endregion
 
@@ -118,9 +118,7 @@ namespace GestureSign.Common.Gestures
         #region Custom Events
 
         public static event EventHandler OnLoadGesturesCompleted;
-        // Define events to allow other classes to subscribe to
         public static event EventHandler GestureSaved;
-        // Define protected method to notifiy subscribers of events
 
         #endregion
 
@@ -188,7 +186,6 @@ namespace GestureSign.Common.Gestures
                                if (!LoadDefaults())
                                    _Gestures = new List<IGesture>();
                        OnLoadGesturesCompleted?.Invoke(this, EventArgs.Empty);
-                       FinishedLoading = true;
                    };
 
             var startLoading = Task.Run(() =>
@@ -230,7 +227,7 @@ namespace GestureSign.Common.Gestures
             return startLoading.ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
 
-        public bool SaveGestures(bool notice = true)
+        public bool SaveGestures()
         {
             try
             {
@@ -239,8 +236,6 @@ namespace GestureSign.Common.Gestures
                 if (flag)
                 {
                     GestureSaved?.Invoke(this, EventArgs.Empty);
-                    if (notice)
-                        InterProcessCommunication.NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
                 }
                 return flag;
             }

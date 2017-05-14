@@ -25,7 +25,6 @@ namespace GestureSign.Common.Applications
         IApplication _CurrentApplication = null;
         IEnumerable<IApplication> RecognizedApplication;
         private Timer timer;
-        public static event EventHandler OnLoadApplicationsCompleted;
         #endregion
 
         #region Public Instance Properties
@@ -53,7 +52,7 @@ namespace GestureSign.Common.Applications
             get { return _instance ?? (_instance = new ApplicationManager()); }
         }
 
-        public static bool FinishedLoading { get; set; }
+        public Task LoadingTask { get; }
 
         #endregion
 
@@ -61,22 +60,9 @@ namespace GestureSign.Common.Applications
 
         protected ApplicationManager()
         {
-            Action<bool> loadCompleted =
-                result =>
-                {
-                    if (!result)
-                        if (!LoadBackup())
-                            if (!LoadLegacy())
-                                if (!LoadDefaults())
-                                    _Applications = new List<IApplication>();
-                    if (OnLoadApplicationsCompleted != null) OnLoadApplicationsCompleted(this, EventArgs.Empty);
-                    FinishedLoading = true;
-                };
             // Load applications from disk, if file couldn't be loaded, create an empty applications list
-            LoadApplications().ContinueWith(antecendent => loadCompleted(antecendent.Result));
+            LoadingTask = LoadApplications();
         }
-
-
 
         #endregion
 
@@ -145,6 +131,8 @@ namespace GestureSign.Common.Applications
         #region Custom Events
 
         public static event ApplicationChangedEventHandler ApplicationChanged;
+        public static event EventHandler ApplicationSaved;
+        public static event EventHandler OnLoadApplicationsCompleted;
 
         #endregion
 
@@ -224,16 +212,26 @@ namespace GestureSign.Common.Applications
 
         private void SaveFile(object state)
         {
-            bool notice = (bool)state;
             // Save application list
             bool flag = FileManager.SaveObject(
                  _Applications, Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true);
-            if (flag && notice) { NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon"); }
+            if (flag) { ApplicationSaved.Invoke(this, EventArgs.Empty); }
 
         }
 
-        public Task<bool> LoadApplications()
+        public Task LoadApplications()
         {
+            Action<bool> loadCompleted =
+                result =>
+                {
+                    if (!result)
+                        if (!LoadBackup())
+                            if (!LoadLegacy())
+                                if (!LoadDefaults())
+                                    _Applications = new List<IApplication>();
+                    OnLoadApplicationsCompleted?.Invoke(this, EventArgs.Empty);
+                };
+
             return Task.Run(() =>
             {
                 // Load application list from file
@@ -241,7 +239,7 @@ namespace GestureSign.Common.Applications
                     FileManager.LoadObject<List<IApplication>>(
                         Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true, true);
                 return _Applications != null;
-            });
+            }).ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
 
         private bool LoadDefaults()

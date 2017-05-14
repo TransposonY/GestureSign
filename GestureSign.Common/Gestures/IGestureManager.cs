@@ -14,6 +14,6 @@ namespace GestureSign.Common.Gestures
         IGesture GetNewestGestureSample(string gestureName);
         void AddGesture(IGesture Gesture);
         Task LoadGestures();
-        bool SaveGestures(bool notice);
+        bool SaveGestures();
     }
 }

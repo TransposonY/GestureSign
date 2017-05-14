@@ -20,17 +20,11 @@ namespace GestureSign.ControlPanel.ViewModel
                     UpdateApplicationItems();
             };
 
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) =>
+            ApplicationManager.Instance.LoadingTask.ContinueWith((task) =>
             {
                 Application.Current.Dispatcher.Invoke(UpdateApplicationItems);
                 Application.Current.Dispatcher.Invoke(UpdateIgnoredApplicationItems);
-            };
-
-            if (ApplicationManager.FinishedLoading)
-            {
-                UpdateApplicationItems();
-                UpdateIgnoredApplicationItems();
-            }
+            });
         }
 
         public static ObservableCollection<IApplication> ApplicationItems { get; set; }

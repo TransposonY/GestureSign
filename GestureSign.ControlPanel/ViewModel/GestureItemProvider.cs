@@ -23,15 +23,20 @@ namespace GestureSign.ControlPanel.ViewModel
 
             GestureManager.GestureSaved += (o, e) => { Update(); };
 
-            GestureManager.OnLoadGesturesCompleted += (o, e) => { if (ApplicationManager.FinishedLoading) Application.Current.Dispatcher.Invoke(Update); };
-            ApplicationManager.OnLoadApplicationsCompleted += (o, e) => { if (GestureManager.FinishedLoading) Application.Current.Dispatcher.Invoke(Update); };
-
-            if (GestureManager.FinishedLoading) Update();
+            ApplicationManager.Instance.LoadingTask.ContinueWith((task) =>
+            {
+                ApplicationManager.ApplicationSaved += (o, e) =>
+                {
+                    Application.Current.Dispatcher.Invoke(Update);
+                };
+                GestureManager.Instance.LoadingTask.Wait();
+                Application.Current.Dispatcher.Invoke(Update);
+            });
         }
 
         public GestureItemProvider()
         {
-            PatternMap = GestureManager.FinishedLoading ? GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern) : new Dictionary<string, PointPattern[]>();
+            PatternMap = GestureManager.Instance.LoadingTask.IsCompleted ? GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern) : new Dictionary<string, PointPattern[]>();
             GlobalPropertyChanged += (sender, propertyName) =>
             {
                 PatternMap = GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern);

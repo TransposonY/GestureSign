@@ -43,12 +43,6 @@ namespace GestureSign.ControlPanel
                 this.Dispatcher.InvokeAsync(SendLog, DispatcherPriority.Input);
             }
 
-            GestureSign.Common.Gestures.GestureManager.Instance.Load(null);
-            GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
-            GestureSign.Common.Applications.ApplicationManager.Instance.Load(null);
-
-            GestureSign.Common.InterProcessCommunication.NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
-
             Activate();
         }
 

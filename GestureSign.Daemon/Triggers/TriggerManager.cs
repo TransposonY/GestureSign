@@ -39,7 +39,6 @@ namespace GestureSign.Daemon.Triggers
             _synchronizationContext = synchronizationContext;
             AddTrigger(new HotKeyManager());
             AddTrigger(new MouseTrigger());
-            GestureManager.OnLoadGesturesCompleted += GestureManager_OnLoadGesturesCompleted;
         }
 
         #endregion

@@ -1,4 +1,7 @@
-﻿using GestureSign.Common.Configuration;
+﻿using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
+using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Localization;
 using ManagedWinapi.Windows;
@@ -66,6 +69,15 @@ namespace GestureSign.ControlPanel
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
                 if (createdNew)
                 {
+                    GestureManager.Instance.Load(null);
+                    GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
+                    ApplicationManager.Instance.Load(null);
+
+                    NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
+
+                    ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon");
+                    GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
+
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
                 }

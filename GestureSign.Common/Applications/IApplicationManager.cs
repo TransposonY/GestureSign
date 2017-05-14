@@ -20,7 +20,7 @@ namespace GestureSign.Common.Applications
         IApplication GetExistingUserApplication(string ApplicationName);
         IApplication GetGlobalApplication();
         SystemWindow GetWindowFromPoint(Point Point);
-        Task<bool> LoadApplications();
+        Task LoadApplications();
         void RemoveGlobalAction(string ActionName);
         void RemoveNonGlobalAction(string ActionName);
         bool SaveApplications();
