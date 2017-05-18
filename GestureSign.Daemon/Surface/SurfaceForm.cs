@@ -66,6 +66,14 @@ namespace GestureSign.Daemon.Surface
             //this.UpdateStyles();
         }
 
+        ~SurfaceForm()
+        {
+            // Avoid System.ObjectDisposedException
+            PointCapture.Instance.PointCaptured -= PointCapture_PointCaptured;
+            PointCapture.Instance.CaptureEnded -= PointCapture_CaptureEnded;
+            PointCapture.Instance.CaptureCanceled -= PointCapture_CaptureCanceled;
+            PointCapture.Instance.CaptureStarted -= Instance_CaptureStarted;
+        }
 
         #endregion
 
