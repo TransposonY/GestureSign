@@ -1,44 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using GestureSign.Common.Applications;
+﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using ManagedWinapi;
+using System;
+using System.Collections.Generic;
 
 namespace GestureSign.Daemon.Triggers
 {
     class HotKeyManager : Trigger
     {
-        private Dictionary<Hotkey, List<string>> _hotKeyMap = new Dictionary<Hotkey, List<string>>();
+        private Dictionary<Hotkey, List<IAction>> _hotKeyMap = new Dictionary<Hotkey, List<IAction>>();
 
-        public override bool LoadConfiguration(IGesture[] gestures)
+        public override bool LoadConfiguration(List<IAction> actions)
         {
             UnloadHotKeys();
-            return LoadHotKeys(gestures);
+            return LoadHotKeys(actions);
         }
 
-        private bool LoadHotKeys(IGesture[] gestures)
+        private bool LoadHotKeys(List<IAction> actions)
         {
-            _hotKeyMap = new Dictionary<Hotkey, List<string>>();
+            _hotKeyMap = new Dictionary<Hotkey, List<IAction>>();
 
-            if (gestures == null || gestures.Length == 0) return false;
+            if (actions == null || actions.Count == 0) return false;
 
-            foreach (var g in gestures)
+            foreach (var action in actions)
             {
-                var h = ((Gesture)g).Hotkey;
+                var h = action.Hotkey;
 
                 if (h != null && h.ModifierKeys != 0 && h.KeyCode != 0)
                 {
                     var hotKey = new Hotkey() { KeyCode = h.KeyCode, ModifierKeys = h.ModifierKeys };
                     if (_hotKeyMap.ContainsKey(hotKey))
                     {
-                        var gestureNameList = _hotKeyMap[hotKey] ?? new List<string>();
-                        if (!gestureNameList.Contains(g.Name))
-                            gestureNameList.Add(g.Name);
+                        var actionList = _hotKeyMap[hotKey];
+                        if (!actionList.Contains(action))
+                            actionList.Add(action);
                     }
                     else
                     {
                         InitializeHotKey(hotKey);
-                        _hotKeyMap.Add(hotKey, new List<string>(new[] { g.Name }));
+                        _hotKeyMap.Add(hotKey, new List<IAction>() { action });
                     }
                 }
             }

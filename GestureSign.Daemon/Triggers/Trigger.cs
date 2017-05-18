@@ -1,16 +1,16 @@
-﻿using System;
+﻿using GestureSign.Common.Applications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GestureSign.Common.Gestures;
 
 namespace GestureSign.Daemon.Triggers
 {
     public abstract class Trigger
     {
         public event EventHandler<TriggerFiredEventArgs> TriggerFired;
-        public abstract bool LoadConfiguration(IGesture[] gestures);
+        public abstract bool LoadConfiguration(List<IAction> actions);
 
         protected virtual void OnTriggerFired(TriggerFiredEventArgs e)
         {

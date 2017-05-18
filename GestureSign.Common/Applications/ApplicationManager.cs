@@ -297,6 +297,20 @@ namespace GestureSign.Common.Applications
             return GetDefinedAction(GestureName, RecognizedApplication, true);
         }
 
+        public IEnumerable<IAction> GetRecognizedDefinedAction(List<IAction> actionList)
+        {
+            if (RecognizedApplication == null)
+            {
+                return null;
+            }
+            var finalAction = actionList.Intersect(RecognizedApplication.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions));
+            // If there is was no action found on given application, try to get an action for global application
+            if (!finalAction.Any())
+                finalAction = GetGlobalApplication().Actions.Intersect(actionList);
+
+            return finalAction;
+        }
+
         public IAction GetAnyDefinedAction(string actionName, string applicationName)
         {
             IApplication app = GetGlobalApplication().Name == applicationName ? GetGlobalApplication() : GetExistingUserApplication(applicationName);

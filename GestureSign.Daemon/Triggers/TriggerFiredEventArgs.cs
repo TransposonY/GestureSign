@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GestureSign.Common.Applications;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -6,13 +7,13 @@ namespace GestureSign.Daemon.Triggers
 {
     public class TriggerFiredEventArgs : EventArgs
     {
-        public TriggerFiredEventArgs(List<string> gestureName, Point firedPoint)
+        public TriggerFiredEventArgs(List<IAction> firedActions, Point firedPoint)
         {
-            GestureName = gestureName;
+            FiredActions = firedActions;
             FiredPoint = firedPoint;
         }
 
-        public List<string> GestureName { get; }
+        public List<IAction> FiredActions { get; }
         public Point FiredPoint { get; }
     }
 }

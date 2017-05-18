@@ -51,14 +51,17 @@ namespace GestureSign.Common.Plugins
         protected void PointCapture_GestureRecognized(object sender, RecognitionEventArgs e)
         {
             var pointCapture = (IPointCapture)sender;
-            ExecuteAction(pointCapture.Mode, e.GestureName, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
+            // Get action to be executed
+            var executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(e.GestureName)?.ToList();
+            if (executableActions == null) return;
+            ExecuteAction(executableActions, pointCapture.Mode, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
         }
 
         #endregion
 
         #region Public Methods
 
-        public void ExecuteAction(CaptureMode mode, string gestureName, List<int> contactIdentifiers, List<Point> firstCapturedPoints, List<List<Point>> points)
+        public void ExecuteAction(List<IAction> executableActions, CaptureMode mode, List<int> contactIdentifiers, List<Point> firstCapturedPoints, List<List<Point>> points)
         {
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
@@ -66,9 +69,6 @@ namespace GestureSign.Common.Plugins
             var pointInfo = new PointInfo(firstCapturedPoints, points, _mainContext);
             var action = new Action<object>(o =>
             {
-                // Get action to be executed
-                var executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(gestureName)?.ToList();
-                if (executableActions == null) return;
                 foreach (IAction executableAction in executableActions)
                 {
                     // Exit if there is no action configured

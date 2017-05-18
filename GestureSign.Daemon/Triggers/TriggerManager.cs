@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
-using GestureSign.Common.Gestures;
+﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Plugins;
 using GestureSign.Daemon.Input;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading;
 
 namespace GestureSign.Daemon.Triggers
 {
@@ -39,6 +40,10 @@ namespace GestureSign.Daemon.Triggers
             _synchronizationContext = synchronizationContext;
             AddTrigger(new HotKeyManager());
             AddTrigger(new MouseTrigger());
+            ApplicationManager.OnLoadApplicationsCompleted += (o, e) =>
+            {
+                _synchronizationContext.Post(state => { LoadConfig((ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApp) && app.Actions != null).SelectMany(app => app.Actions).ToList())); }, null);
+            };
         }
 
         #endregion
@@ -46,16 +51,11 @@ namespace GestureSign.Daemon.Triggers
 
         #region Private Methods
 
-        private void GestureManager_OnLoadGesturesCompleted(object sender, EventArgs e)
-        {
-            _synchronizationContext.Post(state => { LoadConfig(((GestureManager)sender).Gestures); }, null);
-        }
-
-        private void LoadConfig(IGesture[] gestures)
+        private void LoadConfig(List<IAction> actions)
         {
             foreach (var trigger in _triggerList)
             {
-                trigger.LoadConfiguration(gestures);
+                trigger.LoadConfiguration(actions);
             }
         }
 
@@ -68,14 +68,9 @@ namespace GestureSign.Daemon.Triggers
         private void Trigger_TriggerFired(object sender, TriggerFiredEventArgs e)
         {
             var point = new List<Point>(new[] { e.FiredPoint });
-            foreach (var name in e.GestureName)
-            {
-                PluginManager.Instance.ExecuteAction(PointCapture.Instance.Mode,
-                    name,
-                    new List<int>(new[] { 1 }),
-                    point,
-                    new List<List<Point>>(new[] { point }));
-            }
+            var executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction((List<IAction>)e.FiredActions).ToList();
+            if (executableActions == null || executableActions.Count == 0) return;
+            PluginManager.Instance.ExecuteAction(executableActions, PointCapture.Instance.Mode, new List<int>(new[] { 1 }), point, new List<List<Point>>(new[] { point }));
         }
 
         #endregion

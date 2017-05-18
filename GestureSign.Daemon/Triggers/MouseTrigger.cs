@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Daemon.Input;
 using ManagedWinapi.Hooks;
+using System.Collections.Generic;
 
 namespace GestureSign.Daemon.Triggers
 {
     class MouseTrigger : Trigger
     {
-        private Dictionary<MouseActions, List<string>> _actionMap = new Dictionary<MouseActions, List<string>>();
+        private Dictionary<MouseActions, List<IAction>> _actionMap = new Dictionary<MouseActions, List<IAction>>();
 
         public MouseTrigger()
         {
@@ -41,26 +42,24 @@ namespace GestureSign.Daemon.Triggers
                 }
         }
 
-        public override bool LoadConfiguration(IGesture[] gestures)
+        public override bool LoadConfiguration(List<IAction> actions)
         {
             _actionMap.Clear();
-            if (gestures == null || gestures.Length == 0) return false;
+            if (actions == null || actions.Count == 0) return false;
 
-            foreach (var g in gestures)
+            foreach (var action in actions)
             {
-                var action = ((Gesture)g).MouseAction;
-
-                if (action != MouseActions.None)
+                if (action.MouseHotkey != MouseActions.None)
                 {
-                    if (_actionMap.ContainsKey(action))
+                    if (_actionMap.ContainsKey(action.MouseHotkey))
                     {
-                        var gestureNameList = _actionMap[action] ?? new List<string>();
-                        if (!gestureNameList.Contains(g.Name))
-                            gestureNameList.Add(g.Name);
+                        var mouseActionList = _actionMap[action.MouseHotkey];
+                        if (!mouseActionList.Contains(action))
+                            mouseActionList.Add(action);
                     }
                     else
                     {
-                        _actionMap.Add(action, new List<string>(new[] { g.Name }));
+                        _actionMap.Add(action.MouseHotkey, new List<IAction>(new[] { action }));
                     }
                 }
             }
