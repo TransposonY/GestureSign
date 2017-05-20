@@ -37,7 +37,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (int)GetValue("VisualFeedbackWidth", 20);
+                return (int)GetValue("VisualFeedbackWidth", 9);
             }
             set
             {
@@ -155,7 +155,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (MouseActions)GetValue(nameof(DrawingButton), 0);
+                return (MouseActions)GetValue(nameof(DrawingButton), 0x200000);
             }
             set
             {
