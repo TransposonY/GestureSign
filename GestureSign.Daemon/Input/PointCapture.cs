@@ -27,6 +27,8 @@ namespace GestureSign.Daemon.Input
 
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
+        private const uint WINEVENT_SKIPOWNPROCESS = 0x0002; // Don't call back for events on installer's process
+        private const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly PointEventTranslator _pointEventTranslator;
         private readonly InputProvider _inputProvider;
@@ -99,6 +101,7 @@ namespace GestureSign.Daemon.Input
 
         #region Custom Events
 
+        public event EventHandler<IApplication[]> ForegroundApplicationsChanged;
         // Create an event to notify subscribers that CaptureState has been changed
         public event ModeChangedEventHandler ModeChanged;
 
@@ -187,10 +190,12 @@ namespace GestureSign.Daemon.Input
             _pointEventTranslator.PointUp += (PointEventTranslator_PointUp);
             _pointEventTranslator.PointMove += (PointEventTranslator_PointMove);
 
+            _winEventDele = WinEventProc;
+            _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_MINIMIZEEND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+
             if (AppConfig.UiAccess)
             {
-                _winEventDele = WinEventProc;
-                _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT);
+                ForegroundApplicationsChanged += PointCapture_ForegroundApplicationsChanged;
             }
 
             ModeChanged += (o, e) =>
@@ -220,25 +225,31 @@ namespace GestureSign.Daemon.Input
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (State != CaptureState.Ready || Mode != CaptureMode.Normal || hwnd.Equals(IntPtr.Zero) ||
-                Application.OpenForms.Count != 0 && hwnd.Equals(Application.OpenForms[0].Handle))
-                return;
-            var systemWindow = new SystemWindow(hwnd);
-            var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow, true);
-            if (apps != null)
+            if (eventType == EVENT_SYSTEM_FOREGROUND || eventType == EVENT_SYSTEM_MINIMIZEEND)
             {
-                var userAppList = apps.Where(application => application is UserApp).Cast<UserApp>();
-                var userApplications = userAppList as IList<UserApp> ?? userAppList.ToList();
-
-                int maxBlockTouchInputThreshold = userApplications.Max(app => app.BlockTouchInputThreshold);
-
-                _pointerInputTargetWindow.BlockTouchInputThreshold = maxBlockTouchInputThreshold;
+                if (State != CaptureState.Ready || Mode != CaptureMode.Normal || hwnd.Equals(IntPtr.Zero))
+                    return;
+                var systemWindow = new SystemWindow(hwnd);
+                var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow);
+                ForegroundApplicationsChanged.Invoke(this, apps);
             }
         }
 
         #endregion
 
         #region Events
+
+        private void PointCapture_ForegroundApplicationsChanged(object sender, IApplication[] apps)
+        {
+            if (apps != null)
+            {
+                var userAppList = apps.Where(application => application is UserApp).ToList();
+                if (userAppList.Count == 0) return;
+                int maxBlockTouchInputThreshold = userAppList.Cast<UserApp>().Max(app => app.BlockTouchInputThreshold);
+
+                _pointerInputTargetWindow.BlockTouchInputThreshold = maxBlockTouchInputThreshold;
+            }
+        }
 
         protected void PointEventTranslator_PointDown(object sender, InputPointsEventArgs e)
         {

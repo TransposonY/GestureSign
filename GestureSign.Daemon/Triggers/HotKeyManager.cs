@@ -1,14 +1,29 @@
 ﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
+using GestureSign.Daemon.Input;
 using ManagedWinapi;
+using ManagedWinapi.Windows;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GestureSign.Daemon.Triggers
 {
     class HotKeyManager : Trigger
     {
         private Dictionary<Hotkey, List<IAction>> _hotKeyMap = new Dictionary<Hotkey, List<IAction>>();
+
+        public HotKeyManager()
+        {
+            PointCapture.Instance.ForegroundApplicationsChanged += Instance_ForegroundApplicationsChanged;
+        }
+
+        private void Instance_ForegroundApplicationsChanged(object sender, IApplication[] apps)
+        {
+            var userAppList = apps.Where(application => application is UserApp).Union(ApplicationManager.Instance.GetAllGlobalApplication()).ToArray();
+            if (userAppList.Length == 0) return;
+            RegisterHotKeys(userAppList);
+        }
 
         public override bool LoadConfiguration(List<IAction> actions)
         {
@@ -37,24 +52,32 @@ namespace GestureSign.Daemon.Triggers
                     }
                     else
                     {
-                        InitializeHotKey(hotKey);
+                        hotKey.HotkeyPressed += Hotkey_HotkeyPressed;
                         _hotKeyMap.Add(hotKey, new List<IAction>() { action });
                     }
                 }
             }
+            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow);
+            RegisterHotKeys(apps);
             return true;
         }
 
-        private void InitializeHotKey(Hotkey hotkey)
+        private void RegisterHotKeys(params IApplication[] apps)
         {
-            try
+            foreach (var hotKeyPair in _hotKeyMap)
             {
-                hotkey.HotkeyPressed += Hotkey_HotkeyPressed;
-                hotkey.Register();
-            }
-            catch (HotkeyAlreadyInUseException)
-            {
-                hotkey.Unregister();
+                if (apps.Any(app => hotKeyPair.Value.Intersect(app.Actions).Any()))
+                {
+                    try
+                    {
+                        hotKeyPair.Key.Register();
+                    }
+                    catch (HotkeyAlreadyInUseException)
+                    {
+                        hotKeyPair.Key.Unregister();
+                    }
+                }
+                else hotKeyPair.Key.Unregister();
             }
         }
 
