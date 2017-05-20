@@ -86,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Applications\LegacyModel\Action.cs" />
-    <Compile Include="Applications\ActionChangedEventArgs.cs" />
     <Compile Include="Applications\LegacyModel\LegacyApplicationBase.cs" />
     <Compile Include="Applications\ApplicationBase.cs" />
     <Compile Include="Applications\ApplicationChangedEventArgs.cs" />
