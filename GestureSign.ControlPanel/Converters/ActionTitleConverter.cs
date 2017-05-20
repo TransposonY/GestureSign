@@ -1,4 +1,5 @@
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Hooks;
@@ -18,7 +19,8 @@ namespace GestureSign.ControlPanel.Converters
             if (action == null) return null;
             var actionName = string.IsNullOrWhiteSpace(action.Name) ? LocalizationProvider.Instance.GetTextValue("Action.NewAction") : action.Name;
             var hotKeyString = action.Hotkey != null ? "(" + new HotKey(KeyInterop.KeyFromVirtualKey(action.Hotkey.KeyCode), (ModifierKeys)action.Hotkey.ModifierKeys).ToString() + ")" : string.Empty;
-            var mouseString = action.MouseHotkey == MouseActions.None ? string.Empty : "(" + ViewModel.MouseActionDescription.DescriptionDict[action.MouseHotkey] + ")";
+            var mouseString = action.MouseHotkey == MouseActions.None ?
+                string.Empty : "(" + ViewModel.MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + " + " + ViewModel.MouseActionDescription.DescriptionDict[action.MouseHotkey] + ")";
             return $"{actionName} {hotKeyString} {mouseString}";
         }
 
