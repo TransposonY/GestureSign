@@ -601,44 +601,32 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void MoveUpButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            var infoGroup = CommandInfos.Where(ci => ci.Action == selected.Action).ToList();
-            int selectedInfoIndex = infoGroup.IndexOf(selected);
-            if (selectedInfoIndex > 0)
+            int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
+            if (commandIndex > 0)
             {
-                var previousInfo = infoGroup[selectedInfoIndex - 1];
-                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(previousInfo));
-                SelectCommands(selected);
+                var temp = selected.Action.Commands[commandIndex - 1];
+                selected.Action.Commands[commandIndex - 1] = selected.Action.Commands[commandIndex];
+                selected.Action.Commands[commandIndex] = temp;
 
-                int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
-                if (commandIndex > 0)
-                {
-                    var temp = selected.Action.Commands[commandIndex - 1];
-                    selected.Action.Commands[commandIndex - 1] = selected.Action.Commands[commandIndex];
-                    selected.Action.Commands[commandIndex] = temp;
-                    ApplicationManager.Instance.SaveApplications();
-                }
+                RefreshActionGroup(selected.Action);
+                SelectCommands(selected);
+                ApplicationManager.Instance.SaveApplications();
             }
         }
 
         private void MoveDownButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            var infoGroup = CommandInfos.Where(ci => ci.Action == selected.Action).ToList();
-            int selectedInfoIndex = infoGroup.IndexOf(selected);
-            if (selectedInfoIndex + 1 < infoGroup.Count)
+            int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
+            if (commandIndex + 1 < selected.Action.Commands.Count)
             {
-                var nextInfo = infoGroup[selectedInfoIndex + 1];
-                CommandInfos.Move(CommandInfos.IndexOf(selected), CommandInfos.IndexOf(nextInfo));
-                SelectCommands(selected);
+                var temp = selected.Action.Commands[commandIndex + 1];
+                selected.Action.Commands[commandIndex + 1] = selected.Action.Commands[commandIndex];
+                selected.Action.Commands[commandIndex] = temp;
 
-                int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
-                if (commandIndex + 1 < selected.Action.Commands.Count)
-                {
-                    var temp = selected.Action.Commands[commandIndex + 1];
-                    selected.Action.Commands[commandIndex + 1] = selected.Action.Commands[commandIndex];
-                    selected.Action.Commands[commandIndex] = temp;
-                    ApplicationManager.Instance.SaveApplications();
-                }
+                RefreshActionGroup(selected.Action);
+                SelectCommands(selected);
+                ApplicationManager.Instance.SaveApplications();
             }
         }
 
