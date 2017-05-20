@@ -86,7 +86,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <Advanced>Advanced</Advanced>
     <TriggerCondition>Trigger Condition</TriggerCondition>
     <KeyboardHotKey>Keyboard HotKey</KeyboardHotKey>
-    <HotKeyWatermark>Enter hot key</HotKeyWatermark>
+    <HotKeyWatermark>You can enter a HotKey to trigger this action</HotKeyWatermark>
     <HotKey>HotKey</HotKey>
     <MouseHotKey>Mouse HotKey</MouseHotKey>
     <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>

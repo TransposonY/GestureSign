@@ -90,7 +90,7 @@
     <Advanced>高级</Advanced>
     <TriggerCondition>触发条件</TriggerCondition>
     <KeyboardHotKey>键盘快捷键</KeyboardHotKey>
-    <HotKeyWatermark>为该动作指定一个快捷键</HotKeyWatermark>
+    <HotKeyWatermark>设置一个触发此动作的快捷键</HotKeyWatermark>
     <HotKey>快捷键</HotKey>
     <MouseHotKey>鼠标快捷键</MouseHotKey>
     <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
