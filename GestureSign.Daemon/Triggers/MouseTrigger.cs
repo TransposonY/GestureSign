@@ -13,6 +13,7 @@ namespace GestureSign.Daemon.Triggers
 
         public MouseTrigger()
         {
+            PointCapture.Instance.MouseHook.MouseDown += MouseHook_MouseDown;
             PointCapture.Instance.MouseHook.MouseUp += MouseHook_MouseUp;
             PointCapture.Instance.MouseHook.MouseWheel += MouseHook_MouseWheel;
         }
@@ -29,6 +30,15 @@ namespace GestureSign.Daemon.Triggers
                     handled = PointCapture.Instance.Mode != CaptureMode.UserDisabled;
                 }
             }
+        }
+
+        private void MouseHook_MouseDown(LowLevelMouseMessage evt, ref bool handled)
+        {
+            if (PointCapture.Instance.State == CaptureState.CapturingInvalid || PointCapture.Instance.State == CaptureState.TriggerFired)
+                if (_actionMap.ContainsKey((MouseActions)evt.Button))
+                {
+                    handled = PointCapture.Instance.Mode != CaptureMode.UserDisabled;
+                }
         }
 
         private void MouseHook_MouseUp(LowLevelMouseMessage e, ref bool handled)
