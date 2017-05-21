@@ -51,8 +51,8 @@ Email:ccfyzh@gmail.com
     <GetMatchString>Get Match String</GetMatchString>
     <Browse>Browse..</Browse>
     <UsingRegularExpression>Match as pattern</UsingRegularExpression>
-    <GetMatchStringTip>Drag and drop the crosshair on the target window you would like to control.
-Or click the button below to select the running applications.</GetMatchStringTip>
+    <DragCrosshair>Drag and drop the crosshair on the target window</DragCrosshair>
+    <Or>Or</Or>
     <ShowRunningApplications>Select Running..</ShowRunningApplications>
     <BlockTouchInput>Block Touch Input</BlockTouchInput>
     <EditApplication>Edit Application</EditApplication>
@@ -118,7 +118,7 @@ Or click the button below to select the running applications.</GetMatchStringTip
     <ActionFile>Action File</ActionFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
-    <DefaultGroupAppCount>(Default) ({0}) </DefaultGroupAppCount>
+    <DefaultGroup>(Default)</DefaultGroup>
     <ImportActions>Import Actions...</ImportActions>
     <ExportActions>Export Actions</ExportActions>
     <ExportSpecificActions>Export Enabled Actions in Current Application...</ExportSpecificActions>

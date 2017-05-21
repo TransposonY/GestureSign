@@ -52,11 +52,11 @@
     <Group>分组</Group>
     <MatchString>匹配文本</MatchString>
     <MatchUsing>匹配类型</MatchUsing>
-    <GetMatchString>获取匹配文本</GetMatchString>
-    <Browse>浏览..</Browse>
+    <GetMatchString>捕获目标程序</GetMatchString>
+    <Browse>浏览选择exe文件..</Browse>
     <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
-    <GetMatchStringTip>将右侧图标拖至目标程序窗口上
-或点击下方按钮选择运行中的程序获取匹配文本</GetMatchStringTip>
+    <DragCrosshair>将右侧准星拖至目标程序窗口上</DragCrosshair>
+    <Or>或</Or>
     <ShowRunningApplications>选择运行中的窗口..</ShowRunningApplications>
     <BlockTouchInput>屏蔽触摸输入</BlockTouchInput>
     <EditApplication>修改程序</EditApplication>
@@ -121,8 +121,8 @@
     <NewCommand>新命令</NewCommand>
     <ActionFile>动作文件</ActionFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
-    <AppCount>{0} {1}程序</AppCount>
-    <DefaultGroupAppCount>未分组 ({0}程序)</DefaultGroupAppCount>
+    <AppCount>{0} ({1}程序)</AppCount>
+    <DefaultGroup>(默认)</DefaultGroup>
     <ImportActions>导入动作文件</ImportActions>
     <ExportActions>导出动作文件</ExportActions>
     <ExportSpecificActions>导出当前程序中已启用的动作</ExportSpecificActions>

@@ -11,10 +11,11 @@
                  Width="300"
                  Theme="Adapt"
                  Header="{localization:LocalisedText RuningApplicationsFlyout.Title}"
-                 Position="Right"
+                 Position="Left"
                  IsPinned="False">
     <ListView x:Name="lstRunningApplications"
               ScrollViewer.PanningMode="VerticalOnly"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
               Margin="5,0,5,10"
               BorderThickness="0"
               SelectionChanged="lstRunningApplications_SelectionChanged">

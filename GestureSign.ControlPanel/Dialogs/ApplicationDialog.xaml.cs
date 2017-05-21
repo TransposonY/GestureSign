@@ -111,7 +111,9 @@ namespace GestureSign.ControlPanel.Dialogs
             };
             if (ofdExecutable.ShowDialog().Value)
             {
-                ApplicationNameTextBox.Text = MatchStringTextBox.Text = ofdExecutable.SafeFileName;
+                matchUsingRadio.MatchUsing = MatchUsing.ExecutableFilename;
+                ApplicationNameTextBox.Text = System.IO.Path.GetFileNameWithoutExtension(ofdExecutable.FileName);
+                MatchStringTextBox.Text = ofdExecutable.SafeFileName;
             }
         }
 

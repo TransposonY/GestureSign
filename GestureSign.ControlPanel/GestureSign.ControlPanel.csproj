@@ -150,7 +150,6 @@
     </Compile>
     <Compile Include="ViewModel\MouseActionDescription.cs" />
     <Compile Include="Converters\Application2VisibilityConverter.cs" />
-    <Compile Include="Converters\MatchUsing2VisibilityConverter.cs" />
     <Compile Include="Converters\MatchUsing2StringConverter.cs" />
     <Compile Include="Converters\MatchStringConverter.cs" />
     <Compile Include="Converters\ApplicationListHeaderConverter.cs" />
