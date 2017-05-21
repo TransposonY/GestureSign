@@ -367,7 +367,7 @@
                                                             Background="{StaticResource GrayBrush10}">
                                                         <Grid x:Name="GestureImageGrid"
                                                               VerticalAlignment="Top"
-                                                              Height="85">
+                                                              Height="76">
                                                             <TextBlock Text="{localization:LocalisedText Action.SelectGesture}"
                                                                        HorizontalAlignment="Center"
                                                                        FontWeight="Bold"
@@ -389,14 +389,14 @@
                                                                 </TextBlock.Style>
                                                             </TextBlock>
                                                             <Image x:Name="GestureImage"
-                                                                   Height="65"
+                                                                   Height="56"
                                                                    Stretch="Uniform"
                                                                    StretchDirection="DownOnly"
                                                                    HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center">
                                                                 <Image.Source>
                                                                     <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
-                                                                                  ConverterParameter="65">
+                                                                                  ConverterParameter="56">
                                                                         <Binding Source="{StaticResource GestureItemProvider}"
                                                                                  Path="PatternMap"
                                                                                  Mode="OneWay" />
@@ -457,7 +457,7 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="85"
+                    <Grid Height="76"
                           Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -476,7 +476,7 @@
                         <TextBlock Grid.Column="0"
                                    TextWrapping="NoWrap"
                                    Text="{Binding CommandName}"
-                                   Margin="10,25,0,0"
+                                   Margin="10,20,0,0"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
                                    Width="Auto" />
@@ -488,7 +488,7 @@
                                    VerticalAlignment="Top"
                                    Width="Auto"
                                    Foreground="{StaticResource HighlightBrush}"
-                                   Margin="10,45,0,0" />
+                                   Margin="10,41,0,0" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
