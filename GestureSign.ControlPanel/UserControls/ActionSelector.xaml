@@ -1,0 +1,315 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+             xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
+             xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+             xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             x:Class="GestureSign.ControlPanel.UserControls.ActionSelector"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter" />
+        <converters:CommandConverter x:Key="CommandConverter" />
+        <converters:GestureImageConverter x:Key="GestureImageConverter" />
+        <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter"
+                                                GestureImageConverter="{StaticResource GestureImageConverter}" />
+        <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
+        <CollectionViewSource x:Key="ApplicationViewSource"
+                              Filter="CollectionViewSource_Filter"
+                              Source="{Binding UserAppList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Application.Group" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="ActionViewSource"
+                              Culture="{x:Static common:UIHelper.CurrentCulture}"
+                              Source="{Binding SelectedItem.ActionItemList, ElementName=AppListBox}">
+            <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="Action.Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="IgnoredAppViewSource"
+                              Culture="{x:Static common:UIHelper.CurrentCulture}"
+                              Source="{Binding IgnoredAppList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}">
+            <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="Application.Name" />
+            </CollectionViewSource.SortDescriptions>
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Application.MatchUsing" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <Style TargetType="{x:Type ListBoxItem}"
+               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+            <Setter Property="Margin"
+                    Value="-5,0,0,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource AccentColorBrush2}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource AccentSelectedColorBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource GrayBrush7}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsEnabled"
+                                               Value="False" />
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource GrayBrush7}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource AccentSelectedColorBrush}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <TabControl x:Name="AppTabControl">
+        <TabItem Header="{localization:LocalisedText Action.Header}"
+                 controls:ControlsHelper.HeaderFontSize="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.25*"
+                                      MaxWidth="300" />
+                    <ColumnDefinition Width="1.25*" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="FilterTextBox"
+                         FontSize="14"
+                         Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.FilterApplication}"
+                         TextChanged="FilterTextBox_TextChanged"
+                         VerticalAlignment="Top" />
+                <ListBox x:Name="AppListBox"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         ItemsSource="{Binding Source={StaticResource ApplicationViewSource}}"
+                         Margin="0,27,0,0">
+                    <ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource AccentColorBrush}"
+                                            Height="27">
+                                        <CheckBox x:Name="AppGroupCheckBox"
+                                                  Click="AppGroupCheckBox_Click"
+                                                  Margin="10,0,0,0"
+                                                  HorizontalContentAlignment="Center">
+                                            <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding  Converter="{StaticResource ApplicationListHeaderConverter}">
+                                                        <Binding Path="Name" />
+                                                        <Binding Path="ItemCount" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </CheckBox>
+                                    </Border>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="50">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="AppCheckBox"
+                                          IsChecked="{Binding IsSelected,Mode=TwoWay}"
+                                          Margin="10,0,0,0"
+                                          VerticalAlignment="Stretch"
+                                          Click="AppCheckBox_Click" />
+                                <TextBlock Text="{Binding Application.Name}"
+                                           VerticalAlignment="Center"
+                                           Margin="5,0,0,0"
+                                           Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}"
+                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+                <ListBox x:Name="ActionListBox"
+                         ItemsSource="{Binding Source={StaticResource ActionViewSource}}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         Grid.Column="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <CheckBox x:Name="ActionCheckBox"
+                                          IsChecked="{Binding IsSelected,Mode=TwoWay}"
+                                          Margin="15,0,0,0"
+                                          VerticalAlignment="Stretch"
+                                          Click="ActionCheckBox_Click" />
+                                <Image x:Name="GestureImage"
+                                       Height="56"
+                                       Stretch="Uniform"
+                                       StretchDirection="DownOnly"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="0,5,0,0"
+                                       DockPanel.Dock="Top">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
+                                                      ConverterParameter="56">
+                                            <Binding  RelativeSource="{RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}"
+                                                      Path="PatternMap"
+                                                      Mode="OneWay" />
+                                            <Binding  Path="Action.GestureName"
+                                                      Mode="OneWay" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock TextWrapping="NoWrap"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,10"
+                                           DockPanel.Dock="Top">
+                            <Run Text="{Binding Action.Name}" />
+                            <Run Text="{Binding Info}"
+                                    Foreground="{StaticResource AccentColorBrush2}" />
+                                </TextBlock>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}"
+                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+                <ListBox x:Name="CommandListBox"
+                         DataContext="{Binding ElementName=ActionListBox,Path=SelectedItem.Action}"
+                         ItemsSource="{Binding Commands}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Grid.Column="2"
+                         HorizontalContentAlignment="Center">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="50">
+                                <TextBlock TextWrapping="NoWrap"
+                                           DataContext="{Binding Converter={StaticResource CommandConverter},Mode=OneWay}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,5"
+                                           TextAlignment="Center">
+                            <Run Text="{Binding CommandName}" />
+                            <LineBreak />
+                            <Run Text="{Binding Description}"
+                                    Foreground="{StaticResource HighlightBrush}" />
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}"
+                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="{localization:LocalisedText Ignored.Header}"
+                 controls:ControlsHelper.HeaderFontSize="20">
+            <ListBox x:Name="IgnoredListBox"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding Source={StaticResource IgnoredAppViewSource}}">
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource AccentColorBrush}"
+                                        Height="27">
+                                    <TextBlock Text="{Binding Path=Name, Converter={StaticResource MatchUsingToStringConverter},Mode=OneWay}"
+                                               Foreground="{StaticResource AccentSelectedColorBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center">
+                                    </TextBlock>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Height="50"
+                                    Width="180"
+                                    Margin="5"
+                                    Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsSelected,Mode=TwoWay}"
+                                      Margin="5,0,0,0" />
+                            <TextBlock TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center">
+                            <Run Text="{Binding Application.Name}" />
+                            <LineBreak />
+                            <Run Text="{Binding Application.MatchString}"
+                                 Foreground="{StaticResource HighlightBrush}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}"
+                           BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </TabItem>
+    </TabControl>
+</UserControl>

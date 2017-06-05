@@ -145,6 +145,9 @@
     <Compile Include="Dialogs\ActionDialog.xaml.cs">
       <DependentUpon>ActionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ActionSelector.xaml.cs">
+      <DependentUpon>ActionSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
@@ -177,7 +180,7 @@
     </Compile>
     <Compile Include="Common\GestureImage.cs" />
     <Compile Include="Common\GestureItem.cs" />
-    <Compile Include="Common\MatchUsingRadio.xaml.cs">
+    <Compile Include="UserControls\MatchUsingRadio.xaml.cs">
       <DependentUpon>MatchUsingRadio.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\UIHelper.cs" />
@@ -187,7 +190,7 @@
     <Compile Include="MainWindowControls\AvailableGestures.cs">
       <DependentUpon>AvailableGestures.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\Crosshair.xaml.cs">
+    <Compile Include="UserControls\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\GestureDefinition.xaml.cs">
@@ -203,6 +206,10 @@
     <Compile Include="ViewModel\ApplicationItemProvider.cs" />
     <Compile Include="ViewModel\GestureItemProvider.cs" />
     <Page Include="Dialogs\ActionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ActionSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -238,7 +245,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Common\MatchUsingRadio.xaml">
+    <Page Include="UserControls\MatchUsingRadio.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,7 +257,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Common\Crosshair.xaml">
+    <Page Include="UserControls\Crosshair.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

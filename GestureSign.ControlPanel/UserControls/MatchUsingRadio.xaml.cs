@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using GestureSign.Common.Applications;
 
-namespace GestureSign.ControlPanel.Common
+namespace GestureSign.ControlPanel.UserControls
 {
     /// <summary>
     /// MatchUsingRadio.xaml 的交互逻辑

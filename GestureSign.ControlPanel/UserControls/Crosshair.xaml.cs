@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace GestureSign.ControlPanel.Common
+namespace GestureSign.ControlPanel.UserControls
 {
     /// <summary>
     /// Crosshair.xaml 的交互逻辑

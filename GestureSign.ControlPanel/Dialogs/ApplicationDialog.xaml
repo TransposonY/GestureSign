@@ -9,6 +9,7 @@
                       xmlns:flyouts="clr-namespace:GestureSign.ControlPanel.Flyouts"
                       xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
                       xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+                      xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
                       mc:Ignorable="d"
                       Icon="/GestureSign;component/Resources/normal.ico"
                       SizeToContent="Height"
@@ -58,7 +59,7 @@
                        FontSize="14"
                        FontWeight="Bold"
                        Margin="10,5,0,0" />
-            <common:Crosshair x:Name="chCrosshair"
+            <usercontrols:Crosshair x:Name="chCrosshair"
                               HorizontalAlignment="Right"
                               Height="36"
                               Width="36"
@@ -118,7 +119,7 @@
                        FontSize="14"
                        FontWeight="Bold"
                        Margin="10,5,0,0" />
-            <common:MatchUsingRadio x:Name="matchUsingRadio"
+            <usercontrols:MatchUsingRadio x:Name="matchUsingRadio"
                                     Height="27"
                                     Margin="10,5,10,0" />
             <TextBlock HorizontalAlignment="Left"
