@@ -10,7 +10,7 @@ namespace GestureSign.ControlPanel.Converters
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             string name = values[0] as string;
-            int count = (int)values[1];
+            int count = values[1] is int ? (int)values[1] : 0;
 
             if (String.IsNullOrEmpty(name))
                 name = LocalizationProvider.Instance.GetTextValue("Action.DefaultGroup");
