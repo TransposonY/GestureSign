@@ -89,7 +89,6 @@ namespace GestureSign.ControlPanel.Dialogs
                     .OrderBy(g => g);
 
             LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility = LimitNumberOfFingersTextBlock.Visibility =
-                        ApplicationNameTextBlock.Visibility = ApplicationNameTextBox.Visibility =
                             GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
                                 _isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
@@ -268,12 +267,11 @@ namespace GestureSign.ControlPanel.Dialogs
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.EmptyString"));
             }
 
-            string name;
+            string name = ApplicationNameTextBox.Text.Trim();
             if (_isUserApp)
             {
                 string groupName = string.IsNullOrWhiteSpace(GroupComboBox.Text) ? null : GroupComboBox.Text.Trim();
 
-                name = ApplicationNameTextBox.Text.Trim();
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     return ShowErrorMessage(
@@ -334,11 +332,13 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                name = matchUsingRadio.MatchUsing + "$" + matchString;
+                if (string.IsNullOrEmpty(name))
+                    name = matchString;
 
                 if (_currentApplication != null)
                 {
-                    if (name != _currentApplication.Name && ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name == name))
+                    var existingApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
+                    if (existingApp.Length != 0)
                     {
                         return ShowErrorMessage(
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
@@ -346,7 +346,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     }
                     ApplicationManager.Instance.RemoveApplication(_currentApplication);
                 }
-                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.Name == name))
+                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.MatchUsing == matchUsingRadio.MatchUsing && app.MatchString == matchString))
                 {
                     return ShowErrorMessage(
                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),

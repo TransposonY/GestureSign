@@ -101,6 +101,8 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.AppName}"
+                                    DisplayMemberBinding="{Binding Name}" />
                     <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.MatchString}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

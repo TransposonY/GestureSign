@@ -542,7 +542,9 @@ namespace GestureSign.Common.Applications
                 var legacyIgnoredApp = app as IgnoredApplication;
                 if (legacyIgnoredApp != null)
                 {
-                    var newApp = new IgnoredApp(legacyIgnoredApp.Name, legacyIgnoredApp.MatchUsing, legacyIgnoredApp.MatchString, legacyIgnoredApp.IsRegEx, legacyIgnoredApp.IsEnabled);
+                    var temp = legacyIgnoredApp.Name.Split(new[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+                    var newName = temp.Length > 1 ? temp[1] : legacyIgnoredApp.Name;
+                    var newApp = new IgnoredApp(newName, legacyIgnoredApp.MatchUsing, legacyIgnoredApp.MatchString, legacyIgnoredApp.IsRegEx, legacyIgnoredApp.IsEnabled);
                     _Applications.Add(newApp);
                     continue;
                 }
