@@ -10,9 +10,11 @@ namespace GestureSign.Daemon.Input
     public class PointEventTranslator
     {
         private int _lastPointsCount;
+        private HashSet<MouseActions> _pressedMouseButton;
 
         internal PointEventTranslator(InputProvider inputProvider)
         {
+            _pressedMouseButton = new HashSet<MouseActions>();
             inputProvider.TouchInputProcessor.PointsIntercepted += TranslateTouchEvent;
             inputProvider.LowLevelMouseHook.MouseDown += LowLevelMouseHook_MouseDown;
             inputProvider.LowLevelMouseHook.MouseMove += LowLevelMouseHook_MouseMove;
@@ -54,6 +56,7 @@ namespace GestureSign.Daemon.Input
                 OnPointUp(args);
                 handled = args.Handled;
             }
+            _pressedMouseButton.Remove((MouseActions)mouseMessage.Button);
         }
 
         private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
@@ -64,12 +67,13 @@ namespace GestureSign.Daemon.Input
 
         private void LowLevelMouseHook_MouseDown(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
+            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton && _pressedMouseButton.Count == 0)
             {
                 var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
                 OnPointDown(args);
                 handled = args.Handled;
             }
+            _pressedMouseButton.Add((MouseActions)mouseMessage.Button);
         }
 
         private void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
