@@ -26,6 +26,8 @@
     <WindowClass>窗口类</WindowClass>
     <WindowTitle>窗口标题</WindowTitle>
     <Yes>是</Yes>
+    <Import>导入...</Import>
+    <Export>导出...</Export>
   </Common>
   <About>
     <Header>关于</Header>
@@ -123,15 +125,11 @@
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} ({1}程序)</AppCount>
     <DefaultGroup>(默认)</DefaultGroup>
-    <ImportActions>导入动作文件</ImportActions>
-    <ExportActions>导出动作文件</ExportActions>
-    <ExportSpecificActions>导出当前程序中已启用的动作</ExportSpecificActions>
     <CutAction>剪切</CutAction>
     <CopyAction>复制</CopyAction>
     <PasteAction>粘贴</PasteAction>
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
-    <ExportAllActions>导出所有动作</ExportAllActions>
     <SelectGesture>(请点击以设置手势)</SelectGesture>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
@@ -139,12 +137,20 @@
       <DeleteAppConfirm>确定删除程序 "{0}" 吗，该程序的相关动作也将一并删除</DeleteAppConfirm>
       <NoAssociationAction>（未找到{1}中的{0}）</NoAssociationAction>
       <DoubleClickToEditCommand>(双击以编辑此命令)</DoubleClickToEditCommand>
-      <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
-      <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
-      <ImportCompleteTitle>导入完成</ImportCompleteTitle>
-      <ImportComplete>已添加 {0} 个动作</ImportComplete>
     </Messages>
   </Action>
+  <ExportImportDialog>
+    <FilterApplication>筛选程序</FilterApplication>
+    <ImportButton>导入</ImportButton>
+    <ExportButton>导出</ExportButton>
+    <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
+    <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
+    <ImportCompleteTitle>导入完成</ImportCompleteTitle>
+    <ImportComplete>已导入 {1} 个程序中的 {0} 个动作</ImportComplete>
+    <ExportCompleteTitle>导出完成</ExportCompleteTitle>
+    <ExportComplete>已导出 {1} 个程序中的 {0} 个动作</ExportComplete>
+    <ExportCompleteWithoutAction>已经导出 {0} 个程序</ExportCompleteWithoutAction>
+  </ExportImportDialog>
   <Gesture>
     <Header>手势</Header>
     <GestureFile>手势文件</GestureFile>

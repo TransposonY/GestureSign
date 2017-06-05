@@ -434,19 +434,13 @@
                                Click="PasteActionMenuItem_Click" />
                     <Separator></Separator>
                     <MenuItem x:Name="ImportActionMenuItem"
-                              Header="{localization:LocalisedText Action.ImportActions}"
+                              Header="{localization:LocalisedText Common.Import}"
                               Click="ImportActionMenuItem_Click"
                               FontSize="16" />
-                    <MenuItem Header="{localization:LocalisedText Action.ExportActions}"
-                              FontSize="16">
-                        <MenuItem x:Name="ExportAllActionMenuItem"
-                                  Header="{localization:LocalisedText Action.ExportAllActions}"
-                                  Click="ExportAllActionMenuItem_Click"
-                                  FontSize="16"></MenuItem>
-                        <MenuItem Header="{localization:LocalisedText Action.ExportSpecificActions}"
-                                  Click="ExportEnableActionMenuItem_Click"
-                                  FontSize="16"></MenuItem>
-                    </MenuItem>
+                    <MenuItem x:Name="ExportActionMenuItem"
+                              Header="{localization:LocalisedText Common.Export}"
+                              Click="ExportActionMenuItem_Click"
+                              FontSize="16" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>
@@ -595,6 +589,29 @@
                 <Rectangle.OpacityMask>
                     <VisualBrush Visual="{StaticResource Chevron-Down}"
                                  Stretch="Uniform" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
+        <Button x:Name="DownloadButton"
+                Style="{DynamicResource MetroCircleButtonStyle}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Height="50"
+                Width="50"
+                Margin="10,0,0,10"
+                Grid.Row="1"
+                Grid.Column="1"
+                Click="DownloadButton_Click">
+            <Rectangle Width="20"
+                       Height="20"
+                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Uniform">
+                        <VisualBrush.Visual>
+                            <Path Data="M548.571429 884.000914 548.571429 438.857143 475.428571 438.857143 475.428571 884.000914 373.2864 781.856914 321.570743 833.570743 512 1024 702.429257 833.570743 650.7136 781.856914ZM802.177829 256.786286C784.4992 112.142629 661.429029 0 512 0S239.5008 112.142629 221.822171 256.786286C98.000457 265.000229 0 367.786057 0 493.714286c0 131.285943 106.428343 237.714286 237.714286 237.714286l128 0 0-73.142857-128 0c-90.750171 0-164.571429-73.821257-164.571429-164.571429 0-86.213486 67.428571-158.250057 153.536-163.927771l60.392229-4.035657 7.356343-60.106971C307.856457 155.893029 401.3568 73.142857 512 73.142857s204.143543 82.750171 217.570743 192.4992l7.356343 60.106971 60.392229 4.035657C883.428571 335.464229 950.857143 407.5008 950.857143 493.714286c0 90.750171-73.821257 164.571429-164.571429 164.571429l-128 0 0 73.142857 128 0c131.285943 0 237.714286-106.428343 237.714286-237.714286C1024 367.786057 925.999543 265.000229 802.177829 256.786286z"
+                                  Fill="Black" />
+                        </VisualBrush.Visual>
+                    </VisualBrush>
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>

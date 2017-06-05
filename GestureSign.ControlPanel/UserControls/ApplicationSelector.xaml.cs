@@ -12,9 +12,9 @@ using System.Windows.Data;
 namespace GestureSign.ControlPanel.UserControls
 {
     /// <summary>
-    /// Interaction logic for ActionSelector.xaml
+    /// Interaction logic for ApplicationSelector.xaml
     /// </summary>
-    public partial class ActionSelector : UserControl
+    public partial class ApplicationSelector : UserControl
     {
         public Dictionary<string, PointPattern[]> PatternMap { get; set; }
 
@@ -31,10 +31,10 @@ namespace GestureSign.ControlPanel.UserControls
         }
 
         public static readonly DependencyProperty UserAppListProperty =
-            DependencyProperty.Register(nameof(UserAppList), typeof(List<AppListItem>), typeof(ActionSelector), new PropertyMetadata(new List<AppListItem>()));
+            DependencyProperty.Register(nameof(UserAppList), typeof(List<AppListItem>), typeof(ApplicationSelector), new PropertyMetadata(new List<AppListItem>()));
 
         public static readonly DependencyProperty IgnoredAppListProperty =
-            DependencyProperty.Register(nameof(IgnoredAppList), typeof(List<AppListItem>), typeof(ActionSelector), new PropertyMetadata(new List<AppListItem>()));
+            DependencyProperty.Register(nameof(IgnoredAppList), typeof(List<AppListItem>), typeof(ApplicationSelector), new PropertyMetadata(new List<AppListItem>()));
 
         public List<IApplication> SeletedApplications
         {
@@ -90,7 +90,7 @@ namespace GestureSign.ControlPanel.UserControls
         }
 
 
-        public ActionSelector()
+        public ApplicationSelector()
         {
             InitializeComponent();
         }

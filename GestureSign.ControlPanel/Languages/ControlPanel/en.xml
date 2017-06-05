@@ -24,6 +24,8 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <WindowClass>Class</WindowClass>
     <WindowTitle>Title</WindowTitle>
     <Yes>Yes</Yes>
+    <Import>Import...</Import>
+    <Export>Export...</Export>
   </Common>
   <About>
     <Header>About</Header>
@@ -119,15 +121,11 @@ Email:ccfyzh@gmail.com
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
     <DefaultGroup>(Default)</DefaultGroup>
-    <ImportActions>Import Actions...</ImportActions>
-    <ExportActions>Export Actions</ExportActions>
-    <ExportSpecificActions>Export Enabled Actions in Current Application...</ExportSpecificActions>
     <CutAction>Cut</CutAction>
     <CopyAction>Copy</CopyAction>
     <PasteAction>Paste</PasteAction>
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>
-    <ExportAllActions>Export All Actions...</ExportAllActions>
     <SelectGesture>(Click to select a gesture)</SelectGesture>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
@@ -135,12 +133,20 @@ Email:ccfyzh@gmail.com
       <DeleteAppConfirm>Are you sure to delete "{0}"? All actions in this application will be deleted</DeleteAppConfirm>
       <NoAssociationAction>( Can not find {0} in {1} )</NoAssociationAction>
       <DoubleClickToEditCommand>( Double Click to edit this Command )</DoubleClickToEditCommand>
-      <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
-      <ReplaceConfirm>There is already a {0} action in {0}.Replace it?</ReplaceConfirm>
-      <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
-      <ImportComplete>{0} actions have been added</ImportComplete>
     </Messages>
   </Action>
+  <ExportImportDialog>
+    <FilterApplication>Filter Applications</FilterApplication>
+    <ImportButton>Import</ImportButton>
+    <ExportButton>Export</ExportButton>
+    <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
+    <ReplaceConfirm>There is already a {0} action in {1}.Replace it?</ReplaceConfirm>
+    <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
+    <ImportComplete>{0} actions in {1} applications have been added</ImportComplete>
+    <ExportCompleteTitle>Export Complete</ExportCompleteTitle>
+    <ExportComplete>{0} actions in {1} applications have been exported</ExportComplete>
+    <ExportCompleteWithoutAction>{0} applications have been exported</ExportCompleteWithoutAction>  
+</ExportImportDialog>
   <Gesture>
     <Header>Gesture</Header>
     <GestureFile>Gesture File</GestureFile>

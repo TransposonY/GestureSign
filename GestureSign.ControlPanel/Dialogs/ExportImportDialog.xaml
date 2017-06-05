@@ -1,0 +1,29 @@
+﻿<controls:MetroWindow x:Class="GestureSign.ControlPanel.Dialogs.ExportImportDialog"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
+                      mc:Ignorable="d"
+                      FlowDirection="{StaticResource DefaultFlowDirection}"
+                      BorderBrush="{StaticResource AccentColorBrush}"
+                      WindowStartupLocation="CenterScreen"
+                      BorderThickness="1"
+                      Height="380"
+                      Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="48" />
+        </Grid.RowDefinitions>
+        <usercontrols:ApplicationSelector x:Name="ApplicationSelector" />
+        <Button x:Name="OkButton"
+                Click="OkButton_Click"
+                VerticalAlignment="Bottom"
+                Grid.Row="1"
+                Margin="0,10,10,10"
+                MinWidth="90"
+                HorizontalAlignment="Right" />
+    </Grid>
+</controls:MetroWindow>

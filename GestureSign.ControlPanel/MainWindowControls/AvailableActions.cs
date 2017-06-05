@@ -329,133 +329,25 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.act;*.gsa",
-                Title = LocalizationProvider.Instance.GetTextValue("Action.ImportActions"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.gsa",
+                Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
             {
-                int addcount = 0;
-                List<IApplication> newApplications = new List<IApplication>();
                 var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
-
                 if (newApps != null)
                 {
-                    foreach (IApplication newApp in newApps)
-                    {
-                        if (newApp is IgnoredApp) continue;
-                        if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
-                        {
-                            var existingApp = ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
-                            foreach (IAction newAction in newApp.Actions)
-                            {
-                                if (existingApp.Actions.Exists(action => action.Name == newAction.Name))
-                                {
-                                    var result =
-                                        MessageBox.Show(
-                                            String.Format(
-                                                LocalizationProvider.Instance.GetTextValue("Action.Messages.ReplaceConfirm"),
-                                                newAction.Name, existingApp.Name),
-                                            LocalizationProvider.Instance.GetTextValue("Action.Messages.ReplaceConfirmTitle"),
-                                            MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                                    if (result == MessageBoxResult.Yes)
-                                    {
-                                        existingApp.Actions.RemoveAll(ac => ac.Name == newAction.Name);
-                                        existingApp.AddAction(newAction);
-                                        addcount++;
-                                    }
-                                    else if (result == MessageBoxResult.Cancel) goto End;
-                                }
-                                else
-                                {
-                                    existingApp.AddAction(newAction);
-                                    addcount++;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            addcount += newApp.Actions.Count;
-                            newApplications.Add(newApp);
-                        }
-                    }
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                    exportImportDialog.ShowDialog();
                 }
-                End:
-                if (addcount != 0)
-                {
-                    ApplicationManager.Instance.AddApplicationRange(newApplications);
-                    ApplicationManager.Instance.SaveApplications();
-                    lstAvailableApplication.SelectedIndex = 0;
-                }
-                MessageBox.Show(
-                    String.Format(LocalizationProvider.Instance.GetTextValue("Action.Messages.ImportComplete"), addcount),
-                    LocalizationProvider.Instance.GetTextValue("Action.Messages.ImportCompleteTitle"));
             }
         }
 
-        private void ExportAllActionMenuItem_Click(object sender, RoutedEventArgs e)
+        private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.gsa",
-                FileName = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + ".gsa",
-                Title = LocalizationProvider.Instance.GetTextValue("Action.ExportActions"),
-                AddExtension = true,
-                DefaultExt = "gsa",
-                ValidateNames = true
-            };
-            if (sfdApplications.ShowDialog().Value)
-            {
-                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApp)).ToList(), sfdApplications.FileName, true);
-            }
-        }
-        private void ExportEnableActionMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.gsa",
-                FileName = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + ".gsa",
-                Title = LocalizationProvider.Instance.GetTextValue("Action.ExportSpecificActions"),
-                AddExtension = true,
-                DefaultExt = "gsa",
-                ValidateNames = true
-            };
-            if (sfdApplications.ShowDialog().Value)
-            {
-                IApplication currentApp = lstAvailableApplication.SelectedItem as IApplication;
-                if (currentApp != null)
-                {
-                    List<IApplication> exportedApp = new List<IApplication>(1);
-                    if (currentApp is GlobalApp)
-                    {
-                        exportedApp.Add(new GlobalApp()
-                        {
-                            Actions = currentApp.Actions,//.Where(a => a.IsEnabled).ToList(),
-                            Group = currentApp.Group,
-                            IsRegEx = currentApp.IsRegEx,
-                            MatchString = currentApp.MatchString,
-                            MatchUsing = currentApp.MatchUsing
-                        });
-                    }
-                    else
-                    {
-                        var userApplication = currentApp as UserApp;
-                        if (userApplication != null)
-                            exportedApp.Add(new UserApp()
-                            {
-                                Actions = userApplication.Actions,//.Where(a => a.IsEnabled).ToList(),
-                                Group = userApplication.Group,
-                                IsRegEx = userApplication.IsRegEx,
-                                MatchString = userApplication.MatchString,
-                                MatchUsing = userApplication.MatchUsing,
-                                LimitNumberOfFingers = userApplication.LimitNumberOfFingers,
-                                BlockTouchInputThreshold = userApplication.BlockTouchInputThreshold,
-                                Name = userApplication.Name
-                            });
-                    }
-                    FileManager.SaveObject(exportedApp, sfdApplications.FileName, true);
-                }
-            }
+            ExportImportDialog exportImportDialog = new ExportImportDialog(true, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+            exportImportDialog.ShowDialog();
         }
 
         private void lstAvailableApplication_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -660,6 +552,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 Dispatcher.InvokeAsync(EditCommand, DispatcherPriority.Input);
             else if (ReferenceEquals(listBox, lstAvailableApplication))
                 Dispatcher.InvokeAsync(EditApplication, DispatcherPriority.Input);
+        }
+
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            DownloadWindow DownloadWindow = new DownloadWindow();
+            DownloadWindow.Show();
         }
     }
 }

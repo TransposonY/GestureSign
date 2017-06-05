@@ -1,11 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using MahApps.Metro.Controls;
+using System.Globalization;
 
 namespace GestureSign.ControlPanel.Common
 {
     class UIHelper
     {
+        public static CultureInfo CurrentCulture { get { return CultureInfo.CurrentCulture; } }
+
         public static MetroWindow GetParentWindow(DependencyObject dependencyObject)
         {
             return Window.GetWindow(dependencyObject) as MetroWindow;

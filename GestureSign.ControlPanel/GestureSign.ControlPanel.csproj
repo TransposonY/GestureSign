@@ -108,6 +108,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -138,6 +139,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ActionTitleConverter.cs" />
+    <Compile Include="Converters\CommandConverter.cs" />
     <Compile Include="Converters\GestureButtonImageConverter.cs" />
     <Compile Include="Converters\GroupHeaderConverter.cs" />
     <Compile Include="Converters\GestureGroupConverter.cs" />
@@ -145,12 +147,20 @@
     <Compile Include="Dialogs\ActionDialog.xaml.cs">
       <DependentUpon>ActionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ActionSelector.xaml.cs">
-      <DependentUpon>ActionSelector.xaml</DependentUpon>
+    <Compile Include="Dialogs\DownloadWindow.xaml.cs">
+      <DependentUpon>DownloadWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ExportImportDialog.xaml.cs">
+      <DependentUpon>ExportImportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ApplicationSelector.xaml.cs">
+      <DependentUpon>ApplicationSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ActionListItem.cs" />
+    <Compile Include="ViewModel\AppListItem.cs" />
     <Compile Include="ViewModel\MouseActionDescription.cs" />
     <Compile Include="Converters\Application2VisibilityConverter.cs" />
     <Compile Include="Converters\MatchUsing2StringConverter.cs" />
@@ -209,7 +219,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\ActionSelector.xaml">
+    <Page Include="Dialogs\DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ExportImportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ApplicationSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
