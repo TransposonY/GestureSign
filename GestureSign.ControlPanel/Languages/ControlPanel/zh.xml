@@ -190,9 +190,6 @@
   </GestureDefinition>
   <Ignored>
     <Header>忽略</Header>
-    <IgnoredAppFile>忽略程序文件</IgnoredAppFile>
-    <ImportIgnoredApps>导入忽略程序</ImportIgnoredApps>
-    <ExportIgnoredApps>导出忽略程序</ExportIgnoredApps>
     <Count>({0})</Count>
     <Enable>启用</Enable>
     <Messages>

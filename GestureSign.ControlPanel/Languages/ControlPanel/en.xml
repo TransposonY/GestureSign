@@ -186,9 +186,6 @@ Email:ccfyzh@gmail.com
   </GestureDefinition>
   <Ignored>
     <Header>Ignored</Header>
-    <IgnoredAppFile>Ignored Application File</IgnoredAppFile>
-    <ImportIgnoredApps>Import Ignored Application...</ImportIgnoredApps>
-    <ExportIgnoredApps>Export Ignored Application...</ExportIgnoredApps>
     <Count>  ( {0} )</Count>
     <Enable>Enable</Enable>
     <Messages>

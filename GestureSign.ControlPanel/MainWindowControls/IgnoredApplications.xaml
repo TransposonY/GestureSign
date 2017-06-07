@@ -38,11 +38,11 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="ImportIgnoredAppsMenuItem"
-                              Header="{localization:LocalisedText Ignored.ImportIgnoredApps}"
+                              Header="{localization:LocalisedText Common.Import}"
                               Click="ImportIgnoredAppsMenuItem_Click"
                               FontSize="16" />
                     <MenuItem x:Name="ExportIgnoredAppsMenuItem"
-                              Header="{localization:LocalisedText Ignored.ExportIgnoredApps}"
+                              Header="{localization:LocalisedText Common.Export}"
                               Click="ExportIgnoredAppsMenuItem_Click"
                               FontSize="16" />
                 </ContextMenu>

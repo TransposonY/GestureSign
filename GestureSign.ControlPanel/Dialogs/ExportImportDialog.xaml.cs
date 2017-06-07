@@ -17,13 +17,13 @@ namespace GestureSign.ControlPanel.Dialogs
     {
         private bool _isExportMode;
 
-        public ExportImportDialog(bool isExportMode, IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures)
+        public ExportImportDialog(bool isExportMode, bool showIgnore, IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures)
         {
             _isExportMode = isExportMode;
 
             InitializeComponent();
 
-            ApplicationSelector.Initialize(apps, gestures, !_isExportMode);
+            ApplicationSelector.Initialize(apps, gestures, showIgnore, !_isExportMode);
 
             Title = LocalizationProvider.Instance.GetTextValue(_isExportMode ? "Common.Export" : "Common.Import");
             OkButton.Content = LocalizationProvider.Instance.GetTextValue(_isExportMode ? "ExportImportDialog.ExportButton" : "ExportImportDialog.ImportButton");

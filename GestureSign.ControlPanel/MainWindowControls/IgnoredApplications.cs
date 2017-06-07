@@ -82,50 +82,25 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
-                Title = LocalizationProvider.Instance.GetTextValue("Ignored.ImportIgnoredApps"),
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.gsa",
+                Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
             {
-                int addcount = 0;
-                List<IApplication> newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
-
+                var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
                 if (newApps != null)
-                    foreach (IApplication newApp in newApps)
-                    {
-                        if (newApp is IgnoredApp &&
-                            !ApplicationManager.Instance.ApplicationExists(newApp.Name))
-                        {
-                            ApplicationManager.Instance.AddApplication(newApp);
-                            addcount++;
-                        }
-                    }
-                if (addcount != 0)
                 {
-                    ApplicationManager.Instance.SaveApplications();
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, true, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                    exportImportDialog.ShowDialog();
                 }
-                MessageBox.Show(
-                    String.Format(LocalizationProvider.Instance.GetTextValue("Ignored.Messages.ImportComplete"),
-                        addcount),
-                    LocalizationProvider.Instance.GetTextValue("Ignored.Messages.ImportCompleteTitle"));
             }
         }
 
         private void ExportIgnoredAppsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("Ignored.IgnoredAppFile") + "|*.ign",
-                Title = LocalizationProvider.Instance.GetTextValue("Ignored.ExportIgnoredApps"),
-                AddExtension = true,
-                DefaultExt = "ign",
-                ValidateNames = true
-            };
-            if (sfdApplications.ShowDialog().Value)
-            {
-                FileManager.SaveObject(ApplicationManager.Instance.Applications.Where(app => app is IgnoredApp).ToList(), sfdApplications.FileName, true);
-            }
+            ExportImportDialog exportImportDialog = new ExportImportDialog(true, true, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+            exportImportDialog.ShowDialog();
         }
     }
 }

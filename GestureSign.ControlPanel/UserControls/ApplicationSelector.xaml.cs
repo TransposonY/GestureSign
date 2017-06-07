@@ -95,8 +95,11 @@ namespace GestureSign.ControlPanel.UserControls
             InitializeComponent();
         }
 
-        public void Initialize(IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures, bool selecteAll = false)
+        public void Initialize(IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures, bool showIgnore = false, bool selecteAll = false)
         {
+            if (showIgnore)
+                AppTabControl.SelectedIndex = 1;
+
             var newUserAppList = new List<AppListItem>();
             var newIgnoredApp = new List<AppListItem>();
             foreach (var app in apps)

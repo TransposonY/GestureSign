@@ -338,7 +338,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
                 if (newApps != null)
                 {
-                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
                     exportImportDialog.ShowDialog();
                 }
             }
@@ -346,7 +346,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ExportImportDialog exportImportDialog = new ExportImportDialog(true, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+            ExportImportDialog exportImportDialog = new ExportImportDialog(true, false, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
             exportImportDialog.ShowDialog();
         }
 
