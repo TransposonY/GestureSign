@@ -140,6 +140,8 @@
     </Messages>
   </Action>
   <ExportImportDialog>
+    <ApplicationHeader>程序({0})</ApplicationHeader>
+    <IgnoreHeader>忽略({0})</IgnoreHeader>
     <FilterApplication>筛选程序</FilterApplication>
     <ImportButton>导入</ImportButton>
     <ExportButton>导出</ExportButton>

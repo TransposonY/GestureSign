@@ -91,8 +91,9 @@
         </Style>
     </UserControl.Resources>
     <TabControl x:Name="AppTabControl">
-        <TabItem Header="{localization:LocalisedText Action.Header}"
-                 controls:ControlsHelper.HeaderFontSize="20">
+        <TabItem Header="{Binding ElementName=AppListBox,Path=Items.Count}"
+                 HeaderStringFormat="{localization:LocalisedText ExportImportDialog.ApplicationHeader}"
+                 controls:ControlsHelper.HeaderFontSize="22">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -255,8 +256,9 @@
                 </ListBox>
             </Grid>
         </TabItem>
-        <TabItem Header="{localization:LocalisedText Ignored.Header}"
-                 controls:ControlsHelper.HeaderFontSize="20">
+        <TabItem Header="{Binding ElementName=IgnoredListBox,Path=Items.Count}"
+                 HeaderStringFormat="{localization:LocalisedText ExportImportDialog.IgnoreHeader}"
+                 controls:ControlsHelper.HeaderFontSize="22">
             <ListBox x:Name="IgnoredListBox"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Source={StaticResource IgnoredAppViewSource}}">

@@ -136,6 +136,8 @@ Email:ccfyzh@gmail.com
     </Messages>
   </Action>
   <ExportImportDialog>
+    <ApplicationHeader>Applications({0})</ApplicationHeader>
+    <IgnoreHeader>Ignore({0})</IgnoreHeader>
     <FilterApplication>Filter Applications</FilterApplication>
     <ImportButton>Import</ImportButton>
     <ExportButton>Export</ExportButton>
