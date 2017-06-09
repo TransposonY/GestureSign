@@ -289,6 +289,23 @@ namespace GestureSign.Common.Gestures
             return recognizedResult.Count == 0 ? null : recognizedResult.OrderByDescending(r => r.Value).First().Key;
         }
 
+        public string GetMostSimilarGestureName(PointPattern[] pointPattern)
+        {
+
+            string matchName = null;
+            List<IGesture> matchGestures = null;
+            for (int i = 0; i < pointPattern.Length; i++)
+            {
+                matchName = GetGestureSetNameMatch(pointPattern[i].Points, matchGestures ?? _Gestures, i, out matchGestures);
+            }
+            return matchName;
+        }
+
+        public string GetMostSimilarGestureName(IGesture gesture)
+        {
+            return GetMostSimilarGestureName(gesture.PointPatterns);
+        }
+
         public string[] GetAvailableGestures()
         {
             return Gestures.OrderBy(g => g.Name).GroupBy(g => g.Name).Select(g => g.Key).ToArray();

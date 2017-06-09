@@ -73,17 +73,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                 var gestures = FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
                 var newGestures = gestures?.Cast<IGesture>().ToList();
-                var internalGestures = GestureManager.Instance.Gestures.ToList();
 
                 if (newGestures != null)
                     foreach (IGesture newGesture in newGestures)
                     {
-                        string matchName = null;
-                        List<IGesture> matchGestures = null;
-                        for (int i = 0; i < newGesture.PointPatterns.Length; i++)
-                        {
-                            matchName = GestureManager.Instance.GetGestureSetNameMatch(newGesture.PointPatterns[i].Points, matchGestures ?? internalGestures, i, out matchGestures);
-                        }
+                        string matchName = GestureManager.Instance.GetMostSimilarGestureName(newGesture);
                         if (matchName != null)
                         {
                             ignoredCount++;

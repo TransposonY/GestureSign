@@ -132,6 +132,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             int addcount = 0;
+            bool saveGesture = false;
             List<IApplication> newApplications = new List<IApplication>();
             var seletedApplications = ApplicationSelector.SeletedApplications;
 
@@ -145,38 +146,49 @@ namespace GestureSign.ControlPanel.Dialogs
                         newApplications.Add(newApp);
                     }
                 }
-                else if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
+                else if (newApp is GlobalApp)
                 {
-                    var existingApp = ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
-                    foreach (IAction newAction in newApp.Actions)
-                    {
-                        var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
-                        if (existingAction != null)
-                        {
-                            var result =
-                                MessageBox.Show(String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirm"),
-                                existingAction.Name, existingApp.Name),
-                                LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirmTitle"),
-                                MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                            if (result == MessageBoxResult.Yes)
-                            {
-                                existingApp.Actions.Remove(existingAction);
-                                existingApp.AddAction(newAction);
-                                addcount++;
-                            }
-                            else if (result == MessageBoxResult.Cancel) goto End;
-                        }
-                        else
-                        {
-                            existingApp.AddAction(newAction);
-                            addcount++;
-                        }
-                    }
+                    newApp.Actions.ForEach(a => saveGesture |= UpdateGesture(a));
+                    ApplicationManager.Instance.GetGlobalApplication().Actions.AddRange(newApp.Actions);
                 }
                 else
                 {
-                    addcount += newApp.Actions.Count;
-                    newApplications.Add(newApp);
+                    var existingApp = ApplicationManager.Instance.Applications.Find(app => app is UserApp && app.MatchUsing == newApp.MatchUsing && app.MatchString == newApp.MatchString);
+                    if (existingApp != null)
+                    {
+                        foreach (IAction newAction in newApp.Actions)
+                        {
+                            var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
+                            if (existingAction != null)
+                            {
+                                var result =
+                                    MessageBox.Show(String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirm"),
+                                    existingAction.Name, existingApp.Name),
+                                    LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirmTitle"),
+                                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    saveGesture |= UpdateGesture(newAction);
+                                    existingApp.Actions.Remove(existingAction);
+                                    existingApp.AddAction(newAction);
+                                    addcount++;
+                                }
+                                else if (result == MessageBoxResult.Cancel) goto End;
+                            }
+                            else
+                            {
+                                saveGesture |= UpdateGesture(newAction);
+                                existingApp.AddAction(newAction);
+                                addcount++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        newApp.Actions.ForEach(a => saveGesture |= UpdateGesture(a));
+                        addcount += newApp.Actions.Count;
+                        newApplications.Add(newApp);
+                    }
                 }
             }
 
@@ -187,11 +199,41 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             if (newApplications.Count != 0 || addcount != 0)
                 ApplicationManager.Instance.SaveApplications();
+            if (saveGesture)
+                GestureManager.Instance.SaveGestures();
 
             MessageBox.Show(
                 String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), addcount, newApplications.Count),
                 LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
             Close();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action">Related action</param>
+        /// <returns>Indicates whether the new gesture was added</returns>
+        private bool UpdateGesture(IAction action)
+        {
+            PointPattern[] gesture;
+            if (ApplicationSelector.PatternMap.TryGetValue(action.GestureName, out gesture))
+            {
+                var existingGesture = GestureManager.Instance.GetMostSimilarGestureName(gesture);
+                if (existingGesture != null)
+                {
+                    action.GestureName = existingGesture;
+                }
+                else
+                {
+                    if (GestureManager.Instance.GestureExists(action.GestureName))
+                    {
+                        action.GestureName = GestureManager.GetNewGestureName();
+                    }
+                    GestureManager.Instance.AddGesture(new Gesture(action.GestureName, gesture));
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
