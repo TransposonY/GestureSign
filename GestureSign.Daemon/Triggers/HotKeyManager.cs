@@ -57,7 +57,7 @@ namespace GestureSign.Daemon.Triggers
                     }
                 }
             }
-            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow);
+            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow).Where(app=>!(app is IgnoredApp)).ToArray();
             RegisterHotKeys(apps);
             return true;
         }
