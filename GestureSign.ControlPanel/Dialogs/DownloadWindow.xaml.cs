@@ -200,9 +200,8 @@ namespace GestureSign.ControlPanel.Dialogs
             if (saveGesture)
                 GestureManager.Instance.SaveGestures();
 
-            MessageBox.Show(
-                String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount),
-                LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
+            this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"),
+                String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount));
             Close();
         }
 

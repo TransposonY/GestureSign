@@ -3,6 +3,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     var message = actionCount == 0 ? String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteWithoutAction"), seletedApplications.Count) :
                        String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportComplete"), actionCount, seletedApplications.Count);
 
-                    MessageBox.Show(message, LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteTitle"));
+                    this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteTitle"), message);
                     Close();
                 }
             }
@@ -120,9 +121,8 @@ namespace GestureSign.ControlPanel.Dialogs
                 if (newAppCount + newActionCount != 0)
                     ApplicationManager.Instance.SaveApplications();
 
-                MessageBox.Show(
-                    String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount),
-                    LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
+                this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"),
+                    String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount));
                 Close();
             }
         }
