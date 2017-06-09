@@ -83,16 +83,16 @@ namespace GestureSign.CorePlugins.MouseActions
                         simulator.Mouse.VerticalScroll(_settings.ScrollAmount).Sleep(30);
                         return true;
                     case MouseActions.MoveMouseTo:
-                        MoveMouse(simulator, _settings.MovePoint);
+                        Cursor.Position = _settings.MovePoint;
                         return true;
                     case MouseActions.MoveMouseBy:
                         referencePoint.Offset(_settings.MovePoint);
-                        MoveMouse(simulator, referencePoint);
+                        Cursor.Position = referencePoint;
                         break;
                     default:
                         {
                             if (_settings.ClickPosition != ClickPositions.Original)
-                                MoveMouse(simulator, referencePoint);
+                                Cursor.Position = referencePoint;
 
                             MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
                             clickMethod.Invoke(simulator.Mouse, null);
@@ -128,17 +128,6 @@ namespace GestureSign.CorePlugins.MouseActions
 
         #region Private Methods
 
-        private void MoveMouse(InputSimulator simulator, Point point)
-        {
-            int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-
-            int realX = 0xffff * point.X / screenWidth;
-            int realY = 0xffff * point.Y / screenHeight;
-
-            simulator.Mouse.MoveMouseTo(realX, realY).Sleep(30);
-        }
-
         private Point GetReferencePoint(ClickPositions position, PointInfo actionPoint)
         {
             Point referencePoint;
@@ -157,7 +146,7 @@ namespace GestureSign.CorePlugins.MouseActions
                     referencePoint = actionPoint.Points.First().First();
                     break;
                 default:
-                    referencePoint = Point.Empty;
+                    referencePoint = Cursor.Position;
                     break;
             }
             return referencePoint;
