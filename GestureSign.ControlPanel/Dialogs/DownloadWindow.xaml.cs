@@ -131,7 +131,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            int addcount = 0;
+            int newActionCount = 0, newAppCount = 0;
             bool saveGesture = false;
             List<IApplication> newApplications = new List<IApplication>();
             var seletedApplications = ApplicationSelector.SeletedApplications;
@@ -143,17 +143,13 @@ namespace GestureSign.ControlPanel.Dialogs
                     var matchApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(newApp.MatchUsing, newApp.MatchString);
                     if (matchApp.Length == 0)
                     {
+                        newAppCount++;
                         newApplications.Add(newApp);
                     }
                 }
-                else if (newApp is GlobalApp)
-                {
-                    newApp.Actions.ForEach(a => saveGesture |= UpdateGesture(a));
-                    ApplicationManager.Instance.GetGlobalApplication().Actions.AddRange(newApp.Actions);
-                }
                 else
                 {
-                    var existingApp = ApplicationManager.Instance.Applications.Find(app => app is UserApp && app.MatchUsing == newApp.MatchUsing && app.MatchString == newApp.MatchString);
+                    var existingApp = ApplicationManager.Instance.Applications.Find(app => !(app is IgnoredApp) && app.MatchUsing == newApp.MatchUsing && app.MatchString == newApp.MatchString);
                     if (existingApp != null)
                     {
                         foreach (IAction newAction in newApp.Actions)
@@ -171,7 +167,7 @@ namespace GestureSign.ControlPanel.Dialogs
                                     saveGesture |= UpdateGesture(newAction);
                                     existingApp.Actions.Remove(existingAction);
                                     existingApp.AddAction(newAction);
-                                    addcount++;
+                                    newActionCount++;
                                 }
                                 else if (result == MessageBoxResult.Cancel) goto End;
                             }
@@ -179,14 +175,16 @@ namespace GestureSign.ControlPanel.Dialogs
                             {
                                 saveGesture |= UpdateGesture(newAction);
                                 existingApp.AddAction(newAction);
-                                addcount++;
+                                newActionCount++;
                             }
                         }
+                        newAppCount++;
                     }
                     else
                     {
                         newApp.Actions.ForEach(a => saveGesture |= UpdateGesture(a));
-                        addcount += newApp.Actions.Count;
+                        newActionCount += newApp.Actions.Count;
+                        newAppCount++;
                         newApplications.Add(newApp);
                     }
                 }
@@ -197,13 +195,13 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 ApplicationManager.Instance.AddApplicationRange(newApplications);
             }
-            if (newApplications.Count != 0 || addcount != 0)
+            if (newAppCount + newActionCount != 0)
                 ApplicationManager.Instance.SaveApplications();
             if (saveGesture)
                 GestureManager.Instance.SaveGestures();
 
             MessageBox.Show(
-                String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), addcount, newApplications.Count),
+                String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount),
                 LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
             Close();
         }

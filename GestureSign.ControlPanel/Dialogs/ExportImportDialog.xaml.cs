@@ -57,7 +57,7 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                int addcount = 0;
+                int newActionCount = 0, newAppCount = 0;
                 List<IApplication> newApplications = new List<IApplication>();
                 var seletedApplications = ApplicationSelector.SeletedApplications;
 
@@ -68,43 +68,47 @@ namespace GestureSign.ControlPanel.Dialogs
                         var matchApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(newApp.MatchUsing, newApp.MatchString);
                         if (matchApp.Length == 0)
                         {
+                            newAppCount++;
                             newApplications.Add(newApp);
-                        }
-                    }
-                    else if (ApplicationManager.Instance.ApplicationExists(newApp.Name))
-                    {
-                        var existingApp = ApplicationManager.Instance.Applications.Find(a => a.Name == newApp.Name);
-                        foreach (IAction newAction in newApp.Actions)
-                        {
-                            var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
-                            if (existingAction != null)
-                            {
-                                var result =
-                                    MessageBox.Show(
-                                        String.Format(
-                                            LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirm"),
-                                            existingAction.Name, existingApp.Name),
-                                        LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirmTitle"),
-                                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                                if (result == MessageBoxResult.Yes)
-                                {
-                                    existingApp.Actions.Remove(existingAction);
-                                    existingApp.AddAction(newAction);
-                                    addcount++;
-                                }
-                                else if (result == MessageBoxResult.Cancel) goto End;
-                            }
-                            else
-                            {
-                                existingApp.AddAction(newAction);
-                                addcount++;
-                            }
                         }
                     }
                     else
                     {
-                        addcount += newApp.Actions.Count;
-                        newApplications.Add(newApp);
+                        var existingApp = ApplicationManager.Instance.Applications.Find(app => !(app is IgnoredApp) && app.MatchUsing == newApp.MatchUsing && app.MatchString == newApp.MatchString);
+                        if (existingApp != null)
+                        {
+                            foreach (IAction newAction in newApp.Actions)
+                            {
+                                var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
+                                if (existingAction != null)
+                                {
+                                    var result =
+                                        MessageBox.Show(String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirm"),
+                                        existingAction.Name, existingApp.Name),
+                                        LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirmTitle"),
+                                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                    if (result == MessageBoxResult.Yes)
+                                    {
+                                        existingApp.Actions.Remove(existingAction);
+                                        existingApp.AddAction(newAction);
+                                        newActionCount++;
+                                    }
+                                    else if (result == MessageBoxResult.Cancel) goto End;
+                                }
+                                else
+                                {
+                                    existingApp.AddAction(newAction);
+                                    newActionCount++;
+                                }
+                            }
+                            newAppCount++;
+                        }
+                        else
+                        {
+                            newActionCount += newApp.Actions.Count;
+                            newAppCount++;
+                            newApplications.Add(newApp);
+                        }
                     }
                 }
 
@@ -113,12 +117,12 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     ApplicationManager.Instance.AddApplicationRange(newApplications);
                 }
-                if (newApplications.Count != 0 || addcount != 0)
+                if (newAppCount + newActionCount != 0)
                     ApplicationManager.Instance.SaveApplications();
 
                 MessageBox.Show(
-                String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), addcount, newApplications.Count),
-                LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
+                    String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount),
+                    LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"));
                 Close();
             }
         }
