@@ -90,7 +90,7 @@ namespace GestureSign.Daemon.Surface
                 if (_bitmap == null || _lastStroke == null)
                 {
                     ClearSurfaces();
-                    _bitmap = new DiBitmap(Screen.PrimaryScreen.Bounds.Size);
+                    _bitmap = new DiBitmap(this.Size);
                 }
                 DrawSegments(e.Points);
             }
