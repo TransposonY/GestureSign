@@ -143,7 +143,7 @@ namespace GestureSign.Common.Plugins
             }
 
             // Load extra plugins.
-            foreach (string sFilePath in Directory.GetFiles(directoryPath, "*.Plugin.dll"))
+            foreach (string sFilePath in Directory.GetFiles(Path.Combine(directoryPath, "Plugins"), "*.dll"))
             {
                 _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
                 bFailed = false;
