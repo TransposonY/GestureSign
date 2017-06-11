@@ -290,6 +290,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             if (infoList.Count == 0)
             {
+                lstAvailableActions.SelectedItems.Clear();
                 var collectionViewGroup = groupItem.Content as CollectionViewGroup;
                 if (collectionViewGroup != null)
                     foreach (CommandInfo item in collectionViewGroup.Items)
