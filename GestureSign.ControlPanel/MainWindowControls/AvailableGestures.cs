@@ -183,7 +183,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var result = gd.ShowDialog();
             if (result != null && result.Value)
             {
-                lstAvailableGestures.SelectedValue = GestureManager.Instance.GestureName;
+                lstAvailableGestures.SelectedValue = gd.CurrentGesture.Name;
                 lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input,
                     new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
             }

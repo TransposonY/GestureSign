@@ -42,7 +42,7 @@ namespace GestureSign.ControlPanel.Dialogs
         }
 
         public static readonly DependencyProperty CurrentGestureProperty =
-            DependencyProperty.Register(nameof(CurrentGesture), typeof(IGesture), typeof(ActionDialog), new FrameworkPropertyMetadata(new Gesture()));
+            DependencyProperty.Register(nameof(CurrentGesture), typeof(IGesture), typeof(ActionDialog), new FrameworkPropertyMetadata(new Gesture(), new PropertyChangedCallback(OnCurrentGestureChanged)));
 
         #endregion
 
@@ -75,6 +75,12 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            // Save new gesture
+            if (string.IsNullOrEmpty(CurrentGesture.Name))
+            {
+                SaveGesture(CurrentGesture);
+            }
+
             if (SaveAction())
             {
                 DialogResult = true;
@@ -91,27 +97,21 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private void GestureButton_Click(object sender, RoutedEventArgs e)
+        private static void OnCurrentGestureChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            e.Handled = true;
-
-            GestureDefinition gestureDialog = new GestureDefinition();
-            var result = gestureDialog.ShowDialog();
-
-            if (result != null && result.Value)
+            if (e.NewValue == null)
+                return;
+            var actionDialog = (ActionDialog)sender;
+            var existingAction = actionDialog._sourceApplication.Actions.Find(a => a.GestureName == ((IGesture)e.NewValue).Name);
+            if (existingAction != null)
             {
-                var existingAction = _sourceApplication.Actions.Find(a => a.GestureName == GestureManager.Instance.GestureName);
-                if (existingAction != null)
-                {
-                    SetValue(existingAction);
-                }
-                else CurrentGesture = GestureManager.Instance.GetNewestGestureSample(GestureManager.Instance.GestureName);
+                actionDialog.SetValue(existingAction);
             }
         }
 
         #endregion
 
-        #region Private Instance Fields
+        #region Private Methods
 
         private void SetValue(IAction action)
         {
@@ -176,6 +176,24 @@ namespace GestureSign.ControlPanel.Dialogs
                 : null;
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
+
+            return true;
+        }
+
+        private bool SaveGesture(IGesture gesture)
+        {
+            if (string.IsNullOrEmpty(gesture.Name))
+            {
+                gesture.Name = GestureManager.GetNewGestureName();
+            }
+
+            if (GestureManager.Instance.GestureExists(gesture.Name))
+            {
+                GestureManager.Instance.DeleteGesture(gesture.Name);
+            }
+            GestureManager.Instance.AddGesture(gesture);
+
+            GestureManager.Instance.SaveGestures();
 
             return true;
         }

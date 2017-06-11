@@ -83,7 +83,6 @@ Email:ccfyzh@gmail.com
     <ActionNameWatermark>Please enter action name</ActionNameWatermark>
     <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
     <Icon>Icon</Icon>
-    <SelectGesture>Click to select a gesture</SelectGesture>
     <ActivateWindow>Activate Target Window</ActivateWindow>
     <Advanced>Advanced</Advanced>
     <TriggerCondition>Trigger Condition</TriggerCondition>
@@ -180,7 +179,6 @@ Email:ccfyzh@gmail.com
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <SelectGesture>Select Gesture</SelectGesture>
     <Edit>Edit Gesture</Edit>
     <ExistingGesture>Exist similar gesture.Use it?</ExistingGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>

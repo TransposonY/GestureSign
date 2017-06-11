@@ -159,6 +159,9 @@
     <Compile Include="Dialogs\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\GestureSelector.xaml.cs">
+      <DependentUpon>GestureSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ActionListItem.cs" />
     <Compile Include="ViewModel\AppListItem.cs" />
     <Compile Include="ViewModel\MouseActionDescription.cs" />
@@ -260,6 +263,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindowControls\AvailableActions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\GestureSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
