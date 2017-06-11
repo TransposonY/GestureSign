@@ -13,10 +13,14 @@ namespace GestureSign.ControlPanel.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var pattern = (PointPattern[])value;
-            int height = int.Parse((string)parameter);
-            var color = (Color)Application.Current.Resources["HighlightColor"];
-            return GestureImage.CreateImage(pattern, new Size(height, height), color);
+            var pattern = value as PointPattern[];
+            int height;
+            if (int.TryParse(parameter as string, out height))
+            {
+                var color = (Color)Application.Current.Resources["HighlightColor"];
+                return GestureImage.CreateImage(pattern, new Size(height, height), color);
+            };
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
