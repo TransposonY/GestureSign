@@ -14,7 +14,7 @@ namespace GestureSign.ControlPanel
 {
     class MessageProcessor : IMessageProcessor
     {
-        public static event EventHandler<Gesture> GotNewGesture;
+        public static event EventHandler<PointPattern[]> GotNewPattern;
 
         public bool ProcessMessages(NamedPipeServerStream server)
         {
@@ -42,10 +42,10 @@ namespace GestureSign.ControlPanel
                         }
                         else
                         {
-                            var newGesture = data as Tuple<string, List<List<List<Point>>>>;
+                            var newGesture = data as List<List<List<Point>>>;
                             if (newGesture == null) return;
 
-                            GotNewGesture?.Invoke(this, new Gesture(newGesture.Item1, newGesture.Item2.Select(list => new PointPattern(list)).ToArray()));
+                            GotNewPattern?.Invoke(this, newGesture.Select(list => new PointPattern(list)).ToArray());
                         }
                     }, DispatcherPriority.Input);
                 }

@@ -29,34 +29,35 @@ namespace GestureSign.ControlPanel.UserControls
         public GestureSelector()
         {
             InitializeComponent();
-            MessageProcessor.GotNewGesture += MessageProcessor_GotNewGesture;
+            MessageProcessor.GotNewPattern += MessageProcessor_GotNewPattern;
         }
 
-        private void MessageProcessor_GotNewGesture(object sender, Gesture e)
+        private void MessageProcessor_GotNewPattern(object sender, PointPattern[] newPattern)
         {
-            var newPatterns = e.PointPatterns;
-            if (_stackUp)
+            var currentPatterns = newPattern;
+            if (_stackUp && _tempPointPattern != null)
             {
-                newPatterns = _tempPointPattern.Concat(e.PointPatterns).ToArray();
+                currentPatterns = _tempPointPattern.Concat(newPattern).ToArray();
+                _stackUp = false;
+                _tempPointPattern = null;
             }
-            var existingSimilarGesture = (Gesture)GestureManager.Instance.GetNewestGestureSample(e.Name);
-            if (existingSimilarGesture == null)
+            var existingSimilarGestureName = GestureManager.Instance.GetMostSimilarGestureName(currentPatterns);
+            if (existingSimilarGestureName == null)
             {
-                CurrentGesture = new Gesture(null, newPatterns);
+                CurrentGesture = new Gesture(null, currentPatterns);
                 ExistingTextBlock.Visibility = Visibility.Collapsed;
             }
             else
             {
-                if (OldGesture?.Name == existingSimilarGesture.Name)
+                if (OldGesture?.Name == existingSimilarGestureName)
                 {
-                    CurrentGesture = new Gesture(existingSimilarGesture.Name, newPatterns);
+                    CurrentGesture = new Gesture(existingSimilarGestureName, currentPatterns);
                 }
                 else
                 {
                     ExistingTextBlock.Visibility = Visibility.Visible;
-                    CurrentGesture = existingSimilarGesture;
+                    CurrentGesture = GestureManager.Instance.GetNewestGestureSample(existingSimilarGestureName);
                 }
-
             }
             SetTrainingState(false);
         }

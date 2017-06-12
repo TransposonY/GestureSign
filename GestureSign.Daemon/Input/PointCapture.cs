@@ -408,8 +408,7 @@ namespace GestureSign.Daemon.Input
                 _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
 
-                var message = new Tuple<string, List<List<List<Point>>>>(GestureManager.Instance.GestureName, _pointPatternCache.Select(p => p.Points).ToList());
-                if (!await NamedPipe.SendMessageAsync(message, "GestureSignControlPanel"))
+                if (!await NamedPipe.SendMessageAsync(_pointPatternCache.Select(p => p.Points).ToList(), "GestureSignControlPanel"))
                     Mode = CaptureMode.Normal;
             }
 
