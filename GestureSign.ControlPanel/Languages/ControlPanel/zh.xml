@@ -120,7 +120,7 @@
     <Header>动作</Header>
     <NewAction>新动作</NewAction>
     <NewCommand>新命令</NewCommand>
-    <ActionFile>动作文件</ActionFile>
+    <ApplicationFile>GestureSign程序文件</ApplicationFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} ({1}程序)</AppCount>
     <DefaultGroup>(默认)</DefaultGroup>

@@ -116,7 +116,7 @@ Email:ccfyzh@gmail.com
     <Header>Action</Header>
     <NewAction>New Action</NewAction>
     <NewCommand>New Command</NewCommand>
-    <ActionFile>Action File</ActionFile>
+    <ApplicationFile>GestureSign Applications</ApplicationFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
     <DefaultGroup>(Default)</DefaultGroup>

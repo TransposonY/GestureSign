@@ -332,7 +332,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ActionFile") + "|*.gsa",
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*.gsa",
                 Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
                 CheckFileExists = true
             };
