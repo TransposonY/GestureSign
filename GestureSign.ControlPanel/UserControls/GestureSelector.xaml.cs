@@ -29,7 +29,6 @@ namespace GestureSign.ControlPanel.UserControls
         public GestureSelector()
         {
             InitializeComponent();
-            MessageProcessor.GotNewPattern += MessageProcessor_GotNewPattern;
         }
 
         private void MessageProcessor_GotNewPattern(object sender, PointPattern[] newPattern)
@@ -69,12 +68,14 @@ namespace GestureSign.ControlPanel.UserControls
                 CurrentGesture = null;
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
                 ExistingTextBlock.Visibility = RedrawButton.Visibility = Visibility.Collapsed;
+                MessageProcessor.GotNewPattern += MessageProcessor_GotNewPattern;
                 NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
             }
             else
             {
                 DrawGestureTextBlock.Visibility = Visibility.Collapsed;
                 RedrawButton.Visibility = Visibility.Visible;
+                MessageProcessor.GotNewPattern -= MessageProcessor_GotNewPattern;
                 NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
             }
         }
@@ -104,7 +105,7 @@ namespace GestureSign.ControlPanel.UserControls
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
+            SetTrainingState(false);
         }
     }
 }
