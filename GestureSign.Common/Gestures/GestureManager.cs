@@ -78,15 +78,8 @@ namespace GestureSign.Common.Gestures
 
             if (pointCapture.Mode == CaptureMode.Training)
             {
-                if (pointCapture.StackUpGesture)
-                {
-                    _gestureLevel++;
-                }
-                else
-                {
-                    _gestureLevel = 0;
-                    _gestureMatchResult = null;
-                }
+                _gestureLevel = 0;
+                _gestureMatchResult = null;
             }
 
             if (e.GestureTimeout)

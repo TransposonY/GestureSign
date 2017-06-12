@@ -70,8 +70,6 @@ namespace GestureSign.Daemon.Input
             get { return _inputProvider.LowLevelMouseHook; }
         }
 
-        public bool StackUpGesture { get; set; }
-
         public bool TemporarilyDisableCapture { get; set; }
 
         public List<Point>[] InputPoints
@@ -202,8 +200,6 @@ namespace GestureSign.Daemon.Input
             {
                 if (e.Mode == CaptureMode.UserDisabled)
                     _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
-                else if (e.Mode == CaptureMode.Normal && StackUpGesture)
-                    StackUpGesture = false;
             };
 
             _timeoutTimer.Tick += GestureRecognizedCallback;
@@ -409,14 +405,7 @@ namespace GestureSign.Daemon.Input
             }
             else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
-                if (StackUpGesture)
-                {
-                    StackUpGesture = false;
-                }
-                else
-                {
-                    _pointPatternCache.Clear();
-                }
+                _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
 
                 var message = new Tuple<string, List<List<List<Point>>>>(GestureManager.Instance.GestureName, _pointPatternCache.Select(p => p.Points).ToList());

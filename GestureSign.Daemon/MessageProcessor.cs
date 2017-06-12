@@ -43,7 +43,6 @@ namespace GestureSign.Daemon
                                 PointCapture.Instance.Mode = CaptureMode.Training;
                                 break;
                             case "StopTraining":
-                                PointCapture.Instance.StackUpGesture = false;
                                 if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
                                     PointCapture.Instance.Mode = CaptureMode.Normal;
                                 break;
@@ -67,9 +66,6 @@ namespace GestureSign.Daemon
                                 break;
                             case "HideTrayIcon":
                                 TrayManager.Instance.TrayIconVisible = false;
-                                break;
-                            case "StackUpGesture":
-                                PointCapture.Instance.StackUpGesture = true;
                                 break;
                         }
                     }, null);

@@ -12,7 +12,6 @@ namespace GestureSign.Common.Input
         void DisablePointCapture();
         void EnablePointCapture();
         event PointsCapturedEventHandler PointCaptured;
-        bool StackUpGesture { get; set; }
         bool TemporarilyDisableCapture { get; set; }
         Device SourceDevice { get; set; }
         CaptureState State { get; set; }

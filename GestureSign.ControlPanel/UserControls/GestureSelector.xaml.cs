@@ -1,5 +1,6 @@
 ﻿using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,9 @@ namespace GestureSign.ControlPanel.UserControls
     /// </summary>
     public partial class GestureSelector : UserControl
     {
+        private bool _stackUp;
+        private PointPattern[] _tempPointPattern;
+
         public IGesture CurrentGesture
         {
             get { return (IGesture)GetValue(CurrentGestureProperty); }
@@ -30,17 +34,22 @@ namespace GestureSign.ControlPanel.UserControls
 
         private void MessageProcessor_GotNewGesture(object sender, Gesture e)
         {
+            var newPatterns = e.PointPatterns;
+            if (_stackUp)
+            {
+                newPatterns = _tempPointPattern.Concat(e.PointPatterns).ToArray();
+            }
             var existingSimilarGesture = (Gesture)GestureManager.Instance.GetNewestGestureSample(e.Name);
             if (existingSimilarGesture == null)
             {
-                CurrentGesture = new Gesture(null, e.PointPatterns);
+                CurrentGesture = new Gesture(null, newPatterns);
                 ExistingTextBlock.Visibility = Visibility.Collapsed;
             }
             else
             {
                 if (OldGesture?.Name == existingSimilarGesture.Name)
                 {
-                    CurrentGesture = new Gesture(existingSimilarGesture.Name, e.PointPatterns);
+                    CurrentGesture = new Gesture(existingSimilarGesture.Name, newPatterns);
                 }
                 else
                 {
@@ -76,16 +85,17 @@ namespace GestureSign.ControlPanel.UserControls
 
         private void imgGestureThumbnail_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2 && OldGesture == null && CurrentGesture.PointPatterns?.Length < 3)
+            if (e.ClickCount == 2 && CurrentGesture.PointPatterns?.Length < 3)
             {
-                NamedPipe.SendMessageAsync("StackUpGesture", "GestureSignDaemon");
+                _stackUp = true;
+                _tempPointPattern = CurrentGesture.PointPatterns;
                 SetTrainingState(true);
             }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CurrentGesture.PointPatterns == null)
+            if (CurrentGesture?.PointPatterns == null)
             {
                 SetTrainingState(true);
             }
