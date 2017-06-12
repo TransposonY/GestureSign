@@ -8,7 +8,8 @@
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              mc:Ignorable="d"
              d:DesignHeight="400"
-             d:DesignWidth="450">
+             d:DesignWidth="450"
+             AllowDrop="True">
     <UserControl.Resources>
         <converters:GestureImageConverter x:Key="GestureImageConverter" />
         <converters:GestureGroupConverter x:Key="GestureGroupConverter" />

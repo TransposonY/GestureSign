@@ -68,43 +68,49 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
             if (ofdGestures.ShowDialog().Value)
             {
-                int addcount = 0;
-                int ignoredCount = 0;
-
                 var gestures = FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
                 var newGestures = gestures?.Cast<IGesture>().ToList();
 
-                if (newGestures != null)
-                    foreach (IGesture newGesture in newGestures)
-                    {
-                        string matchName = GestureManager.Instance.GetMostSimilarGestureName(newGesture);
-                        if (matchName != null)
-                        {
-                            ignoredCount++;
-                            continue;
-                        }
-
-                        if (GestureManager.Instance.GestureExists(newGesture.Name))
-                        {
-                            newGesture.Name = GestureManager.GetNewGestureName();
-                        }
-                        GestureManager.Instance.AddGesture(newGesture);
-                        addcount++;
-                    }
-
-                if (addcount != 0)
-                {
-                    GestureManager.Instance.SaveGestures();
-                }
-                UIHelper.GetParentWindow(this).ShowModalMessageExternal(
-                        LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"),
-                        String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
-                            ignoredCount, addcount), settings: new MetroDialogSettings()
-                            {
-                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
-                                ColorScheme = MetroDialogColorScheme.Accented,
-                            });
+                ImportGesture(newGestures);
             }
+        }
+
+        private void ImportGesture(List<IGesture> gestureList)
+        {
+            if (gestureList == null || gestureList.Count == 0) return;
+
+            int addcount = 0;
+            int ignoredCount = 0;
+
+            foreach (IGesture newGesture in gestureList)
+            {
+                string matchName = GestureManager.Instance.GetMostSimilarGestureName(newGesture);
+                if (matchName != null)
+                {
+                    ignoredCount++;
+                    continue;
+                }
+
+                if (GestureManager.Instance.GestureExists(newGesture.Name))
+                {
+                    newGesture.Name = GestureManager.GetNewGestureName();
+                }
+                GestureManager.Instance.AddGesture(newGesture);
+                addcount++;
+            }
+
+            if (addcount != 0)
+            {
+                GestureManager.Instance.SaveGestures();
+            }
+            UIHelper.GetParentWindow(this).ShowModalMessageExternal(
+                    LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"),
+                    String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
+                        ignoredCount, addcount), settings: new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
+                            ColorScheme = MetroDialogColorScheme.Accented,
+                        });
         }
 
         private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
@@ -187,6 +193,33 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input,
                     new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
             }
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                try
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    foreach (var file in files)
+                    {
+                        if (file.EndsWith(".gest", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var gestures = FileManager.LoadObject<List<Gesture>>(file, false);
+                            var newGestures = gestures?.Cast<IGesture>().ToList();
+                            ImportGesture(newGestures);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(exception.GetType().Name, exception.Message);
+                }
+            }
+            e.Handled = true;
         }
     }
 }

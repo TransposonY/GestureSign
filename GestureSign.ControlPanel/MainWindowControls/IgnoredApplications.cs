@@ -1,14 +1,13 @@
-﻿using System;
+﻿using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Dialogs;
+using MahApps.Metro.Controls.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-
-using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
-using GestureSign.Common.Localization;
-using GestureSign.ControlPanel.Dialogs;
 
 namespace GestureSign.ControlPanel.MainWindowControls
 {
@@ -101,6 +100,41 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             ExportImportDialog exportImportDialog = new ExportImportDialog(true, true, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
             exportImportDialog.ShowDialog();
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var newApps = new List<IApplication>();
+                try
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    foreach (var file in files)
+                    {
+                        if (file.EndsWith(".gsa", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
+                            if (apps != null)
+                            {
+                                newApps.AddRange(apps);
+                            }
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Common.UIHelper.GetParentWindow(this).ShowModalMessageExternal(exception.GetType().Name, exception.Message);
+                }
+                if (newApps.Count != 0)
+                {
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, true, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                    exportImportDialog.ShowDialog();
+                }
+            }
+            e.Handled = true;
         }
     }
 }

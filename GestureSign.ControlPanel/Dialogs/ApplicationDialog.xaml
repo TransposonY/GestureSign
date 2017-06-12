@@ -21,7 +21,8 @@
                       BorderBrush="{StaticResource AccentColorBrush}"
                       Loaded="ApplicationDialog_OnLoaded"
                       ResizeMode="CanMinimize"
-                      MaxHeight="400">
+                      MaxHeight="400"
+                      AllowDrop="True">
     <controls:MetroWindow.Resources>
         <converters:MatchStringConverter x:Key="MatchStringConverter" />
     </controls:MetroWindow.Resources>

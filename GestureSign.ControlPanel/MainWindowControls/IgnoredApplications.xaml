@@ -8,7 +8,8 @@
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="400"
-             d:DesignWidth="450">
+             d:DesignWidth="450"
+             AllowDrop="True">
     <UserControl.Resources>
         <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
         <converters:BoolConverter x:Key="boolConverter"></converters:BoolConverter>

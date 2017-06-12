@@ -416,6 +416,27 @@ namespace GestureSign.Common.Applications
             return newName;
         }
 
+        public IApplication AddApplication(IApplication app, string executablefilePath)
+        {
+            var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(executablefilePath);
+            app.Name = versionInfo.ProductName;
+            app.MatchUsing = MatchUsing.ExecutableFilename;
+            app.MatchString = Path.GetFileName(executablefilePath);
+
+            var matchApplications = FindMatchApplications<UserApp>(app.MatchUsing, app.MatchString);
+            if (matchApplications.Length != 0)
+            {
+                return matchApplications[0];
+            }
+            if (ApplicationExists(app.Name))
+            {
+                return GetExistingUserApplication(app.Name);
+            }
+            AddApplication(app);
+            SaveApplications();
+            return app;
+        }
+
         #endregion
 
         #region Private Methods

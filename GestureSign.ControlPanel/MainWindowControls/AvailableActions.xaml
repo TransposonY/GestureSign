@@ -13,7 +13,8 @@
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="540"
-             Initialized="UserControl_Initialized">
+             Initialized="UserControl_Initialized"
+             AllowDrop="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ActionTitleConverter x:Key="ActionTitleConverter" />

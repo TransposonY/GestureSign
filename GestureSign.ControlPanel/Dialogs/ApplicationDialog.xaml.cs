@@ -1,18 +1,22 @@
-﻿using System;
+﻿using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Common;
+using GestureSign.ControlPanel.Flyouts;
+using IWshRuntimeLibrary;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using ManagedWinapi.Windows;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
-using GestureSign.Common.Localization;
-using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.Flyouts;
-using MahApps.Metro.Controls;
-using ManagedWinapi.Windows;
-using Microsoft.Win32;
 using Point = System.Drawing.Point;
 
 namespace GestureSign.ControlPanel.Dialogs
@@ -182,6 +186,43 @@ namespace GestureSign.ControlPanel.Dialogs
             LimitNumberOfFingersInfoTextBlock.Text = string.Format(
                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.LimitNumberOfFingersInfo"),
                 (int)e.NewValue);
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                try
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    if (files?.Length > 0)
+                    {
+                        string targetFile = files[0];
+                        if (targetFile.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
+                        {
+                            WshShell shell = new WshShell();
+                            IWshShortcut link = (IWshShortcut)shell.CreateShortcut(targetFile);
+                            targetFile = link.TargetPath;
+                        }
+                        if (Path.GetExtension(targetFile).ToLower() == ".exe")
+                        {
+                            matchUsingRadio.MatchUsing = MatchUsing.ExecutableFilename;
+
+                            var versionInfo = FileVersionInfo.GetVersionInfo(targetFile);
+                            ApplicationNameTextBox.Text = versionInfo.ProductName;
+
+                            MatchStringTextBox.Text = Path.GetFileName(targetFile);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    this.ShowModalMessageExternal(exception.GetType().Name, exception.Message);
+                }
+            }
+            e.Handled = true;
         }
 
         #endregion

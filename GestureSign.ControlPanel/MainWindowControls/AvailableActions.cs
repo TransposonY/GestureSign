@@ -3,10 +3,14 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
+using GestureSign.ControlPanel.ViewModel;
+using IWshRuntimeLibrary;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,8 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
-using GestureSign.ControlPanel.ViewModel;
-using MahApps.Metro.Controls;
 
 namespace GestureSign.ControlPanel.MainWindowControls
 {
@@ -559,6 +561,54 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             DownloadWindow DownloadWindow = new DownloadWindow();
             DownloadWindow.Show();
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var newApps = new List<IApplication>();
+                try
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    foreach (var file in files)
+                    {
+                        switch (Path.GetExtension(file).ToLower())
+                        {
+                            case ".gsa":
+                                var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
+                                if (apps != null)
+                                {
+                                    newApps.AddRange(apps);
+                                }
+                                break;
+                            case ".exe":
+                                Dispatcher.InvokeAsync(() => lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), file), DispatcherPriority.Input);
+                                break;
+                            case ".lnk":
+                                WshShell shell = new WshShell();
+                                IWshShortcut link = (IWshShortcut)shell.CreateShortcut(file);
+                                if (Path.GetExtension(link.TargetPath).ToLower() == ".exe")
+                                {
+                                    Dispatcher.InvokeAsync(() => lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath), DispatcherPriority.Input);
+                                }
+                                break;
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(exception.GetType().Name, exception.Message);
+                }
+                if (newApps.Count != 0)
+                {
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                    exportImportDialog.ShowDialog();
+                }
+            }
+            e.Handled = true;
         }
     }
 }
