@@ -76,7 +76,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             // Save new gesture
-            if (string.IsNullOrEmpty(CurrentGesture.Name))
+            if (CurrentGesture != null && string.IsNullOrEmpty(CurrentGesture.Name))
             {
                 SaveGesture(CurrentGesture);
             }

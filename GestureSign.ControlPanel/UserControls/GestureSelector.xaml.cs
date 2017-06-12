@@ -86,7 +86,7 @@ namespace GestureSign.ControlPanel.UserControls
 
         private void imgGestureThumbnail_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2 && CurrentGesture.PointPatterns?.Length < 3)
+            if (e.ClickCount == 2 && CurrentGesture != null && CurrentGesture.PointPatterns?.Length < 3)
             {
                 _stackUp = true;
                 _tempPointPattern = CurrentGesture.PointPatterns;
