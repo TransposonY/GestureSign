@@ -284,12 +284,14 @@ namespace GestureSign.Common.Gestures
 
         public string GetMostSimilarGestureName(PointPattern[] pointPattern)
         {
-
             string matchName = null;
             List<IGesture> matchGestures = null;
-            for (int i = 0; i < pointPattern.Length; i++)
+            for (int i = 0; i < pointPattern.Length;)
             {
                 matchName = GetGestureSetNameMatch(pointPattern[i].Points, matchGestures ?? _Gestures, i, out matchGestures);
+
+                if (++i < pointPattern.Length && matchGestures == null)
+                    return null;
             }
             return matchName;
         }
