@@ -165,7 +165,7 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        public static void Initialize()
+        static AppConfig()
         {
 #if uiAccess
             UiAccess = true;

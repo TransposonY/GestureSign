@@ -33,7 +33,6 @@ namespace GestureSign.ControlPanel
         {
             try
             {
-                AppConfig.Initialize();
                 Logging.OpenLogFile();
                 LoadLanguageData();
 
