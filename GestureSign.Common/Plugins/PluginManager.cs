@@ -142,11 +142,15 @@ namespace GestureSign.Common.Plugins
                 bFailed = false;
             }
 
-            // Load extra plugins.
-            foreach (string sFilePath in Directory.GetFiles(Path.Combine(directoryPath, "Plugins"), "*.dll"))
+            var extraPluginsPath = Path.Combine(directoryPath, "Plugins");
+            if (Directory.Exists(extraPluginsPath))
             {
-                _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
-                bFailed = false;
+                // Load extra plugins.
+                foreach (string sFilePath in Directory.GetFiles(extraPluginsPath, "*.dll"))
+                {
+                    _Plugins.AddRange(LoadPluginsFromAssembly(sFilePath, host));
+                    bFailed = false;
+                }
             }
 
 
