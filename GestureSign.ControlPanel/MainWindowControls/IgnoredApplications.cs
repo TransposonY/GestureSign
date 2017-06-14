@@ -130,8 +130,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
                 if (newApps.Count != 0)
                 {
-                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, true, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
-                    exportImportDialog.ShowDialog();
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        ExportImportDialog exportImportDialog = new ExportImportDialog(false, true, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                        exportImportDialog.ShowDialog();
+                    }, System.Windows.Threading.DispatcherPriority.Background);
                 }
             }
             e.Handled = true;
