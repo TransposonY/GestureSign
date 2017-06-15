@@ -8,7 +8,7 @@ using Newtonsoft.Json.Converters;
 
 namespace GestureSign.Common.Applications
 {
-    public class Action : IAction
+    public class Action : IAction, ICloneable
     {
         #region Public Properties
 
@@ -27,6 +27,11 @@ namespace GestureSign.Common.Applications
         public Hotkey Hotkey { get; set; }
 
         public MouseActions MouseHotkey { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
 
         #endregion
     }

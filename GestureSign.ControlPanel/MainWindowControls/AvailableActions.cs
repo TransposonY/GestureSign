@@ -388,14 +388,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             CommandInfo commandInfo;
             foreach (var info in _commandClipboard)
             {
-                var newCommand = new Command()
-                {
-                    CommandSettings = info.Command.CommandSettings,
-                    IsEnabled = info.IsEnabled,
-                    Name = info.Command.Name,
-                    PluginClass = info.Command.PluginClass,
-                    PluginFilename = info.Command.PluginFilename,
-                };
+                var newCommand = ((Command)info.Command).Clone() as Command;
                 if (targetApplication.Actions.Contains(info.Action))
                 {
                     if (info.Action.Commands.Exists(c => c.Name == newCommand.Name))
@@ -407,14 +400,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
                 else
                 {
-                    var newAction = new GestureSign.Common.Applications.Action()
-                    {
-                        Commands = new List<ICommand>(),
-                        Condition = info.Action.Condition,
-                        GestureName = info.Action.GestureName,
-                        Name = info.Action.Name
-                    };
-                    newAction.Commands.Add(newCommand);
+                    var newAction = ((GestureSign.Common.Applications.Action)info.Action).Clone() as GestureSign.Common.Applications.Action;
+                    newAction.Commands = new List<ICommand> { newCommand };
                     targetApplication.AddAction(newAction);
                     commandInfo = CommandInfo.FromCommand(newCommand, newAction);
                 }

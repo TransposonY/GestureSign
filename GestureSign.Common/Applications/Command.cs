@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace GestureSign.Common.Applications
 {
-    public class Command : ICommand
+    public class Command : ICommand, ICloneable
     {
         #region Public Properties
 
@@ -12,6 +12,11 @@ namespace GestureSign.Common.Applications
         public string PluginClass { get; set; }
         public string PluginFilename { get; set; }
         public bool IsEnabled { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
 
         #endregion
     }
