@@ -15,7 +15,7 @@ using GestureSign.Common.Log;
 
 namespace GestureSign.Common.InterProcessCommunication
 {
-    public class NamedPipe
+    public class NamedPipe : IDisposable
     {
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -24,6 +24,8 @@ namespace GestureSign.Common.InterProcessCommunication
         private static NamedPipeServerStream _pipeServer;
         private static NamedPipeServerStream _persistentPipeServerStream;
         private static readonly NamedPipe instance = new NamedPipe();
+
+        private bool disposed = false; // To detect redundant calls
 
         public static NamedPipe Instance
         {
@@ -41,6 +43,7 @@ namespace GestureSign.Common.InterProcessCommunication
             AsyncCallback ac = null;
             ac = o =>
             {
+                if (disposed) return;
                 NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
                 server.EndWaitForConnection(o);
 
@@ -60,6 +63,7 @@ namespace GestureSign.Common.InterProcessCommunication
             AsyncCallback ac = null;
             ac = o =>
             {
+                if (disposed) return;
                 NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
                 server.EndWaitForConnection(o);
 
@@ -151,6 +155,29 @@ namespace GestureSign.Common.InterProcessCommunication
                 //return true; // assume it exists
             }
         }
+
+        #region IDisposable Support
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _persistentPipeServerStream?.Dispose();
+                    _pipeServer?.Dispose();
+                }
+
+                disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
 
     }
 }

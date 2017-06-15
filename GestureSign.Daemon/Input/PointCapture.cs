@@ -21,7 +21,7 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace GestureSign.Daemon.Input
 {
-    public class PointCapture : ILoadable, IPointCapture
+    public class PointCapture : ILoadable, IPointCapture, IDisposable
     {
         #region Private Variables
 
@@ -48,6 +48,8 @@ namespace GestureSign.Daemon.Input
         private readonly IntPtr _hWinEventHook;
 
         private bool _gestureTimeout;
+
+        private bool disposedValue = false; // To detect redundant calls
 
         #endregion
 
@@ -207,12 +209,35 @@ namespace GestureSign.Daemon.Input
 
         #endregion
 
-        #region Destructor
+        #region IDisposable Support
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _pointerInputTargetWindow?.Dispose();
+                    _inputProvider?.Dispose();
+                    _timeoutTimer?.Dispose();
+                }
+
+                if (_hWinEventHook != IntPtr.Zero)
+                    UnhookWinEvent(_hWinEventHook);
+
+                disposedValue = true;
+            }
+        }
 
         ~PointCapture()
         {
-            if (_hWinEventHook != IntPtr.Zero)
-                UnhookWinEvent(_hWinEventHook);
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

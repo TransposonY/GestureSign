@@ -58,21 +58,39 @@ namespace GestureSign.Daemon.Surface
             PointCapture.Instance.CaptureEnded += PointCapture_CaptureEnded;
             PointCapture.Instance.CaptureCanceled += PointCapture_CaptureCanceled;
             PointCapture.Instance.CaptureStarted += Instance_CaptureStarted;
-            AppConfig.ConfigChanged += (o, e) => { ResetSurface(); };
+            AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             // Respond to system event changes by reinitializing the form
-            SystemEvents.DisplaySettingsChanged += (o, e) => { ResetSurface(); };
-            SystemEvents.UserPreferenceChanged += (o, e) => { ResetSurface(); };
+            SystemEvents.DisplaySettingsChanged += AppConfig_ConfigChanged;
+            SystemEvents.UserPreferenceChanged += AppConfig_ConfigChanged;
             //this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             //this.UpdateStyles();
         }
 
-        ~SurfaceForm()
+        #endregion
+
+        #region Dispose
+
+        protected override void Dispose(bool disposing)
         {
-            // Avoid System.ObjectDisposedException
-            PointCapture.Instance.PointCaptured -= PointCapture_PointCaptured;
-            PointCapture.Instance.CaptureEnded -= PointCapture_CaptureEnded;
-            PointCapture.Instance.CaptureCanceled -= PointCapture_CaptureCanceled;
-            PointCapture.Instance.CaptureStarted -= Instance_CaptureStarted;
+            if (!IsDisposed)
+            {
+                if (disposing)
+                {
+                    PointCapture.Instance.PointCaptured -= PointCapture_PointCaptured;
+                    PointCapture.Instance.CaptureEnded -= PointCapture_CaptureEnded;
+                    PointCapture.Instance.CaptureCanceled -= PointCapture_CaptureCanceled;
+                    PointCapture.Instance.CaptureStarted -= Instance_CaptureStarted;
+
+                    AppConfig.ConfigChanged -= AppConfig_ConfigChanged;
+                    SystemEvents.DisplaySettingsChanged -= AppConfig_ConfigChanged;
+                    SystemEvents.UserPreferenceChanged -= AppConfig_ConfigChanged;
+                }
+
+                _bitmap?.Dispose();
+                _graphicsPath?.Dispose();
+                _dirtyGraphicsPath?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -121,6 +139,11 @@ namespace GestureSign.Daemon.Surface
             }
 
             ClearSurfaces();
+        }
+
+        private void AppConfig_ConfigChanged(object sender, EventArgs e)
+        {
+            ResetSurface();
         }
 
         #endregion

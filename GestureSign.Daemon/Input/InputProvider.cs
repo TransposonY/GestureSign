@@ -1,12 +1,15 @@
-﻿using System.Threading;
-using GestureSign.Common.Configuration;
+﻿using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Hooks;
+using System;
+using System.Threading;
 
 namespace GestureSign.Daemon.Input
 {
-    internal class InputProvider
+    internal class InputProvider : IDisposable
     {
+        private bool disposedValue = false; // To detect redundant calls
+
         public TouchInputProcessor TouchInputProcessor;
         private const string TouchInputProvider = "GestureSign_TouchInputProvider";
         public LowLevelMouseHook LowLevelMouseHook;
@@ -36,5 +39,33 @@ namespace GestureSign.Daemon.Input
 
             NamedPipe.Instance.RunPersistentPipeConnection(TouchInputProvider, TouchInputProcessor);
         }
+
+        #region IDisposable Support
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AppConfig.ConfigChanged -= AppConfig_ConfigChanged;
+                }
+
+                LowLevelMouseHook.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~InputProvider()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

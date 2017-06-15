@@ -39,6 +39,7 @@ namespace GestureSign.Daemon
 #if !ConvertedDesktopApp
                         Application.ThreadException += Application_ThreadException;
 #endif
+                        Application.ApplicationExit += Application_ApplicationExit;
                         Logging.OpenLogFile();
 
                         if ("Built-in".Equals(AppConfig.CultureName) ||
@@ -85,6 +86,13 @@ namespace GestureSign.Daemon
                     Application.Exit();
                 }
             }
+        }
+
+        private static void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            NamedPipe.Instance.Dispose();
+            PointCapture.Instance.Dispose();
+            SurfaceForm.Instance.Dispose();
         }
 
 #if !ConvertedDesktopApp
