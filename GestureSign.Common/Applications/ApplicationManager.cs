@@ -42,7 +42,10 @@ namespace GestureSign.Common.Applications
         {
             get
             {
-                return _applications ?? new List<IApplication>();
+                if (LoadingTask.IsCompleted)
+                    return _applications != null ? _applications : _applications = new List<IApplication>();
+                else
+                    return new List<IApplication>();
             }
         }
 
@@ -363,14 +366,15 @@ namespace GestureSign.Common.Applications
 
         public IApplication GetGlobalApplication()
         {
-            if (_applications == null)
+            var apps = Applications;
+            GlobalApp globalApp = apps.FirstOrDefault(a => a is GlobalApp) as GlobalApp;
+            if (globalApp == null)
             {
-                _applications = new List<IApplication> { new GlobalApp { Group = String.Empty } };
+                globalApp = new GlobalApp() { Group = String.Empty };
+                apps.Add(globalApp);
+                return globalApp;
             }
-            else if (!_applications.Exists(a => a is GlobalApp))
-                Applications.Add(new GlobalApp() { Group = String.Empty });
-
-            return Applications.FirstOrDefault(a => a is GlobalApp);
+            else return globalApp;
         }
 
         public void RemoveGlobalAction(string ActionName)
