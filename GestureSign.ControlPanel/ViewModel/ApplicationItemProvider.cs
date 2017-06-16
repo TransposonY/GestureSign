@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using GestureSign.Common.Applications;
+using System.Collections.Generic;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
@@ -38,10 +39,11 @@ namespace GestureSign.ControlPanel.ViewModel
             else
                 ApplicationItems.Clear();
 
-            var userApplications = ApplicationManager.Instance.Applications.Where(app => (app is UserApp)).OrderBy(app => app.Name);
-            var globalApplication = ApplicationManager.Instance.GetAllGlobalApplication();
+            var newApps = new List<IApplication>();
+            newApps.Add(ApplicationManager.Instance.GetGlobalApplication());
+            newApps.AddRange(ApplicationManager.Instance.Applications.Where(app => (app is UserApp)).OrderBy(app => app.Name));
 
-            foreach (var app in globalApplication.Union(userApplications))
+            foreach (var app in newApps)
             {
                 ApplicationItems.Add(app);
             }

@@ -66,7 +66,7 @@ namespace GestureSign.ControlPanel.ViewModel
 
             // Get all available gestures from gesture manager
             IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.PointPatterns?.Max(p => p.Points.Count));
-            var apps = ApplicationManager.Instance.GetAvailableUserApplications().Union(ApplicationManager.Instance.GetAllGlobalApplication()).ToList();
+            var apps = ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApp)).ToList();
 
             foreach (var g in results)
             {

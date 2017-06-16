@@ -20,7 +20,7 @@ namespace GestureSign.Daemon.Triggers
 
         private void Instance_ForegroundApplicationsChanged(object sender, IApplication[] apps)
         {
-            var userAppList = apps.Where(application => application is UserApp).Union(ApplicationManager.Instance.GetAllGlobalApplication()).ToArray();
+            var userAppList = apps.Where(application => application is UserApp).Union(new[] { ApplicationManager.Instance.GetGlobalApplication() }).ToArray();
             if (userAppList.Length == 0) return;
             RegisterHotKeys(userAppList);
         }
@@ -57,7 +57,7 @@ namespace GestureSign.Daemon.Triggers
                     }
                 }
             }
-            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow).Where(app=>!(app is IgnoredApp)).ToArray();
+            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow).Where(app => !(app is IgnoredApp)).ToArray();
             RegisterHotKeys(apps);
             return true;
         }

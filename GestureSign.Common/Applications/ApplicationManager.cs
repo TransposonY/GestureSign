@@ -374,12 +374,6 @@ namespace GestureSign.Common.Applications
             return _Applications.FirstOrDefault(a => a is GlobalApp);
         }
 
-        public IEnumerable<IApplication> GetAllGlobalApplication()
-        {
-            if (!_Applications.Exists(a => a is GlobalApp))
-                _Applications.Add(new GlobalApp() { Group = String.Empty });
-            return _Applications.Where(a => a is GlobalApp);
-        }
         public void RemoveGlobalAction(string ActionName)
         {
             RemoveAction(ActionName, true);
