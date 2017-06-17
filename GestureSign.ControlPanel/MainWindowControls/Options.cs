@@ -101,7 +101,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             UpdateVisualFeedbackExample();
 
-            AppConfig.VisualFeedbackWidth = (int)Math.Round(VisualFeedbackWidthSlider.Value);
+            var newValue = (int)Math.Round(e.NewValue);
+            if (newValue == AppConfig.VisualFeedbackWidth) return;
+
+            AppConfig.VisualFeedbackWidth = newValue;
 
             AppConfig.Save();
         }
@@ -110,6 +113,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             // Change opacity display text with new value
             OpacityText.Text = LocalizationProvider.Instance.GetTextValue("Options.Opacity") + GetAlphaPercentage(OpacitySlider.Value) + "%";
+            if (Math.Abs(e.NewValue - AppConfig.Opacity) < 0.001) return;
+
             AppConfig.Opacity = OpacitySlider.Value;
 
             AppConfig.Save();
@@ -117,8 +122,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void MinimumPointDistanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (e.OldValue == 0) return;
-            AppConfig.MinimumPointDistance = (int)Math.Round(e.NewValue);
+            var newValue = (int)Math.Round(e.NewValue);
+            if (newValue == AppConfig.MinimumPointDistance || (int)e.OldValue == 0) return;
+            AppConfig.MinimumPointDistance = newValue;
 
             AppConfig.Save();
         }
