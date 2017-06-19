@@ -118,6 +118,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             SaveFileDialog sfdGestures = new SaveFileDialog()
             {
                 Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
+                FileName = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + ".gest",
                 Title = LocalizationProvider.Instance.GetTextValue("Gesture.ExportGestures"),
                 AddExtension = true,
                 DefaultExt = "gest",
