@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Daemon.Native;
@@ -16,10 +14,6 @@ namespace GestureSign.Daemon.Filtration
         private int _blockTouchInputThreshold;
         private Dictionary<int, int> _pointerIdList = new Dictionary<int, int>(10);
         private Queue<int> _idPool = new Queue<int>(10);
-        private Dictionary<int, POINTER_TOUCH_INFO> _pointerCache = new Dictionary<int, POINTER_TOUCH_INFO>();
-        private bool _pointMoved;
-        private int _screenWidth;
-        private int _screenHeight;
         private bool _isInitialized = false;
 
         public PointerInputTargetWindow()
@@ -137,47 +131,10 @@ namespace GestureSign.Daemon.Filtration
 
             if (pointerInfos.Length != ptis.Count) return;
 
-            if (!_pointMoved)
+            if (pointerInfos.Length < _blockTouchInputThreshold)
             {
-                GetDisplayResolution();
-                foreach (var pointerTouchInfo in ptis)
-                {
-                    var currentPointerInfo = pointerTouchInfo.PointerInfo;
-                    if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.UPDATE))
-                    {
-                        _pointMoved |= IsPointMoved(_pointerCache[currentPointerInfo.PointerID].PointerInfo.PtPixelLocation, currentPointerInfo.PtPixelLocation);
-                    }
-                    else if (currentPointerInfo.PointerFlags.HasFlag(POINTER_FLAGS.DOWN))
-                    {
-                        if (!_pointerCache.ContainsKey(currentPointerInfo.PointerID))
-                            _pointerCache.Add(currentPointerInfo.PointerID, pointerTouchInfo);
-                    }
-                    else
-                    {
-                        if (_pointerCache.ContainsKey(currentPointerInfo.PointerID))
-                            _pointerCache.Remove(currentPointerInfo.PointerID);
-                        if (ptis.Count == 1)
-                            SimulateClick(ptis.ToArray());
-                    }
-                }
-            }
-
-            if (_pointMoved && pointerInfos.Length < _blockTouchInputThreshold)
-            {
-                if (_pointerCache.Count != 0)
-                {
-                    NativeMethods.InjectTouchInput(_pointerCache.Count, _pointerCache.Values.ToArray());
-                    _pointerCache.Clear();
-                    Thread.Sleep(1);
-                }
                 if (ptis.Count != 0)
                     NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
-            }
-
-            if (_pointerIdList.Count == 0)
-            {
-                _pointerCache.Clear();
-                _pointMoved = false;
             }
         }
 
@@ -262,26 +219,6 @@ namespace GestureSign.Daemon.Filtration
                 ResetIdPool();
             }
             return ptis;
-        }
-
-        private void SimulateClick(POINTER_TOUCH_INFO[] pointerTouchInfos)
-        {
-            pointerTouchInfos[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
-            NativeMethods.InjectTouchInput(1, pointerTouchInfos);
-            Thread.Sleep(5);
-            pointerTouchInfos[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
-            NativeMethods.InjectTouchInput(1, pointerTouchInfos);
-        }
-
-        private bool IsPointMoved(POINT point1, POINT point2)
-        {
-            return Math.Abs(point1.X - point2.X) > _screenWidth / 150 || Math.Abs(point1.Y - point2.Y) > _screenHeight / 150;
-        }
-
-        private void GetDisplayResolution()
-        {
-            _screenWidth = Screen.PrimaryScreen.Bounds.Width;
-            _screenHeight = Screen.PrimaryScreen.Bounds.Height;
         }
 
         #endregion ProcessInput
