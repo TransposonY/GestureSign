@@ -1,5 +1,4 @@
 ﻿using GestureSign.Common.Applications;
-using GestureSign.Common.Gestures;
 using GestureSign.Daemon.Input;
 using ManagedWinapi;
 using ManagedWinapi.Windows;
@@ -16,13 +15,22 @@ namespace GestureSign.Daemon.Triggers
         public HotKeyManager()
         {
             PointCapture.Instance.ForegroundApplicationsChanged += Instance_ForegroundApplicationsChanged;
+            PointCapture.Instance.ModeChanged += Instance_ModeChanged;
         }
 
         private void Instance_ForegroundApplicationsChanged(object sender, IApplication[] apps)
         {
             var userAppList = apps.Where(application => application is UserApp).Union(new[] { ApplicationManager.Instance.GetGlobalApplication() }).ToArray();
-            if (userAppList.Length == 0) return;
-            RegisterHotKeys(userAppList);
+            if (userAppList.Length == 0)
+                UnregisterAllHotKeys();
+            else
+                RegisterHotKeys(userAppList);
+        }
+
+        private void Instance_ModeChanged(object sender, Common.Input.ModeChangedEventArgs e)
+        {
+            if (e.Mode == Common.Input.CaptureMode.UserDisabled)
+                UnregisterAllHotKeys();
         }
 
         public override bool LoadConfiguration(List<IAction> actions)
@@ -78,6 +86,14 @@ namespace GestureSign.Daemon.Triggers
                     }
                 }
                 else hotKeyPair.Key.Unregister();
+            }
+        }
+
+        private void UnregisterAllHotKeys()
+        {
+            foreach (var hotKeyPair in _hotKeyMap)
+            {
+                hotKeyPair.Key.Unregister();
             }
         }
 
