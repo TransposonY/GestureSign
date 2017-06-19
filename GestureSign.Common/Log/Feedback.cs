@@ -95,11 +95,9 @@ namespace GestureSign.Common.Log
 
             if (File.Exists(Logging.LogFilePath))
             {
-                using (FileStream fs = new FileStream(Logging.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (StreamReader streamReader = new StreamReader(fs))
-                        result.Append(streamReader.ReadToEnd());
-                }
+                FileStream fs = new FileStream(Logging.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (StreamReader streamReader = new StreamReader(fs))
+                    result.Append(streamReader.ReadToEnd());
             }
             result.AppendLine();
             result.AppendLine();
