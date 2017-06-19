@@ -143,5 +143,14 @@ namespace GestureSign.ControlPanel
             }
             return false;
         }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            if (mutex != null)
+            {
+                NamedPipe.Instance.Dispose();
+                mutex.Dispose();
+            }
+        }
     }
 }
