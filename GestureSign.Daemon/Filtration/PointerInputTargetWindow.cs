@@ -61,7 +61,6 @@ namespace GestureSign.Daemon.Filtration
 
                     if (NativeMethods.RegisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
                     {
-                        NativeMethods.AccSetRunningUtilityState(Handle, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE, NativeMethods.ANRUS_TOUCH_MODIFICATION_ACTIVE);
                         _isRegistered = true;
                     }
                 }
@@ -69,7 +68,6 @@ namespace GestureSign.Daemon.Filtration
                 {
                     if (_isRegistered && NativeMethods.UnregisterPointerInputTarget(Handle, POINTER_INPUT_TYPE.TOUCH))
                     {
-                        NativeMethods.AccSetRunningUtilityState(Handle, 0, 0);
                         _isRegistered = false;
                     }
                 }
