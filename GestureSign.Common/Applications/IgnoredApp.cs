@@ -5,25 +5,25 @@ using System.Runtime.CompilerServices;
 
 namespace GestureSign.Common.Applications
 {
-	public class IgnoredApp : ApplicationBase, INotifyPropertyChanged
-	{
-		#region Contructors
+    public class IgnoredApp : ApplicationBase, INotifyPropertyChanged
+    {
+        #region Contructors
 
-		protected IgnoredApp()
-		{
+        public IgnoredApp()
+        {
 
-		}
+        }
 
-		public IgnoredApp(string Name, MatchUsing MatchUsing, string MatchString, bool IsRegEx,bool isEnabled)
-		{
-			this.Name = Name;
-			this.MatchUsing = MatchUsing;
-			this.MatchString = MatchString;
-			this.IsRegEx = IsRegEx;
+        public IgnoredApp(string Name, MatchUsing MatchUsing, string MatchString, bool IsRegEx, bool isEnabled)
+        {
+            this.Name = Name;
+            this.MatchUsing = MatchUsing;
+            this.MatchString = MatchString;
+            this.IsRegEx = IsRegEx;
             this.IsEnabled = isEnabled;
-		}
+        }
 
-		#endregion
+        #endregion
 
         private bool isEnabled;
         public bool IsEnabled
@@ -36,32 +36,32 @@ namespace GestureSign.Common.Applications
             set { SetProperty(ref isEnabled, value); }
         }
 
-		#region IApplication Properties
+        #region IApplication Properties
 
-		public override List<IAction> Actions
-		{
-			get { return null; }
-			set { /* Only exists for serialization purposes */ }
-		}
+        public override List<IAction> Actions
+        {
+            get { return null; }
+            set { /* Only exists for serialization purposes */ }
+        }
 
-		#endregion
+        #endregion
 
-		#region IApplication Methods
+        #region IApplication Methods
 
-		public override void AddAction(IAction Action)
-		{
-			throw new NotSupportedException();
-		}
+        public override void AddAction(IAction Action)
+        {
+            throw new NotSupportedException();
+        }
 
-		public override void RemoveAction(IAction Action)
-		{
-			throw new NotSupportedException();
-		}
+        public override void RemoveAction(IAction Action)
+        {
+            throw new NotSupportedException();
+        }
 
-		public override void RemoveAllActions(Predicate<IAction> Match)
-		{
-			throw new NotSupportedException();
-		}
+        public override void RemoveAllActions(Predicate<IAction> Match)
+        {
+            throw new NotSupportedException();
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -79,6 +79,6 @@ namespace GestureSign.Common.Applications
             storage = value;
             this.OnPropertyChanged(propertyName);
         }
-		#endregion	
-	}
+        #endregion
+    }
 }

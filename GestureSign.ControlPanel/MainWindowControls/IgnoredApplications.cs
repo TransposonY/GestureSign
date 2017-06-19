@@ -2,12 +2,15 @@
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Dialogs;
+using IWshRuntimeLibrary;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace GestureSign.ControlPanel.MainWindowControls
 {
@@ -114,13 +117,26 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     foreach (var file in files)
                     {
-                        if (file.EndsWith(".gsa", StringComparison.OrdinalIgnoreCase))
+                        switch (Path.GetExtension(file).ToLower())
                         {
-                            var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
-                            if (apps != null)
-                            {
-                                newApps.AddRange(apps);
-                            }
+                            case ".gsa":
+                                var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
+                                if (apps != null)
+                                {
+                                    newApps.AddRange(apps);
+                                }
+                                break;
+                            case ".exe":
+                                Dispatcher.InvokeAsync(() => lstIgnoredApplications.SelectedItem = ApplicationManager.Instance.AddApplication(new IgnoredApp() { IsEnabled = true }, file), DispatcherPriority.Input);
+                                break;
+                            case ".lnk":
+                                WshShell shell = new WshShell();
+                                IWshShortcut link = (IWshShortcut)shell.CreateShortcut(file);
+                                if (Path.GetExtension(link.TargetPath).ToLower() == ".exe")
+                                {
+                                    Dispatcher.InvokeAsync(() => lstIgnoredApplications.SelectedItem = ApplicationManager.Instance.AddApplication(new IgnoredApp() { IsEnabled = true }, link.TargetPath), DispatcherPriority.Input);
+                                }
+                                break;
                         }
                     }
                 }
