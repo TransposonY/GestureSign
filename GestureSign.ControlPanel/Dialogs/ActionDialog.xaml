@@ -51,7 +51,7 @@
                 <usercontrols:GestureSelector x:Name="GestureSelector"
                                               CurrentGesture="{Binding CurrentGesture, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type controls:MetroWindow}, Mode=FindAncestor}}" />
             </TabItem>
-            <TabItem Header="{localization:LocalisedText ActionDialog.HotKey}"
+            <TabItem Header="{localization:LocalisedText ActionDialog.Triggers}"
                      controls:ControlsHelper.HeaderFontSize="18">
                 <StackPanel>
                     <TextBlock x:Name="KeyboardHotKeyTextBlock"

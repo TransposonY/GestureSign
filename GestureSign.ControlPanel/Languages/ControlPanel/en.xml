@@ -88,7 +88,7 @@ Email:ccfyzh@gmail.com
     <TriggerCondition>Trigger Condition</TriggerCondition>
     <KeyboardHotKey>Keyboard HotKey</KeyboardHotKey>
     <HotKeyWatermark>You can enter a HotKey to trigger this action</HotKeyWatermark>
-    <HotKey>HotKey</HotKey>
+    <Triggers>Triggers</Triggers>
     <MouseHotKey>Mouse HotKey</MouseHotKey>
     <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
     <Default>Default</Default>
