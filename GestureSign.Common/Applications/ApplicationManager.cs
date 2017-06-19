@@ -413,21 +413,22 @@ namespace GestureSign.Common.Applications
             return newName;
         }
 
-        public IApplication AddApplication(IApplication app, string executablefilePath)
+        public IApplication AddApplication<TApp>(TApp app, string executablefilePath) where TApp : IApplication
         {
             var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(executablefilePath);
-            app.Name = versionInfo.ProductName;
+            app.Name = string.IsNullOrWhiteSpace(versionInfo.ProductName) ? Path.GetFileNameWithoutExtension(executablefilePath) : versionInfo.ProductName;
             app.MatchUsing = MatchUsing.ExecutableFilename;
             app.MatchString = Path.GetFileName(executablefilePath);
 
-            var matchApplications = FindMatchApplications<UserApp>(app.MatchUsing, app.MatchString);
+            var matchApplications = FindMatchApplications<TApp>(app.MatchUsing, app.MatchString);
             if (matchApplications.Length != 0)
             {
                 return matchApplications[0];
             }
-            if (ApplicationExists(app.Name))
+            var existingApp = Applications.Find(a => a.Name == app.Name && a is TApp);
+            if (existingApp != null)
             {
-                return GetExistingUserApplication(app.Name);
+                return existingApp;
             }
             AddApplication(app);
             SaveApplications();

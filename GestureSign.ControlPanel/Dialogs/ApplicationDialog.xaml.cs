@@ -211,7 +211,7 @@ namespace GestureSign.ControlPanel.Dialogs
                             matchUsingRadio.MatchUsing = MatchUsing.ExecutableFilename;
 
                             var versionInfo = FileVersionInfo.GetVersionInfo(targetFile);
-                            ApplicationNameTextBox.Text = versionInfo.ProductName;
+                            ApplicationNameTextBox.Text = string.IsNullOrWhiteSpace(versionInfo.ProductName) ? Path.GetFileNameWithoutExtension(targetFile) : versionInfo.ProductName;
 
                             MatchStringTextBox.Text = Path.GetFileName(targetFile);
                         }
