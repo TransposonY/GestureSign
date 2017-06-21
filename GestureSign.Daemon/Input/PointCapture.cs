@@ -303,20 +303,21 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        protected async void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
+        protected void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
         {
             if (SourceDevice != Device.None && SourceDevice != e.PointSource) return;
 
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && SourceDevice == Device.Touch)
             {
+                e.Handled = Mode != CaptureMode.UserDisabled;
+
+                EndCapture();
+
                 if (TemporarilyDisableCapture && Mode == CaptureMode.UserDisabled)
                 {
                     TemporarilyDisableCapture = false;
                     ToggleUserDisablePointCapture();
                 }
-
-                await EndCapture();
-                e.Handled = Mode != CaptureMode.UserDisabled;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
             else if (State == CaptureState.CapturingInvalid && SourceDevice == Device.Mouse)
@@ -402,7 +403,7 @@ namespace GestureSign.Daemon.Input
             return true;
         }
 
-        private async Task EndCapture()
+        private void EndCapture()
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Point event
@@ -433,7 +434,7 @@ namespace GestureSign.Daemon.Input
                 _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
 
-                if (!await NamedPipe.SendMessageAsync(_pointPatternCache.Select(p => p.Points).ToList(), "GestureSignControlPanel"))
+                if (!NamedPipe.SendMessageAsync(_pointPatternCache.Select(p => p.Points).ToList(), "GestureSignControlPanel").Result)
                     Mode = CaptureMode.Normal;
             }
 
