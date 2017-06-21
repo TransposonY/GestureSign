@@ -177,6 +177,8 @@ namespace GestureSign.Common.Configuration
             if (!Directory.Exists(ApplicationDataPath))
                 Directory.CreateDirectory(ApplicationDataPath);
 
+            FileManager.WaitFile(ConfigPath);
+
             ExeMap = new ExeConfigurationFileMap
             {
                 ExeConfigFilename = ConfigPath,
