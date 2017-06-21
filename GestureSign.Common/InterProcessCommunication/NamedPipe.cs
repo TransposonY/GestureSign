@@ -45,13 +45,19 @@ namespace GestureSign.Common.InterProcessCommunication
             {
                 if (disposed) return;
                 NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
-                server.EndWaitForConnection(o);
+                try
+                {
+                    server.EndWaitForConnection(o);
 
-                messageProcessor.ProcessMessages(server);
-                server.Disconnect();
+                    messageProcessor.ProcessMessages(server);
+                    server.Disconnect();
 
-                server.BeginWaitForConnection(ac, server);
-
+                    server.BeginWaitForConnection(ac, server);
+                }
+                catch (Exception e)
+                {
+                    Logging.LogException(e);
+                }
             };
             _pipeServer.BeginWaitForConnection(ac, _pipeServer);
         }
