@@ -330,7 +330,7 @@ namespace GestureSign.Common.Applications
             }
             // Attempt to retrieve an action on the application passed in
             IEnumerable<IAction> finalAction =
-                application.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName));
+                application.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName && a.Commands != null && a.Commands.Any(com => com != null && com.IsEnabled)));
             // If there is was no action found on given application, try to get an action for global application
             if (!finalAction.Any() && useGlobal)
                 finalAction = GetGlobalApplication().Actions.Where(a => a.GestureName == gestureName);
