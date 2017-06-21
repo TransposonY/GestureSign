@@ -21,7 +21,9 @@
             <RowDefinition Height="48" />
         </Grid.RowDefinitions>
         <usercontrols:ApplicationSelector x:Name="ApplicationSelector"
-                                     Grid.Row="0" />
+                                          Grid.Row="0"
+                                          Visibility="Collapsed" />
+        <controls:ProgressRing x:Name="ProgressRing" />
         <Button x:Name="OkButton"
                 Content="{localization:LocalisedText Common.Import}"
                 Click="OkButton_Click"

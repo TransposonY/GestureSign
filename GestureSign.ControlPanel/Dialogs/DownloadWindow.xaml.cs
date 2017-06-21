@@ -122,6 +122,8 @@ namespace GestureSign.ControlPanel.Dialogs
             Dispatcher.InvokeAsync(() =>
             {
                 ApplicationSelector.Initialize(newApps, gestures);
+                ProgressRing.Visibility = Visibility.Collapsed;
+                ApplicationSelector.Visibility = Visibility.Visible;
             }
             , DispatcherPriority.Input);
 
