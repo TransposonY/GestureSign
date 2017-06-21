@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using ManagedWinapi.Windows;
+using GestureSign.Common.Log;
 
 namespace GestureSign.ControlPanel.Flyouts
 {
@@ -80,31 +81,39 @@ namespace GestureSign.ControlPanel.Flyouts
             foreach (SystemWindow sWind in windows)
             {
                 SystemWindow realWindow = sWind;
-                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(realWindow.ClassName))
+                try
                 {
-                    realWindow = sWind.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
-                    if (realWindow == null) continue;
+                    if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(realWindow.ClassName))
+                    {
+                        realWindow = sWind.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
+                        if (realWindow == null) continue;
+                    }
+
+                    var pid = (uint)realWindow.ProcessId;
+                    if (!processInfoMap.ContainsKey(pid)) continue;
+
+                    var icon = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    icon.Freeze();
+
+                    ApplicationListViewItem lItem = new ApplicationListViewItem
+                    {
+                        WindowClass = realWindow.ClassName,
+                        WindowTitle = realWindow.Title,
+                        WindowFilename = processInfoMap[pid],
+                        ApplicationIcon = icon
+                    };
+
+                    //lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
+                    this.lstRunningApplications.Dispatcher.InvokeAsync(new Action(() =>
+                   {
+                       this.lstRunningApplications.Items.Add(lItem);
+                   }), DispatcherPriority.Input);
+
                 }
-
-                var pid = (uint)realWindow.ProcessId;
-                if (!processInfoMap.ContainsKey(pid)) continue;
-
-                var icon = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                icon.Freeze();
-
-                ApplicationListViewItem lItem = new ApplicationListViewItem
+                catch (Exception e)
                 {
-                    WindowClass = realWindow.ClassName,
-                    WindowTitle = realWindow.Title,
-                    WindowFilename = processInfoMap[pid],
-                    ApplicationIcon = icon
-                };
-
-                //lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
-                this.lstRunningApplications.Dispatcher.InvokeAsync(new Action(() =>
-               {
-                   this.lstRunningApplications.Items.Add(lItem);
-               }), DispatcherPriority.Input);
+                    Logging.LogException(e);
+                }
             }
 
         }
