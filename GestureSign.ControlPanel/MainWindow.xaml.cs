@@ -86,11 +86,14 @@ namespace GestureSign.ControlPanel
                 if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source) &&
                     entry.Message.IndexOf("GestureSign", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    DateTime lastTime = AppConfig.LastErrorTime;
-                    AppConfig.LastErrorTime = entry.TimeWritten;
-                    AppConfig.Save();
+                    bool hasNewLog = AppConfig.LastErrorTime.CompareTo(entry.TimeWritten) < 0;
+                    if (hasNewLog)
+                    {
+                        AppConfig.LastErrorTime = entry.TimeWritten;
+                        AppConfig.Save();
+                    }
 
-                    return lastTime.CompareTo(entry.TimeWritten) < 0;
+                    return hasNewLog;
                 }
             }
             return false;
