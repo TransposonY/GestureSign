@@ -343,12 +343,11 @@ Email:ccfyzh@gmail.com
       <ScrollAmountTip>A Positive value to the Right/Up.A Negative value to the Left/Down.</ScrollAmountTip>
     </MouseActions>
     <RunCommand>
-      <Name>Command or Program</Name>
-      <Description>Runs a specified command or program</Description>
+      <Name>Command Prompt Commands</Name>
+      <Description>Runs {0}</Description>
       <Category>Run</Category>
       <Command>Command</Command>
       <InsertVariable>Insert Variable</InsertVariable>
-      <Browse>Browse...</Browse>
       <ShowCMD>Show CMD Window</ShowCMD>
     </RunCommand>
     <ScreenBrightness>
@@ -439,5 +438,13 @@ Email:ccfyzh@gmail.com
       <Name>Toggle Topmost</Name>
       <Description>Toggle the window topmost flag.</Description>
     </ToggleWindowTopmost>
+    <OpenFile>
+      <Name>Open File or Website</Name>
+      <Category>Run</Category>
+      <Description>Open {0}</Description>
+      <FileOrWebsite>File or Website</FileOrWebsite>
+      <Arguments>Arguments</Arguments>
+      <Browse>Browse...</Browse>
+    </OpenFile>
   </CorePlugins>
 </Language>

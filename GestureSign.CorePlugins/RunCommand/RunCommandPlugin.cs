@@ -26,7 +26,7 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public string Description
         {
-            get { return LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Description"); }
+            get { return string.Format(LocalizationProvider.Instance.GetTextValue("CorePlugins.RunCommand.Description"), _Settings.Command); }
         }
 
         public object GUI

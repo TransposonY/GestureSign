@@ -38,22 +38,6 @@ namespace GestureSign.CorePlugins.RunCommand
             }
         }
 
-        private void cmdSelectFile_Click(object sender, RoutedEventArgs e)
-        {
-            // Create open file dialog to let user select file to open
-            Microsoft.Win32.OpenFileDialog ofDialog = new Microsoft.Win32.OpenFileDialog();
-            try
-            {
-                // Set initial directory if path is valid
-                if (System.IO.File.Exists(txtCommand.Text.Trim()))
-                    ofDialog.InitialDirectory = System.IO.Path.GetDirectoryName(txtCommand.Text.Trim());
-            }
-            catch { }
-            if (ofDialog.ShowDialog().Value)
-                txtCommand.Text = "\"" + ofDialog.FileName + "\"";
-
-        }
-
         //private bool IsValidPath(string path)
         //{
         //    return !System.IO.Path.GetInvalidPathChars().Any(fnc => path.Contains(fnc)) && path != String.Empty;

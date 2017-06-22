@@ -27,13 +27,6 @@
                  VerticalAlignment="Top"
                  Height="77"
                  MaxLines="5" />
-        <Button x:Name="cmdSelectFile"
-                Content="{localization:LocalisedText CorePlugins.RunCommand.Browse}"
-                HorizontalAlignment="Right"
-                Margin="0,128,10,0"
-                VerticalAlignment="Top"
-                Click="cmdSelectFile_Click"
-                FontSize="12" />
         <CheckBox x:Name="showCmdCheckBox"
                   Content="{localization:LocalisedText CorePlugins.RunCommand.ShowCMD}"
                   HorizontalAlignment="Left"

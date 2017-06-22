@@ -347,12 +347,11 @@
       <ScrollAmountTip>输入滚动数  正数向右/上滚动 负数向左/下滚动</ScrollAmountTip>
     </MouseActions>
     <RunCommand>
-      <Name>命令或程序</Name>
-      <Description>运行指定的命令或程序</Description>
+      <Name>命令行</Name>
+      <Description>执行{0}</Description>
       <Category>运行</Category>
       <Command>命令</Command>
       <InsertVariable>插入变量</InsertVariable>
-      <Browse>浏览..</Browse>
       <ShowCMD>显示CMD窗口</ShowCMD>
     </RunCommand>
     <ScreenBrightness>
@@ -444,5 +443,13 @@
       <Name>切换顶置</Name>
       <Description>切换窗口的顶置状态</Description>
     </ToggleWindowTopmost>
+    <OpenFile>
+      <Name>打开文件或网站</Name>
+      <Category>运行</Category>
+      <Description>打开 {0}</Description>
+      <FileOrWebsite>文件或网站</FileOrWebsite>
+      <Arguments>参数</Arguments>
+      <Browse>浏览..</Browse>
+    </OpenFile>
   </CorePlugins>
 </Language>
