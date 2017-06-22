@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Input;
+using GestureSign.Common.Log;
 using ManagedWinapi.Windows;
 
 namespace GestureSign.Common.Plugins
@@ -108,7 +109,7 @@ namespace GestureSign.Common.Plugins
 
             var observeExceptions = new Action<Task>(t =>
             {
-                Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
+                Logging.LogException(t.Exception.InnerException);
             });
 
             if (_lastActionTask == null)
