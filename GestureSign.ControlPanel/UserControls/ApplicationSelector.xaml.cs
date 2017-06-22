@@ -121,14 +121,19 @@ namespace GestureSign.ControlPanel.UserControls
             IgnoredAppList = newIgnoredApp;
         }
 
-        private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void AppFilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             CollectionViewSource.GetDefaultView(AppListBox.ItemsSource).Refresh();
         }
 
-        private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
+        private void ActionFilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string filter = FilterTextBox.Text?.Trim();
+            CollectionViewSource.GetDefaultView(ActionListBox.ItemsSource).Refresh();
+        }
+
+        private void AppCollectionViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            string filter = AppFilterTextBox.Text?.Trim();
             if (string.IsNullOrEmpty(filter))
             {
                 e.Accepted = true;
@@ -137,6 +142,20 @@ namespace GestureSign.ControlPanel.UserControls
             {
                 var app = (AppListItem)e.Item;
                 e.Accepted = (app.Application.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+        }
+
+        private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            string filter = ActionFilterTextBox.Text?.Trim();
+            if (string.IsNullOrEmpty(filter))
+            {
+                e.Accepted = true;
+            }
+            else
+            {
+                var listItem = (ActionListItem)e.Item;
+                e.Accepted = (listItem.Action.Name?.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
             }
         }
 

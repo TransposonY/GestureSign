@@ -20,7 +20,7 @@
                                                 GestureImageConverter="{StaticResource GestureImageConverter}" />
         <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
         <CollectionViewSource x:Key="ApplicationViewSource"
-                              Filter="CollectionViewSource_Filter"
+                              Filter="AppCollectionViewSource_Filter"
                               Source="{Binding UserAppList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Application.Group" />
@@ -28,6 +28,7 @@
         </CollectionViewSource>
         <CollectionViewSource x:Key="ActionViewSource"
                               Culture="{x:Static common:UIHelper.CurrentCulture}"
+                              Filter="CollectionViewSource_Filter"
                               Source="{Binding SelectedItem.ActionItemList, ElementName=AppListBox}">
             <CollectionViewSource.SortDescriptions>
                 <componentmodel:SortDescription PropertyName="Action.Name" />
@@ -101,11 +102,14 @@
                                       MaxWidth="300" />
                     <ColumnDefinition Width="1.25*" />
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="FilterTextBox"
+                <TextBox x:Name="AppFilterTextBox"
                          FontSize="14"
-                         Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.FilterApplication}"
-                         TextChanged="FilterTextBox_TextChanged"
-                         VerticalAlignment="Top" />
+                         Background="{StaticResource AccentColorBrush}"
+                         Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.SearchApplication}"
+                         TextChanged="AppFilterTextBox_TextChanged"
+                         VerticalAlignment="Top"
+                         BorderThickness="0"
+                         Foreground="White" />
                 <ListBox x:Name="AppListBox"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -167,12 +171,22 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
+                <TextBox x:Name="ActionFilterTextBox"
+                         FontSize="14"
+                         Background="{StaticResource AccentColorBrush}"
+                         Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.SearchAction}"
+                         TextChanged="ActionFilterTextBox_TextChanged"
+                         VerticalAlignment="Top"
+                         Grid.Column="1"
+                         BorderThickness="0"
+                         Foreground="White" />
                 <ListBox x:Name="ActionListBox"
                          ItemsSource="{Binding Source={StaticResource ActionViewSource}}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          VirtualizingPanel.IsVirtualizing="True"
                          VirtualizingPanel.VirtualizationMode="Recycling"
-                         Grid.Column="1">
+                         Grid.Column="1"
+                         Margin="0,27,0,0">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <DockPanel>
@@ -221,12 +235,22 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
+                <Border Height="27"
+                        Background="{StaticResource AccentColorBrush}"
+                        VerticalAlignment="Top"
+                        Grid.Column="2">
+                    <TextBlock Text="{localization:LocalisedText ExportImportDialog.Commands}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="White" />
+                </Border>
                 <ListBox x:Name="CommandListBox"
                          DataContext="{Binding ElementName=ActionListBox,Path=SelectedItem.Action}"
                          ItemsSource="{Binding Commands}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Grid.Column="2"
-                         HorizontalContentAlignment="Center">
+                         HorizontalContentAlignment="Center"
+                         Margin="0,27,0,0">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Height="50">

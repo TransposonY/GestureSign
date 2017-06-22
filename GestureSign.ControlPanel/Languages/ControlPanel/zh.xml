@@ -141,7 +141,9 @@
   <ExportImportDialog>
     <ApplicationHeader>程序({0})</ApplicationHeader>
     <IgnoreHeader>忽略({0})</IgnoreHeader>
-    <FilterApplication>筛选程序</FilterApplication>
+    <SearchApplication>查找程序...</SearchApplication>
+    <SearchAction>查找动作...</SearchAction>
+    <Commands>命令</Commands>
     <ImportButton>导入</ImportButton>
     <ExportButton>导出</ExportButton>
     <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>

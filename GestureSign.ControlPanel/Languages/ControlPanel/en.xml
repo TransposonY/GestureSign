@@ -137,7 +137,9 @@ Email:ccfyzh@gmail.com
   <ExportImportDialog>
     <ApplicationHeader>Applications({0})</ApplicationHeader>
     <IgnoreHeader>Ignore({0})</IgnoreHeader>
-    <FilterApplication>Filter Applications</FilterApplication>
+    <SearchApplication>Search Application...</SearchApplication>
+    <SearchAction>Search Action...</SearchAction>
+    <Commands>Commands</Commands>
     <ImportButton>Import</ImportButton>
     <ExportButton>Export</ExportButton>
     <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
