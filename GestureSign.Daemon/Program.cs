@@ -36,9 +36,7 @@ namespace GestureSign.Daemon
                     //Application.SetCompatibleTextRenderingDefault(false);
                     try
                     {
-#if !ConvertedDesktopApp
                         Application.ThreadException += Application_ThreadException;
-#endif
                         Application.ApplicationExit += Application_ApplicationExit;
                         Logging.OpenLogFile();
 
@@ -95,7 +93,6 @@ namespace GestureSign.Daemon
             SurfaceForm.Instance.Dispose();
         }
 
-#if !ConvertedDesktopApp
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             DialogResult result = DialogResult.Abort;
@@ -123,7 +120,6 @@ namespace GestureSign.Daemon
             if (result == DialogResult.Abort)
                 Application.Exit();
         }
-#endif
 
         private static bool StartTouchInputProvider()
         {
