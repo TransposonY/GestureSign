@@ -328,11 +328,9 @@
                  SelectedValuePath="CommandName"
                  ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 VirtualizingPanel.IsVirtualizing="True"
-                 VirtualizingPanel.VirtualizationMode="Recycling"
-                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                  SelectionChanged="lstAvailableActions_SelectionChanged"
                  ScrollViewer.ScrollChanged="LstAvailableActions_OnScrollChanged"
+                 ScrollViewer.CanContentScroll="False"
                  Grid.Row="0"
                  Grid.Column="1"
                  BorderBrush="{StaticResource AccentColorBrush}"
@@ -488,6 +486,12 @@
                             Value="Stretch" />
                 </Style>
             </ListBox.ItemContainerStyle>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel IsItemsHost="True">
+                    </StackPanel>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
         </ListBox>
         <Button x:Name="btnAddAction"
                 Style="{DynamicResource MetroCircleButtonStyle}"
