@@ -71,10 +71,7 @@ namespace GestureSign.CorePlugins
             }
             catch (Exception)
             {
-                simulator.Keyboard.KeyUp(VirtualKeyCode.TAB)
-                    .Sleep(20)
-                    .KeyUp(VirtualKeyCode.LMENU)
-                    .Sleep(20);
+                KeyboardHelper.ResetKeyState(ActionPoint.Window, VirtualKeyCode.LMENU);
 
                 return false;
             }
