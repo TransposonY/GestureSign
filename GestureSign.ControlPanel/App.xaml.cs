@@ -37,32 +37,7 @@ namespace GestureSign.ControlPanel
                 LoadLanguageData();
 
                 if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
-                {
-                    using (var currentUser = WindowsIdentity.GetCurrent())
-                    {
-                        if (currentUser.User != null)
-                        {
-                            var sid = currentUser.User.ToString();
-                            PackageManager packageManager = new PackageManager();
-                            var storeVersion = packageManager.FindPackagesForUserWithPackageTypes(sid, "41908Transpy.GestureSign", "CN=AF41F066-0041-4D13-9D95-9DAB66112B0A", PackageTypes.Main).FirstOrDefault();
-                            if (storeVersion != null)
-                            {
-                                using (Process explorer = new Process
-                                {
-                                    StartInfo =
-                                    {
-                                        FileName = "explorer.exe", Arguments = @"shell:AppsFolder\" + "41908Transpy.GestureSign_f441wk0cxr8zc!GestureSign"
-                                    }
-                                })
-                                {
-                                    explorer.Start();
-                                }
-                                Current.Shutdown();
-                                return;
-                            }
-                        }
-                    }
-                }
+                    LaunchStoreVersion();
 
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
@@ -142,6 +117,34 @@ namespace GestureSign.ControlPanel
                 return true;
             }
             return false;
+        }
+
+        private void LaunchStoreVersion()
+        {
+            using (var currentUser = WindowsIdentity.GetCurrent())
+            {
+                if (currentUser.User != null)
+                {
+                    var sid = currentUser.User.ToString();
+                    PackageManager packageManager = new PackageManager();
+                    var storeVersion = packageManager.FindPackagesForUserWithPackageTypes(sid, "41908Transpy.GestureSign", "CN=AF41F066-0041-4D13-9D95-9DAB66112B0A", PackageTypes.Main).FirstOrDefault();
+                    if (storeVersion != null)
+                    {
+                        using (Process explorer = new Process
+                        {
+                            StartInfo =
+                                    {
+                                        FileName = "explorer.exe", Arguments = @"shell:AppsFolder\" + "41908Transpy.GestureSign_f441wk0cxr8zc!GestureSign"
+                                    }
+                        })
+                        {
+                            explorer.Start();
+                        }
+                        Current.Shutdown();
+                        return;
+                    }
+                }
+            }
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
