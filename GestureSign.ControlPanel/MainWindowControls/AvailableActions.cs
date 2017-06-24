@@ -283,23 +283,23 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             List<CommandInfo> infoList = new List<CommandInfo>();
             var groupItem = UIHelper.GetParentDependencyObject<GroupItem>((Button)sender);
+            var collectionViewGroup = groupItem.Content as CollectionViewGroup;
+            if (collectionViewGroup == null) return;
+
             foreach (CommandInfo info in lstAvailableActions.SelectedItems)
             {
-                var listItem = lstAvailableActions.ItemContainerGenerator.ContainerFromItem(info);
-                if (ReferenceEquals(UIHelper.GetParentDependencyObject<GroupItem>(listItem), groupItem))
+                if (collectionViewGroup.Items.Contains(info))
                     infoList.Add(info);
             }
 
             if (infoList.Count == 0)
             {
                 lstAvailableActions.SelectedItems.Clear();
-                var collectionViewGroup = groupItem.Content as CollectionViewGroup;
-                if (collectionViewGroup != null)
-                    foreach (CommandInfo item in collectionViewGroup.Items)
-                    {
-                        lstAvailableActions.SelectedItems.Add(item);
-                        infoList.Add(item);
-                    }
+                foreach (CommandInfo item in collectionViewGroup.Items)
+                {
+                    lstAvailableActions.SelectedItems.Add(item);
+                    infoList.Add(item);
+                }
             }
 
             var sourceAction = infoList.First().Action;
