@@ -273,20 +273,7 @@ namespace GestureSign.ControlPanel.Dialogs
             GetCursorPos(out cursorPosition);
 
             SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
-            try
-            {
-                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(window.ClassName))
-                {
-                    var realWindow = window.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
-                    if (realWindow != null)
-                        return realWindow;
-                }
-                return window;
-            }
-            catch (Exception)
-            {
-                return window;
-            }
+            return ApplicationManager.GetRealWindow(window);
         }
 
         private bool ShowErrorMessage(string title, string message)

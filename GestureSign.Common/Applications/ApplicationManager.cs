@@ -278,9 +278,10 @@ namespace GestureSign.Common.Applications
             {
                 return new[] { GetGlobalApplication() };
             }
+            var realWindow = GetRealWindow(Window);
             IApplication[] definedApplications = userApplicationOnly
-                ? FindMatchApplications(Applications.Where(a => a is UserApp), Window)
-                : FindMatchApplications(Applications.Where(a => !(a is GlobalApp)), Window);
+                ? FindMatchApplications(Applications.Where(a => a is UserApp), realWindow)
+                : FindMatchApplications(Applications.Where(a => !(a is GlobalApp)), realWindow);
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
@@ -435,6 +436,24 @@ namespace GestureSign.Common.Applications
             return app;
         }
 
+        public static SystemWindow GetRealWindow(SystemWindow window)
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(window.ClassName))
+                {
+                    var realWindow = window.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
+                    if (realWindow != null)
+                        return realWindow;
+                }
+                return window;
+            }
+            catch (Exception)
+            {
+                return window;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -504,17 +523,7 @@ namespace GestureSign.Common.Applications
             {
                 try
                 {
-                    windowMatchString = ((Func<string>)delegate
-                    {
-                        if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(window.ClassName))
-                        {
-                            var realWindow = window.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
-                            if (realWindow != null)
-                                return realWindow.Process.MainModule.ModuleName;
-                        }
-                        return window.Process.MainModule.ModuleName;
-                    }).Invoke();
-
+                    windowMatchString = window.Process.MainModule.ModuleName;
                     result.AddRange(byFileName.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
                 }
                 catch
