@@ -51,7 +51,7 @@ namespace GestureSign.Daemon.Input
                     AppConfig.ConfigChanged -= AppConfig_ConfigChanged;
                 }
 
-                LowLevelMouseHook.Dispose();
+                LowLevelMouseHook?.Dispose();
                 disposedValue = true;
             }
         }
