@@ -76,9 +76,10 @@ namespace GestureSign.Common.Plugins
                     if (executableAction?.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
                         continue;
 
-                    foreach (var command in executableAction.Commands)
+                    var commandList = executableAction.Commands.Where(command => command != null && command.IsEnabled).ToList();
+                    foreach (var command in commandList)
                     {
-                        if (command == null || !command.IsEnabled || (mode == CaptureMode.UserDisabled && !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(command.PluginClass)))
+                        if (mode == CaptureMode.UserDisabled && !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(command.PluginClass))
                             continue;
 
                         if (!WaitForInputIdle(pointInfo.Window, 1000))
@@ -91,7 +92,7 @@ namespace GestureSign.Common.Plugins
                         if (pluginInfo == null)
                             continue;
 
-                        if (executableAction.Commands.IndexOf(command) == 0)
+                        if (commandList.IndexOf(command) == 0)
                         {
                             if (executableAction.ActivateWindow == null && pluginInfo.Plugin.ActivateWindowDefault ||
                             executableAction.ActivateWindow.HasValue && executableAction.ActivateWindow.Value)
