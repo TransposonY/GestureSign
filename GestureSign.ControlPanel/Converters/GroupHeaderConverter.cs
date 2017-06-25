@@ -10,6 +10,8 @@ namespace GestureSign.ControlPanel.Converters
         {
             int name = (int)values[0];
             int count = (int)values[1];
+            if (name == 1)
+                return LocalizationProvider.Instance.GetTextValue("Options.MouseGesture") + " / " + string.Format(LocalizationProvider.Instance.GetTextValue("Gesture.GestureGroupHeader"), name, count);
             return string.Format(LocalizationProvider.Instance.GetTextValue("Gesture.GestureGroupHeader"), name, count);
         }
 
