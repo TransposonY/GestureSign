@@ -8,7 +8,6 @@ using ManagedWinapi.Windows;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
@@ -22,11 +21,6 @@ namespace GestureSign.ControlPanel
     /// </summary>
     public partial class App : Application
     {
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-        private const int SW_RESTORE = 9;
-
         Mutex mutex;
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -108,7 +102,7 @@ namespace GestureSign.ControlPanel
 
                         if (window.WindowState == System.Windows.Forms.FormWindowState.Minimized)
                         {
-                            ShowWindowAsync(process.MainWindowHandle, SW_RESTORE);
+                            window.RestoreWindow();
                         }
                         SystemWindow.ForegroundWindow = window;
                         break;

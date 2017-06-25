@@ -899,6 +899,11 @@ namespace ManagedWinapi.Windows
             }
         }
 
+        public bool RestoreWindow()
+        {
+            return ShowWindowAsync(HWnd, SW_RESTORE);
+        }
+
         /// <summary>
         /// Whether this window can be moved on the screen by the user.
         /// </summary>
@@ -1372,6 +1377,9 @@ namespace ManagedWinapi.Windows
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
         [DllImport("gdi32.dll")]
         static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect,
            int nBottomRect);
@@ -1464,6 +1472,8 @@ namespace ManagedWinapi.Windows
         const uint SWP_SHOWWINDOW = 0x0040;
         const uint SWP_NOOWNERZORDER = 0x0200;
         const uint SWP_ASYNCWINDOWPOS = 0x4000;
+
+        private const int SW_RESTORE = 9;
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);

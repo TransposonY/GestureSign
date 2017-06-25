@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -20,7 +19,6 @@ namespace GestureSign.CorePlugins.ActivateWindow
         private bool _isFound;
 
         private const string User32 = "user32.dll";
-        private const int SW_RESTORE = 9;
         #endregion
 
         #region PInvoke Declarations
@@ -31,9 +29,6 @@ namespace GestureSign.CorePlugins.ActivateWindow
         private static extern bool IsWindowVisible(IntPtr hWnd);
         [DllImport(User32)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport(User32)]
-        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         #endregion
 
@@ -104,7 +99,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
                         var window = new SystemWindow(hWnd);
                         if (window.WindowState == System.Windows.Forms.FormWindowState.Minimized)
                         {
-                            ShowWindowAsync(window.HWnd, SW_RESTORE);
+                            window.RestoreWindow();
                         }
                         SystemWindow.ForegroundWindow = window;
                         return true;
@@ -133,7 +128,7 @@ namespace GestureSign.CorePlugins.ActivateWindow
 
                         if (window.WindowState == System.Windows.Forms.FormWindowState.Minimized)
                         {
-                            ShowWindowAsync(window.HWnd, SW_RESTORE);
+                            window.RestoreWindow();
                         }
 
                         SystemWindow.ForegroundWindow = window;
