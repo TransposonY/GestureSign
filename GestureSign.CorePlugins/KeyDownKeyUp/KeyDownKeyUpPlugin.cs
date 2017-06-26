@@ -67,6 +67,8 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
             get { return true; }
         }
 
+        public object Icon => IconSource.Keyboard;
+
         #endregion
 
         #region Public Methods

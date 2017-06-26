@@ -43,6 +43,8 @@ namespace GestureSign.CorePlugins
             get { return true; }
         }
 
+        public object Icon => IconSource.MaximizeRestore;
+
         #endregion
 
         #region Public Methods

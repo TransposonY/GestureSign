@@ -69,6 +69,8 @@ namespace GestureSign.CorePlugins.ActivateWindow
             get { return true; }
         }
 
+        public object Icon => IconSource.Window;
+
         #endregion
 
         #region Public Methods

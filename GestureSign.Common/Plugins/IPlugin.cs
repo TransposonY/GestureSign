@@ -11,6 +11,11 @@
         object GUI { get; }
         bool ActivateWindowDefault { get; }
 
+        /// <summary>
+        /// System.Windows.Media.Geometry
+        /// </summary>
+        object Icon { get; }
+
         #endregion
 
         #region Methods

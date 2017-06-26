@@ -45,6 +45,8 @@ namespace GestureSign.CorePlugins
             get { return true; }
         }
 
+        public object Icon => IconSource.Browser;
+
         #endregion
 
         #region IAction Methods

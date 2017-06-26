@@ -60,6 +60,8 @@ namespace GestureSign.CorePlugins.RunCommand
             get { return true; }
         }
 
+        public object Icon => IconSource.Command;
+
         #endregion
 
         #region Public Methods

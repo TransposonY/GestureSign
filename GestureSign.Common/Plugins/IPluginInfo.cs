@@ -5,21 +5,22 @@ using System.Text;
 
 namespace GestureSign.Common.Plugins
 {
-	public interface IPluginInfo
-	{
-		#region Instance Properties
+    public interface IPluginInfo
+    {
+        #region Instance Properties
 
-		string DisplayText { get; set; }
-		IPlugin Plugin { get; set; }
-		string Class { get; set; }
-		string Filename { get; set; }
+        string DisplayText { get; set; }
+        IPlugin Plugin { get; set; }
+        string Class { get; set; }
+        string Filename { get; set; }
+        object Icon { get; }
 
-		#endregion
+        #endregion
 
-		#region Instance Methods
+        #region Instance Methods
 
-		string ToString();
+        string ToString();
 
-		#endregion
-	}
+        #endregion
+    }
 }

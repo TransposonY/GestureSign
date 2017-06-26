@@ -44,11 +44,26 @@
                    HorizontalAlignment="Left"
                    FontWeight="Bold" />
         <ComboBox x:Name="cmbPlugins"
-                  Margin="20,5,20,10"
-                  DisplayMemberPath="DisplayText"
+                  Margin="20,5,20,0"
                   SelectionChanged="cmbPlugins_SelectionChanged"
-                  FontSize="14"
-                  MaxDropDownHeight="300" />
+                  MaxDropDownHeight="300">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="24"
+                              Height="24"
+                              Fill="{StaticResource HighlightBrush}"
+                              Data="{Binding Icon}"
+                              Stretch="Uniform"
+                              Margin="0,3" />
+                        <TextBlock Text="{Binding DisplayText}"
+                                   Margin="10,0,0,0"
+                                   FontSize="14"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
         <ContentControl x:Name="SettingsContent"
                         Margin="20,10,20,5" />
         <TextBlock TextWrapping="Wrap"

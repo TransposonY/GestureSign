@@ -68,6 +68,8 @@ namespace GestureSign.CorePlugins.SendMessage
             get { return false; }
         }
 
+        public object Icon => IconSource.Window;
+
         #endregion
 
         #region Public Methods

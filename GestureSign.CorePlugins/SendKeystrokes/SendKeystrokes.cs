@@ -61,6 +61,8 @@ namespace GestureSign.CorePlugins.SendKeystrokes
 
         public IHostControl HostControl { get; set; }
 
+        public object Icon => IconSource.Keyboard;
+
         #endregion
 
         #region IPlugin Instance Methods

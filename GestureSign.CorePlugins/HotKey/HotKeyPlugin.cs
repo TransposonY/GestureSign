@@ -73,6 +73,8 @@ namespace GestureSign.CorePlugins.HotKey
             get { return true; }
         }
 
+        public object Icon => IconSource.Keyboard;
+
         #endregion
 
         #region Public Methods

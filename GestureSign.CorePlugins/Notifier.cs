@@ -37,6 +37,8 @@ namespace GestureSign.CorePlugins
             get { return false; }
         }
 
+        public object Icon => null;
+
         public void Initialize()
         {
             //HostControl.GestureManager.GestureRecognized += (o, e) =>

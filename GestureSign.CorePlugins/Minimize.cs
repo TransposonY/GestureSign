@@ -44,6 +44,8 @@ namespace GestureSign.CorePlugins
             get { return true; }
         }
 
+        public object Icon => IconSource.Minimize;
+
         #endregion
 
         #region Public Methods

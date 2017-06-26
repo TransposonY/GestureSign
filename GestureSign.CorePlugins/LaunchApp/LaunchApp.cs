@@ -61,6 +61,8 @@ namespace GestureSign.CorePlugins.LaunchApp
 
         public bool IsAction => true;
 
+        public object Icon => IconSource.Windows;
+
         #endregion
 
         #region Public Methods

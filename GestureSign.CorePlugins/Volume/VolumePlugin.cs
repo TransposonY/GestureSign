@@ -63,6 +63,8 @@ namespace GestureSign.CorePlugins.Volume
             get { return true; }
         }
 
+        public object Icon => IconSource.Volume;
+
         #endregion
 
         #region Public Methods

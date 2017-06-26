@@ -56,6 +56,8 @@ namespace GestureSign.CorePlugins.MouseActions
             get { return true; }
         }
 
+        public object Icon => IconSource.Mouse;
+
         #endregion
 
         #region Public Methods

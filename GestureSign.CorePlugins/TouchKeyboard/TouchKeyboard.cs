@@ -88,6 +88,9 @@ namespace GestureSign.CorePlugins.TouchKeyboard
         {
             get { return (TouchKeyboardUI)GUI; }
         }
+
+        public object Icon => IconSource.Keyboard;
+
         #endregion
 
         #region Private Instance Methods

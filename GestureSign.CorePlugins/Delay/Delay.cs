@@ -58,6 +58,8 @@ namespace GestureSign.CorePlugins.Delay
 
         public IHostControl HostControl { get; set; }
 
+        public object Icon => IconSource.GestureSign;
+
         #endregion
 
         #region IPlugin Instance Methods

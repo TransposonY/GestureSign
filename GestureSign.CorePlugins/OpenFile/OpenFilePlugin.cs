@@ -68,6 +68,8 @@ namespace GestureSign.CorePlugins.OpenFile
             get { return true; }
         }
 
+        public object Icon => IconSource.Open;
+
         #endregion
 
         #region Public Methods

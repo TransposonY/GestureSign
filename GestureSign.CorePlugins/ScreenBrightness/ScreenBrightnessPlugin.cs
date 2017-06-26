@@ -72,6 +72,8 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             get { return true; }
         }
 
+        public object Icon => IconSource.Brightness;
+
         #endregion
 
         #region Public Methods

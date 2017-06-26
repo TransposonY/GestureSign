@@ -88,6 +88,7 @@
     <Compile Include="ActivateWindow\ActivateWindowUI.xaml.cs">
       <DependentUpon>ActivateWindowUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IconSource.cs" />
     <Compile Include="KeyboardHelper.cs" />
     <Compile Include="Delay\Delay.cs" />
     <Compile Include="Delay\DelayUI.xaml.cs">
