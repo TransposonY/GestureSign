@@ -187,7 +187,8 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             else
             {
                 var keyboardHwnd = FindWindow("IPTip_Main_Window", null);
-                if (keyboardHwnd == IntPtr.Zero) return false;
+                if (keyboardHwnd == IntPtr.Zero)
+                    return ShowKeyboard();
 
                 var taptipWindow = new SystemWindow(keyboardHwnd);
                 return taptipWindow.Visible && taptipWindow.Enabled ? HideKeyboard() : ShowKeyboard();
