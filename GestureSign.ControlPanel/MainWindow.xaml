@@ -91,7 +91,7 @@
                                  Text="{localization:LocalisedText About.Information}" />
                         <TextBox  HorizontalAlignment="Left"
                                   Margin="10,10,0,0"
-                                  Text="Project Page&#xA;https://github.com/TransposonY/GestureSign&#xA;&#xA;&#xA;Thanks to the following project:&#xA;http://highsign.codeplex.com/&#xA;License:http://highsign.codeplex.com/license&#xA;&#xA;MahApps.Metro&#xA;https://github.com/MahApps/MahApps.Metro&#xA;License:http://www.opensource.org/licenses/MS-PL"
+                                  Text="Project Page&#xA;https://github.com/TransposonY/GestureSign&#xA;&#xA;Thanks to the following project:&#xA;http://highsign.codeplex.com/&#xA;License:http://highsign.codeplex.com/license&#xA;&#xA;MahApps.Metro&#xA;https://github.com/MahApps/MahApps.Metro&#xA;License:http://www.opensource.org/licenses/MS-PL&#xA;&#xA;WGestures&#xA;https://github.com/yingDev/WGestures&#xA;License:https://github.com/yingDev/WGestures/blob/master/LICENSE"
                                   VerticalAlignment="Top"
                                   BorderThickness="0"
                                   IsReadOnly="True"
