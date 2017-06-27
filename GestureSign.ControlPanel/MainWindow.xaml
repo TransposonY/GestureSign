@@ -48,13 +48,13 @@
                      controls:ControlsHelper.HeaderFontSize="32">
                 <mainWindowControl:AvailableActions x:Name="AvailableActions"></mainWindowControl:AvailableActions>
             </TabItem>
-            <TabItem Header="{localization:LocalisedText Gesture.Header}"
-                     controls:ControlsHelper.HeaderFontSize="32">
-                <mainWindowControl:AvailableGestures x:Name="availableGestures"></mainWindowControl:AvailableGestures>
-            </TabItem>
             <TabItem Header="{localization:LocalisedText Ignored.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
                 <mainWindowControl:IgnoredApplications x:Name="ignoredApplications" />
+            </TabItem>
+            <TabItem Header="{localization:LocalisedText Gesture.Header}"
+                     controls:ControlsHelper.HeaderFontSize="32">
+                <mainWindowControl:AvailableGestures x:Name="availableGestures"></mainWindowControl:AvailableGestures>
             </TabItem>
             <TabItem Header="{localization:LocalisedText Options.Header}"
                      controls:ControlsHelper.HeaderFontSize="32">
