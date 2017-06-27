@@ -226,11 +226,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
                      foreach (var command in currentAction.Commands)
                      {
                          var info = CommandInfo.FromCommand(command, currentAction);
-
-                         Dispatcher.Invoke(() =>
+                         try
                          {
-                             CommandInfos.Add(info);
-                         }, DispatcherPriority.Input);
+                             Dispatcher.Invoke(() =>
+                             {
+                                 CommandInfos.Add(info);
+                             }, DispatcherPriority.Input);
+                         }
+                         catch { }
                      }
                  }
              };
