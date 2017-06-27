@@ -199,7 +199,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         else
                             CommandInfos.Insert(infoIndex + 1, newInfo);
                     }
+                    RefreshActionGroup(newInfo.Action);
                     SelectCommands(newInfo);
+                    ApplicationManager.Instance.SaveApplications();
                 }, DispatcherPriority.Input);
             };
 
@@ -208,8 +210,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 _addCommandTask.ContinueWith(addCommand);
             }
             else addCommand.Invoke(null);
-
-            ApplicationManager.Instance.SaveApplications();
         }
 
         private void RefreshAllActions()
