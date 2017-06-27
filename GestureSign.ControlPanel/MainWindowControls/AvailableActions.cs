@@ -43,8 +43,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             ApplicationManager.ApplicationChanged += (o, e) =>
             {
-                lstAvailableApplication.SelectedItem = e.Application;
-                lstAvailableApplication.Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(e.Application), DispatcherPriority.Input);
+                SelectApp(e.Application);
             };
         }
 
@@ -248,6 +247,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
             lstAvailableActions.UpdateLayout();
             Dispatcher.InvokeAsync(() => lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem), DispatcherPriority.Background);
+        }
+
+        private void SelectApp(IApplication app)
+        {
+            lstAvailableApplication.SelectedItem = app;
+            Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(lstAvailableApplication.SelectedItem), DispatcherPriority.Background);
         }
 
         private void EnableRelevantButtons()
@@ -572,14 +577,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 }
                                 break;
                             case ".exe":
-                                Dispatcher.InvokeAsync(() => lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), file), DispatcherPriority.Input);
+                                SelectApp(ApplicationManager.Instance.AddApplication(new UserApp(), file));
                                 break;
                             case ".lnk":
                                 WshShell shell = new WshShell();
                                 IWshShortcut link = (IWshShortcut)shell.CreateShortcut(file);
                                 if (Path.GetExtension(link.TargetPath).ToLower() == ".exe")
                                 {
-                                    Dispatcher.InvokeAsync(() => lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath), DispatcherPriority.Input);
+                                    SelectApp(ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath));
                                 }
                                 break;
                         }
