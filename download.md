@@ -1,5 +1,26 @@
 # Download
 
+## v5.2 (2017-06-27)
+
+- Icon for command.
+- Fixed incorrect recognition of window class.
+- Fixed touchkeyboard can not show under some circumstances.
+- Reset key state after sending shortcut was blocked.
+
+**Download**
+
+[GestureSignSetup-5.2.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.2/GestureSignSetup-5.2.0.0.zip)
+
+## v5.1 (2017-06-22)
+
+- Added "Open File or Website" command to open programs, files, folders and URLs and do not need to escape special characters.
+- Fixed touchkeyboard does not show properly when Block Touch Input is enabled.
+- Fixed press and hold can not perform a right-click action when Block Touch Input is enabled(for Windows 10 15063 Creators Update).
+
+**Download**
+
+[GestureSignSetup-5.1.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.1/GestureSignSetup-5.1.0.0.zip)
+
 ## v5.0 (2017-06-17)
 
 - You can download actions and ignored applications directly from the Internet
