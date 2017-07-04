@@ -41,7 +41,7 @@ namespace GestureSign.Common.Log
 
             var rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
             if (rk != null)
-                result.AppendLine(rk.GetValue("ProductName") + " " + rk.GetValue("BuildLabEx"));
+                result.AppendLine(rk.GetValue("ProductName") + " " + rk.GetValue("BuildLabEx") + " " + rk.GetValue("UBR"));
 
             string version = LocalizationProvider.Instance.GetTextValue("About.Version") +
                            (Environment.Is64BitProcess ? " X64" : " x86") +
