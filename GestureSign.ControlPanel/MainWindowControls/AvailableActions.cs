@@ -66,19 +66,23 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var result = commandDialog.ShowDialog();
             if (result != null && result.Value)
             {
-                int index = CommandInfos.IndexOf(selectedItem);
                 var newActionInfo = CommandInfo.FromCommand(selectedCommand, selectedItem.Action);
-                CommandInfos[index] = newActionInfo;
-                RefreshActionGroup(newActionInfo.Action);
+                UpdateCommandInfo(newActionInfo, selectedItem);
                 SelectCommands(newActionInfo);
             }
         }
 
+        private void UpdateCommandInfo(CommandInfo newInfo, CommandInfo oldInfo)
+        {
+            CommandInfos.Remove(oldInfo);
+            CommandInfos.Add(newInfo);
+        }
+
         private void RefreshActionGroup(IAction action)
         {
-            var temp = CommandInfos.Where(ci => ci.Action == action).ToList();
-            temp.ForEach(ci => CommandInfos.Remove(ci));
-            action.Commands.ForEach(com => CommandInfos.Add(temp.Find(ci => ci.Command == com)));
+            var targetInfo = CommandInfos.Where(ci => ci.Action == action).ToList();
+            targetInfo.ForEach(ci => CommandInfos.Remove(ci));
+            targetInfo.ForEach(ci => CommandInfos.Add(ci));
         }
 
         private void cmdDeleteCommand_Click(object sender, RoutedEventArgs e)
@@ -180,26 +184,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         newAction.Commands.Add(newCommand);
                         selectedApplication.AddAction(newAction);
                         newInfo = CommandInfo.FromCommand(newCommand, newAction);
-                        CommandInfos.Add(newInfo);
                     }
                     else
                     {
                         newInfo = CommandInfo.FromCommand(newCommand, ci.Action);
 
-                        int infoIndex = CommandInfos.IndexOf(ci);
                         int commandIndex = ci.Action.Commands.IndexOf(ci.Command);
 
                         if (commandIndex + 1 == ci.Action.Commands.Count)
                             ci.Action.Commands.Add(newCommand);
                         else
                             ci.Action.Commands.Insert(commandIndex + 1, newCommand);
-
-                        if (infoIndex + 1 == CommandInfos.Count)
-                            CommandInfos.Add(newInfo);
-                        else
-                            CommandInfos.Insert(infoIndex + 1, newInfo);
                     }
-                    RefreshActionGroup(newInfo.Action);
+                    CommandInfos.Add(newInfo);
                     SelectCommands(newInfo);
                     ApplicationManager.Instance.SaveApplications();
                 }, DispatcherPriority.Input);
@@ -267,7 +264,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 MoveUpButton.IsEnabled = MoveDownButton.IsEnabled = false;
             else
             {
-                int index = CommandInfos.Where(ci => ci.Action == selectedInfo.Action).ToList().IndexOf(selectedInfo);
+                int index = selectedInfo.Action.Commands.IndexOf(selectedInfo.Command);
 
                 MoveUpButton.IsEnabled = index > 0;
                 MoveDownButton.IsEnabled = index < selectedInfo.Action.Commands.Count - 1;
@@ -498,7 +495,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selected.Action.Commands[commandIndex - 1] = selected.Action.Commands[commandIndex];
                 selected.Action.Commands[commandIndex] = temp;
 
-                RefreshActionGroup(selected.Action);
+                UpdateCommandInfo(selected, selected);
                 SelectCommands(selected);
                 ApplicationManager.Instance.SaveApplications();
             }
@@ -514,7 +511,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selected.Action.Commands[commandIndex + 1] = selected.Action.Commands[commandIndex];
                 selected.Action.Commands[commandIndex] = temp;
 
-                RefreshActionGroup(selected.Action);
+                UpdateCommandInfo(selected, selected);
                 SelectCommands(selected);
                 ApplicationManager.Instance.SaveApplications();
             }

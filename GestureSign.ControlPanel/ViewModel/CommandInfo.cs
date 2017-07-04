@@ -1,13 +1,14 @@
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
-    public class CommandInfo : INotifyPropertyChanged, IEquatable<IAction>
+    public class CommandInfo : INotifyPropertyChanged, IEquatable<IAction>, IComparable, IComparable<CommandInfo>
     {
 
         public CommandInfo(IAction action, ICommand command, string commandName, string description, bool isEnabled)
@@ -58,6 +59,25 @@ namespace GestureSign.ControlPanel.ViewModel
 
             storage = value;
             this.OnPropertyChanged(propertyName);
+        }
+
+        public int CompareTo(object obj)
+        {
+            var info = (CommandInfo)obj;
+            return CompareTo(info);
+        }
+
+        public int CompareTo(CommandInfo info)
+        {
+            if (info.Action == Action)
+            {
+                if (Action.Commands == null) return 0;
+                return Action.Commands.IndexOf(Command) - info.Action.Commands.IndexOf(info.Command);
+            }
+            else
+            {
+                return string.Compare(Action.Name, info.Action.Name, false, CultureInfo.CurrentCulture);
+            }
         }
 
         public bool Equals(IAction action)

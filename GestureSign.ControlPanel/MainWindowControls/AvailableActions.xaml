@@ -6,7 +6,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:applications="clr-namespace:GestureSign.Common.Applications;assembly=GestureSign.Common"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
-             xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
@@ -89,13 +88,12 @@
                                 x:Key="ApplicationItemProvider">
             </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
-                                  Source="{Binding CommandInfos}"
-                                  Culture="{x:Static common:UIHelper.CurrentCulture}">
+                                  Source="{Binding CommandInfos}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Action" />
                 </CollectionViewSource.GroupDescriptions>
                 <CollectionViewSource.SortDescriptions>
-                    <componentmodel:SortDescription PropertyName="Action.Name"
+                    <componentmodel:SortDescription PropertyName="."
                                                     Direction="Ascending" />
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
