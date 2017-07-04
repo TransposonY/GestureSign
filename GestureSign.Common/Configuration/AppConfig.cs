@@ -205,9 +205,9 @@ namespace GestureSign.Common.Configuration
         }
 
 
-        public static void Save()
+        private static void Save()
         {
-            Timer.Change(400, Timeout.Infinite);
+            Timer.Change(100, Timeout.Infinite);
         }
 
         private static void SaveFile(object state)
@@ -285,29 +285,17 @@ namespace GestureSign.Common.Configuration
             {
                 _config.AppSettings.Settings.Add(key, value.ToString());
             }
+            Save();
         }
+
         private static void SetValue(string key, System.Drawing.Color value)
         {
-            if (_config.AppSettings.Settings[key] != null)
-            {
-                _config.AppSettings.Settings[key].Value = System.Drawing.ColorTranslator.ToHtml(value);
-            }
-            else
-            {
-                _config.AppSettings.Settings.Add(key, System.Drawing.ColorTranslator.ToHtml(value));
-            }
+            SetValue(key, System.Drawing.ColorTranslator.ToHtml(value));
         }
 
         private static void SetValue(string key, DateTime value)
         {
-            if (_config.AppSettings.Settings[key] != null)
-            {
-                _config.AppSettings.Settings[key].Value = value.ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                _config.AppSettings.Settings.Add(key, value.ToString(CultureInfo.InvariantCulture));
-            }
+            SetValue(key, value.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

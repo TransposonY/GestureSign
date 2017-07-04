@@ -93,8 +93,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             _VisualFeedbackColor = cdColorPicker.Color;
             AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
             UpdateVisualFeedbackExample();
-
-            AppConfig.Save();
         }
 
         private void VisualFeedbackWidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -105,8 +103,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (newValue == AppConfig.VisualFeedbackWidth) return;
 
             AppConfig.VisualFeedbackWidth = newValue;
-
-            AppConfig.Save();
         }
 
         private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -116,8 +112,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (Math.Abs(e.NewValue - AppConfig.Opacity) < 0.001) return;
 
             AppConfig.Opacity = OpacitySlider.Value;
-
-            AppConfig.Save();
         }
 
         private void MinimumPointDistanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -125,8 +119,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var newValue = (int)Math.Round(e.NewValue);
             if (newValue == AppConfig.MinimumPointDistance || (int)e.OldValue == 0) return;
             AppConfig.MinimumPointDistance = newValue;
-
-            AppConfig.Save();
         }
 
 
@@ -264,13 +256,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
         {
             AppConfig.IsOrderByLocation = true;
-            AppConfig.Save();
         }
 
         private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.IsOrderByLocation = false;
-            AppConfig.Save();
         }
 
         private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
@@ -282,45 +272,38 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             NamedPipe.SendMessageAsync("ShowTrayIcon", "GestureSignDaemon");
             AppConfig.ShowTrayIcon = true;
-            AppConfig.Save();
         }
 
         private void ShowTrayIconSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             NamedPipe.SendMessageAsync("HideTrayIcon", "GestureSignDaemon");
             AppConfig.ShowTrayIcon = false;
-            AppConfig.Save();
         }
 
         private void ShowBalloonTipSwitch_Checked(object sender, RoutedEventArgs e)
         {
             AppConfig.ShowBalloonTip = true;
-            AppConfig.Save();
         }
 
         private void ShowBalloonTipSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.ShowBalloonTip = false;
-            AppConfig.Save();
         }
 
         private void SendLogToggleSwitch_Checked(object sender, RoutedEventArgs e)
         {
             AppConfig.SendErrorReport = true;
-            AppConfig.Save();
         }
 
         private void SendLogToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.SendErrorReport = false;
-            AppConfig.Save();
         }
 
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
         {
             if (LanguageComboBox.SelectedValue == null) return;
             AppConfig.CultureName = (string)LanguageComboBox.SelectedValue;
-            AppConfig.Save();
         }
 
         private void MouseSwitch_Click(object sender, RoutedEventArgs e)
@@ -328,13 +311,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (MouseSwitch.IsChecked != null && MouseSwitch.IsChecked.Value)
                 DrawingButtonComboBox.SelectedValue = AppConfig.DrawingButton = MouseActions.Right;
             else AppConfig.DrawingButton = MouseActions.None;
-            AppConfig.Save();
         }
 
         private void DrawingButtonComboBox_DropDownClosed(object sender, EventArgs e)
         {
             AppConfig.DrawingButton = (MouseActions)DrawingButtonComboBox.SelectedValue;
-            AppConfig.Save();
         }
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)

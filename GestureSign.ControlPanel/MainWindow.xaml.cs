@@ -90,7 +90,6 @@ namespace GestureSign.ControlPanel
                     if (hasNewLog)
                     {
                         AppConfig.LastErrorTime = entry.TimeWritten;
-                        AppConfig.Save();
                     }
 
                     return hasNewLog;
