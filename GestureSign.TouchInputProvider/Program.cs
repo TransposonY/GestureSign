@@ -98,14 +98,15 @@ namespace GestureSign.TouchInputProvider
         {
             try
             {
+                var pipeName = NamedPipe.GetUserPipeName(TouchInputProvider);
                 if (_pipeClient == null)
-                    _pipeClient = new NamedPipeClientStream(".", TouchInputProvider, PipeDirection.InOut,
+                    _pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut,
                         PipeOptions.Asynchronous, TokenImpersonationLevel.None);
 
                 int i = 0;
                 for (; i != 10; i++)
                 {
-                    if (!NamedPipe.NamedPipeDoesNotExist(TouchInputProvider)) break;
+                    if (!NamedPipe.NamedPipeDoesNotExist(pipeName)) break;
                     Thread.Sleep(500);
                 }
                 if (i == 10) return false;
