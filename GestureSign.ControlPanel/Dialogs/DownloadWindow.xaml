@@ -24,6 +24,14 @@
                                           Grid.Row="0"
                                           Visibility="Collapsed" />
         <controls:ProgressRing x:Name="ProgressRing" />
+        <Button x:Name="FromFileButton"
+                Content="{localization:LocalisedText ExportImportDialog.FromFile}"
+                Click="FromFileButton_Click"
+                VerticalAlignment="Bottom"
+                Grid.Row="1"
+                Margin="10"
+                MinWidth="90"
+                HorizontalAlignment="Left" />
         <Button x:Name="OkButton"
                 Content="{localization:LocalisedText Common.Import}"
                 Click="OkButton_Click"

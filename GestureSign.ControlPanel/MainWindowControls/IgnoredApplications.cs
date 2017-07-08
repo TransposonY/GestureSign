@@ -105,6 +105,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
             exportImportDialog.ShowDialog();
         }
 
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            DownloadWindow DownloadWindow = new DownloadWindow();
+            DownloadWindow.Show();
+        }
+
         protected override void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);

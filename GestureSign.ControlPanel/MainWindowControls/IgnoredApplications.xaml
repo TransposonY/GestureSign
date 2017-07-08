@@ -170,5 +170,45 @@
                 </Rectangle.Fill>
             </Rectangle>
         </Button>
+        <Button x:Name="ExportButton"
+                Style="{DynamicResource MetroCircleButtonStyle}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Height="50"
+                Width="50"
+                Margin="10,0,0,10"
+                Grid.Row="1"
+                Grid.Column="0"
+                Click="ExportIgnoredAppsMenuItem_Click">
+            <Rectangle Width="20"
+                       Height="20"
+                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Uniform"
+                                 Visual="{StaticResource Export}">
+                    </VisualBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
+        <Button x:Name="DownloadButton"
+                Style="{DynamicResource MetroCircleButtonStyle}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Height="50"
+                Width="50"
+                Margin="65,0,0,10"
+                Grid.Row="1"
+                Grid.Column="0"
+                Click="DownloadButton_Click">
+            <Rectangle Width="20"
+                       Height="20"
+                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Uniform"
+                                 Visual="{StaticResource Import}">
+                    </VisualBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
     </Grid>
 </UserControl>

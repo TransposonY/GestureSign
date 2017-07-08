@@ -153,6 +153,7 @@
     <ExportCompleteTitle>导出完成</ExportCompleteTitle>
     <ExportComplete>已导出 {1} 个程序中的 {0} 个动作</ExportComplete>
     <ExportCompleteWithoutAction>已经导出 {0} 个程序</ExportCompleteWithoutAction>
+    <FromFile>导入文件...</FromFile>
   </ExportImportDialog>
   <Gesture>
     <Header>手势</Header>

@@ -131,6 +131,26 @@ namespace GestureSign.ControlPanel.Dialogs
             Directory.Delete(_tempDirectory, true);
         }
 
+        private void FromFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*.gsa",
+                Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
+                CheckFileExists = true
+            };
+            if (ofdApplications.ShowDialog().Value)
+            {
+                var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
+                if (newApps != null)
+                {
+                    Close();
+                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureManager.Instance.Gestures);
+                    exportImportDialog.ShowDialog();
+                }
+            }
+        }
+
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             int newActionCount = 0, newAppCount = 0;

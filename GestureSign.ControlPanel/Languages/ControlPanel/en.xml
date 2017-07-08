@@ -148,7 +148,8 @@ Email:ccfyzh@gmail.com
     <ImportComplete>{0} actions in {1} applications have been added</ImportComplete>
     <ExportCompleteTitle>Export Complete</ExportCompleteTitle>
     <ExportComplete>{0} actions in {1} applications have been exported</ExportComplete>
-    <ExportCompleteWithoutAction>{0} applications have been exported</ExportCompleteWithoutAction>  
+    <ExportCompleteWithoutAction>{0} applications have been exported</ExportCompleteWithoutAction>
+    <FromFile>From File...</FromFile>
 </ExportImportDialog>
   <Gesture>
     <Header>Gesture</Header>
