@@ -31,7 +31,8 @@ namespace GestureSign.ControlPanel
                 LoadLanguageData();
 
                 if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
-                    LaunchStoreVersion();
+                    if (TryLaunchStoreVersion())
+                        return;
 
                 bool createdNew;
                 mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
@@ -113,7 +114,7 @@ namespace GestureSign.ControlPanel
             return false;
         }
 
-        private void LaunchStoreVersion()
+        private bool TryLaunchStoreVersion()
         {
             using (var currentUser = WindowsIdentity.GetCurrent())
             {
@@ -135,10 +136,11 @@ namespace GestureSign.ControlPanel
                             explorer.Start();
                         }
                         Current.Shutdown();
-                        return;
+                        return true;
                     }
                 }
             }
+            return false;
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
