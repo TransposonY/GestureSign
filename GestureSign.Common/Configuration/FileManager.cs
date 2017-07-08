@@ -118,7 +118,7 @@ namespace GestureSign.Common.Configuration
             try
             {
                 if (!File.Exists(file)) return false;
-                using (File.Open(file, FileMode.Open, FileAccess.Write, FileShare.None))
+                using (File.Open(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 {
                     return false;
                 }
