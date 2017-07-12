@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using WindowsInput;
-using GestureSign.Common;
+﻿using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
@@ -17,6 +8,15 @@ using GestureSign.Daemon.Filtration;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Hooks;
 using ManagedWinapi.Windows;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using WindowsInput;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GestureSign.Daemon.Input
@@ -35,6 +35,7 @@ namespace GestureSign.Daemon.Input
         private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly Timer _timeoutTimer = new Timer();
+        private readonly System.Threading.Timer _blockTouchDelayTimer;
 
         private Dictionary<int, List<Point>> _pointsCaptured;
         // Create variable to hold the only allowed instance of this class
@@ -50,6 +51,8 @@ namespace GestureSign.Daemon.Input
         private bool _gestureTimeout;
 
         private bool disposedValue = false; // To detect redundant calls
+
+        private int? _blockTouchInputThreshold;
 
         #endregion
 
@@ -195,6 +198,7 @@ namespace GestureSign.Daemon.Input
 
             if (AppConfig.UiAccess)
             {
+                _blockTouchDelayTimer = new System.Threading.Timer(UpdateBlockTouchInputThresholdCallback, null, Timeout.Infinite, Timeout.Infinite);
                 ForegroundApplicationsChanged += PointCapture_ForegroundApplicationsChanged;
             }
 
@@ -220,6 +224,7 @@ namespace GestureSign.Daemon.Input
                     _pointerInputTargetWindow?.Dispose();
                     _inputProvider?.Dispose();
                     _timeoutTimer?.Dispose();
+                    _blockTouchDelayTimer?.Dispose();
                 }
 
                 if (_hWinEventHook != IntPtr.Zero)
@@ -266,9 +271,7 @@ namespace GestureSign.Daemon.Input
             {
                 var userAppList = apps.Where(application => application is UserApp).ToList();
                 if (userAppList.Count == 0) return;
-                int maxBlockTouchInputThreshold = userAppList.Cast<UserApp>().Max(app => app.BlockTouchInputThreshold);
-
-                _pointerInputTargetWindow.BlockTouchInputThreshold = maxBlockTouchInputThreshold;
+                UpdateBlockTouchInputThreshold(userAppList.Cast<UserApp>().Max(app => app.BlockTouchInputThreshold));
             }
         }
 
@@ -301,6 +304,7 @@ namespace GestureSign.Daemon.Input
 
                 AddPoint(e.InputPointList);
             }
+            UpdateBlockTouchInputThreshold();
         }
 
         protected void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
@@ -355,11 +359,31 @@ namespace GestureSign.Daemon.Input
             }
 
             SourceDevice = Device.None;
+
+            UpdateBlockTouchInputThreshold();
         }
 
         #endregion
 
         #region Private Methods
+
+        private void UpdateBlockTouchInputThreshold(int? threshold = null)
+        {
+            if (!AppConfig.UiAccess) return;
+
+            if (threshold != null)
+                _blockTouchInputThreshold = threshold;
+            if (_blockTouchInputThreshold != null)
+                _blockTouchDelayTimer.Change(100, Timeout.Infinite);
+        }
+
+        private void UpdateBlockTouchInputThresholdCallback(object o)
+        {
+            if (!_blockTouchInputThreshold.HasValue) return;
+
+            _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.Value;
+            _blockTouchInputThreshold = null;
+        }
 
         private void GestureRecognizedCallback(object sender, EventArgs e)
         {
@@ -374,7 +398,7 @@ namespace GestureSign.Daemon.Input
             PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => p.Point).ToList());
             OnCaptureStarted(captureStartedArgs);
 
-            _pointerInputTargetWindow.BlockTouchInputThreshold = Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0;
+            UpdateBlockTouchInputThreshold(Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0);
 
             if (captureStartedArgs.Cancel)
                 return false;
