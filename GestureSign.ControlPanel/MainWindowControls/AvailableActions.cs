@@ -390,35 +390,46 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (targetApplication == null) return;
 
-            CommandInfo commandInfo;
-            foreach (var info in _commandClipboard)
+            var newInfoList = new List<CommandInfo>();
+
+            foreach (var actionGroup in _commandClipboard.GroupBy(ci => ci.Action))
             {
-                var newCommand = ((Command)info.Command).Clone() as Command;
-                if (targetApplication.Actions.Contains(info.Action))
+                IAction currentAction;
+                if (targetApplication.Actions.Contains(actionGroup.Key))
                 {
-                    if (info.Action.Commands.Exists(c => c.Name == newCommand.Name))
-                    {
-                        newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, info.Action);
-                    }
-                    info.Action.Commands.Add(newCommand);
-                    commandInfo = CommandInfo.FromCommand(newCommand, info.Action);
+                    currentAction = actionGroup.Key;
                 }
                 else
                 {
-                    var newAction = ((GestureSign.Common.Applications.Action)info.Action).Clone() as GestureSign.Common.Applications.Action;
-                    newAction.Commands = new List<ICommand> { newCommand };
-                    targetApplication.AddAction(newAction);
-                    commandInfo = CommandInfo.FromCommand(newCommand, newAction);
+                    currentAction = ((GestureSign.Common.Applications.Action)actionGroup.Key).Clone() as GestureSign.Common.Applications.Action;
+                    currentAction.Commands = new List<ICommand>(1);
+                    targetApplication.AddAction(currentAction);
                 }
 
-                if (_cutActionSource != null)
+                foreach (var info in actionGroup)
                 {
-                    _cutActionSource.RemoveAction(info.Action);
-                    if (_cutActionSource == targetApplication)
-                        CommandInfos.Remove(info);
+                    if (_cutActionSource != null)
+                    {
+                        info.Action.Commands.Remove(info.Command);
+                        if (_cutActionSource == targetApplication)
+                            CommandInfos.Remove(info);
+                        else if (info.Action.Commands.Count == 0)
+                            _cutActionSource.RemoveAction(info.Action);
+                    }
+
+                    var newCommand = ((Command)info.Command).Clone() as Command;
+                    if (currentAction.Commands.Exists(c => c.Name == newCommand.Name))
+                    {
+                        newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, info.Action);
+                    }
+                    currentAction.Commands.Add(newCommand);
+                    var newInfo = CommandInfo.FromCommand(newCommand, currentAction);
+                    CommandInfos.Add(newInfo);
+                    newInfoList.Add(newInfo);
                 }
-                CommandInfos.Add(commandInfo);
             }
+
+            SelectCommands(newInfoList.ToArray());
 
             if (_cutActionSource != null)
             {
