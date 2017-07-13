@@ -1,5 +1,15 @@
 # Download
 
+## v5.3 (2017-07-12)
+
+- Optimizing Block Touch Input experience.
+- Fixed bug that cannot be used by multiple users at the same time.
+- Fixed clipboard exception.
+
+**Download**
+
+[GestureSignSetup-5.3.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.3/GestureSignSetup-5.3.0.0.zip)
+
 ## v5.2 (2017-06-27)
 
 - Icon for command.
