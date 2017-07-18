@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -12,6 +11,7 @@ using GestureSign.ControlPanel.ViewModel;
 using MahApps.Metro.Controls;
 using ManagedWinapi;
 using ManagedWinapi.Hooks;
+using System.Linq;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -29,7 +29,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
         #region Public Instance Fields
 
-        public IAction NewAction { get; private set; } = new GestureSign.Common.Applications.Action() { Commands = new List<GestureSign.Common.Applications.ICommand>() };
+        public IAction NewAction { get; private set; } = new GestureSign.Common.Applications.Action();
 
         #endregion
 
@@ -102,7 +102,7 @@ namespace GestureSign.ControlPanel.Dialogs
             if (e.NewValue == null)
                 return;
             var actionDialog = (ActionDialog)sender;
-            var existingAction = actionDialog._sourceApplication.Actions.Find(a => a.GestureName == ((IGesture)e.NewValue).Name);
+            var existingAction = actionDialog._sourceApplication.Actions.FirstOrDefault(a => a.GestureName == ((IGesture)e.NewValue).Name);
             if (existingAction != null)
             {
                 actionDialog.SetValue(existingAction);
@@ -155,7 +155,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ConditionError"), exception.Message);
             }
             // Move command to existing action
-            var sameAction = _sourceApplication.Actions.Find(a => a.GestureName == CurrentGesture?.Name);
+            var sameAction = _sourceApplication.Actions.FirstOrDefault(a => a.GestureName == CurrentGesture?.Name);
             if (sameAction != null)
                 NewAction = sameAction;
             else

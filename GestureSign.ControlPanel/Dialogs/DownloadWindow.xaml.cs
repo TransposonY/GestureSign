@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -176,7 +177,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     {
                         foreach (IAction newAction in newApp.Actions)
                         {
-                            var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
+                            var existingAction = existingApp.Actions.FirstOrDefault(action => action.Name == newAction.Name);
                             if (existingAction != null)
                             {
                                 var result =
@@ -187,7 +188,7 @@ namespace GestureSign.ControlPanel.Dialogs
                                 if (result == MessageBoxResult.Yes)
                                 {
                                     saveGesture |= UpdateGesture(newAction);
-                                    existingApp.Actions.Remove(existingAction);
+                                    existingApp.RemoveAction(existingAction);
                                     existingApp.AddAction(newAction);
                                     newActionCount++;
                                 }
@@ -204,8 +205,11 @@ namespace GestureSign.ControlPanel.Dialogs
                     }
                     else
                     {
-                        newApp.Actions.ForEach(a => saveGesture |= UpdateGesture(a));
-                        newActionCount += newApp.Actions.Count;
+                        foreach (var action in newApp.Actions)
+                        {
+                            saveGesture |= UpdateGesture(action);
+                            newActionCount++;
+                        }
                         newAppCount++;
                         newApplications.Add(newApp);
                     }

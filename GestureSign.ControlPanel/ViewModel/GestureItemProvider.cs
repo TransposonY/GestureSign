@@ -74,7 +74,7 @@ namespace GestureSign.ControlPanel.ViewModel
                 string result = string.Empty;
                 foreach (IApplication application in apps)
                 {
-                    if (application.Actions.Exists(a => a.GestureName == gesture.Name))
+                    if (application.Actions.Any(a => a.GestureName == gesture.Name))
                         result += $" {application.Name},";
                 }
                 result = result.TrimEnd(',');

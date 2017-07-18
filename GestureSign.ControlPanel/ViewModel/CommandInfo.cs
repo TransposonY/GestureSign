@@ -72,7 +72,14 @@ namespace GestureSign.ControlPanel.ViewModel
             if (info.Action == Action)
             {
                 if (Action.Commands == null) return 0;
-                return Action.Commands.IndexOf(Command) - info.Action.Commands.IndexOf(info.Command);
+                foreach (var command in Action.Commands)
+                {
+                    if (command == Command)
+                        return -1;
+                    else if (command == info.Command)
+                        return 1;
+                }
+                return 0;
             }
             else
             {

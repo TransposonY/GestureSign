@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Configuration;
-using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using ManagedWinapi.Windows;
 
@@ -183,22 +182,16 @@ namespace GestureSign.Common.Applications
 
         public void RenameGesture(string newName, string oldName)
         {
-            Applications.ForEach(app => app.Actions?.ForEach(action =>
-              {
-                  if (action.GestureName == oldName)
-                      action.GestureName = newName;
-              }));
-
-            SaveApplications();
-        }
-
-        public void TrimGesture()
-        {
-            Applications.ForEach(app => app?.Actions?.ForEach(a =>
+            foreach (var app in Applications)
             {
-                if (!GestureManager.Instance.GestureExists(a.GestureName))
-                    a.GestureName = string.Empty;
-            }));
+                if (app.Actions == null) continue;
+                foreach (var action in app.Actions)
+                {
+                    if (action.GestureName == oldName)
+                        action.GestureName = newName;
+                }
+            }
+
             SaveApplications();
         }
 
@@ -314,15 +307,6 @@ namespace GestureSign.Common.Applications
             return finalAction;
         }
 
-        public IAction GetAnyDefinedAction(string actionName, string applicationName)
-        {
-            IApplication app = GetGlobalApplication().Name == applicationName ? GetGlobalApplication() : GetExistingUserApplication(applicationName);
-            if (app != null && app.Actions.Exists(a => a.Name == actionName))
-                return app.Actions.Find(a => a.Name == actionName);
-
-            return null;
-        }
-
         public IEnumerable<IAction> GetDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
         {
             if (application == null)
@@ -378,16 +362,6 @@ namespace GestureSign.Common.Applications
             else return globalApp;
         }
 
-        public void RemoveGlobalAction(string ActionName)
-        {
-            RemoveAction(ActionName, true);
-        }
-
-        public void RemoveNonGlobalAction(string ActionName)
-        {
-            RemoveAction(ActionName, false);
-        }
-
         public IApplication[] FindMatchApplications<TApplication>(MatchUsing matchUsing, string matchString, string excludedApplication = null) where TApplication : IApplication
         {
             return Applications.FindAll(
@@ -409,7 +383,7 @@ namespace GestureSign.Common.Applications
             if (action == null) throw new ArgumentNullException(nameof(action));
 
             var newName = number == 1 ? name : $"{name}({number})";
-            if (action.Commands.Exists(a => a.Name == newName))
+            if (action.Commands.Any(a => a.Name == newName))
                 return GetNextCommandName(name, action, ++number);
             return newName;
         }
@@ -457,17 +431,6 @@ namespace GestureSign.Common.Applications
         #endregion
 
         #region Private Methods
-
-        private void RemoveAction(string ActionName, bool Global)
-        {
-            if (Global)
-                // Attempt to remove action from global actions
-                GetGlobalApplication().RemoveAllActions(a => a.Name.Trim() == ActionName.Trim());
-            else
-                // Select applications where this action may exist and delete them
-                foreach (IApplication app in GetAvailableUserApplications().Where(a => a.Actions.Any(ac => ac.Name == ActionName)))
-                    app.RemoveAllActions(a => a.Name.Trim() == ActionName.Trim());
-        }
 
         private IApplication[] FindMatchApplications(IEnumerable<IApplication> applications, SystemWindow window)
         {
@@ -604,11 +567,10 @@ namespace GestureSign.Common.Applications
                     Condition = grouping.First().Condition,
                     GestureName = grouping.Key,
                     Name = grouping.First().Name,
-                    Commands = new List<ICommand>()
                 };
                 foreach (var legacyAction in grouping)
                 {
-                    newAction.Commands.Add(new Command
+                    newAction.AddCommand(new Command
                     {
                         CommandSettings = legacyAction.ActionSettings,
                         IsEnabled = legacyAction.IsEnabled,

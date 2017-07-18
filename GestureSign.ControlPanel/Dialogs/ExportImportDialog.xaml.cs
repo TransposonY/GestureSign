@@ -48,7 +48,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     var seletedApplications = ApplicationSelector.SeletedApplications;
                     FileManager.SaveObject(seletedApplications, sfdApplications.FileName, true);
 
-                    int actionCount = seletedApplications.Sum(app => app.Actions == null ? 0 : app.Actions.Count);
+                    int actionCount = seletedApplications.Sum(app => app.Actions == null ? 0 : app.Actions.Count());
                     var message = actionCount == 0 ? String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteWithoutAction"), seletedApplications.Count) :
                        String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportComplete"), actionCount, seletedApplications.Count);
 
@@ -80,7 +80,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         {
                             foreach (IAction newAction in newApp.Actions)
                             {
-                                var existingAction = existingApp.Actions.Find(action => action.Name == newAction.Name);
+                                var existingAction = existingApp.Actions.FirstOrDefault(action => action.Name == newAction.Name);
                                 if (existingAction != null)
                                 {
                                     var result =
@@ -90,7 +90,7 @@ namespace GestureSign.ControlPanel.Dialogs
                                         MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                                     if (result == MessageBoxResult.Yes)
                                     {
-                                        existingApp.Actions.Remove(existingAction);
+                                        existingApp.RemoveAction(existingAction);
                                         existingApp.AddAction(newAction);
                                         newActionCount++;
                                     }
@@ -106,7 +106,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         }
                         else
                         {
-                            newActionCount += newApp.Actions.Count;
+                            newActionCount += newApp.Actions.Count();
                             newAppCount++;
                             newApplications.Add(newApp);
                         }

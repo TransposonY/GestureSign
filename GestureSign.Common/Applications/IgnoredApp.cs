@@ -38,7 +38,7 @@ namespace GestureSign.Common.Applications
 
         #region IApplication Properties
 
-        public override List<IAction> Actions
+        public override IEnumerable<IAction> Actions
         {
             get { return null; }
             set { /* Only exists for serialization purposes */ }
@@ -54,11 +54,6 @@ namespace GestureSign.Common.Applications
         }
 
         public override void RemoveAction(IAction Action)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void RemoveAllActions(Predicate<IAction> Match)
         {
             throw new NotSupportedException();
         }

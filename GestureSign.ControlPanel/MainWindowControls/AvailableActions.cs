@@ -9,10 +9,8 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -33,9 +31,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             DataContext = this;
         }
 
-        public ObservableCollection<CommandInfo> CommandInfos { get; } = new ObservableCollection<CommandInfo>();
-
-        private Task _addCommandTask;
         private IApplication _cutActionSource;
         private readonly List<CommandInfo> _commandClipboard = new List<CommandInfo>();
 
@@ -59,30 +54,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             // Get first item selected, associated action, and selected application
             CommandInfo selectedItem = (CommandInfo)lstAvailableActions.SelectedItem;
+            var selectedAction = selectedItem.Action;
             var selectedCommand = selectedItem.Command;
             if (selectedCommand == null) return;
 
-            CommandDialog commandDialog = new CommandDialog(selectedCommand, selectedItem.Action);
+            CommandDialog commandDialog = new CommandDialog(selectedCommand, selectedAction);
             var result = commandDialog.ShowDialog();
             if (result != null && result.Value)
             {
-                var newActionInfo = CommandInfo.FromCommand(selectedCommand, selectedItem.Action);
-                UpdateCommandInfo(newActionInfo, selectedItem);
-                SelectCommands(newActionInfo);
+                int index = selectedAction.Commands.ToList().IndexOf(selectedCommand);
+                selectedAction.RemoveCommand(selectedCommand);
+                selectedAction.InsertCommand(index, selectedCommand);
+                SelectCommands(selectedCommand);
             }
-        }
-
-        private void UpdateCommandInfo(CommandInfo newInfo, CommandInfo oldInfo)
-        {
-            CommandInfos.Remove(oldInfo);
-            CommandInfos.Add(newInfo);
-        }
-
-        private void RefreshActionGroup(IAction action)
-        {
-            var targetInfo = CommandInfos.Where(ci => ci.Action == action).ToList();
-            targetInfo.ForEach(ci => CommandInfos.Remove(ci));
-            targetInfo.ForEach(ci => CommandInfos.Add(ci));
         }
 
         private void cmdDeleteCommand_Click(object sender, RoutedEventArgs e)
@@ -108,15 +92,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 // Grab selected item
                 CommandInfo selectedCommand = commandInfoList[i];
-                selectedCommand.Action.Commands.Remove(selectedCommand.Command);
-                if (selectedCommand.Action.Commands.Count == 0)
+                selectedCommand.Action.RemoveCommand(selectedCommand.Command);
+                if (selectedCommand.Action.IsEmpty())
                 {
                     IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
 
                     selectedApp.RemoveAction(selectedCommand.Action);
                 }
-
-                CommandInfos.Remove(selectedCommand);
             }
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
@@ -170,82 +152,33 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 Name = LocalizationProvider.Instance.GetTextValue("Action.NewCommand")
             };
-            Action<Task> addCommand = task =>
+
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (ci == null)
                 {
-                    CommandInfo newInfo;
-                    if (ci == null)
-                    {
-                        var newAction = new GestureSign.Common.Applications.Action
-                        {
-                            Commands = new List<ICommand>()
-                        };
-                        newAction.Commands.Add(newCommand);
-                        selectedApplication.AddAction(newAction);
-                        newInfo = CommandInfo.FromCommand(newCommand, newAction);
-                    }
-                    else
-                    {
-                        newInfo = CommandInfo.FromCommand(newCommand, ci.Action);
-
-                        int commandIndex = ci.Action.Commands.IndexOf(ci.Command);
-
-                        if (commandIndex + 1 == ci.Action.Commands.Count)
-                            ci.Action.Commands.Add(newCommand);
-                        else
-                            ci.Action.Commands.Insert(commandIndex + 1, newCommand);
-                    }
-                    CommandInfos.Add(newInfo);
-                    SelectCommands(newInfo);
-                    ApplicationManager.Instance.SaveApplications();
-                }, DispatcherPriority.Input);
-            };
-
-            if (_addCommandTask != null && !_addCommandTask.IsCompleted)
-            {
-                _addCommandTask.ContinueWith(addCommand);
-            }
-            else addCommand.Invoke(null);
+                    var newAction = new GestureSign.Common.Applications.Action();
+                    newAction.AddCommand(newCommand);
+                    selectedApplication.AddAction(newAction);
+                }
+                else
+                {
+                    int commandIndex = ci.Action.Commands.ToList().IndexOf(ci.Command);
+                    ci.Action.InsertCommand(commandIndex + 1, newCommand);
+                }
+                SelectCommands(newCommand);
+                ApplicationManager.Instance.SaveApplications();
+            }, DispatcherPriority.Input);
         }
 
-        private void RefreshAllActions()
-        {
-            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
-            if (selectedApplication == null) return;
-
-            Action<object> refreshAction = (o) =>
-             {
-                 Dispatcher.Invoke(() => { CommandInfos.Clear(); }, DispatcherPriority.Loaded);
-                 foreach (var currentAction in selectedApplication.Actions)
-                 {
-                     if (currentAction.Commands == null) continue;
-                     foreach (var command in currentAction.Commands)
-                     {
-                         var info = CommandInfo.FromCommand(command, currentAction);
-                         try
-                         {
-                             Dispatcher.Invoke(() =>
-                             {
-                                 CommandInfos.Add(info);
-                             }, DispatcherPriority.Input);
-                         }
-                         catch { }
-                     }
-                 }
-             };
-
-            _addCommandTask = _addCommandTask?.ContinueWith(refreshAction) ?? Task.Factory.StartNew(refreshAction, null);
-        }
-
-        void SelectCommands(params CommandInfo[] infos)
+        private void SelectCommands(params ICommand[] commands)
         {
             lstAvailableActions.SelectedItems.Clear();
-            foreach (var info in infos)
+            foreach (CommandInfo ci in lstAvailableActions.Items)
             {
-                lstAvailableActions.SelectedItems.Add(info);
+                if (commands.Contains(ci.Command))
+                    lstAvailableActions.SelectedItems.Add(ci);
             }
-            lstAvailableActions.UpdateLayout();
             Dispatcher.InvokeAsync(() => lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem), DispatcherPriority.Background);
         }
 
@@ -264,10 +197,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 MoveUpButton.IsEnabled = MoveDownButton.IsEnabled = false;
             else
             {
-                int index = selectedInfo.Action.Commands.IndexOf(selectedInfo.Command);
+                int index = selectedInfo.Action.Commands.ToList().IndexOf(selectedInfo.Command);
 
                 MoveUpButton.IsEnabled = index > 0;
-                MoveDownButton.IsEnabled = index < selectedInfo.Action.Commands.Count - 1;
+                MoveDownButton.IsEnabled = index < selectedInfo.Action.Commands.Count() - 1;
             }
         }
 
@@ -317,19 +250,24 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 var newAction = actionDialog.NewAction;
 
                 if (newAction != sourceAction)
+                {
                     foreach (CommandInfo info in infoList)
                     {
-                        sourceAction.Commands.Remove(info.Command);
-                        newAction.Commands.Add(info.Command);
-
-                        info.Action = newAction;
+                        sourceAction.RemoveCommand(info.Command);
+                        newAction.AddCommand(info.Command);
                     }
-                RefreshActionGroup(newAction);
+                }
+                selectedApplication.RemoveAction(newAction);
+                selectedApplication.AddAction(newAction);
 
-                selectedApplication.Actions.RemoveAll(a => a.Commands == null || a.Commands.Count == 0);
+                var emptyActions = selectedApplication.Actions.Where(a => a.Commands == null || a.Commands.Count() == 0).ToList();
+                foreach (var action in emptyActions)
+                {
+                    selectedApplication.RemoveAction(action);
+                }
                 ApplicationManager.Instance.SaveApplications();
 
-                SelectCommands(infoList.ToArray());
+                SelectCommands(infoList.Select(ci => ci.Command).ToArray());
             }
         }
 
@@ -390,7 +328,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (targetApplication == null) return;
 
-            var newInfoList = new List<CommandInfo>();
+            var newCommandList = new List<ICommand>();
 
             foreach (var actionGroup in _commandClipboard.GroupBy(ci => ci.Action))
             {
@@ -410,26 +348,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     if (_cutActionSource != null)
                     {
-                        info.Action.Commands.Remove(info.Command);
-                        if (_cutActionSource == targetApplication)
-                            CommandInfos.Remove(info);
-                        else if (info.Action.Commands.Count == 0)
+                        info.Action.RemoveCommand(info.Command);
+                        if (_cutActionSource != targetApplication && info.Action.Commands.Count() == 0)
                             _cutActionSource.RemoveAction(info.Action);
                     }
 
                     var newCommand = ((Command)info.Command).Clone() as Command;
-                    if (currentAction.Commands.Exists(c => c.Name == newCommand.Name))
-                    {
-                        newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, info.Action);
-                    }
-                    currentAction.Commands.Add(newCommand);
-                    var newInfo = CommandInfo.FromCommand(newCommand, currentAction);
-                    CommandInfos.Add(newInfo);
-                    newInfoList.Add(newInfo);
+                    newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, info.Action);
+
+                    newCommandList.Add(newCommand);
+                    currentAction.AddCommand(newCommand);
                 }
             }
 
-            SelectCommands(newInfoList.ToArray());
+            SelectCommands(newCommandList.ToArray());
 
             if (_cutActionSource != null)
             {
@@ -443,13 +375,17 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            RefreshAllActions();
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
             if (selectedApp == null)
             {
                 ToggleAllActionsToggleSwitch.IsEnabled = false;
                 return;
             }
+
+            var commandInfoProvider = ((ObjectDataProvider)Resources["CommandInfoProvider"]).ObjectInstance as CommandInfoProvider;
+            if (commandInfoProvider == null) return;
+            commandInfoProvider.RefreshCommandInfos(selectedApp);
+
             ToggleAllActionsToggleSwitch.IsEnabled = true;
             ToggleAllActionsToggleSwitch.IsChecked = selectedApp.Actions.SelectMany(a => a.Commands).All(c => c.IsEnabled);
         }
@@ -499,15 +435,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void MoveUpButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
+            int commandIndex = selected.Action.Commands.ToList().IndexOf(selected.Command);
             if (commandIndex > 0)
             {
-                var temp = selected.Action.Commands[commandIndex - 1];
-                selected.Action.Commands[commandIndex - 1] = selected.Action.Commands[commandIndex];
-                selected.Action.Commands[commandIndex] = temp;
-
-                UpdateCommandInfo(selected, selected);
-                SelectCommands(selected);
+                selected.Action.MoveCommand(commandIndex, commandIndex - 1);
+                SelectCommands(selected.Command);
                 ApplicationManager.Instance.SaveApplications();
             }
         }
@@ -515,15 +447,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void MoveDownButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = (CommandInfo)lstAvailableActions.SelectedItem;
-            int commandIndex = selected.Action.Commands.IndexOf(selected.Command);
-            if (commandIndex + 1 < selected.Action.Commands.Count)
+            int commandIndex = selected.Action.Commands.ToList().IndexOf(selected.Command);
+            if (commandIndex + 1 < selected.Action.Commands.Count())
             {
-                var temp = selected.Action.Commands[commandIndex + 1];
-                selected.Action.Commands[commandIndex + 1] = selected.Action.Commands[commandIndex];
-                selected.Action.Commands[commandIndex] = temp;
-
-                UpdateCommandInfo(selected, selected);
-                SelectCommands(selected);
+                selected.Action.MoveCommand(commandIndex, commandIndex + 1);
+                SelectCommands(selected.Command);
                 ApplicationManager.Instance.SaveApplications();
             }
         }
@@ -542,7 +470,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
                 ApplicationManager.Instance.SaveApplications();
 
-                foreach (CommandInfo ai in CommandInfos)
+                foreach (CommandInfo ai in lstAvailableActions.Items)
                 {
                     ai.IsEnabled = toggleSwitch.IsChecked.Value;
                 }

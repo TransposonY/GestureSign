@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using ManagedWinapi.Windows;
+﻿using ManagedWinapi.Windows;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GestureSign.Common.Applications
 {
-    public abstract class ApplicationBase : IApplication
+    public abstract class ApplicationBase : IApplication, INotifyCollectionChanged
     {
         #region Private Instance Fields
 
@@ -24,10 +26,26 @@ namespace GestureSign.Common.Applications
         public virtual string Group { get; set; }
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.None)]
-        public virtual List<IAction> Actions
+        public virtual IEnumerable<IAction> Actions
         {
-            get { return _Actions; }
-            set { _Actions = value; }
+            get { return _Actions.AsEnumerable(); }
+            set { _Actions = value.ToList(); }
+        }
+
+        public virtual event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        #endregion
+
+        #region Private Methods
+
+        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            CollectionChanged?.Invoke(this, e);
+        }
+
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, object changedItem)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItem));
         }
 
         #endregion
@@ -37,21 +55,19 @@ namespace GestureSign.Common.Applications
         public virtual void AddAction(IAction Action)
         {
             _Actions.Add(Action);
+            OnCollectionChanged(NotifyCollectionChangedAction.Add, Action);
         }
 
-        public void Insert(int index, IAction action)
+        public virtual void Insert(int index, IAction action)
         {
             _Actions.Insert(index, action);
+            OnCollectionChanged(NotifyCollectionChangedAction.Add, action);
         }
 
         public virtual void RemoveAction(IAction Action)
         {
             _Actions.Remove(Action);
-        }
-
-        public virtual void RemoveAllActions(Predicate<IAction> Match)
-        {
-            _Actions.RemoveAll(Match);
+            OnCollectionChanged(NotifyCollectionChangedAction.Remove, Action);
         }
 
         public bool IsSystemWindowMatch(SystemWindow Window)

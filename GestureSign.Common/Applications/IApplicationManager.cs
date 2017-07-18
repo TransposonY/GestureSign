@@ -21,8 +21,6 @@ namespace GestureSign.Common.Applications
         IApplication GetGlobalApplication();
         SystemWindow GetWindowFromPoint(Point Point);
         Task LoadApplications();
-        void RemoveGlobalAction(string ActionName);
-        void RemoveNonGlobalAction(string ActionName);
         bool SaveApplications();
     }
 }

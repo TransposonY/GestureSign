@@ -87,8 +87,11 @@
             <ObjectDataProvider ObjectType="{x:Type viewModel:ApplicationItemProvider}"
                                 x:Key="ApplicationItemProvider">
             </ObjectDataProvider>
+            <ObjectDataProvider ObjectType="{x:Type viewModel:CommandInfoProvider}"
+                                x:Key="CommandInfoProvider">
+            </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
-                                  Source="{Binding CommandInfos}">
+                                  Source="{Binding Source={StaticResource CommandInfoProvider},Path=CommandInfos}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Action" />
                 </CollectionViewSource.GroupDescriptions>
