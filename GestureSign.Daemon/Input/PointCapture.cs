@@ -221,10 +221,10 @@ namespace GestureSign.Daemon.Input
             {
                 if (disposing)
                 {
+                    _blockTouchDelayTimer?.Dispose();
+                    _timeoutTimer?.Dispose();
                     _pointerInputTargetWindow?.Dispose();
                     _inputProvider?.Dispose();
-                    _timeoutTimer?.Dispose();
-                    _blockTouchDelayTimer?.Dispose();
                 }
 
                 if (_hWinEventHook != IntPtr.Zero)

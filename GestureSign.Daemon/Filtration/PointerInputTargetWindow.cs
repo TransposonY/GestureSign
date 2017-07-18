@@ -27,14 +27,15 @@ namespace GestureSign.Daemon.Filtration
             get { return _blockTouchInputThreshold; }
             set
             {
+                if (IsDisposed) return;
+
                 _blockTouchInputThreshold = value;
 
                 bool flag = _blockTouchInputThreshold >= 2;
 
                 if (!IsHandleCreated)
                 {
-                    if (!IsDisposed)
-                        CreateHandle();
+                    CreateHandle();
                 }
 
                 if (InvokeRequired)
