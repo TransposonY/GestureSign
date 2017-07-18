@@ -38,8 +38,8 @@ namespace GestureSign.Common.InterProcessCommunication
         public void RunNamedPipeServer(string pipeName, IMessageProcessor messageProcessor)
         {
             PipeSecurity pipeSecurity = new PipeSecurity();
-            pipeSecurity.AddAccessRule(new PipeAccessRule(@"NT AUTHORITY\NETWORK", PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(string.Format(@"{0}\{1}", Environment.UserDomainName, Environment.UserName), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.NetworkSid, null), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User, PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
 
             _pipeServer = new NamedPipeServerStream(GetUserPipeName(pipeName), PipeDirection.In, 1, PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous, 0, 0, pipeSecurity);
@@ -69,8 +69,8 @@ namespace GestureSign.Common.InterProcessCommunication
         public void RunPersistentPipeConnection(string pipeName, IMessageProcessor messageProcessor)
         {
             PipeSecurity pipeSecurity = new PipeSecurity();
-            pipeSecurity.AddAccessRule(new PipeAccessRule(@"NT AUTHORITY\NETWORK", PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(string.Format(@"{0}\{1}", Environment.UserDomainName, Environment.UserName), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.NetworkSid, null), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User, PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
 
             string userPipeName = GetUserPipeName(pipeName);
             _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity);
