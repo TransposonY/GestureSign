@@ -147,7 +147,7 @@
     <ImportButton>导入</ImportButton>
     <ExportButton>导出</ExportButton>
     <ReplaceConfirmTitle>已存在同名动作</ReplaceConfirmTitle>
-    <ReplaceConfirm>在 {0} 中已经存在 {1} 动作，是否覆盖？</ReplaceConfirm>
+    <ReplaceConfirm>在程序 {1} 中已经存在动作 {0}，是否覆盖？</ReplaceConfirm>
     <ImportCompleteTitle>导入完成</ImportCompleteTitle>
     <ImportComplete>已导入 {1} 个程序中的 {0} 个动作</ImportComplete>
     <ExportCompleteTitle>导出完成</ExportCompleteTitle>
