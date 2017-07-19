@@ -37,12 +37,8 @@ namespace GestureSign.Common.InterProcessCommunication
 
         public void RunNamedPipeServer(string pipeName, IMessageProcessor messageProcessor)
         {
-            PipeSecurity pipeSecurity = new PipeSecurity();
-            pipeSecurity.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.NetworkSid, null), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User, PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
-
             _pipeServer = new NamedPipeServerStream(GetUserPipeName(pipeName), PipeDirection.In, 1, PipeTransmissionMode.Message,
-                PipeOptions.Asynchronous, 0, 0, pipeSecurity);
+                PipeOptions.Asynchronous);
 
             AsyncCallback ac = null;
             ac = o =>
@@ -68,12 +64,8 @@ namespace GestureSign.Common.InterProcessCommunication
 
         public void RunPersistentPipeConnection(string pipeName, IMessageProcessor messageProcessor)
         {
-            PipeSecurity pipeSecurity = new PipeSecurity();
-            pipeSecurity.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.NetworkSid, null), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Deny));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User, PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
-
             string userPipeName = GetUserPipeName(pipeName);
-            _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity);
+            _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
 
             AsyncCallback ac = null;
             ac = o =>
@@ -88,7 +80,7 @@ namespace GestureSign.Common.InterProcessCommunication
                 }
 
                 server.Dispose();
-                server = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity);
+                server = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
                 server.BeginWaitForConnection(ac, server);
             };
             _persistentPipeServerStream.BeginWaitForConnection(ac, _persistentPipeServerStream);
