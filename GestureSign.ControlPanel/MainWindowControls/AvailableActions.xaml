@@ -311,7 +311,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center">
                 <Run Text="{Binding ElementName=lstAvailableApplication,Path=SelectedItem.(applications:IApplication.Name),Mode=OneWay}" />
-                <Run Text="{Binding ElementName=lstAvailableApplication,Path=SelectedItem.(applications:IApplication.Actions).Count,Mode=OneWay,StringFormat={localization:LocalisedText Action.ActionCount}}" />
+                <Run Text="{Binding ElementName=lstAvailableActions,Path=Items.Groups.Count,Mode=OneWay,StringFormat={localization:LocalisedText Action.ActionCount}}" />
             </TextBlock>
             <controls:ToggleSwitch x:Name="ToggleAllActionsToggleSwitch"
                                    Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
