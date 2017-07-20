@@ -19,14 +19,19 @@ namespace GestureSign.Common.Log
                 return "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
             }
 
+            private string GetVersion()
+            {
+                return "[" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + "] ";
+            }
+
             public override void WriteLine(string value)
             {
-                base.WriteLine(GetTimestamp() + value);
+                base.WriteLine(GetTimestamp() + GetVersion() + value);
             }
 
             public override void Write(string value)
             {
-                base.Write(GetTimestamp() + value);
+                base.Write(GetTimestamp() + GetVersion() + value);
             }
         }
 
