@@ -65,7 +65,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 int index = selectedAction.Commands.ToList().IndexOf(selectedCommand);
                 selectedAction.RemoveCommand(selectedCommand);
                 selectedAction.InsertCommand(index, selectedCommand);
-                SelectCommands(selectedCommand);
             }
         }
 
@@ -155,6 +154,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             Dispatcher.Invoke(() =>
             {
+                lstAvailableActions.SelectedItem = null;
                 if (ci == null)
                 {
                     var newAction = new GestureSign.Common.Applications.Action();
@@ -166,20 +166,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     int commandIndex = ci.Action.Commands.ToList().IndexOf(ci.Command);
                     ci.Action.InsertCommand(commandIndex + 1, newCommand);
                 }
-                SelectCommands(newCommand);
                 ApplicationManager.Instance.SaveApplications();
             }, DispatcherPriority.Input);
-        }
-
-        private void SelectCommands(params ICommand[] commands)
-        {
-            lstAvailableActions.SelectedItems.Clear();
-            foreach (CommandInfo ci in lstAvailableActions.Items)
-            {
-                if (commands.Contains(ci.Command))
-                    lstAvailableActions.SelectedItems.Add(ci);
-            }
-            Dispatcher.InvokeAsync(() => lstAvailableActions.ScrollIntoView(lstAvailableActions.SelectedItem), DispatcherPriority.Background);
         }
 
         private void SelectApp(IApplication app)
@@ -248,17 +236,18 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (result != null && result.Value)
             {
                 var newAction = actionDialog.NewAction;
+                selectedApplication.RemoveAction(newAction);
+                selectedApplication.AddAction(newAction);
 
                 if (newAction != sourceAction)
                 {
+                    lstAvailableActions.SelectedItem = null;
                     foreach (CommandInfo info in infoList)
                     {
                         sourceAction.RemoveCommand(info.Command);
                         newAction.AddCommand(info.Command);
                     }
                 }
-                selectedApplication.RemoveAction(newAction);
-                selectedApplication.AddAction(newAction);
 
                 var emptyActions = selectedApplication.Actions.Where(a => a.Commands == null || a.Commands.Count() == 0).ToList();
                 foreach (var action in emptyActions)
@@ -266,8 +255,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     selectedApplication.RemoveAction(action);
                 }
                 ApplicationManager.Instance.SaveApplications();
-
-                SelectCommands(infoList.Select(ci => ci.Command).ToArray());
             }
         }
 
@@ -328,8 +315,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (targetApplication == null) return;
 
-            var newCommandList = new List<ICommand>();
-
+            lstAvailableActions.SelectedItem = null;
             foreach (var actionGroup in _commandClipboard.GroupBy(ci => ci.Action))
             {
                 IAction currentAction;
@@ -356,12 +342,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     var newCommand = ((Command)info.Command).Clone() as Command;
                     newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, info.Action);
 
-                    newCommandList.Add(newCommand);
                     currentAction.AddCommand(newCommand);
                 }
             }
-
-            SelectCommands(newCommandList.ToArray());
 
             if (_cutActionSource != null)
             {
@@ -384,7 +367,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             var commandInfoProvider = ((ObjectDataProvider)Resources["CommandInfoProvider"]).ObjectInstance as CommandInfoProvider;
             if (commandInfoProvider == null) return;
-            commandInfoProvider.RefreshCommandInfos(selectedApp);
+            commandInfoProvider.RefreshCommandInfos(selectedApp, lstAvailableActions);
 
             ToggleAllActionsToggleSwitch.IsEnabled = true;
             ToggleAllActionsToggleSwitch.IsChecked = selectedApp.Actions.SelectMany(a => a.Commands).All(c => c.IsEnabled);
@@ -439,7 +422,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (commandIndex > 0)
             {
                 selected.Action.MoveCommand(commandIndex, commandIndex - 1);
-                SelectCommands(selected.Command);
                 ApplicationManager.Instance.SaveApplications();
             }
         }
@@ -451,7 +433,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (commandIndex + 1 < selected.Action.Commands.Count())
             {
                 selected.Action.MoveCommand(commandIndex, commandIndex + 1);
-                SelectCommands(selected.Command);
                 ApplicationManager.Instance.SaveApplications();
             }
         }

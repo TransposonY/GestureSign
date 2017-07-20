@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace GestureSign.ControlPanel.ViewModel
@@ -13,6 +14,7 @@ namespace GestureSign.ControlPanel.ViewModel
     {
         private IApplication _currentApp;
         private Task _addCommandTask;
+        private ListBox _listBox;
         public ObservableCollection<CommandInfo> CommandInfos { get; } = new ObservableCollection<CommandInfo>();
 
         public CommandInfoProvider()
@@ -20,8 +22,9 @@ namespace GestureSign.ControlPanel.ViewModel
 
         }
 
-        public void RefreshCommandInfos(IApplication source)
+        public void RefreshCommandInfos(IApplication source, ListBox listBox)
         {
+            _listBox = listBox;
             if (_currentApp != null)
             {
                 _currentApp.CollectionChanged -= CommandCollectionChanged;
@@ -81,8 +84,11 @@ namespace GestureSign.ControlPanel.ViewModel
             {
                 foreach (var newCommand in e.NewItems)
                 {
-                    CommandInfos.Add(CommandInfo.FromCommand((ICommand)newCommand, action));
+                    var newInfo = CommandInfo.FromCommand((ICommand)newCommand, action);
+                    CommandInfos.Add(newInfo);
+                    _listBox.SelectedItems.Add(newInfo);
                 }
+                _listBox.Dispatcher.InvokeAsync(() => _listBox.ScrollIntoView(_listBox.SelectedItem), DispatcherPriority.Background);
             }
         }
 
@@ -110,9 +116,12 @@ namespace GestureSign.ControlPanel.ViewModel
                     newAction.CollectionChanged += CommandCollectionChanged;
                     foreach (ICommand newCommand in newAction.Commands)
                     {
-                        CommandInfos.Add(CommandInfo.FromCommand(newCommand, newAction));
+                        var newInfo = CommandInfo.FromCommand(newCommand, newAction);
+                        CommandInfos.Add(newInfo);
+                        _listBox.SelectedItems.Add(newInfo);
                     }
                 }
+                _listBox.Dispatcher.InvokeAsync(() => _listBox.ScrollIntoView(_listBox.SelectedItem), DispatcherPriority.Background);
             }
         }
     }
