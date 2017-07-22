@@ -42,6 +42,7 @@ namespace GestureSign.Daemon.Input
         static readonly PointCapture _Instance = new PointCapture();
 
         private CaptureMode _mode = CaptureMode.Normal;
+        private int _state;
 
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
@@ -87,7 +88,11 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        public CaptureState State { get; set; }
+        public CaptureState State
+        {
+            get { return (CaptureState)_state; }
+            set { Interlocked.Exchange(ref _state, (int)value); }
+        }
 
         public CaptureMode Mode
         {
