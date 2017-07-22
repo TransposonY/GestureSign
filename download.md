@@ -1,5 +1,14 @@
 # Download
 
+## v5.4 (2017-07-22)
+
+- Optimized double tab when Block Touch Input is enabled.
+- Improved compatibility.
+
+**Download**
+
+[GestureSignSetup-5.4.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.4/GestureSignSetup-5.4.0.0.zip)
+
 ## v5.3 (2017-07-12)
 
 - Optimizing Block Touch Input experience.
