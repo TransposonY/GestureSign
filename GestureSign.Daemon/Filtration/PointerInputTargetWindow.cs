@@ -1,25 +1,35 @@
-﻿using System;
+﻿using GestureSign.Common.Configuration;
+using GestureSign.Daemon.Native;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using GestureSign.Common.Configuration;
-using GestureSign.Daemon.Native;
 
 namespace GestureSign.Daemon.Filtration
 {
     public class PointerInputTargetWindow : Form
     {
+        private readonly float _doubleTapRadius;
+        private readonly int _doubleTapTime;
+        private readonly List<string> _doubleTapList = new List<string> { "MMCMainFrame", "CabinetWClass", "ExploreWClass", "Shell_TrayWnd", "Progman", "WorkerW" };
         private bool _isRegistered;
         private int _blockTouchInputThreshold;
         private Dictionary<int, int> _pointerIdList = new Dictionary<int, int>(10);
         private Queue<int> _idPool = new Queue<int>(10);
+        private POINT? _doubleTapPoint;
+        private int _lastTapTime;
+        private bool _blockTap;
         private bool _isInitialized = false;
 
         public PointerInputTargetWindow()
         {
             CreateHandle();
             ResetIdPool();
+            _doubleTapRadius = 3 * SystemInformation.DoubleClickSize.Width * NativeMethods.GetScreenDpi() / 96f;
+            _doubleTapTime = SystemInformation.DoubleClickTime;
         }
 
         public int BlockTouchInputThreshold
@@ -125,6 +135,8 @@ namespace GestureSign.Daemon.Filtration
 
             if (pointerInfos.Length != ptis.Count) return;
 
+            if (SimulateDoubleTap(ptis) || _blockTap) return;
+
             if (pointerInfos.Length < _blockTouchInputThreshold)
             {
                 if (ptis.Count != 0)
@@ -213,6 +225,62 @@ namespace GestureSign.Daemon.Filtration
                 ResetIdPool();
             }
             return ptis;
+        }
+
+        private bool SimulateDoubleTap(List<POINTER_TOUCH_INFO> ptis)
+        {
+            if (ptis.Count == 1)
+            {
+                if ((ptis[0].PointerInfo.PointerFlags & POINTER_FLAGS.DOWN) == POINTER_FLAGS.DOWN)
+                {
+                    string className;
+                    try
+                    {
+                        className = ManagedWinapi.Windows.SystemWindow.FromPointEx(ptis[0].PointerInfo.PtPixelLocation.X, ptis[0].PointerInfo.PtPixelLocation.Y, true, true).ClassName;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                    if (_doubleTapPoint != null && _doubleTapList.Contains(className))
+                    {
+                        var distance = Math.Sqrt(Math.Pow(ptis[0].PointerInfo.PtPixelLocation.X - _doubleTapPoint.Value.X, 2) +
+                            Math.Pow(ptis[0].PointerInfo.PtPixelLocation.Y - _doubleTapPoint.Value.Y, 2));
+                        var deltaTime = Environment.TickCount - _lastTapTime;
+                        if (distance < _doubleTapRadius && deltaTime < _doubleTapTime)
+                        {
+                            _blockTap = true;
+                            Task.Delay(100).ContinueWith((t) =>
+                            {
+                                var infoArray = ptis.ToArray();
+                                infoArray[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+                                NativeMethods.InjectTouchInput(1, infoArray);
+                                Thread.Sleep(2);
+                                infoArray[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+                                NativeMethods.InjectTouchInput(1, infoArray);
+                                Thread.Sleep(2);
+                                infoArray[0].PointerInfo.PointerFlags = POINTER_FLAGS.DOWN | POINTER_FLAGS.INRANGE | POINTER_FLAGS.INCONTACT;
+                                NativeMethods.InjectTouchInput(1, infoArray);
+                                Thread.Sleep(2);
+                                infoArray[0].PointerInfo.PointerFlags = POINTER_FLAGS.UP;
+                                NativeMethods.InjectTouchInput(1, infoArray);
+                            });
+
+                            _doubleTapPoint = null;
+                            return true;
+                        }
+                    }
+                    _doubleTapPoint = ptis[0].PointerInfo.PtPixelLocation;
+                    _lastTapTime = Environment.TickCount;
+                }
+                else if (_blockTap && (ptis[0].PointerInfo.PointerFlags & POINTER_FLAGS.UP) == POINTER_FLAGS.UP)
+                {
+                    _blockTap = false;
+                    return true;
+                }
+            }
+            else _doubleTapPoint = null;
+            return false;
         }
 
         #endregion ProcessInput
