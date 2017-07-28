@@ -333,19 +333,19 @@
         <Original>不移动鼠标位置</Original>
       </ClickPositions>
       <Description>
-        <Right>右</Right>
-        <Left>左</Left>
-        <Up>上</Up>
-        <Down>下</Down>
-        <HorizontalScroll>水平向{0}滚动{1}单位</HorizontalScroll>
-        <VerticalScroll>垂直向{0}滚动{1}单位</VerticalScroll>
+        <Right>向右</Right>
+        <Left>向左</Left>
+        <Up>向上</Up>
+        <Down>向下</Down>
+        <HorizontalScroll>水平{0}滚动 {1} 次</HorizontalScroll>
+        <VerticalScroll>垂直{0}滚动 {1} 次</VerticalScroll>
         <MoveMouseBy>鼠标位移</MoveMouseBy>
         <MoveMouseTo>鼠标移动至</MoveMouseTo>
       </Description>
       <SelectAction>选择鼠标动作</SelectAction>
       <ClickPosition>鼠标点击位置</ClickPosition>
       <ReferencePosition>相对位置</ReferencePosition>
-      <ScrollAmountTip>输入滚动数  正数向右/上滚动 负数向左/下滚动</ScrollAmountTip>
+      <ScrollAmountTip>滚动次数</ScrollAmountTip>
     </MouseActions>
     <RunCommand>
       <Name>命令行</Name>

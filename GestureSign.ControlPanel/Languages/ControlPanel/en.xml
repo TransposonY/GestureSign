@@ -341,7 +341,7 @@ Email:ccfyzh@gmail.com
       <SelectAction>Select Mouse Action</SelectAction>
       <ClickPosition>Click Position</ClickPosition>
       <ReferencePosition>Reference Position</ReferencePosition>
-      <ScrollAmountTip>A Positive value to the Right/Up.A Negative value to the Left/Down.</ScrollAmountTip>
+      <ScrollAmountTip>Scroll Amount</ScrollAmountTip>
     </MouseActions>
     <RunCommand>
       <Name>Command Prompt Commands</Name>

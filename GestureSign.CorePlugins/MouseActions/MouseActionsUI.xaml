@@ -33,7 +33,7 @@
                       SelectedValuePath="Key"
                       FontSize="14"
                       SelectionChanged="ActionComboBox_SelectionChanged"
-                      Margin="0,23,5,0"
+                      Margin="0,23,0,0"
                       VerticalAlignment="Top" />
             <StackPanel x:Name="ButtonPanel"
                         Grid.Column="1"
@@ -105,25 +105,36 @@
                              Canvas.Left="260"
                              Canvas.Top="10" />
         </Canvas>
-        <Canvas x:Name="ScrollCanvas"
-                Height="86"
-                Width="320">
-            <TextBox x:Name="ScrollAmountTextBox"
-                     KeyDown="TextBox_KeyDown"
-                     TextChanged="TextBox_TextChanged"
-                     Height="23"
-                     Canvas.Left="10"
-                     TextWrapping="Wrap"
-                     Canvas.Top="10"
-                     Width="60"
-                     FontSize="14" />
+        <StackPanel x:Name="ScrollPanel"
+                    Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <RadioButton x:Name="PositiveRadioButton"
+                             GroupName="direction"
+                             IsChecked="True" />
+                <RadioButton x:Name="NegativeRadioButton"
+                             GroupName="direction"
+                             Margin="50,0,0,0" />
+            </StackPanel>
             <TextBlock TextWrapping="Wrap"
                        Text="{localization:LocalisedText CorePlugins.MouseActions.ScrollAmountTip}"
-                       Canvas.Top="41"
                        FontSize="14"
-                       Width="300"
-                       Canvas.Left="10" />
-        </Canvas>
+                       Margin="0,10,0,0"
+                       HorizontalAlignment="Center" />
+            <ComboBox x:Name="ScrollAmountComboBox"
+                      KeyDown="TextBox_KeyDown"
+                      TextBoxBase.TextChanged="TextBox_TextChanged"
+                      InputMethod.IsInputMethodEnabled="False"
+                      IsEditable="True"
+                      FontSize="14"
+                      HorizontalAlignment="Center"
+                      Margin="0,5,0,0"
+                      MinWidth="100">
+                <ComboBoxItem Content="1" />
+                <ComboBoxItem Content="2" />
+                <ComboBoxItem Content="3" />
+            </ComboBox>
+        </StackPanel>
 
     </StackPanel>
 </UserControl>
