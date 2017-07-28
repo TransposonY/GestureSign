@@ -307,24 +307,24 @@
     <MouseActions>
       <Name>鼠标动作</Name>
       <Category>鼠标</Category>
+      <Button>按键</Button>
       <MouseActions>
-        <LeftButtonClick>单击左键</LeftButtonClick>
-        <LeftButtonDoubleClick>双击左键</LeftButtonDoubleClick>
-        <LeftButtonDown>按住左键</LeftButtonDown>
-        <LeftButtonUp>释放左键</LeftButtonUp>
-        <MiddleButtonClick>单击中键</MiddleButtonClick>
-        <MiddleButtonDoubleClick>双击中键</MiddleButtonDoubleClick>
-        <MiddleButtonDown>按住中键</MiddleButtonDown>
-        <MiddleButtonUp>释放中键</MiddleButtonUp>
-        <RightButtonClick>单击右键</RightButtonClick>
-        <RightButtonDoubleClick>双击右键</RightButtonDoubleClick>
-        <RightButtonDown>按住右键</RightButtonDown>
-        <RightButtonUp>释放右键</RightButtonUp>
+        <Click>单击</Click>
+        <DoubleClick>双击</DoubleClick>
+        <Down>按下</Down>
+        <Up>释放</Up>
         <VerticalScroll>垂直滚动</VerticalScroll>
         <HorizontalScroll>水平滚动</HorizontalScroll>
         <MoveMouseTo>移动鼠标至指定坐标</MoveMouseTo>
         <MoveMouseBy>将鼠标位移一段距离</MoveMouseBy>
       </MouseActions>
+      <Buttons>
+        <LeftButton>左键</LeftButton>
+        <MiddleButton>中键</MiddleButton>
+        <RightButton>右键</RightButton>
+        <XButton1>X1</XButton1>
+        <XButton2>X2</XButton2>
+      </Buttons>
       <ClickPositions>
         <FirstDown>第一根手指落点</FirstDown>
         <FirstUp>第一根手指抬起点</FirstUp>

@@ -27,7 +27,16 @@ namespace GestureSign.CorePlugins.MouseActions
         HorizontalScroll,
 
         MoveMouseTo,
-        MoveMouseBy
+        MoveMouseBy,
+
+        XButton1Click,
+        XButton1DoubleClick,
+        XButton1Down,
+        XButton1Up,
+        XButton2Click,
+        XButton2DoubleClick,
+        XButton2Down,
+        XButton2Up,
     }
 
     public enum ClickPositions
@@ -42,15 +51,21 @@ namespace GestureSign.CorePlugins.MouseActions
     {
         static MouseActionDescription()
         {
-            DescriptionDict = new Dictionary<MouseActions, String>(16);
-            foreach (MouseActions mouseAction in Enum.GetValues(typeof(MouseActions)))
+            DescriptionDict = new Dictionary<string, string>(8);
+            ButtonDescription = new Dictionary<string, string>(5);
+            foreach (var button in new string[5] { "LeftButton", "MiddleButton", "RightButton", "XButton1", "XButton2" })
+            {
+                ButtonDescription.Add(button, LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Buttons." + button));
+            }
+            foreach (var mouseAction in new List<string>() { "Click", "DoubleClick", "Down", "Up", MouseActions.VerticalScroll.ToString(), MouseActions.HorizontalScroll.ToString(), MouseActions.MoveMouseTo.ToString(), MouseActions.MoveMouseBy.ToString() })
             {
                 DescriptionDict.Add(mouseAction,
                     LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.MouseActions." + mouseAction));
             }
         }
 
-        public static Dictionary<MouseActions, String> DescriptionDict { get; private set; }
+        public static Dictionary<string, string> DescriptionDict { get; private set; }
+        public static Dictionary<string, string> ButtonDescription { get; private set; }
     }
 
     public class ClickPositionDescription

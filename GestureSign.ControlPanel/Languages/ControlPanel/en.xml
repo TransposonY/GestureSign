@@ -303,24 +303,24 @@ Email:ccfyzh@gmail.com
     <MouseActions>
       <Name>Mouse Actions</Name>
       <Category>Mouse</Category>
+      <Button>Button</Button>
       <MouseActions>
-        <LeftButtonClick>Left Button Click</LeftButtonClick>
-        <LeftButtonDoubleClick>Left Button Double Click</LeftButtonDoubleClick>
-        <LeftButtonDown>Left Button Down</LeftButtonDown>
-        <LeftButtonUp>Left Button Up</LeftButtonUp>
-        <MiddleButtonClick>Middle Button Click</MiddleButtonClick>
-        <MiddleButtonDoubleClick>Middle Button Double Click</MiddleButtonDoubleClick>
-        <MiddleButtonDown>Middle Button Down</MiddleButtonDown>
-        <MiddleButtonUp>Middle Button Up</MiddleButtonUp>
-        <RightButtonClick>Right Button Click</RightButtonClick>
-        <RightButtonDoubleClick>Right Button Double Click</RightButtonDoubleClick>
-        <RightButtonDown>Right Button Down</RightButtonDown>
-        <RightButtonUp>Right Button Up</RightButtonUp>
+        <Click>Click</Click>
+        <DoubleClick>Double Click</DoubleClick>
+        <Down>Presse</Down>
+        <Up>Release</Up>
         <VerticalScroll>Vertical Scroll</VerticalScroll>
         <HorizontalScroll>Horizontal Scroll</HorizontalScroll>
         <MoveMouseTo>Move Mouse To Specified Location</MoveMouseTo>
         <MoveMouseBy>Move Mouse By Specified Distance</MoveMouseBy>
       </MouseActions>
+      <Buttons>
+        <LeftButton>Left Button</LeftButton>
+        <MiddleButton>Middle Button</MiddleButton>
+        <RightButton>Right Button</RightButton>
+        <XButton1>X1</XButton1>
+        <XButton2>X2</XButton2>
+      </Buttons>
       <ClickPositions>
         <FirstDown>First Finger Down</FirstDown>
         <FirstUp>First Finger Up</FirstUp>

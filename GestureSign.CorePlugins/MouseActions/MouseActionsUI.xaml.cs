@@ -43,10 +43,18 @@ namespace GestureSign.CorePlugins.MouseActions
                 flag = int.TryParse(ScrollAmountTextBox.Text, out scrollAmount);
                 scrollAmount = flag ? scrollAmount : 0;
 
+                string action;
+                if (ActionComboBox.SelectedIndex < 4)
+                {
+                    action = $"{MouseButtonComboBox.SelectedValue}{ActionComboBox.SelectedValue}";
+                }
+                else
+                    action = (string)ActionComboBox.SelectedValue;
+
                 _settings = new MouseActionsSettings
                 {
                     ClickPosition = (ClickPositions)PositionComboBox.SelectedValue,
-                    MouseAction = (MouseActions)ActionComboBox.SelectedValue,
+                    MouseAction = (MouseActions)Enum.Parse(typeof(MouseActions), action),
                     MovePoint = new System.Drawing.Point(x, y),
                     ScrollAmount = scrollAmount
                 };
@@ -55,7 +63,16 @@ namespace GestureSign.CorePlugins.MouseActions
             set
             {
                 _settings = value ?? new MouseActionsSettings();
-                ActionComboBox.SelectedValue = _settings.MouseAction;
+
+                var action = _settings.MouseAction.ToString();
+                if (action.Contains("Button"))
+                {
+                    ActionComboBox.SelectedValue = action.Split(MouseActionDescription.ButtonDescription.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+                    MouseButtonComboBox.SelectedValue = action.Split(MouseActionDescription.DescriptionDict.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+                }
+                else
+                    ActionComboBox.SelectedValue = action;
+
                 PositionComboBox.SelectedValue = _settings.ClickPosition;
                 XTextBox.Text = _settings.MovePoint.X.ToString();
                 YTextBox.Text = _settings.MovePoint.Y.ToString();
@@ -119,24 +136,23 @@ namespace GestureSign.CorePlugins.MouseActions
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            var dict = (KeyValuePair<MouseActions, String>)e.AddedItems[0];
-            switch (dict.Key)
+            switch (((KeyValuePair<string, string>)e.AddedItems[0]).Key)
             {
-                case MouseActions.HorizontalScroll:
-                case MouseActions.VerticalScroll:
+                case "HorizontalScroll":
+                case "VerticalScroll":
                     ScrollCanvas.Visibility = Visibility.Visible;
-                    ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
                     break;
-                case MouseActions.MoveMouseBy:
+                case "MoveMouseBy":
                     ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = PositionComboBox.Visibility = Visibility.Visible;
-                    ClickPositionText.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ClickPositionText.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
                     break;
-                case MouseActions.MoveMouseTo:
+                case "MoveMouseTo":
                     MoveMouseCanvas.Visibility = Visibility.Visible;
-                    ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
                     break;
                 default:
-                    ClickPositionText.Visibility = PositionComboBox.Visibility = Visibility.Visible;
+                    ButtonPanel.Visibility = ClickPositionText.Visibility = PositionComboBox.Visibility = Visibility.Visible;
                     ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = ScrollCanvas.Visibility = Visibility.Collapsed;
                     break;
             }

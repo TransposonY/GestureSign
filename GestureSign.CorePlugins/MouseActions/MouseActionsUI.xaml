@@ -17,43 +17,62 @@
                                 x:Key="PositionDescription">
             </ObjectDataProvider>
         </StackPanel.Resources>
-
-        <TextBlock TextWrapping="Wrap"
-                   Text="{localization:LocalisedText CorePlugins.MouseActions.SelectAction}"
-                   FontSize="14"
-                   Margin="0,0,0,5" />
-        <ComboBox x:Name="ActionComboBox"
-                  ItemsSource="{Binding Source={StaticResource ActionDescription},Path=DescriptionDict}"
-                  DisplayMemberPath="Value"
-                  SelectedValuePath="Key"
-                  Width="300"
-                  FontSize="14"
-                  SelectionChanged="ActionComboBox_SelectionChanged"
-                  Margin="0,5" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock TextWrapping="Wrap"
+                       Text="{localization:LocalisedText CorePlugins.MouseActions.SelectAction}"
+                       FontSize="14"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top" />
+            <ComboBox x:Name="ActionComboBox"
+                      ItemsSource="{Binding Source={StaticResource ActionDescription},Path=DescriptionDict}"
+                      DisplayMemberPath="Value"
+                      SelectedValuePath="Key"
+                      FontSize="14"
+                      SelectionChanged="ActionComboBox_SelectionChanged"
+                      Margin="0,23,5,0"
+                      VerticalAlignment="Top" />
+            <StackPanel x:Name="ButtonPanel"
+                        Grid.Column="1"
+                        Width="160">
+                <TextBlock TextWrapping="Wrap"
+                           Text="{localization:LocalisedText CorePlugins.MouseActions.Button}"
+                           FontSize="14"
+                           HorizontalAlignment="Left"
+                           Margin="10,0,0,0" />
+                <ComboBox x:Name="MouseButtonComboBox"
+                          ItemsSource="{Binding Source={StaticResource ActionDescription},Path=ButtonDescription}"
+                          DisplayMemberPath="Value"
+                          SelectedValuePath="Key"
+                          FontSize="14"
+                          SelectionChanged="ActionComboBox_SelectionChanged"
+                          Margin="5,5,0,0" />
+            </StackPanel>
+        </Grid>
 
         <TextBlock x:Name="ClickPositionText"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
                    FontSize="14"
-                   Margin="0,5" />
+                   Margin="0,5,0,0" />
         <TextBlock x:Name="ReferencePositionText"
                    Text="{localization:LocalisedText CorePlugins.MouseActions.ReferencePosition}"
                    FontSize="14"
-                   Margin="0,5" />
+                   Margin="0,5,0,0" />
         <ComboBox x:Name="PositionComboBox"
                   ItemsSource="{Binding Source={StaticResource PositionDescription},Path=DescriptionDict}"
                   DisplayMemberPath="Value"
                   SelectedValuePath="Key"
-                  Width="300"
-                  FontSize="14" />
+                  FontSize="14"
+                  Margin="0,5,0,0" />
 
         <Canvas x:Name="MoveMouseCanvas"
-                Height="55"
-                Width="300"
-                Margin="10,0">
+                Height="55">
             <TextBlock TextWrapping="Wrap"
                        Text="X"
-                       Canvas.Left="10"
                        Canvas.Top="14"
                        FontSize="14" />
             <TextBlock TextWrapping="Wrap"
@@ -65,7 +84,7 @@
                      KeyDown="TextBox_KeyDown"
                      TextChanged="TextBox_TextChanged"
                      Height="23"
-                     Canvas.Left="35"
+                     Canvas.Left="25"
                      TextWrapping="Wrap"
                      Canvas.Top="10"
                      Width="60"
