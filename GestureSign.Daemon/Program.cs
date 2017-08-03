@@ -124,27 +124,37 @@ namespace GestureSign.Daemon
         private static bool StartTouchInputProvider()
         {
             bool createdNewProvider;
-            using (new Mutex(false, TouchInputProvider, out createdNewProvider))
-                if (createdNewProvider)
-                {
-                    string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.TouchInputProvider.exe");
-                    if (!File.Exists(path))
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.TouchInputProvider.exe");
+            try
+            {
+                using (new Mutex(false, TouchInputProvider, out createdNewProvider))
+                    if (createdNewProvider)
                     {
-                        MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindTouchInputProviderMessage"),
-                            LocalizationProvider.Instance.GetTextValue("Messages.Error"));
-                        return false;
-                    }
-                    using (Process daemon = new Process())
-                    {
-                        daemon.StartInfo.FileName = path;
+                        if (!File.Exists(path))
+                        {
+                            MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindTouchInputProviderMessage"),
+                                LocalizationProvider.Instance.GetTextValue("Messages.Error"));
+                            return false;
+                        }
+                        using (Process daemon = new Process())
+                        {
+                            daemon.StartInfo.FileName = path;
 
-                        //daemon.StartInfo.UseShellExecute = false;
-                        if (IsAdministrator())
-                            daemon.StartInfo.Verb = "runas";
-                        daemon.StartInfo.CreateNoWindow = false;
-                        daemon.Start();
+                            //daemon.StartInfo.UseShellExecute = false;
+                            if (IsAdministrator())
+                                daemon.StartInfo.Verb = "runas";
+                            daemon.StartInfo.CreateNoWindow = false;
+                            daemon.Start();
+                        }
                     }
-                }
+            }
+            catch (Exception e)
+            {
+                Logging.LogException(e);
+                MessageBox.Show(string.Format(e.Message + Environment.NewLine + LocalizationProvider.Instance.GetTextValue("Messages.StartupError"), path),
+                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             return true;
         }
 

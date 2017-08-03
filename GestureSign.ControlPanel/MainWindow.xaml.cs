@@ -211,15 +211,24 @@ namespace GestureSign.ControlPanel
             }
             if (createdNewDaemon)
             {
-                using (Process daemon = new Process())
+                try
                 {
-                    daemon.StartInfo.FileName = daemonPath;
+                    using (Process daemon = new Process())
+                    {
+                        daemon.StartInfo.FileName = daemonPath;
 
-                    //daemon.StartInfo.UseShellExecute = false;
-                    if (IsAdministrator())
-                        daemon.StartInfo.Verb = "runas";
-                    daemon.StartInfo.CreateNoWindow = false;
-                    daemon.Start();
+                        //daemon.StartInfo.UseShellExecute = false;
+                        if (IsAdministrator())
+                            daemon.StartInfo.Verb = "runas";
+                        daemon.StartInfo.CreateNoWindow = false;
+                        daemon.Start();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logging.LogException(e);
+                    MessageBox.Show(string.Format(e.Message + Environment.NewLine + LocalizationProvider.Instance.GetTextValue("Messages.StartupError"), daemonPath),
+                        LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
                 }
             }
         }
