@@ -125,15 +125,6 @@
                     FontSize="12"
                     FontWeight="Bold"
                     Click="btnOpenApplicationData_Click" />
-            <Button x:Name="ExportLogButton"
-                    Content="{localization:LocalisedText Options.ExportLogButton}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Margin="0,10,0,15"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Click="ExportLogButton_Click" />
-
             <controls:ToggleSwitch x:Name="MouseSwitch"
                                    Header="{localization:LocalisedText Options.MouseGesture}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
@@ -203,7 +194,7 @@
                                    FontSize="14"
                                    FontWeight="Bold" />
             <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
-                                   Header="{localization:LocalisedText Options.SendLogTitle}"
+                                   Header="{localization:LocalisedText About.SendLogTitle}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Width="300"

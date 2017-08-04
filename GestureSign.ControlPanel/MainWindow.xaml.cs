@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -73,14 +72,21 @@ namespace GestureSign.ControlPanel
             }
         }
 
+        private void SendFeedback_Click(object sender, RoutedEventArgs e)
+        {
+            SendFeedback();
+        }
+
         private bool ExistsNewerErrorLog()
         {
             EventLog logs = new EventLog { Log = "Application" };
+            var now = DateTime.Now;
             var entryCollection = logs.Entries;
-            for (int i = entryCollection.Count - 1; i > entryCollection.Count - 1000 && i >= 0; i--)
+            int logCount = entryCollection.Count;
+            for (int i = logCount - 1; i > logCount - 1000 && i >= 0; i--)
             {
                 var entry = entryCollection[i];
-                if (DateTime.Now.Subtract(entry.TimeWritten).TotalDays > 1)
+                if (now.Subtract(entry.TimeWritten).TotalHours > 1)
                     break;
 
                 if (entry.EntryType == EventLogEntryType.Error && ".NET Runtime".Equals(entry.Source) &&
@@ -98,81 +104,64 @@ namespace GestureSign.ControlPanel
             return false;
         }
 
-        private async void SendLog()
+        private void SendLog()
         {
-            var dialogResult = this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
+            var dialogResult = this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("About.SendLogTitle"),
             LocalizationProvider.Instance.GetTextValue("Messages.FindNewErrorLog"),
-            MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+            MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
             {
-                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
-                NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
-                FirstAuxiliaryButtonText = LocalizationProvider.Instance.GetTextValue("Messages.ShowLog"),
+                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("About.SendButton"),
+                NegativeButtonText = LocalizationProvider.Instance.GetTextValue("About.DontSendButton"),
             });
             if (dialogResult == MessageDialogResult.Negative) return;
+            SendFeedback();
+        }
 
+        private async void SendFeedback()
+        {
             var controller =
-                await (this).ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
-                    LocalizationProvider.Instance.GetTextValue("Options.Exporting"));
+                await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("About.Waiting"),
+                            LocalizationProvider.Instance.GetTextValue("About.Exporting"));
             controller.SetIndeterminate();
 
-            StringBuilder result = new StringBuilder();
-            await Task.Run(() =>
+            string result = await Task.Factory.StartNew(() =>
             {
-                Feedback.OutputLog(ref result);
+                return Feedback.OutputLog();
             });
             await controller.CloseAsync();
 
-            if (dialogResult == MessageDialogResult.FirstAuxiliary)
+            LogWindow logWin = new LogWindow(result);
+            var dialogResult = logWin.ShowDialog();
+            string msg = logWin.Message;
+
+            while (dialogResult != null && dialogResult.Value)
             {
-                LogWindow logWin = new LogWindow(result.ToString());
-                logWin.Show();
+                var sendReportTask = Task.Factory.StartNew(() => Feedback.Send(result, msg));
 
-                dialogResult = await this.ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
-                    LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
-                    MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                    {
-                        AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
-                        NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton"),
-                    });
-            }
-
-            string message = null;
-            while (dialogResult == MessageDialogResult.Affirmative)
-            {
-                var sendReportTask = Task.Run(() => Feedback.Send(result.ToString()));
-                if (message == null)
-                    message = this.ShowModalInputExternal(
-                        LocalizationProvider.Instance.GetTextValue("Options.Feedback"),
-                        LocalizationProvider.Instance.GetTextValue("Options.FeedbackTip")) ?? string.Empty;
-
-                controller = await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
-                   LocalizationProvider.Instance.GetTextValue("Options.Sending"));
+                controller = await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("About.Waiting"),
+                        LocalizationProvider.Instance.GetTextValue("About.Sending"));
                 controller.SetIndeterminate();
 
                 string exceptionMessage = await sendReportTask;
-                if (!string.IsNullOrEmpty(message))
-                {
-                    var msg = message;
-                    await Task.Run(() => Feedback.Send(msg, true));
-                }
 
                 await controller.CloseAsync();
 
                 if (exceptionMessage == null)
                 {
-                    (this)
-                       .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
-                           LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
+                    this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("About.SendSuccessTitle"),
+                            LocalizationProvider.Instance.GetTextValue("About.SendSuccess"));
                     break;
                 }
                 else
                 {
-                    dialogResult = this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
-                        LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" + exceptionMessage,
-                        MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                        {
-                            AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
-                        });
+                    dialogResult =
+                        this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("About.SendFailed"),
+                                exceptionMessage + Environment.NewLine + LocalizationProvider.Instance.GetTextValue("About.Mail"),
+                                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                                {
+                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("About.Retry"),
+                                    NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.Cancel"),
+                                }) == MessageDialogResult.Affirmative;
                 }
             }
         }

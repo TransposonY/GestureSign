@@ -10,7 +10,6 @@
     <CompatWarning>检测到您在本程序的文件属性中勾选了“以管理员身份运行此程序”，这将导致开机启动、屏蔽等功能失效。
 如需用管理员身份运行，请在快捷方式的高级属性中设置，或右键菜单-以管理员身份运行。</CompatWarning>
     <CompatWarningTitle>注意</CompatWarningTitle>
-    <ShowLog>显示日志...</ShowLog>
     <FindNewErrorLog>有新的错误日志生成。
 日志包含程序崩溃的信息，你可以将这些信息发回作者以便尽快解决问题。
 您可以在“选项”中关闭此提示。
@@ -45,6 +44,20 @@
 交流群：576981420
 
     </Information>
+    <SendFeedback>发送反馈</SendFeedback>
+    <ShowReport>显示报告</ShowReport>
+    <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
+    <Waiting>请稍候...</Waiting>
+    <Exporting>正在导出日志...</Exporting>
+    <Sending>发送日志中...</Sending>
+    <SendLogTitle>发送日志</SendLogTitle>
+    <SendButton>发送</SendButton>
+    <DontSendButton>不发送</DontSendButton>
+    <SendSuccessTitle>发送成功</SendSuccessTitle>
+    <SendSuccess>反馈发送成功，感谢您的支持！</SendSuccess>
+    <SendFailed>发送失败</SendFailed>
+    <FeedbackTip>请描述一下触发异常的操作，帮助作者更快解决问题（也可留空）</FeedbackTip>
+    <Retry>重试</Retry>
   </About>
   <ApplicationDialog>
     <AddApplication>添加新程序</AddApplication>
@@ -210,26 +223,10 @@
     <PickColor>选择颜色..</PickColor>
     <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
     <OpenConfigFolder>打开设置文件文件夹</OpenConfigFolder>
-    <ExportLogButton>导出日志</ExportLogButton>
-    <Waiting>请稍候...</Waiting>
-    <Exporting>正在导出日志...</Exporting>
-    <Sending>发送日志中...</Sending>
-    <SendLogTitle>发送日志</SendLogTitle>
-    <SendLog>日志包含程序崩溃的信息，可以将这些信息发回作者以便定位并尽快解决问题。</SendLog>
-    <SendButton>发送</SendButton>
-    <DontSendButton>不发送</DontSendButton>
-    <SendSuccessTitle>发送成功</SendSuccessTitle>
-    <SendSuccess>错误日志发送成功！</SendSuccess>
-    <SendFailed>发送失败</SendFailed>
-    <Feedback>反馈</Feedback>
-    <FeedbackTip>提供更多信息（比如怎样触发异常）将有助于作者更快解决问题</FeedbackTip>
-    <Retry>重试</Retry>
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
-    <Mail>您也可以直接将信息反馈到 553078206@qq.com</Mail>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
-    <ErrorReport>错误报告</ErrorReport>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

@@ -7,10 +7,18 @@ namespace GestureSign.ControlPanel.Dialogs
     /// </summary>
     public partial class LogWindow : MetroWindow
     {
+        public string Message { get { return MessageTextBox.Text; } }
+
         public LogWindow(string log)
         {
             InitializeComponent();
             LogTextBox.Text = log;
+        }
+
+        private void OkButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
     }
 }

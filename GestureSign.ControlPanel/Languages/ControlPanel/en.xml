@@ -11,7 +11,6 @@
 This may lead to function failure(e.g. Start application at Windows startup).
     </CompatWarning>
     <CompatWarningTitle>Warning</CompatWarningTitle>
-    <ShowLog>Show Log...</ShowLog>
     <FindNewErrorLog>Find new error log.You can help me track and fix problems by sending these error logs.</FindNewErrorLog>
     <StartupError>Can not launch "{0}". Please check if you have some antivirus blocking the startup or try reinstalling GestureSign. </StartupError>
   </Messages>
@@ -41,6 +40,20 @@ This may lead to function failure(e.g. Start application at Windows startup).
 Translator:TransposonY
 Email:ccfyzh@gmail.com
     </Information>
+    <SendFeedback>Send Feedback</SendFeedback>
+    <ShowReport>Show Report</ShowReport>
+    <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
+    <Waiting>Please wait...</Waiting>
+    <Exporting>Exporting error log file...</Exporting>
+    <Sending>Sending error log...</Sending>
+    <SendLogTitle>Send Error Log</SendLogTitle>
+    <SendButton>Send</SendButton>
+    <DontSendButton>Don't Send</DontSendButton>
+    <SendSuccessTitle>Log Send Success</SendSuccessTitle>
+    <SendSuccess>Thank you! The logs were sent successfully! </SendSuccess>
+    <SendFailed>Send Failed</SendFailed>
+    <FeedbackTip>Description about the exception. (can be blank)</FeedbackTip>
+    <Retry>Retry</Retry>
   </About>
   <ApplicationDialog>
     <AddApplication>New Application</AddApplication>
@@ -206,26 +219,10 @@ Email:ccfyzh@gmail.com
     <PickColor>Pick Color...</PickColor>
     <MinimumPointDistance>Minimum Point Distance {0:F0} px</MinimumPointDistance>
     <OpenConfigFolder>Open Configuration Folder</OpenConfigFolder>
-    <ExportLogButton>Export Error Log...</ExportLogButton>
-    <Waiting>Please wait...</Waiting>
-    <Exporting>Exporting error log file...</Exporting>
-    <Sending>Sending error log...</Sending>
-    <SendLogTitle>Send Error Log</SendLogTitle>
-    <SendLog>You can help me track and fix problems by sending these error logs.</SendLog>
-    <SendButton>Send</SendButton>
-    <DontSendButton>Don't Send</DontSendButton>
-    <SendSuccessTitle>Log Send Success</SendSuccessTitle>
-    <SendSuccess>Thank you!The logs were sent successfully!</SendSuccess>
-    <SendFailed>Send Failed</SendFailed>
-    <Feedback>Feedback</Feedback>
-    <FeedbackTip>Description about the exception</FeedbackTip>
-    <Retry>Retry</Retry>
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
-    <Mail>You can also send mail to ccfyzh@gmail.com</Mail>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
-    <ErrorReport>Error Report</ErrorReport>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

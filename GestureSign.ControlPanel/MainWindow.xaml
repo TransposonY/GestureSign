@@ -83,6 +83,13 @@
                                 <Run Text="{localization:LocalisedText About.Store}" />
                             </Hyperlink>
                         </TextBlock>
+                        <TextBlock HorizontalAlignment="Left"
+                                   FontSize="14"
+                                   Margin="15,10,0,0">
+                            <Hyperlink Click="SendFeedback_Click">
+                                <Run Text="{localization:LocalisedText About.SendFeedback}" />
+                            </Hyperlink>
+                        </TextBlock>
                         <TextBox x:Name="AboutTextBox"
                                  HorizontalAlignment="Left"
                                  Margin="10,10,0,0"

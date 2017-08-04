@@ -18,7 +18,7 @@ namespace GestureSign.Common.Log
     {
         private const string Dsn = "https://a828c0c755fc493fa93c0f2ac7963e6d:4e74093b0f6a4a438a95b3bb85273e69@sentry.io/141461";
 
-        public static string Send(string content, bool isInfo = false)
+        public static string Send(string report, string message)
         {
             string sendError = null;
             var ravenClient = new RavenClient(Dsn)
@@ -27,17 +27,21 @@ namespace GestureSign.Common.Log
                 {
                     Logging.LogException(e);
                     sendError = e.Message;
-                }
+                },
+                Compression = true
             };
 
-            ravenClient.Capture(new SentryEvent(content) { Level = isInfo ? ErrorLevel.Info : ErrorLevel.Error });
+            ravenClient.Capture(new SentryEvent(report));
+
+            if (!string.IsNullOrWhiteSpace(message))
+                ravenClient.Capture(new SentryEvent(message) { Level = ErrorLevel.Info });
 
             return sendError;
         }
 
-        public static void OutputLog(ref StringBuilder result)
+        public static string OutputLog()
         {
-            if (result == null) result = new StringBuilder(1000);
+            StringBuilder result = new StringBuilder(2048);
 
             var rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
             if (rk != null)
@@ -113,6 +117,8 @@ namespace GestureSign.Common.Log
                     result.AppendLine(entry.Message.Replace("\n", "\r\n"));
                 }
             }
+
+            return result.ToString();
         }
     }
 }

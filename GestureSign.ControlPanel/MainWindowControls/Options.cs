@@ -1,19 +1,14 @@
-﻿using System;
+﻿using GestureSign.Common.Configuration;
+using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
+using IWshRuntimeLibrary;
+using ManagedWinapi.Hooks;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
-using GestureSign.Common.Configuration;
-using GestureSign.Common.InterProcessCommunication;
-using GestureSign.Common.Localization;
-using GestureSign.Common.Log;
-using GestureSign.ControlPanel.Common;
-using GestureSign.ControlPanel.Dialogs;
-using IWshRuntimeLibrary;
-using MahApps.Metro.Controls.Dialogs;
-using ManagedWinapi.Hooks;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using File = System.IO.File;
@@ -316,83 +311,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void DrawingButtonComboBox_DropDownClosed(object sender, EventArgs e)
         {
             AppConfig.DrawingButton = (MouseActions)DrawingButtonComboBox.SelectedValue;
-        }
-
-        private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
-        {
-            StringBuilder result = new StringBuilder();
-
-            var controller =
-                await
-                    UIHelper.GetParentWindow(this)
-                        .ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
-                            LocalizationProvider.Instance.GetTextValue("Options.Exporting"));
-            controller.SetIndeterminate();
-
-            await System.Threading.Tasks.Task.Run(() =>
-            {
-                Feedback.OutputLog(ref result);
-            });
-            await controller.CloseAsync();
-
-            LogWindow logWin = new LogWindow(result.ToString());
-            logWin.Show();
-
-            var dialogResult =
-              await UIHelper.GetParentWindow(this)
-                        .ShowMessageAsync(LocalizationProvider.Instance.GetTextValue("Options.SendLogTitle"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendLog"),
-                            MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                            {
-                                AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.SendButton"),
-                                NegativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.DontSendButton")
-                            });
-
-            string message = null;
-            while (dialogResult == MessageDialogResult.Affirmative)
-            {
-                var sendReportTask = System.Threading.Tasks.Task.Run(() => Feedback.Send(result.ToString()));
-                if (message == null)
-                    message =
-                        UIHelper.GetParentWindow(this)
-                            .ShowModalInputExternal(LocalizationProvider.Instance.GetTextValue("Options.Feedback"),
-                                LocalizationProvider.Instance.GetTextValue("Options.FeedbackTip")) ?? string.Empty;
-
-                controller = await UIHelper.GetParentWindow(this)
-                    .ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("Options.Waiting"),
-                        LocalizationProvider.Instance.GetTextValue("Options.Sending"));
-                controller.SetIndeterminate();
-
-                string exceptionMessage = await sendReportTask;
-                if (!string.IsNullOrEmpty(message))
-                {
-                    var msg = message;
-                    await System.Threading.Tasks.Task.Run(() => Feedback.Send(msg, true));
-                }
-
-                await controller.CloseAsync();
-
-                if (exceptionMessage == null)
-                {
-                    UIHelper.GetParentWindow(this)
-                        .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendSuccessTitle"),
-                            LocalizationProvider.Instance.GetTextValue("Options.SendSuccess"));
-                    break;
-                }
-                else
-                {
-                    dialogResult =
-                        UIHelper.GetParentWindow(this)
-                            .ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.SendFailed"),
-                                LocalizationProvider.Instance.GetTextValue("Options.SendFailed") + ":\r\n" +
-                                exceptionMessage +
-                                ":\r\n" + LocalizationProvider.Instance.GetTextValue("Options.Mail"),
-                                MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
-                                {
-                                    AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Options.Retry"),
-                                });
-                }
-            }
         }
     }
 }
