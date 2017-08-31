@@ -25,46 +25,35 @@ namespace GestureSign.ControlPanel
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            try
+            Logging.OpenLogFile();
+            LoadLanguageData();
+
+            if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
+                if (TryLaunchStoreVersion())
+                    return;
+
+            bool createdNew;
+            mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
+            if (createdNew)
             {
-                Logging.OpenLogFile();
-                LoadLanguageData();
+                GestureManager.Instance.Load(null);
+                GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
+                ApplicationManager.Instance.Load(null);
 
-                if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
-                    if (TryLaunchStoreVersion())
-                        return;
+                NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
 
-                bool createdNew;
-                mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
-                if (createdNew)
-                {
-                    GestureManager.Instance.Load(null);
-                    GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
-                    ApplicationManager.Instance.Load(null);
+                ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon");
+                GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
 
-                    NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
-
-                    ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon");
-                    GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
-
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show();
-                }
-                else
-                {
-                    ShowControlPanel();
-                    // use Dispatcher to resolve exception 0xc0020001
-                    Current.Dispatcher.InvokeAsync(() => Current.Shutdown(), DispatcherPriority.ApplicationIdle);
-                }
-
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
             }
-            catch (Exception exception)
+            else
             {
-                Logging.LogException(exception);
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
-                Current.Shutdown();
+                ShowControlPanel();
+                // use Dispatcher to resolve exception 0xc0020001
+                Current.Dispatcher.InvokeAsync(() => Current.Shutdown(), DispatcherPriority.ApplicationIdle);
             }
-
         }
 
         private void LoadLanguageData()
@@ -150,6 +139,16 @@ namespace GestureSign.ControlPanel
                 NamedPipe.Instance.Dispose();
                 mutex.Dispose();
             }
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            Logging.LogException(e.Exception);
+            MessageBox.Show(e.Exception.Message + Environment.NewLine + Environment.NewLine + GestureSign.Common.Localization.LocalizationProvider.Instance.GetTextValue("Messages.UnexpectedException"), "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+
+            e.Handled = true;
+            Environment.Exit(0);
         }
     }
 }

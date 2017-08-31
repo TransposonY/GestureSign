@@ -15,6 +15,7 @@
 您可以在“选项”中关闭此提示。
     </FindNewErrorLog>
     <StartupError>未能启动 "{0}". 请检查是否被安全软件拦截或存在文件损坏。</StartupError>
+    <UnexpectedException>发生了一个未知错误，程序将关闭。您可以点击“关于”中的“发送反馈”来帮助修复该问题。</UnexpectedException>
   </Messages>
   <Common>
     <GlobalActions>(全局动作)</GlobalActions>
