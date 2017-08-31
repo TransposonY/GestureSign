@@ -163,7 +163,7 @@ namespace GestureSign.Daemon.Surface
                 TopMost = true;
                 Show();
             }
-            if (_lastStroke == null) { _lastStroke = points.Select(p => p.Count).ToArray(); return; }
+            if (_lastStroke == null) { _lastStroke = Enumerable.Repeat(0, points.Count).ToArray(); }
             if (_lastStroke.Length != points.Count) return;
             try
             {
@@ -179,7 +179,7 @@ namespace GestureSign.Daemon.Surface
 
                     var iDelta = points[i].Count - _lastStroke[i] + 1;
 
-                    newPoints.AddRange(points[i].Skip(points[i].Count() - iDelta).Take(iDelta));
+                    newPoints.AddRange(points[i].Skip(points[i].Count - iDelta).Take(iDelta));
                     if (newPoints.Count < 2) continue;
 
                     var translatedPoints = newPoints.Select(TranslatePoint).ToArray();
