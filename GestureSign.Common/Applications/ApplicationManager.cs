@@ -241,7 +241,7 @@ namespace GestureSign.Common.Applications
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Actions.gsa");
 
-            _applications = FileManager.LoadObject<List<IApplication>>(path, true, true);
+            _applications = FileManager.LoadObject<List<IApplication>>(path, false, true);
             // Ensure we got an object back
             if (_applications == null)
                 return false; // No object, failed
@@ -254,7 +254,7 @@ namespace GestureSign.Common.Applications
             var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*.gsa");
             foreach (var file in actionfiles)
             {
-                _applications = FileManager.LoadObject<List<IApplication>>(file, true, true);
+                _applications = FileManager.LoadObject<List<IApplication>>(file, false, true);
                 if (_applications != null) return true;
             }
             return false;

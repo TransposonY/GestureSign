@@ -121,7 +121,7 @@ namespace GestureSign.Common.Gestures
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Gestures.gest");
 
-            var gestures = FileManager.LoadObject<List<Gesture>>(path, true);
+            var gestures = FileManager.LoadObject<List<Gesture>>(path, false);
             _Gestures = gestures?.Cast<IGesture>().ToList();
 
             return _Gestures != null;
@@ -132,7 +132,7 @@ namespace GestureSign.Common.Gestures
             var files = Directory.GetFiles(AppConfig.ApplicationDataPath, "Gestures*.gest");
             foreach (var file in files)
             {
-                var gestures = FileManager.LoadObject<List<IApplication>>(file, true);
+                var gestures = FileManager.LoadObject<List<IApplication>>(file, false);
                 if (gestures != null)
                 {
                     _Gestures = gestures.Cast<IGesture>().ToList();
