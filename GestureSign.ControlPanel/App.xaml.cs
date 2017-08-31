@@ -28,14 +28,14 @@ namespace GestureSign.ControlPanel
             Logging.OpenLogFile();
             LoadLanguageData();
 
-            if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
-                if (TryLaunchStoreVersion())
-                    return;
-
             bool createdNew;
             mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
             if (createdNew)
             {
+                if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
+                    if (TryLaunchStoreVersion())
+                        return;
+
                 GestureManager.Instance.Load(null);
                 GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
                 ApplicationManager.Instance.Load(null);
