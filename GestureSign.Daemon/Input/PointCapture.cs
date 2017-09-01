@@ -54,6 +54,7 @@ namespace GestureSign.Daemon.Input
         private bool disposedValue = false; // To detect redundant calls
 
         private int? _blockTouchInputThreshold;
+        private Point _touchPadStartPoint;
 
         #endregion
 
@@ -316,7 +317,7 @@ namespace GestureSign.Daemon.Input
         {
             if (SourceDevice != Device.None && SourceDevice != e.PointSource) return;
 
-            if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && SourceDevice == Device.Touch)
+            if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && (SourceDevice & Device.Touch) != 0)
             {
                 e.Handled = Mode != CaptureMode.UserDisabled;
 
@@ -398,9 +399,17 @@ namespace GestureSign.Daemon.Input
 
         private bool TryBeginCapture(List<InputPoint> firstPoint)
         {
-
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
-            PointsCapturedEventArgs captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => p.Point).ToList());
+            PointsCapturedEventArgs captureStartedArgs;
+            if (SourceDevice == Device.TouchPad)
+            {
+                _touchPadStartPoint = System.Windows.Forms.Cursor.Position;
+                captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => new List<Point>() { p.Point }).ToList(), new List<Point>() { _touchPadStartPoint });
+            }
+            else
+            {
+                captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => p.Point).ToList());
+            }
             OnCaptureStarted(captureStartedArgs);
 
             UpdateBlockTouchInputThreshold(Mode == CaptureMode.Normal ? captureStartedArgs.BlockTouchInputThreshold : 0);
@@ -436,7 +445,9 @@ namespace GestureSign.Daemon.Input
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Point event
-            PointsCapturedEventArgs pointsInformation = new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values));
+            PointsCapturedEventArgs pointsInformation = SourceDevice == Device.TouchPad ?
+                new PointsCapturedEventArgs(_pointsCaptured.Values.ToList(), new List<Point>() { _touchPadStartPoint }) :
+                new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values), _pointsCaptured.Values.Select(p => p.FirstOrDefault()).ToList());
 
             // Notify subscribers that capture has ended （draw end）
             OnCaptureEnded();
@@ -469,7 +480,12 @@ namespace GestureSign.Daemon.Input
 
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
             if (GestureManager.Instance.GestureName != null)
-                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
+                if (SourceDevice == Device.TouchPad)
+                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName,
+                        new List<List<Point>>() { new List<Point>() { _touchPadStartPoint } },
+                        new List<Point>() { _touchPadStartPoint }, _pointsCaptured.Keys.ToList()));
+                else
+                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
             //else
             //    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
 
@@ -478,11 +494,11 @@ namespace GestureSign.Daemon.Input
             _pointsCaptured.Clear();
         }
 
-        private void CancelCapture(int num)
-        {
-            // Notify subscribers that gesture capture has been canceled
-            OnCaptureCanceled(new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values)));
-        }
+        //private void CancelCapture(int num)
+        //{
+        //    // Notify subscribers that gesture capture has been canceled
+        //    OnCaptureCanceled(new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values)));
+        //}
 
         private void AddPoint(List<InputPoint> point)
         {

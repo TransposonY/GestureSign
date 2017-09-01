@@ -83,7 +83,7 @@ namespace GestureSign.Daemon.Input
             {
                 if (e.RawData.Count <= _lastPointsCount)
                 {
-                    OnPointUp(new InputPointsEventArgs(e.RawData, Device.Touch));
+                    OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                     _lastPointsCount = _lastPointsCount - releaseCount;
                 }
                 return;
@@ -93,15 +93,15 @@ namespace GestureSign.Daemon.Input
             {
                 if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
                 {
-                    OnPointMove(new InputPointsEventArgs(e.RawData, Device.Touch));
+                    OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                     return;
                 }
                 _lastPointsCount = e.RawData.Count;
-                OnPointDown(new InputPointsEventArgs(e.RawData, Device.Touch));
+                OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
             }
             else if (e.RawData.Count == _lastPointsCount)
             {
-                OnPointMove(new InputPointsEventArgs(e.RawData, Device.Touch));
+                OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
             }
         }
 

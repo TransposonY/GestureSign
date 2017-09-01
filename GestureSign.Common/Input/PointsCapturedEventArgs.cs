@@ -20,15 +20,10 @@ namespace GestureSign.Common.Input
                 this.Points[i].Add(capturePoint[i]);
             }
         }
-        public PointsCapturedEventArgs(List<List<Point>> points)
-        {
-            this.Points = points;
-            this.FirstCapturedPoints = points.Select(p => p.FirstOrDefault()).ToList();
-        }
 
         public PointsCapturedEventArgs(List<List<Point>> points, List<Point> capturePoint)
-            : this(points)
         {
+            this.Points = points;
             this.FirstCapturedPoints = capturePoint;
         }
 

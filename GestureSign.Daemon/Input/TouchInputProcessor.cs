@@ -27,11 +27,13 @@ namespace GestureSign.Daemon.Input
             {
                 //BinaryReader would throw EndOfStreamException
 
-                byte[] buffer = new byte[4];
-                if (server.Read(buffer, 0, 4) == 0)
+                byte[] buffer = new byte[8];
+                if (server.Read(buffer, 0, buffer.Length) == 0)
                     return false;
 
                 int count = BitConverter.ToInt32(buffer, 0);
+                Device source = (Device)BitConverter.ToInt32(buffer, 4);
+
                 buffer = new byte[size * count];
                 var rawTouchDatas = new List<RawData>(count);
                 server.Read(buffer, 0, buffer.Length);
@@ -48,7 +50,7 @@ namespace GestureSign.Daemon.Input
 
                 _synchronizationContext.Post(o =>
                 {
-                    PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(rawTouchDatas));
+                    PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(rawTouchDatas, source));
                 }, null);
             }
             catch (Exception exception)

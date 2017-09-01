@@ -116,7 +116,7 @@ namespace GestureSign.Common.Applications
                     }
                 }
             }
-            e.Cancel = pointCapture.SourceDevice == Device.Touch && (limitNumberFlag ?? e.Points.Count == 1);
+            e.Cancel = (pointCapture.SourceDevice & Device.Touch) != 0 && (limitNumberFlag ?? e.Points.Count == 1);
             e.BlockTouchInputThreshold = maxThreshold;
         }
 

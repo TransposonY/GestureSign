@@ -70,18 +70,20 @@ namespace GestureSign.TouchInputProvider
             try
             {
                 const int size = 16;
+                const int offset = 8;
                 int rawDataCount = e.RawData.Count;
 
-                byte[] buffer = new byte[rawDataCount * size + 4];
+                byte[] buffer = new byte[rawDataCount * size + offset];
 
                 BitConverter.GetBytes(e.RawData.Count).CopyTo(buffer, 0);
+                BitConverter.GetBytes((int)e.SourceDevice).CopyTo(buffer, 4);
                 for (int i = 0; i < rawDataCount; i++)
                 {
                     var current = e.RawData[i];
-                    BitConverter.GetBytes(current.Tip).CopyTo(buffer, i * size + 4);
-                    BitConverter.GetBytes(current.ContactIdentifier).CopyTo(buffer, i * size + 8);
-                    BitConverter.GetBytes(current.RawPoints.X).CopyTo(buffer, i * size + 12);
-                    BitConverter.GetBytes(current.RawPoints.Y).CopyTo(buffer, i * size + 16);
+                    BitConverter.GetBytes(current.Tip).CopyTo(buffer, offset + i * size);
+                    BitConverter.GetBytes(current.ContactIdentifier).CopyTo(buffer, offset + 4 + i * size);
+                    BitConverter.GetBytes(current.RawPoints.X).CopyTo(buffer, offset + 4 * 2 + i * size);
+                    BitConverter.GetBytes(current.RawPoints.Y).CopyTo(buffer, offset + 4 * 3 + i * size);
                 }
 
                 _pipeClient.Write(buffer, 0, buffer.Length);
