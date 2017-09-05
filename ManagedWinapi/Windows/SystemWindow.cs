@@ -1163,6 +1163,13 @@ namespace ManagedWinapi.Windows
             RedrawWindow(hwndToRefresh, IntPtr.Zero, IntPtr.Zero, RDW.RDW_FRAME | RDW.RDW_INVALIDATE | RDW.RDW_UPDATENOW | RDW.RDW_ALLCHILDREN | RDW.RDW_ERASENOW);
         }
 
+        public bool WaitForIdle(uint timeout)
+        {
+            const uint WM_NULL = 0x0000;
+            IntPtr lRes;
+            return SendMessageTimeout(_hwnd, WM_NULL, IntPtr.Zero, IntPtr.Zero, SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, timeout, out lRes) != IntPtr.Zero;
+        }
+
         internal int SendGetMessage(uint message)
         {
             return SendGetMessage(message, 0);
@@ -1557,6 +1564,26 @@ namespace ManagedWinapi.Windows
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool CloseHandle(IntPtr hObject);
+
+        [Flags]
+        enum SendMessageTimeoutFlags : uint
+        {
+            SMTO_NORMAL = 0x0,
+            SMTO_BLOCK = 0x1,
+            SMTO_ABORTIFHUNG = 0x2,
+            SMTO_NOTIMEOUTIFNOTHUNG = 0x8,
+            SMTO_ERRORONEXIT = 0x20
+        }
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessageTimeout(
+            IntPtr windowHandle,
+            uint Msg,
+            IntPtr wParam,
+            IntPtr lParam,
+            SendMessageTimeoutFlags flags,
+            uint timeout,
+            out IntPtr result);
 
         #endregion
     }

@@ -82,8 +82,7 @@ namespace GestureSign.Common.Plugins
                         if (mode == CaptureMode.UserDisabled && !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(command.PluginClass))
                             continue;
 
-                        if (!WaitForInputIdle(pointInfo.Window, 1000))
-                            break;
+                        pointInfo.Window.WaitForIdle(200);
 
                         // Locate the plugin associated with this action
                         IPluginInfo pluginInfo = FindPluginByClassAndFilename(command.PluginClass, command.PluginFilename);
@@ -245,19 +244,6 @@ namespace GestureSign.Common.Plugins
                 sb.Replace(variable, contactIdentifiers[i - 1].ToString());
             }
             return sb.ToString();
-        }
-
-        private static bool WaitForInputIdle(SystemWindow targetWindow, int timeout = 0)
-        {
-            try
-            {
-                var windowProcess = targetWindow.Process;
-                return windowProcess.WaitForInputIdle(timeout);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         #endregion
