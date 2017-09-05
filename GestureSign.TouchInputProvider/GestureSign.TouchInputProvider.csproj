@@ -83,6 +83,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageProcessor.cs" />
     <Compile Include="Native\HidDeclarations.cs" />
     <Compile Include="Native\HidReports.cs" />
     <Compile Include="MessageWindow.cs">

@@ -228,6 +228,7 @@
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
+    <TouchPad>触摸板</TouchPad>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

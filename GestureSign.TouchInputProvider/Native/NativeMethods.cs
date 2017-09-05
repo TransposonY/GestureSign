@@ -7,6 +7,7 @@ namespace GestureSign.TouchInputProvider.Native
     {
         #region const definitions
 
+        internal const int RIDEV_REMOVE = 0x00000001;
         internal const int RIDEV_INPUTSINK = 0x00000100;
         internal const int RIDEV_DEVNOTIFY = 0x00002000;
         internal const int RID_INPUT = 0x10000003;

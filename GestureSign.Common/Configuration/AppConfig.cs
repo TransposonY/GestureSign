@@ -165,6 +165,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool RegisterTouchPad
+        {
+            get
+            {
+                return (bool)GetValue(nameof(RegisterTouchPad), false);
+            }
+            set
+            {
+                SetValue(nameof(RegisterTouchPad), value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess
@@ -229,8 +241,7 @@ namespace GestureSign.Common.Configuration
             }
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
-
-            NamedPipe.SendMessageAsync("LoadConfiguration", "GestureSignDaemon");
+            ConfigChanged?.Invoke(new object(), EventArgs.Empty);
         }
 
         private static object GetValue(string key, object defaultValue)

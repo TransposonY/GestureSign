@@ -4,6 +4,7 @@ using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
@@ -46,6 +47,10 @@ namespace GestureSign.TouchInputProvider
 
                         _messageWindow = new MessageWindow();
                         _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
+
+                        _messageWindow.RegisterTouchPad = AppConfig.RegisterTouchPad;
+                        AppConfig.ConfigChanged += (o, e) => _messageWindow.RegisterTouchPad = AppConfig.RegisterTouchPad;
+                        NamedPipe.Instance.RunNamedPipeServer("TouchInputProviderMessage", new MessageProcessor());
 
                         Application.Run();
                     }

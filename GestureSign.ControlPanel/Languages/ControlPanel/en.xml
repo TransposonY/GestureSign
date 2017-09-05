@@ -224,6 +224,7 @@ Email:ccfyzh@gmail.com
     <OffLabel>Off</OffLabel>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
+    <TouchPad>TouchPad</TouchPad>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

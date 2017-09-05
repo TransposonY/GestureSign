@@ -46,6 +46,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
+                TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
                 if (AppConfig.DrawingButton != MouseActions.None)
                 {
                     MouseSwitch.IsChecked = true;
@@ -311,6 +312,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void DrawingButtonComboBox_DropDownClosed(object sender, EventArgs e)
         {
             AppConfig.DrawingButton = (MouseActions)DrawingButtonComboBox.SelectedValue;
+        }
+
+        private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.RegisterTouchPad = TouchPadSwitch.IsChecked != null && TouchPadSwitch.IsChecked.Value;
         }
     }
 }
