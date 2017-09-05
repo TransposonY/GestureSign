@@ -845,6 +845,31 @@ namespace ManagedWinapi.Windows
             }
         }
 
+        public string GetProcessFilePath()
+        {
+            var processHandle = OpenProcess(0x0400 | 0x0010, false, ProcessId);
+
+            if (processHandle == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            const int lengthSb = 1024;
+
+            var sb = new StringBuilder(lengthSb);
+
+            string result = null;
+
+            if (GetModuleFileNameEx(processHandle, IntPtr.Zero, sb, lengthSb) > 0)
+            {
+                result = sb.ToString();
+            }
+
+            CloseHandle(processHandle);
+
+            return result;
+        }
+
         /// <summary>
         ///  The Thread which created this window.
         /// </summary>
@@ -1522,6 +1547,16 @@ namespace ManagedWinapi.Windows
 
         [DllImport("user32.dll")]
         private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, RDW flags);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, int processId);
+
+        [DllImport("psapi.dll")]
+        static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
 
         #endregion
     }

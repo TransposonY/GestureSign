@@ -486,7 +486,7 @@ namespace GestureSign.Common.Applications
             {
                 try
                 {
-                    windowMatchString = window.Process.MainModule.ModuleName;
+                    windowMatchString = Path.GetFileName(window.GetProcessFilePath());
                     result.AddRange(byFileName.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
                 }
                 catch
