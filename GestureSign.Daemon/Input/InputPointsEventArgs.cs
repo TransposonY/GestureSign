@@ -9,13 +9,13 @@ namespace GestureSign.Daemon.Input
     {
         #region Constructors
 
-        public InputPointsEventArgs(List<InputPoint> inputPointList, Device pointSource)
+        public InputPointsEventArgs(List<InputPoint> inputPointList, Devices pointSource)
         {
             InputPointList = inputPointList;
             PointSource = pointSource;
         }
 
-        public InputPointsEventArgs(List<RawData> rawDataList, Device pointSource)
+        public InputPointsEventArgs(List<RawData> rawDataList, Devices pointSource)
         {
             InputPointList = rawDataList?.Select(rd => new InputPoint(rd.ContactIdentifier, rd.RawPoints)).ToList();
             PointSource = pointSource;
@@ -29,7 +29,7 @@ namespace GestureSign.Daemon.Input
 
         public bool Handled { get; set; }
 
-        public Device PointSource { get; set; }
+        public Devices PointSource { get; set; }
 
         #endregion
     }

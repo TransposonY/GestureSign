@@ -7,7 +7,7 @@ namespace GestureSign.Common.Input
     {
         #region Constructors
 
-        public RawPointsDataMessageEventArgs(List<RawData> rawData, Device device)
+        public RawPointsDataMessageEventArgs(List<RawData> rawData, Devices device)
         {
             this.RawData = rawData;
             SourceDevice = device;
@@ -19,7 +19,7 @@ namespace GestureSign.Common.Input
         #region Public Properties
 
         public List<RawData> RawData { get; set; }
-        public Device SourceDevice { get; set; }
+        public Devices SourceDevice { get; set; }
 
         #endregion
     }

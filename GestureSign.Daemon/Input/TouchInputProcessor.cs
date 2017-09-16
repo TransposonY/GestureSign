@@ -32,7 +32,7 @@ namespace GestureSign.Daemon.Input
                     return false;
 
                 int count = BitConverter.ToInt32(buffer, 0);
-                Device source = (Device)BitConverter.ToInt32(buffer, 4);
+                Devices source = (Devices)BitConverter.ToInt32(buffer, 4);
 
                 buffer = new byte[size * count];
                 var rawTouchDatas = new List<RawData>(count);

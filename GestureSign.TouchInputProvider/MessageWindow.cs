@@ -22,7 +22,7 @@ namespace GestureSign.TouchInputProvider
         private Dictionary<IntPtr, ushort> _validDevices = new Dictionary<IntPtr, ushort>();
         private Point _physicalMax;
 
-        private Device _sourceDevice;
+        private Devices _sourceDevice;
         private bool _isTouchpadRegistered;
 
         public event RawPointsDataMessageEventHandler PointsIntercepted;
@@ -217,13 +217,13 @@ namespace GestureSign.TouchInputProvider
 
                 if (usage == NativeMethods.TouchScreenUsage)
                 {
-                    if (_sourceDevice == Device.None)
+                    if (_sourceDevice == Devices.None)
                     {
-                        _sourceDevice = Device.TouchScreen;
+                        _sourceDevice = Devices.TouchScreen;
                         GetCurrentScreenOrientation();
                         GetScreenSize();
                     }
-                    else if (_sourceDevice != Device.TouchScreen)
+                    else if (_sourceDevice != Devices.TouchScreen)
                         return;
 
                     uint pcbSize = 0;
@@ -292,12 +292,12 @@ namespace GestureSign.TouchInputProvider
                 }
                 else if (usage == NativeMethods.TouchPadUsage)
                 {
-                    if (_sourceDevice == Device.None)
+                    if (_sourceDevice == Devices.None)
                     {
-                        _sourceDevice = Device.TouchPad;
+                        _sourceDevice = Devices.TouchPad;
                         GetScreenSize();
                     }
-                    else if (_sourceDevice != Device.TouchPad)
+                    else if (_sourceDevice != Devices.TouchPad)
                         return;
 
                     uint pcbSize = 0;
@@ -364,7 +364,7 @@ namespace GestureSign.TouchInputProvider
                     PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs, _sourceDevice));
                     if (_outputTouchs.TrueForAll(rd => !rd.Tip))
                     {
-                        _sourceDevice = Device.None;
+                        _sourceDevice = Devices.None;
                         _physicalMax = Point.Empty;
                     }
                 }

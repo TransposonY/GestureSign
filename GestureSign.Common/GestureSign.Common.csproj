@@ -110,7 +110,7 @@
     <Compile Include="Gestures\IGesture.cs" />
     <Compile Include="Gestures\LegacyGesture.cs" />
     <Compile Include="Gestures\PointPattern.cs" />
-    <Compile Include="Input\Device.cs" />
+    <Compile Include="Input\Devices.cs" />
     <Compile Include="Input\RecognitionEventArgs.cs" />
     <Compile Include="Input\RecognitionEventHandler.cs" />
     <Compile Include="ILoadable.cs" />

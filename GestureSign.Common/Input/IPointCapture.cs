@@ -13,7 +13,7 @@ namespace GestureSign.Common.Input
         void EnablePointCapture();
         event PointsCapturedEventHandler PointCaptured;
         bool TemporarilyDisableCapture { get; set; }
-        Device SourceDevice { get; set; }
+        Devices SourceDevice { get; set; }
         CaptureState State { get; set; }
         CaptureMode Mode { get; set; }
     }

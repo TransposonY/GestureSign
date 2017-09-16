@@ -52,7 +52,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
             {
-                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
+                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
                 OnPointUp(args);
                 handled = args.Handled;
             }
@@ -61,7 +61,7 @@ namespace GestureSign.Daemon.Input
 
         private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
+            var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
             OnPointMove(args);
         }
 
@@ -69,7 +69,7 @@ namespace GestureSign.Daemon.Input
         {
             if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton && _pressedMouseButton.Count == 0)
             {
-                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Device.Mouse);
+                var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
                 OnPointDown(args);
                 handled = args.Handled;
             }

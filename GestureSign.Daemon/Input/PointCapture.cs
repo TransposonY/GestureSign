@@ -70,7 +70,7 @@ namespace GestureSign.Daemon.Input
 
         #region Public Instance Properties
 
-        public Device SourceDevice { get; set; }
+        public Devices SourceDevice { get; set; }
 
         public LowLevelMouseHook MouseHook
         {
@@ -283,7 +283,7 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointDown(object sender, InputPointsEventArgs e)
         {
-            if (SourceDevice != Device.None && SourceDevice != e.PointSource) return;
+            if (SourceDevice != Devices.None && SourceDevice != e.PointSource) return;
             SourceDevice = e.PointSource;
 
             if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
@@ -315,9 +315,9 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
         {
-            if (SourceDevice != Device.None && SourceDevice != e.PointSource) return;
+            if (SourceDevice != Devices.None && SourceDevice != e.PointSource) return;
 
-            if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && (SourceDevice & Device.Touch) != 0)
+            if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && (SourceDevice & Devices.TouchDevice) != 0)
             {
                 e.Handled = Mode != CaptureMode.UserDisabled;
 
@@ -330,7 +330,7 @@ namespace GestureSign.Daemon.Input
                 }
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
-            else if (State == CaptureState.CapturingInvalid && SourceDevice == Device.Mouse)
+            else if (State == CaptureState.CapturingInvalid && SourceDevice == Devices.Mouse)
             {
                 if (Mode != CaptureMode.UserDisabled)
                 {
@@ -364,7 +364,7 @@ namespace GestureSign.Daemon.Input
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
 
-            SourceDevice = Device.None;
+            SourceDevice = Devices.None;
 
             UpdateBlockTouchInputThreshold();
         }
@@ -401,7 +401,7 @@ namespace GestureSign.Daemon.Input
         {
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
             PointsCapturedEventArgs captureStartedArgs;
-            if (SourceDevice == Device.TouchPad)
+            if (SourceDevice == Devices.TouchPad)
             {
                 _touchPadStartPoint = System.Windows.Forms.Cursor.Position;
                 captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => new List<Point>() { p.Point }).ToList(), new List<Point>() { _touchPadStartPoint });
@@ -445,7 +445,7 @@ namespace GestureSign.Daemon.Input
         {
 
             // Create points capture event args, to be used to send off to event subscribers or to simulate original Point event
-            PointsCapturedEventArgs pointsInformation = SourceDevice == Device.TouchPad ?
+            PointsCapturedEventArgs pointsInformation = SourceDevice == Devices.TouchPad ?
                 new PointsCapturedEventArgs(_pointsCaptured.Values.ToList(), new List<Point>() { _touchPadStartPoint }) :
                 new PointsCapturedEventArgs(new List<List<Point>>(_pointsCaptured.Values), _pointsCaptured.Values.Select(p => p.FirstOrDefault()).ToList());
 
@@ -480,7 +480,7 @@ namespace GestureSign.Daemon.Input
 
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
             if (GestureManager.Instance.GestureName != null)
-                if (SourceDevice == Device.TouchPad)
+                if (SourceDevice == Devices.TouchPad)
                     OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName,
                         new List<List<Point>>() { new List<Point>() { _touchPadStartPoint } },
                         new List<Point>() { _touchPadStartPoint }, _pointsCaptured.Keys.ToList()));
