@@ -165,6 +165,7 @@
     <Compile Include="ViewModel\ActionListItem.cs" />
     <Compile Include="ViewModel\AppListItem.cs" />
     <Compile Include="ViewModel\CommandInfoProvider.cs" />
+    <Compile Include="ViewModel\ContinuousGestureDesc.cs" />
     <Compile Include="ViewModel\MouseActionDescription.cs" />
     <Compile Include="Converters\Application2VisibilityConverter.cs" />
     <Compile Include="Converters\MatchUsing2StringConverter.cs" />

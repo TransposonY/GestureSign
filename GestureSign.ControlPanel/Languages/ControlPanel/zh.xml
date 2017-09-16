@@ -111,6 +111,7 @@
     <MouseHotKey>鼠标快捷键</MouseHotKey>
     <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
     <Default>默认</Default>
+    <Continuous>连续手势</Continuous>
     <Messages>
       <ConditionError>条件错误</ConditionError>
     </Messages>
@@ -145,6 +146,11 @@
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
     <SelectGesture>(请点击以设置手势)</SelectGesture>
+    <Right>向右滑</Right>
+    <Left>向左滑</Left>
+    <Up>向上滑</Up>
+    <Down>向下滑</Down>
+    <Fingers>{0}根手指</Fingers>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteCommandConfirm>确定要删除这 {0} 个命令吗？</DeleteCommandConfirm>

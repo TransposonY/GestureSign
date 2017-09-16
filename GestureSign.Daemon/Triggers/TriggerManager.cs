@@ -40,6 +40,7 @@ namespace GestureSign.Daemon.Triggers
             _synchronizationContext = synchronizationContext;
             AddTrigger(new HotKeyManager());
             AddTrigger(new MouseTrigger());
+            AddTrigger(new ContinuousGestureTrigger());
             ApplicationManager.OnLoadApplicationsCompleted += (o, e) =>
             {
                 _synchronizationContext.Post(state => { LoadConfig((ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApp) && app.Actions != null).SelectMany(app => app.Actions).ToList())); }, null);

@@ -85,6 +85,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Applications\ContinuousGesture.cs" />
     <Compile Include="Applications\LegacyModel\Action.cs" />
     <Compile Include="Applications\LegacyModel\LegacyApplicationBase.cs" />
     <Compile Include="Applications\ApplicationBase.cs" />

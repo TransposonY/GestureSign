@@ -14,6 +14,7 @@ namespace GestureSign.Common.Applications
         IEnumerable<ICommand> Commands { get; set; }
         Hotkey Hotkey { get; set; }
         MouseActions MouseHotkey { get; set; }
+        ContinuousGesture ContinuousGesture { get; set; }
 
         void AddCommand(ICommand command);
         void InsertCommand(int index, ICommand command);

@@ -107,6 +107,7 @@ Email:ccfyzh@gmail.com
     <MouseHotKey>Mouse HotKey</MouseHotKey>
     <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
     <Default>Default</Default>
+    <Continuous>Continuous</Continuous>
     <Messages>
       <ConditionError>Condition Error</ConditionError>
     </Messages>
@@ -141,6 +142,11 @@ Email:ccfyzh@gmail.com
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>
     <SelectGesture>(Click to select a gesture)</SelectGesture>
+    <Right>Swipe Right</Right>
+    <Left>Swipe Left</Left>
+    <Up>Swipe Up</Up>
+    <Down>Swipe Down</Down>
+    <Fingers>{0} Fingers</Fingers>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteCommandConfirm>Are you sure you want to delete these {0} Commands?</DeleteCommandConfirm>

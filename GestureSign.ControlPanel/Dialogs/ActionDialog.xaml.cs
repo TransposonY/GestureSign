@@ -109,6 +109,11 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
+        private void ContactCountSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            ContactCountText.Text = string.Format(LocalizationProvider.Instance.GetTextValue("Action.Fingers"), (int)e.NewValue);
+        }
+
         #endregion
 
         #region Private Methods
@@ -121,6 +126,15 @@ namespace GestureSign.ControlPanel.Dialogs
                 ConditionTextBox.Text = action.Condition;
                 MouseActionComboBox.SelectedValue = action.MouseHotkey;
                 ActivateWindowCheckBox.IsChecked = action.ActivateWindow;
+
+                if (action.ContinuousGesture != null)
+                {
+                    ContinuousGestureSwitch.IsChecked = true;
+                    ContactCountSlider.Value = action.ContinuousGesture.ContactCount;
+                    GestureComboBox.SelectedValue = action.ContinuousGesture.Gesture;
+                }
+                else
+                    ContinuousGestureSwitch.IsChecked = false;
 
                 var gesture = GestureManager.Instance.GetNewestGestureSample(action.GestureName);
                 if (gesture != null)
@@ -174,6 +188,9 @@ namespace GestureSign.ControlPanel.Dialogs
                     ModifierKeys = (int)HotKeyTextBox.HotKey.ModifierKeys
                 }
                 : null;
+            int contactCount = (int)ContactCountSlider.Value;
+            NewAction.ContinuousGesture = ContinuousGestureSwitch.IsChecked.GetValueOrDefault() && contactCount > 1 && (int)GestureComboBox.SelectedValue > 0 ? new ContinuousGesture(contactCount, (Gestures)(GestureComboBox.SelectedValue ?? 0)) : null;
+
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
 

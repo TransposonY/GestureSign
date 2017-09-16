@@ -46,6 +46,7 @@ namespace GestureSign.Common.Applications
         public Hotkey Hotkey { get; set; }
 
         public MouseActions MouseHotkey { get; set; }
+        public ContinuousGesture ContinuousGesture { get; set; }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
