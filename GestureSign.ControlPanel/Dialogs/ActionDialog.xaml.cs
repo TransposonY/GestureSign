@@ -83,7 +83,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
             if (SaveAction())
             {
-                DialogResult = true;
+                if (!DialogResult.GetValueOrDefault())
+                    DialogResult = true;
                 Close();
             }
         }

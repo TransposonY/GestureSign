@@ -64,7 +64,8 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (SaveCommand())
             {
-                DialogResult = true;
+                if (!DialogResult.GetValueOrDefault())
+                    DialogResult = true;
                 Close();
             }
         }

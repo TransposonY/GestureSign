@@ -17,7 +17,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void OkButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            DialogResult = true;
+            if (!DialogResult.GetValueOrDefault())
+                DialogResult = true;
             Close();
         }
     }
