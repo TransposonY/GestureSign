@@ -10,110 +10,91 @@ namespace GestureSign.Daemon.Triggers
 {
     class HotKeyManager : Trigger
     {
-        private Dictionary<Hotkey, List<IAction>> _hotKeyMap = new Dictionary<Hotkey, List<IAction>>();
+        private List<KeyValuePair<Hotkey, List<IAction>>> _hotKeyMap = new List<KeyValuePair<Hotkey, List<IAction>>>();
 
         public HotKeyManager()
         {
             PointCapture.Instance.ForegroundApplicationsChanged += Instance_ForegroundApplicationsChanged;
             PointCapture.Instance.ModeChanged += Instance_ModeChanged;
+
+            var hotKeyActions = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow).Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions).Where(a => a.Hotkey != null).ToList();
+            hotKeyActions.AddRange(ApplicationManager.Instance.GetGlobalApplication().Actions.Where(a => a.Hotkey != null));
+
+            if (hotKeyActions.Count != 0)
+                RegisterHotKeys(hotKeyActions);
         }
 
         private void Instance_ForegroundApplicationsChanged(object sender, IApplication[] apps)
         {
-            var userAppList = apps.Where(application => application is UserApp).Union(new[] { ApplicationManager.Instance.GetGlobalApplication() }).ToArray();
-            if (userAppList.Length == 0)
-                UnregisterAllHotKeys();
+            var hotKeyActions = apps.Where(application => application is UserApp).SelectMany(app => app.Actions).Where(a => a.Hotkey != null).ToList();
+            hotKeyActions.AddRange(ApplicationManager.Instance.GetGlobalApplication().Actions.Where(a => a.Hotkey != null));
+
+            if (hotKeyActions.Count == 0)
+                UnloadHotKeys();
             else
-                RegisterHotKeys(userAppList);
+                RegisterHotKeys(hotKeyActions);
         }
 
         private void Instance_ModeChanged(object sender, Common.Input.ModeChangedEventArgs e)
         {
             if (e.Mode == Common.Input.CaptureMode.UserDisabled)
-                UnregisterAllHotKeys();
+                UnloadHotKeys();
         }
 
-        public override bool LoadConfiguration(List<IAction> actions)
+        private void RegisterHotKeys(List<IAction> actions)
         {
             UnloadHotKeys();
-            return LoadHotKeys(actions);
-        }
-
-        private bool LoadHotKeys(List<IAction> actions)
-        {
-            _hotKeyMap = new Dictionary<Hotkey, List<IAction>>();
-
-            if (actions == null || actions.Count == 0) return false;
-
+            _hotKeyMap = new List<KeyValuePair<Hotkey, List<IAction>>>();
             foreach (var action in actions)
             {
                 var h = action.Hotkey;
 
                 if (h != null && h.ModifierKeys != 0 && h.KeyCode != 0)
                 {
-                    var hotKey = new Hotkey() { KeyCode = h.KeyCode, ModifierKeys = h.ModifierKeys };
-                    if (_hotKeyMap.ContainsKey(hotKey))
+                    int index = _hotKeyMap.FindIndex(p => p.Key.KeyCode == h.KeyCode && p.Key.ModifierKeys == h.ModifierKeys);
+                    if (index >= 0)
                     {
-                        var actionList = _hotKeyMap[hotKey];
+                        var actionList = _hotKeyMap[index].Value;
                         if (!actionList.Contains(action))
                             actionList.Add(action);
                     }
                     else
                     {
+                        var hotKey = new Hotkey() { KeyCode = h.KeyCode, ModifierKeys = h.ModifierKeys };
                         hotKey.HotkeyPressed += Hotkey_HotkeyPressed;
-                        _hotKeyMap.Add(hotKey, new List<IAction>() { action });
+                        _hotKeyMap.Add(new KeyValuePair<Hotkey, List<IAction>>(hotKey, new List<IAction>() { action }));
+                        try
+                        {
+                            hotKey.Register();
+                        }
+                        catch (HotkeyAlreadyInUseException)
+                        {
+                            hotKey.Unregister();
+                        }
                     }
                 }
-            }
-            var apps = ApplicationManager.Instance.GetApplicationFromWindow(SystemWindow.ForegroundWindow).Where(app => !(app is IgnoredApp)).ToArray();
-            RegisterHotKeys(apps);
-            return true;
-        }
-
-        private void RegisterHotKeys(params IApplication[] apps)
-        {
-            foreach (var hotKeyPair in _hotKeyMap)
-            {
-                if (apps.Any(app => hotKeyPair.Value.Intersect(app.Actions).Any()))
-                {
-                    try
-                    {
-                        hotKeyPair.Key.Register();
-                    }
-                    catch (HotkeyAlreadyInUseException)
-                    {
-                        hotKeyPair.Key.Unregister();
-                    }
-                }
-                else hotKeyPair.Key.Unregister();
-            }
-        }
-
-        private void UnregisterAllHotKeys()
-        {
-            foreach (var hotKeyPair in _hotKeyMap)
-            {
-                hotKeyPair.Key.Unregister();
             }
         }
 
         private void UnloadHotKeys()
         {
-            foreach (var hotKeyPair in _hotKeyMap)
-            {
-                hotKeyPair.Key.HotkeyPressed -= Hotkey_HotkeyPressed;
-                hotKeyPair.Key.Dispose();
-            }
+            if (_hotKeyMap != null)
+                foreach (var hotKeyPair in _hotKeyMap)
+                {
+                    hotKeyPair.Key.HotkeyPressed -= Hotkey_HotkeyPressed;
+                    hotKeyPair.Key.Dispose();
+                }
             _hotKeyMap = null;
         }
 
         private void Hotkey_HotkeyPressed(object sender, EventArgs e)
         {
             Hotkey hotkey = (Hotkey)sender;
-            if (_hotKeyMap.ContainsKey(hotkey))
+            int index = _hotKeyMap.FindIndex(p => p.Key.KeyCode == hotkey.KeyCode && p.Key.ModifierKeys == hotkey.ModifierKeys);
+            if (index >= 0)
             {
                 var window = ApplicationManager.Instance.GetForegroundApplications();
-                OnTriggerFired(new TriggerFiredEventArgs(_hotKeyMap[hotkey], window.Rectangle.Location));
+                OnTriggerFired(new TriggerFiredEventArgs(_hotKeyMap[index].Value, window.Rectangle.Location));
             }
         }
     }

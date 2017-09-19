@@ -49,7 +49,7 @@ namespace GestureSign.Daemon
                         PointCapture.Instance.Load();
                         SurfaceForm.Instance.Load();
                         SynchronizationContext uiContext = SynchronizationContext.Current;
-                        TriggerManager.Instance.Load(uiContext);
+                        TriggerManager.Instance.Load();
 
                         if (!StartTouchInputProvider()) return;
 

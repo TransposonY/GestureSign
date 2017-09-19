@@ -9,13 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 
 namespace GestureSign.Daemon.Triggers
 {
     class ContinuousGestureTrigger : Trigger
     {
-        private List<KeyValuePair<ContinuousGesture, List<IAction>>> _actionMap = new List<KeyValuePair<ContinuousGesture, List<IAction>>>();
-
         private Point _startPoint;
         private float _motionThreshold;
         private Stopwatch _stopwatch = new Stopwatch();
@@ -29,31 +28,6 @@ namespace GestureSign.Daemon.Triggers
             PointCapture.Instance.CaptureEnded += PointCapture_CaptureEnded;
         }
 
-        public override bool LoadConfiguration(List<IAction> actions)
-        {
-            _actionMap.Clear();
-            if (actions == null || actions.Count == 0) return false;
-
-            foreach (var action in actions)
-            {
-                if (action.ContinuousGesture != null)
-                {
-                    var index = _actionMap.FindIndex(kvp => action.ContinuousGesture.Equals(kvp.Key));
-                    if (index >= 0)
-                    {
-                        var actionConfig = _actionMap[index].Value;
-                        if (!actionConfig.Contains(action))
-                            actionConfig.Add(action);
-                    }
-                    else
-                    {
-                        _actionMap.Add(new KeyValuePair<ContinuousGesture, List<IAction>>(action.ContinuousGesture, new List<IAction>(new[] { action })));
-                    }
-                }
-            }
-            return true;
-        }
-
         private void PointCapture_CaptureEnded(object sender, System.EventArgs e)
         {
             _stopwatch.Stop();
@@ -62,7 +36,9 @@ namespace GestureSign.Daemon.Triggers
 
         private void PointCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (PointCapture.Instance.State != CaptureState.Capturing || _actionMap.Count == 0 || e.Points.Count < 2)
+            if (PointCapture.Instance.State != CaptureState.Capturing ||
+                !ApplicationManager.Instance.RecognizedApplication.Any(app => !(app is IgnoredApp) && app.Actions.Any(a => a.ContinuousGesture != null)) ||
+                e.Points.Count < 2)
                 return;
             if (_lastPoints == null || _lastPoints.Count != e.FirstCapturedPoints.Count)
             {
@@ -113,9 +89,10 @@ namespace GestureSign.Daemon.Triggers
 
         private void OnGesturerRecognized(int contactCount, Gestures gesture)
         {
-            int index = _actionMap.FindIndex(cg => cg.Key.ContactCount == contactCount && cg.Key.Gesture == gesture);
-            if (index >= 0)
-                OnTriggerFired(new TriggerFiredEventArgs(_actionMap[index].Value, _startPoint));
+            var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a.ContinuousGesture != null &&
+            a.ContinuousGesture.ContactCount == contactCount && a.ContinuousGesture.Gesture == gesture);
+            if (actions.Count > 0)
+                OnTriggerFired(new TriggerFiredEventArgs(actions, _startPoint));
         }
 
         private double GetRateOfFire(int distance)

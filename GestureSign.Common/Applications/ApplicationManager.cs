@@ -28,6 +28,7 @@ namespace GestureSign.Common.Applications
         #region Public Instance Properties
 
         public SystemWindow CaptureWindow { get; private set; }
+        public IEnumerable<IApplication> RecognizedApplication { get { return _recognizedApplication; }  }
         public IApplication CurrentApplication
         {
             get { return _currentApplication; }
@@ -293,18 +294,18 @@ namespace GestureSign.Common.Applications
             return GetDefinedAction(GestureName, _recognizedApplication, true);
         }
 
-        public IEnumerable<IAction> GetRecognizedDefinedAction(List<IAction> actionList)
+        public List<IAction> GetRecognizedDefinedAction(Func<IAction, bool> predicate)
         {
             if (_recognizedApplication == null)
             {
                 return null;
             }
-            var finalAction = actionList.Intersect(_recognizedApplication.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions));
+            var recognizedActions = _recognizedApplication.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions).Where(a => predicate(a)).ToList();
             // If there is was no action found on given application, try to get an action for global application
-            if (!finalAction.Any())
-                finalAction = GetGlobalApplication().Actions.Intersect(actionList);
+            if (recognizedActions.Count == 0)
+                recognizedActions = GetGlobalApplication().Actions.Where(a => predicate(a)).ToList();
 
-            return finalAction;
+            return recognizedActions;
         }
 
         public IEnumerable<IAction> GetDefinedAction(string gestureName, IEnumerable<IApplication> application, bool useGlobal)
