@@ -35,7 +35,10 @@ namespace GestureSign.CorePlugins.HotKey
             AddDescription(Keys.BrowserBack, Keys.BrowserForward, Keys.BrowserHome, Keys.BrowserRefresh,
                 Keys.BrowserSearch, Keys.BrowserStop,
                 Keys.MediaNextTrack, Keys.MediaPlayPause, Keys.MediaPreviousTrack,
-                Keys.MediaStop, Keys.VolumeDown, Keys.VolumeMute, Keys.VolumeUp);
+                Keys.MediaStop, Keys.VolumeDown, Keys.VolumeMute, Keys.VolumeUp,
+                Keys.PageDown, Keys.PageUp, Keys.PrintScreen, Keys.Scroll);
+
+            AddKeys(Keys.Home, Keys.End, Keys.Insert, Keys.Pause);
         }
         public static Dictionary<Keys, string> DescriptionDict { get; private set; }
 
@@ -44,6 +47,12 @@ namespace GestureSign.CorePlugins.HotKey
             foreach (Keys code in keys)
                 DescriptionDict.Add(code,
                     LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.ExtraKeys." + code));
+        }
+
+        private static void AddKeys(params Keys[] keys)
+        {
+            foreach (Keys key in keys)
+                DescriptionDict.Add(key, key.ToString());
         }
     }
 }

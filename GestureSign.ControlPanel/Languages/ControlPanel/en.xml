@@ -279,19 +279,23 @@ Email:ccfyzh@gmail.com
       <SendByKeybdEvent>Send By Legacy Method</SendByKeybdEvent>
       <UnauthorizedAccessException>Insufficient permissions.Please check your virus scanning software settings.</UnauthorizedAccessException>
       <ExtraKeys>
-        <BrowserBack>Browser Back key</BrowserBack>
-        <BrowserForward>Browser Forward key</BrowserForward>
-        <BrowserHome>Browser Start and Home key</BrowserHome>
-        <BrowserRefresh>Browser Refresh key</BrowserRefresh>
-        <BrowserSearch>Browser Search key</BrowserSearch>
-        <BrowserStop>Browser Stop key</BrowserStop>
-        <MediaNextTrack>Next Track key</MediaNextTrack>
-        <MediaPlayPause>Play/Pause Media key</MediaPlayPause>
-        <MediaPreviousTrack>Previous Track key</MediaPreviousTrack>
-        <MediaStop>Stop Media key</MediaStop>
-        <VolumeDown>Volume Down key</VolumeDown>
-        <VolumeMute>Volume Mute key</VolumeMute>
-        <VolumeUp>Volume Up key</VolumeUp>
+        <BrowserBack>Browser Back</BrowserBack>
+        <BrowserForward>Browser Forward</BrowserForward>
+        <BrowserHome>Browser Start and Home</BrowserHome>
+        <BrowserRefresh>Browser Refresh</BrowserRefresh>
+        <BrowserSearch>Browser Search</BrowserSearch>
+        <BrowserStop>Browser Stop</BrowserStop>
+        <MediaNextTrack>Next Track</MediaNextTrack>
+        <MediaPlayPause>Play/Pause Media</MediaPlayPause>
+        <MediaPreviousTrack>Previous Track</MediaPreviousTrack>
+        <MediaStop>Stop Media</MediaStop>
+        <VolumeDown>Volume Down</VolumeDown>
+        <VolumeMute>Volume Mute</VolumeMute>
+        <VolumeUp>Volume Up</VolumeUp>
+        <Next>Page Down</Next>
+        <PageUp>Page Up</PageUp>
+        <PrintScreen>Print Screen</PrintScreen>
+        <Scroll>Scroll Lock</Scroll>
       </ExtraKeys>
     </HotKey>
     <KeyDownKeyUp>
