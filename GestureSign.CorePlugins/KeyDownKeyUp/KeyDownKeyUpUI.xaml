@@ -6,49 +6,46 @@
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="120"
-             d:DesignWidth="320">
-    <Canvas PreviewKeyDown="KeysTextBox_PreviewKeyDown"
-            PreviewKeyUp="KeysTextBox_PreviewKeyUp"
-            Height="120">
+             d:DesignWidth="350">
+    <Grid PreviewKeyDown="KeysTextBox_PreviewKeyDown"
+          PreviewKeyUp="KeysTextBox_PreviewKeyUp"
+          Height="120">
         <RadioButton x:Name="KeyDownRadioButton"
                      Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.KeyDown}"
-                     Canvas.Left="25"
-                     Canvas.Top="10"
-                     FontSize="14" />
+                     FontSize="14"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top" />
         <RadioButton x:Name="KeyUpRadioButton"
                      Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.KeyUp}"
-                     Canvas.Left="200"
-                     Canvas.Top="10"
-                     FontSize="14" />
+                     FontSize="14"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Top" />
+        <TextBlock TextWrapping="Wrap"
+                   Text="{localization:LocalisedText CorePlugins.KeyDownKeyUp.Tip}"
+                   FontSize="14"
+                   Margin="0,42,0,0" />
         <TextBox x:Name="KeysTextBox"
                  InputMethod.IsInputMethodEnabled="False"
                  HorizontalAlignment="Left"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top"
-                 Width="205"
+                 Width="260"
                  FontSize="14"
-                 Canvas.Left="10"
-                 Canvas.Top="65"
-                 MaxLines="5">
+                 MaxLines="5"
+                 Margin="0,65,0,0">
             <TextBox.ContextMenu>
                 <ContextMenu Visibility="Collapsed" />
             </TextBox.ContextMenu>
         </TextBox>
         <Button x:Name="ResetButton"
                 Content="{localization:LocalisedText CorePlugins.KeyDownKeyUp.Reset}"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 FontSize="14"
                 Width="65"
-                Canvas.Left="245"
-                Canvas.Top="65"
                 Height="26"
-                Click="ResetButton_Click" />
-        <TextBlock Canvas.Left="10"
-                   TextWrapping="Wrap"
-                   Text="{localization:LocalisedText CorePlugins.KeyDownKeyUp.Tip}"
-                   Canvas.Top="42"
-                   FontSize="14" />
+                Click="ResetButton_Click"
+                Margin="0,65,0,0" />
 
-    </Canvas>
+    </Grid>
 </UserControl>

@@ -7,19 +7,16 @@
              mc:Ignorable="d"
              d:DesignHeight="70"
              d:DesignWidth="300">
-    <Grid>
+    <StackPanel Orientation="Horizontal">
         <TextBox x:Name="TimeoutTextBox"
                  InputMethod.IsInputMethodEnabled="False"
                  TextAlignment="Left"
-                 HorizontalAlignment="Left"
                  Width="71"
                  KeyDown="TimeoutTextBox_KeyDown"
                  TextChanged="TimeoutTextBox_TextChanged"
-                 VerticalAlignment="Center"
-                 Margin="10,10,0,34" />
-        <TextBlock HorizontalAlignment="Left"
-                   Text="{localization:LocalisedText CorePlugins.Delay.Millisecond}"
+                 VerticalAlignment="Center" />
+        <TextBlock Text="{localization:LocalisedText CorePlugins.Delay.Millisecond}"
                    VerticalAlignment="Center"
-                   Margin="86,15,-115,40" />
-    </Grid>
+                   Margin="10,0,0,0" />
+    </StackPanel>
 </UserControl>

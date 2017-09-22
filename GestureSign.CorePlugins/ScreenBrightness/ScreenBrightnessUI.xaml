@@ -6,16 +6,14 @@
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignHeight="70"
-             d:DesignWidth="320">
-    <Canvas Height="50">
+             d:DesignWidth="350">
+    <Canvas Height="40">
         <ComboBox x:Name="cboMethod"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
-                  Width="167"
+                  Width="210"
                   SelectedIndex="0"
                   FontSize="14"
-                  Canvas.Left="10"
-                  Canvas.Top="10"
                   Height="27">
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.IncreaseBrightness}" />
             <ComboBoxItem Content="{localization:LocalisedText CorePlugins.ScreenBrightness.DecreaseBrightness}" />
@@ -29,15 +27,14 @@
                   KeyDown="NumPercent_KeyDown"
                   TextBoxBase.TextChanged="NumPercent_TextChanged"
                   FontSize="14"
-                  Canvas.Left="186"
-                  Canvas.Top="10"
+                  Canvas.Left="226"
                   Height="27" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
                    Text="(1-100)"
                    VerticalAlignment="Top"
                    FontSize="14"
-                   Canvas.Left="272"
-                   Canvas.Top="17" />
+                   Canvas.Left="302"
+                   Canvas.Top="5" />
     </Canvas>
 </UserControl>

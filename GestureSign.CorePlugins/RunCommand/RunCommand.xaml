@@ -9,20 +9,18 @@
              d:DesignWidth="310">
     <Grid>
         <TextBlock HorizontalAlignment="Left"
-                   Margin="10,13,0,0"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.RunCommand.Command}"
                    VerticalAlignment="Top"
                    FontSize="14" />
         <ComboBox x:Name="VariableComboBox"
                   HorizontalAlignment="Right"
-                  Margin="0,10,10,0"
                   VerticalAlignment="Top"
                   FontSize="14"
                   Initialized="VariableComboBox_OnInitialized"
                   DropDownClosed="VariableComboBox_DropDownClosed" />
         <TextBox x:Name="txtCommand"
-                 Margin="10,40,10,0"
+                 Margin="0,30,0,0"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top"
                  Height="77"
@@ -31,7 +29,7 @@
                   Content="{localization:LocalisedText CorePlugins.RunCommand.ShowCMD}"
                   HorizontalAlignment="Left"
                   Height="28"
-                  Margin="10,128,0,0"
+                  Margin="0,118,0,0"
                   VerticalAlignment="Top" />
 
     </Grid>

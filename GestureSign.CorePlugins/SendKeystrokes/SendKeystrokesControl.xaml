@@ -9,27 +9,22 @@
              Height="145">
     <Grid>
         <TextBox x:Name="TxtSendKeys"
-                 HorizontalAlignment="Left"
                  Height="80"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top"
-                 Width="300"
-                 Margin="10,30,0,0">
-        </TextBox>
+                 Margin="0,25,0,0" />
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.SendKeystrokes.Tip}"
-                   VerticalAlignment="Top"
-                   Margin="10,10,0,0" />
+                   VerticalAlignment="Top" />
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Content="{localization:LocalisedText CorePlugins.SendKeystrokes.EscapesString}"
                 Click="Button_Click"
-                Margin="0,0,10,0" />
+                Margin="0" />
         <CheckBox x:Name="UseSendInputCheckBox"
                   Content="{localization:LocalisedText CorePlugins.SendKeystrokes.UseSendInput}"
                   HorizontalAlignment="Left"
-                  VerticalAlignment="Bottom"
-                  Margin="10,0,0,0" />
+                  VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>

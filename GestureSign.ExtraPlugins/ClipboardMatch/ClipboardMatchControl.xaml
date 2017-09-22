@@ -11,12 +11,11 @@
                    TextWrapping="Wrap"
                    Text="Pattern String"
                    VerticalAlignment="Top"
-                   Margin="10,0,0,0"
                    FontSize="14" />
         <TextBox x:Name="MatchTextBox"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top"
-                 Margin="10,10,10,0"
+                 Margin="0,10,0,0"
                  MaxHeight="85" />
     </StackPanel>
 </UserControl>
