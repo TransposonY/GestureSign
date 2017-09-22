@@ -17,7 +17,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput;
-using Timer = System.Windows.Forms.Timer;
 
 namespace GestureSign.Daemon.Input
 {
@@ -29,12 +28,12 @@ namespace GestureSign.Daemon.Input
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         private const uint WINEVENT_SKIPOWNPROCESS = 0x0002; // Don't call back for events on installer's process
         private const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
+        private const int GestureStackTimeout = 800;
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly PointEventTranslator _pointEventTranslator;
         private readonly InputProvider _inputProvider;
         private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
-        private readonly Timer _timeoutTimer = new Timer();
         private readonly System.Threading.Timer _blockTouchDelayTimer;
 
         private Dictionary<int, List<Point>> _pointsCaptured;
@@ -49,12 +48,13 @@ namespace GestureSign.Daemon.Input
         readonly WinEventDelegate _winEventDele;
         private readonly IntPtr _hWinEventHook;
 
-        private bool _gestureTimeout;
+        private bool _isGestureStackTimeout;
 
         private bool disposedValue = false; // To detect redundant calls
 
         private int? _blockTouchInputThreshold;
         private Point _touchPadStartPoint;
+        private int? _lastGestureTime;
 
         #endregion
 
@@ -213,8 +213,6 @@ namespace GestureSign.Daemon.Input
                 if (e.Mode == CaptureMode.UserDisabled)
                     _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
             };
-
-            _timeoutTimer.Tick += GestureRecognizedCallback;
         }
 
         #endregion
@@ -228,7 +226,6 @@ namespace GestureSign.Daemon.Input
                 if (disposing)
                 {
                     _blockTouchDelayTimer?.Dispose();
-                    _timeoutTimer?.Dispose();
                     _pointerInputTargetWindow?.Dispose();
                     _inputProvider?.Dispose();
                 }
@@ -290,6 +287,9 @@ namespace GestureSign.Daemon.Input
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
+                if (_lastGestureTime != null && Environment.TickCount - _lastGestureTime.Value > GestureStackTimeout)
+                    _isGestureStackTimeout = true;
+
                 // Try to begin capture process, if capture started then don't notify other applications of a Point event, otherwise do
                 if (!TryBeginCapture(e.InputPointList))
                 {
@@ -305,9 +305,6 @@ namespace GestureSign.Daemon.Input
             // Only add point if we're capturing
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
-                if (_timeoutTimer.Enabled)
-                    _timeoutTimer.Stop();
-
                 AddPoint(e.InputPointList);
             }
             UpdateBlockTouchInputThreshold();
@@ -391,12 +388,6 @@ namespace GestureSign.Daemon.Input
             _blockTouchInputThreshold = null;
         }
 
-        private void GestureRecognizedCallback(object sender, EventArgs e)
-        {
-            _timeoutTimer.Stop();
-            _gestureTimeout = true;
-        }
-
         private bool TryBeginCapture(List<InputPoint> firstPoint)
         {
             // Create capture args so we can notify subscribers that capture has started and allow them to cancel if they want.
@@ -453,9 +444,10 @@ namespace GestureSign.Daemon.Input
             OnCaptureEnded();
             State = CaptureState.Ready;
 
-            if (_gestureTimeout)
+            if (_isGestureStackTimeout)
             {
-                _gestureTimeout = false;
+                _lastGestureTime = null;
+                _isGestureStackTimeout = false;
                 pointsInformation.GestureTimeout = true;
             }
             // Notify PointsCaptured event subscribers that points have been captured.
@@ -466,8 +458,7 @@ namespace GestureSign.Daemon.Input
 
             if (pointsInformation.Delay)
             {
-                _timeoutTimer.Interval = AppConfig.GestureTimeout;
-                _timeoutTimer.Start();
+                _lastGestureTime = Environment.TickCount;
             }
             else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
