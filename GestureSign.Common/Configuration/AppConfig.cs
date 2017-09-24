@@ -141,15 +141,15 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        public static int GestureTimeout
+        public static int InitialTimeout
         {
             get
             {
-                return (int)GetValue("Timeout", 800);
+                return (int)GetValue(nameof(InitialTimeout), 300);
             }
             set
             {
-                SetValue("Timeout", value);
+                SetValue(nameof(InitialTimeout), value);
             }
         }
 

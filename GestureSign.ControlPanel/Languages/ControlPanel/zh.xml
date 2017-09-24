@@ -235,6 +235,7 @@
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
     <TouchPad>触摸板</TouchPad>
+    <InitialTimeout>手势起始超时 (秒)</InitialTimeout>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

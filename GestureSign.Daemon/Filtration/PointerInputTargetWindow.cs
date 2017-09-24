@@ -23,6 +23,7 @@ namespace GestureSign.Daemon.Filtration
         private int _lastTapTime;
         private bool _blockTap;
         private bool _isInitialized = false;
+        private bool _tempDisable;
 
         public PointerInputTargetWindow()
         {
@@ -78,6 +79,11 @@ namespace GestureSign.Daemon.Filtration
                     }
                 }
             }
+        }
+
+        public void TemporarilyDisable()
+        {
+            _tempDisable = true;
         }
 
         protected sealed override void CreateHandle()
@@ -137,7 +143,9 @@ namespace GestureSign.Daemon.Filtration
 
             if (SimulateDoubleTap(ptis) || _blockTap) return;
 
-            if (pointerInfos.Length < _blockTouchInputThreshold)
+            if (pointerInfos.Length < _blockTouchInputThreshold ||
+                Input.PointCapture.Instance.State == Common.Input.CaptureState.CapturingInvalid ||
+                _tempDisable)
             {
                 if (ptis.Count != 0)
                     NativeMethods.InjectTouchInput(ptis.Count, ptis.ToArray());
@@ -223,6 +231,10 @@ namespace GestureSign.Daemon.Filtration
             {
                 _pointerIdList.Clear();
                 ResetIdPool();
+                if (_tempDisable)
+                {
+                    _tempDisable = false;
+                }
             }
             return ptis;
         }

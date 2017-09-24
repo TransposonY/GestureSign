@@ -41,7 +41,7 @@ namespace GestureSign.Daemon.Input
         static readonly PointCapture _Instance = new PointCapture();
 
         private CaptureMode _mode = CaptureMode.Normal;
-        private int _state;
+        private volatile CaptureState _state;
 
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
@@ -91,8 +91,8 @@ namespace GestureSign.Daemon.Input
 
         public CaptureState State
         {
-            get { return (CaptureState)_state; }
-            set { Interlocked.Exchange(ref _state, (int)value); }
+            get { return _state; }
+            set { _state = value; }
         }
 
         public CaptureMode Mode
@@ -286,6 +286,46 @@ namespace GestureSign.Daemon.Input
             if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+
+                var observeExceptionsTask = new Action<Task>(t =>
+                {
+                    Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
+                });
+                var currentContext = TaskScheduler.FromCurrentSynchronizationContext();
+                Task.Delay(AppConfig.InitialTimeout).ContinueWith((task) =>
+                {
+                    if (State == CaptureState.CapturingInvalid)
+                    {
+                        State = CaptureState.Ready;
+                        if (SourceDevice == Devices.TouchScreen)
+                        {
+                            if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
+                                _pointerInputTargetWindow.TemporarilyDisable();
+                        }
+                        else if (SourceDevice == Devices.Mouse)
+                        {
+                            InputSimulator simulator = new InputSimulator();
+                            switch (AppConfig.DrawingButton)
+                            {
+                                case MouseActions.Left:
+                                    simulator.Mouse.LeftButtonDown();
+                                    break;
+                                case MouseActions.Middle:
+                                    simulator.Mouse.MiddleButtonDown();
+                                    break;
+                                case MouseActions.Right:
+                                    simulator.Mouse.RightButtonDown();
+                                    break;
+                                case MouseActions.XButton1:
+                                    simulator.Mouse.XButtonDown(1);
+                                    break;
+                                case MouseActions.XButton2:
+                                    simulator.Mouse.XButtonDown(2);
+                                    break;
+                            }
+                        }
+                    }
+                }, currentContext).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
 
                 if (_lastGestureTime != null && Environment.TickCount - _lastGestureTime.Value > GestureStackTimeout)
                     _isGestureStackTimeout = true;
