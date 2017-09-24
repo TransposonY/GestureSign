@@ -46,12 +46,6 @@ namespace GestureSign.Daemon
                                 if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
                                     PointCapture.Instance.Mode = CaptureMode.Normal;
                                 break;
-                            case "EnableCapture":
-                                PointCapture.Instance.EnablePointCapture();
-                                break;
-                            case "DisableCapture":
-                                PointCapture.Instance.DisablePointCapture();
-                                break;
                             case "LoadApplications":
                                 ApplicationManager.Instance.LoadApplications().Wait();
                                 break;

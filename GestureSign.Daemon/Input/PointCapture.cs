@@ -531,16 +531,6 @@ namespace GestureSign.Daemon.Input
             // Shortcut method to control singleton instantiation
         }
 
-        public void EnablePointCapture()
-        {
-            State = CaptureState.Ready;
-        }
-
-        public void DisablePointCapture()
-        {
-            State = CaptureState.Disabled;
-        }
-
         public void ToggleUserDisablePointCapture()
         {
             // Toggle User selected Gesture Disabling

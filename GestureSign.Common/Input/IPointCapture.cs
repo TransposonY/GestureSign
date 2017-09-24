@@ -9,8 +9,6 @@ namespace GestureSign.Common.Input
         event PointsCapturedEventHandler CaptureStarted;
         event EventHandler CaptureEnded;
         event RecognitionEventHandler GestureRecognized;
-        void DisablePointCapture();
-        void EnablePointCapture();
         event PointsCapturedEventHandler PointCaptured;
         bool TemporarilyDisableCapture { get; set; }
         Devices SourceDevice { get; set; }
