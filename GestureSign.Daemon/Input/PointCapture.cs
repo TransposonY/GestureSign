@@ -381,8 +381,25 @@ namespace GestureSign.Daemon.Input
 
                     var clickAsync = Task.Factory.StartNew(delegate
                     {
-                        InputSimulator ssSimulator = new InputSimulator();
-                        ssSimulator.Mouse.RightButtonClick();
+                        InputSimulator simulator = new InputSimulator();
+                        switch (AppConfig.DrawingButton)
+                        {
+                            case MouseActions.Left:
+                                simulator.Mouse.LeftButtonClick();
+                                break;
+                            case MouseActions.Middle:
+                                simulator.Mouse.MiddleButtonClick();
+                                break;
+                            case MouseActions.Right:
+                                simulator.Mouse.RightButtonClick();
+                                break;
+                            case MouseActions.XButton1:
+                                simulator.Mouse.XButtonClick(1);
+                                break;
+                            case MouseActions.XButton2:
+                                simulator.Mouse.XButtonClick(2);
+                                break;
+                        }
                         State = CaptureState.Ready;
                     }).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
 
