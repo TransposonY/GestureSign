@@ -24,6 +24,7 @@ namespace GestureSign.Daemon.Filtration
         private bool _blockTap;
         private bool _isInitialized = false;
         private bool _tempDisable;
+        private int _lastFrameID;
 
         public PointerInputTargetWindow()
         {
@@ -137,6 +138,10 @@ namespace GestureSign.Daemon.Filtration
         private void ProcessPointerMessage(Message message)
         {
             POINTER_INFO[] pointerInfos = GetPointerInfos(message);
+
+            if (pointerInfos.Length == 0 || pointerInfos[0].FrameID == _lastFrameID) return;
+            _lastFrameID = pointerInfos[0].FrameID;
+
             List<POINTER_TOUCH_INFO> ptis = GenerateInput(pointerInfos);
 
             if (pointerInfos.Length != ptis.Count) return;
