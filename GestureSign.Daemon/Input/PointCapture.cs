@@ -287,45 +287,49 @@ namespace GestureSign.Daemon.Input
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                var observeExceptionsTask = new Action<Task>(t =>
+                var timeout = AppConfig.InitialTimeout;
+                if (timeout > 0)
                 {
-                    Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
-                });
-                var currentContext = TaskScheduler.FromCurrentSynchronizationContext();
-                Task.Delay(AppConfig.InitialTimeout).ContinueWith((task) =>
-                {
-                    if (State == CaptureState.CapturingInvalid)
+                    var observeExceptionsTask = new Action<Task>(t =>
                     {
-                        State = CaptureState.Ready;
-                        if (SourceDevice == Devices.TouchScreen)
+                        Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
+                    });
+                    var currentContext = TaskScheduler.FromCurrentSynchronizationContext();
+                    Task.Delay(timeout).ContinueWith((task) =>
+                    {
+                        if (State == CaptureState.CapturingInvalid)
                         {
-                            if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
-                                _pointerInputTargetWindow.TemporarilyDisable();
-                        }
-                        else if (SourceDevice == Devices.Mouse)
-                        {
-                            InputSimulator simulator = new InputSimulator();
-                            switch (AppConfig.DrawingButton)
+                            State = CaptureState.Ready;
+                            if (SourceDevice == Devices.TouchScreen)
                             {
-                                case MouseActions.Left:
-                                    simulator.Mouse.LeftButtonDown();
-                                    break;
-                                case MouseActions.Middle:
-                                    simulator.Mouse.MiddleButtonDown();
-                                    break;
-                                case MouseActions.Right:
-                                    simulator.Mouse.RightButtonDown();
-                                    break;
-                                case MouseActions.XButton1:
-                                    simulator.Mouse.XButtonDown(1);
-                                    break;
-                                case MouseActions.XButton2:
-                                    simulator.Mouse.XButtonDown(2);
-                                    break;
+                                if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
+                                    _pointerInputTargetWindow.TemporarilyDisable();
+                            }
+                            else if (SourceDevice == Devices.Mouse)
+                            {
+                                InputSimulator simulator = new InputSimulator();
+                                switch (AppConfig.DrawingButton)
+                                {
+                                    case MouseActions.Left:
+                                        simulator.Mouse.LeftButtonDown();
+                                        break;
+                                    case MouseActions.Middle:
+                                        simulator.Mouse.MiddleButtonDown();
+                                        break;
+                                    case MouseActions.Right:
+                                        simulator.Mouse.RightButtonDown();
+                                        break;
+                                    case MouseActions.XButton1:
+                                        simulator.Mouse.XButtonDown(1);
+                                        break;
+                                    case MouseActions.XButton2:
+                                        simulator.Mouse.XButtonDown(2);
+                                        break;
+                                }
                             }
                         }
-                    }
-                }, currentContext).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
+                    }, currentContext).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
+                }
 
                 if (_lastGestureTime != null && Environment.TickCount - _lastGestureTime.Value > GestureStackTimeout)
                     _isGestureStackTimeout = true;
