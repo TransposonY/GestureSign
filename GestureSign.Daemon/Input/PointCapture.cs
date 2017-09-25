@@ -299,7 +299,6 @@ namespace GestureSign.Daemon.Input
                     {
                         if (State == CaptureState.CapturingInvalid)
                         {
-                            State = CaptureState.Ready;
                             if (SourceDevice == Devices.TouchScreen)
                             {
                                 if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
@@ -327,6 +326,7 @@ namespace GestureSign.Daemon.Input
                                         break;
                                 }
                             }
+                            State = CaptureState.Ready;
                         }
                     }, currentContext).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
                 }
