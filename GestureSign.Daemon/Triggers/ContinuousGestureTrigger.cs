@@ -110,7 +110,7 @@ namespace GestureSign.Daemon.Triggers
             {
                 if (velocity > 16)
                     velocity = 16;
-                return distance / ((0.0039 * velocity * velocity - 0.105 * velocity + 1.195) * _motionThreshold);
+                return distance / ((-0.0023 * velocity * velocity + 0.0096 * velocity + 0.89) * _motionThreshold);
             }
         }
     }
