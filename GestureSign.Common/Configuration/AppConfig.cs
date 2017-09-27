@@ -145,7 +145,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (int)GetValue(nameof(InitialTimeout), 300);
+                return (int)GetValue(nameof(InitialTimeout), 0);
             }
             set
             {

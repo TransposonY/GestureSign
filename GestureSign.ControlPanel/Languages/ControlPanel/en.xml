@@ -231,6 +231,7 @@ Email:ccfyzh@gmail.com
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
     <TouchPad>TouchPad</TouchPad>
+    <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Drawing Start Timeout (second)</InitialTimeout>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>

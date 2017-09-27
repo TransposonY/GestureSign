@@ -57,7 +57,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
                 LanguageComboBox.ItemsSource = LocalizationProvider.Instance.GetLanguageList("ControlPanel");
                 LanguageComboBox.SelectedValue = AppConfig.CultureName;
-                InitialTimeoutTextBox.Text = (AppConfig.InitialTimeout / 1000f).ToString();
+                if (AppConfig.InitialTimeout > 0)
+                {
+                    InitialTimeoutSwitch.IsChecked = true;
+                    InitialTimeoutTextBox.Text = (AppConfig.InitialTimeout / 1000f).ToString();
+                }
             }
             catch (Exception)
             {
@@ -320,6 +324,18 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.RegisterTouchPad = TouchPadSwitch.IsChecked != null && TouchPadSwitch.IsChecked.Value;
+        }
+
+        private void InitialTimeoutSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (InitialTimeoutSwitch.IsChecked.GetValueOrDefault())
+            {
+                InitialTimeoutTextBox.Text = "0.3";
+            }
+            else
+            {
+                InitialTimeoutTextBox.Text = "0";
+            }
         }
 
         private void TimeoutTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
