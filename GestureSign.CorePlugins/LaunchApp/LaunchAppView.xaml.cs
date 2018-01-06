@@ -73,16 +73,16 @@ namespace GestureSign.CorePlugins.LaunchApp
                         {
                             var appUserModelIds =
                                 key?.GetSubKeyNames().Where(k => k.StartsWith(package.Id.FamilyName));
-                            if (appUserModelIds == null) continue;
+                            List<AppInfo> infoList = ReadAppInfosFromManifest(package.InstalledLocation.Path);
+                            if (appUserModelIds == null || infoList == null) continue;
 
                             foreach (string appUserModelId in appUserModelIds)
                             {
                                 Model model = new Model();
-                                string backgroundColor, displayName, logo;
-                                if (!ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo, out backgroundColor))
-                                    continue;
+                                AppInfo info = infoList.Find(i => appUserModelId.EndsWith(i.ID));
+                                string displayName = info.DisplayName;
 
-                                var color = ColorConverter.ConvertFromString(backgroundColor);
+                                var color = ColorConverter.ConvertFromString(info.BackgroundColor);
                                 if (color != null)
                                 {
                                     model.BackgroundColor = (Color)color == Colors.Transparent ? SystemParameters.WindowGlassBrush : new SolidColorBrush((Color)color);
@@ -95,11 +95,12 @@ namespace GestureSign.CorePlugins.LaunchApp
 
                                     displayName = ExtractDisplayName(package, appXInfo.ApplicationName);
                                     if (string.IsNullOrEmpty(displayName)) continue;
-
+                                    if (infoList.Count > 1)
+                                        displayName = displayName + "\n(" + info.ID + ")";
                                     var logoPath = GetDisplayIconPath(package.InstalledLocation.Path, appXInfo.ApplicationIcon);
                                     if (string.IsNullOrEmpty(logoPath))
                                     {
-                                        logoPath = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
+                                        logoPath = ExtractDisplayIcon(package.InstalledLocation.Path, info.Logo);
                                     }
                                     model.Logo = logoPath;
                                     model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
@@ -112,10 +113,11 @@ namespace GestureSign.CorePlugins.LaunchApp
                                         if (appName != null)
                                             displayName = ExtractDisplayName(package, appName.ToString());
                                         if (string.IsNullOrEmpty(displayName) || displayName.Contains("ms-resource:")) continue;
+                                        if (infoList.Count > 1)
+                                            displayName = displayName + "\n(" + info.ID + ")";
                                         model.AppInfo = new KeyValuePair<string, string>(appUserModelId, displayName);
 
-                                        logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
-                                        model.Logo = logo;
+                                        model.Logo = ExtractDisplayIcon(package.InstalledLocation.Path, info.Logo);
                                     }
                                 }
                                 apps.Add(model);
@@ -127,25 +129,25 @@ namespace GestureSign.CorePlugins.LaunchApp
                 {
                     foreach (var package in packages)
                     {
-                        string displayName, logo, backgroundColor;
-                        if (
-                            !ReadAppxInfoFromXml(package.InstalledLocation.Path, out displayName, out logo,
-                                out backgroundColor))
+                        List<AppInfo> infoList = ReadAppInfosFromManifest(package.InstalledLocation.Path);
+                        if (infoList == null)
                             continue;
-
-                        displayName = ExtractDisplayName(package.InstalledLocation.Path, package.Id.Name, displayName);
-                        logo = ExtractDisplayIcon(package.InstalledLocation.Path, logo);
-
-                        var color = ColorConverter.ConvertFromString(backgroundColor);
-                        if (color == null) continue;
-                        var model = new Model
+                        foreach (var info in infoList)
                         {
-                            AppInfo = new KeyValuePair<string, string>(GetAppUserModelId(package.Id.FullName), displayName),
-                            BackgroundColor = (Color)color == Colors.Transparent ? SystemParameters.WindowGlassBrush : new SolidColorBrush((Color)color),
-                            Logo = logo
-                        };
-                        model.BackgroundColor.Freeze();
-                        apps.Add(model);
+                            string displayName = ExtractDisplayName(package.InstalledLocation.Path, package.Id.Name, info.DisplayName);
+                            string logo = ExtractDisplayIcon(package.InstalledLocation.Path, info.Logo);
+
+                            var color = ColorConverter.ConvertFromString(info.BackgroundColor);
+                            if (color == null) continue;
+                            var model = new Model
+                            {
+                                AppInfo = new KeyValuePair<string, string>(GetAppUserModelId(package.Id.FullName), displayName),
+                                BackgroundColor = (Color)color == Colors.Transparent ? SystemParameters.WindowGlassBrush : new SolidColorBrush((Color)color),
+                                Logo = logo
+                            };
+                            model.BackgroundColor.Freeze();
+                            apps.Add(model);
+                        }
                     }
                 }
             });
@@ -263,36 +265,48 @@ namespace GestureSign.CorePlugins.LaunchApp
             return ExtractDisplayIcon(dir, logo);
         }
 
-        private bool ReadAppxInfoFromXml(string path, out string displayName, out string logo,
-            out string backgroundColor)
+        private List<AppInfo> ReadAppInfosFromManifest(string path)
         {
             var file = Path.Combine(path, "AppxManifest.xml");
-            backgroundColor = displayName = logo = null;
-            if (!File.Exists(file)) return false;
+            if (!File.Exists(file)) return null;
+            List<AppInfo> list = new List<AppInfo>();
             using (var xtr = new XmlTextReader(file) { WhitespaceHandling = WhitespaceHandling.None })
             {
-                while (xtr.Read())
-                {
-                    if (xtr.NodeType != XmlNodeType.Element) continue;
+                if (xtr.ReadToFollowing("Applications"))
+                    if (xtr.ReadToDescendant("Application"))
+                    {
+                        int depth = xtr.Depth;
+                        do
+                        {
+                            if (xtr.NodeType != XmlNodeType.Element || xtr.Depth > depth) continue;
+                            var id = xtr.GetAttribute("Id");
+                            if (string.IsNullOrWhiteSpace(id)) continue;
 
-                    if ("DisplayName".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        xtr.Read();
-                        displayName = xtr.Value;
+                            AppInfo info = new AppInfo
+                            {
+                                ID = id
+                            };
+                            while (xtr.Read())
+                            {
+                                if (xtr.NodeType != XmlNodeType.Element) continue;
+                                if ("VisualElements".Equals(xtr.LocalName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    info.BackgroundColor = xtr.GetAttribute("BackgroundColor");
+                                    info.DisplayName = xtr.GetAttribute("DisplayName");
+                                    info.Logo = xtr.GetAttribute("Square44x44Logo");
+
+                                    list.Add(info);
+                                    break;
+                                }
+                            }
+                        }
+                        while (xtr.Read() && xtr.Depth >= depth);
+
+                        if (list.Count > 0)
+                            return list;
                     }
-                    else if ("Logo".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        xtr.Read();
-                        logo = xtr.Value;
-                    }
-                    else if ("VisualElements".Equals(xtr.LocalName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        backgroundColor = xtr.GetAttribute("BackgroundColor");
-                        return true;
-                    }
-                }
             }
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -373,6 +387,14 @@ namespace GestureSign.CorePlugins.LaunchApp
             public string Logo { get; set; }
             public KeyValuePair<string, string> AppInfo { get; set; }
             public Brush BackgroundColor { get; set; }
+        }
+
+        private struct AppInfo
+        {
+            public string ID { get; set; }
+            public string BackgroundColor { get; set; }
+            public string DisplayName { get; set; }
+            public string Logo { get; set; }
         }
     }
 }
