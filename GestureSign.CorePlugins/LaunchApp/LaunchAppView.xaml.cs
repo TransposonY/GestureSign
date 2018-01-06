@@ -258,7 +258,7 @@ namespace GestureSign.CorePlugins.LaunchApp
             if (!Uri.TryCreate(logo, UriKind.Absolute, out uri))
                 return string.Empty;
             //remove "/Files"
-            logo = uri.AbsolutePath.Substring(6).Replace('/', '\\');
+            logo = (uri.AbsolutePath.StartsWith("/Files", StringComparison.OrdinalIgnoreCase) ? uri.AbsolutePath.Substring(6) : uri.AbsolutePath).Replace('/', '\\');
 
             return ExtractDisplayIcon(dir, logo);
         }
