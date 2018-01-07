@@ -72,26 +72,32 @@ namespace GestureSign.Common.Log
             }
             result.AppendLine();
 
-
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_computersystem");
-            foreach (ManagementObject mo in searcher.Get())
+            try
             {
-                try
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_computersystem");
+                foreach (ManagementObject mo in searcher.Get())
                 {
-                    result.AppendLine(mo["Manufacturer"].ToString().Trim());
-                    result.AppendLine(mo["Model"].ToString().Trim());
-                    break;
+                    try
+                    {
+                        result.AppendLine(mo["Manufacturer"].ToString().Trim());
+                        result.AppendLine(mo["Model"].ToString().Trim());
+                        break;
+                    }
+                    catch { }
                 }
-                catch { }
+                searcher = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystemProduct");
+                foreach (ManagementObject mo in searcher.Get())
+                {
+                    try
+                    {
+                        result.AppendLine(mo["Version"].ToString().Trim());
+                    }
+                    catch { }
+                }
             }
-            searcher = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystemProduct");
-            foreach (ManagementObject mo in searcher.Get())
+            catch (Exception e)
             {
-                try
-                {
-                    result.AppendLine(mo["Version"].ToString().Trim());
-                }
-                catch { }
+                result.AppendLine(e.ToString());
             }
 
             result.AppendLine();
