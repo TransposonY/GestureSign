@@ -64,19 +64,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             bool isChecked = (sender as CheckBox).IsChecked.Value;
             foreach (IgnoredApp ia in this.lstIgnoredApplications.Items)
                 ia.IsEnabled = isChecked;
-        }
-
-        private void IgnoredAppCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            (ApplicationManager.Instance.Applications.Find(app => app.Name == ((CheckBox)sender).Tag as string)
-                as IgnoredApp).IsEnabled = true;
             ApplicationManager.Instance.SaveApplications();
         }
 
-        private void IgnoredAppCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void IgnoredAppCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            (ApplicationManager.Instance.Applications.Find(app => app.Name == ((CheckBox)sender).Tag as string)
-                as IgnoredApp).IsEnabled = false;
             ApplicationManager.Instance.SaveApplications();
         }
 

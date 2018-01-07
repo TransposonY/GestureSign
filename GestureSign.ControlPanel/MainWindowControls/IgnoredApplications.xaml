@@ -95,10 +95,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding Path=IsEnabled}"
-                                          IsThreeState="False"
-                                          Checked="IgnoredAppCheckBox_Checked"
-                                          Unchecked="IgnoredAppCheckBox_Unchecked"
-                                          Tag="{Binding Name}" />
+                                          Click="IgnoredAppCheckBox_Click" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
