@@ -1,11 +1,11 @@
-﻿using System;
+﻿using GestureSign.Common.Log;
+using ManagedWinapi.Hooks;
+using System;
 using System.Configuration;
 using System.Globalization;
-using System.Threading;
 using System.IO;
-using GestureSign.Common.InterProcessCommunication;
-using GestureSign.Common.Log;
-using ManagedWinapi.Hooks;
+using System.Threading;
+using Windows.Storage;
 
 namespace GestureSign.Common.Configuration
 {
@@ -265,7 +265,11 @@ namespace GestureSign.Common.Configuration
                     return defaultValue;
                 }
             }
-            else return defaultValue;
+#if ConvertedDesktopApp
+            return GetRoamingSetting(key, defaultValue);
+#else
+            return defaultValue;
+#endif
         }
 
         private static DateTime GetValue(string key, DateTime defaultValue)
@@ -286,7 +290,7 @@ namespace GestureSign.Common.Configuration
             else return defaultValue;
         }
 
-        private static void SetValue(string key, object value)
+        private static void SetValue<T>(string key, T value)
         {
             if (_config.AppSettings.Settings[key] != null)
             {
@@ -297,6 +301,10 @@ namespace GestureSign.Common.Configuration
                 _config.AppSettings.Settings.Add(key, value.ToString());
             }
             Save();
+
+#if ConvertedDesktopApp
+            SetRoamingSetting(key, value);
+#endif
         }
 
         private static void SetValue(string key, System.Drawing.Color value)
@@ -308,5 +316,41 @@ namespace GestureSign.Common.Configuration
         {
             SetValue(key, value.ToString(CultureInfo.InvariantCulture));
         }
+
+#if ConvertedDesktopApp
+        private static bool SetRoamingSetting<T>(string key, T value)
+        {
+            try
+            {
+                ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
+                roamingSettings.Values[key] = value;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logging.LogException(e);
+                return false;
+            }
+        }
+
+        private static T GetRoamingSetting<T>(string key, T defaultValue)
+        {
+            try
+            {
+                ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
+                var value = roamingSettings.Values[key];
+                if (value != null)
+                {
+                    return (T)value;
+                }
+                return defaultValue;
+            }
+            catch (Exception e)
+            {
+                Logging.LogException(e);
+                return defaultValue;
+            }
+        }
+#endif
     }
 }
