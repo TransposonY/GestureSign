@@ -23,7 +23,7 @@ namespace GestureSign.Daemon.Triggers
                 {
                     MouseActions wheelAction = e.MouseData > 0 ? MouseActions.WheelForward : e.MouseData < 0 ? MouseActions.WheelBackward : MouseActions.None;
                     var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a.MouseHotkey == wheelAction);
-                    if (actions.Count != 0)
+                    if (actions != null && actions.Count != 0)
                     {
                         OnTriggerFired(new TriggerFiredEventArgs(actions, e.Point));
                         PointCapture.Instance.State = CaptureState.TriggerFired;
@@ -38,7 +38,7 @@ namespace GestureSign.Daemon.Triggers
                 if (PointCapture.Instance.State == CaptureState.CapturingInvalid || PointCapture.Instance.State == CaptureState.TriggerFired)
                 {
                     var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a.MouseHotkey == (MouseActions)evt.Button);
-                    if (actions.Count != 0)
+                    if (actions != null && actions.Count != 0)
                     {
                         handled = PointCapture.Instance.Mode != CaptureMode.UserDisabled;
                     }
@@ -51,7 +51,7 @@ namespace GestureSign.Daemon.Triggers
                 if (PointCapture.Instance.State == CaptureState.CapturingInvalid || PointCapture.Instance.State == CaptureState.TriggerFired)
                 {
                     var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a.MouseHotkey == (MouseActions)e.Button);
-                    if (actions.Count != 0)
+                    if (actions != null && actions.Count != 0)
                     {
                         OnTriggerFired(new TriggerFiredEventArgs(actions, e.Point));
                         PointCapture.Instance.State = CaptureState.TriggerFired;
