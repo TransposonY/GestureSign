@@ -123,12 +123,18 @@ namespace GestureSign.ControlPanel.UserControls
 
         private void AppFilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(AppListBox.ItemsSource).Refresh();
+            if (AppListBox == null) return;
+            var view = CollectionViewSource.GetDefaultView(AppListBox.ItemsSource);
+            if (view == null) return;
+            view.Refresh();
         }
 
         private void ActionFilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(ActionListBox.ItemsSource).Refresh();
+            if (ActionListBox == null) return;
+            var view = CollectionViewSource.GetDefaultView(ActionListBox.ItemsSource);
+            if (view == null) return;
+            view.Refresh();
         }
 
         private void AppCollectionViewSource_Filter(object sender, FilterEventArgs e)
