@@ -244,46 +244,88 @@ namespace GestureSign.Common.Configuration
             ConfigChanged?.Invoke(new object(), EventArgs.Empty);
         }
 
-        private static object GetValue(string key, object defaultValue)
+        private static T GetValue<T>(string key, T defaultValue, Func<string, T> converter)
         {
             var setting = _config.AppSettings.Settings[key];
             if (setting != null)
             {
                 try
                 {
-                    string strReturn = setting.Value;
-                    if (defaultValue.GetType() == typeof(System.Drawing.Color)) return System.Drawing.ColorTranslator.FromHtml(strReturn);
-                    else if (defaultValue is int) return int.Parse(strReturn);
-                    else if (defaultValue is double) return double.Parse(strReturn);
-                    else if (defaultValue is bool) return bool.Parse(strReturn);
-                    //return string
-                    else return strReturn;
+                    return converter(setting.Value);
                 }
                 catch
                 {
-                    SetValue(key, defaultValue);
+                    _config.AppSettings.Settings.Remove(key);
                     return defaultValue;
                 }
             }
 #if ConvertedDesktopApp
-            return GetRoamingSetting(key, defaultValue);
-#else
-            return defaultValue;
+            var roamingSetting = GetRoamingSetting(key);
+            if (roamingSetting != null)
+            {
+                try
+                {
+                    return (T)roamingSetting;
+                }
+                catch
+                {
+                    return defaultValue;
+                }
+            }
 #endif
+            return defaultValue;
+        }
+
+        private static int GetValue(string key, int defaultValue)
+        {
+            return GetValue(key, defaultValue, s => int.Parse(s));
+        }
+
+        private static double GetValue(string key, double defaultValue)
+        {
+            return GetValue(key, defaultValue, s => double.Parse(s));
+        }
+
+        private static bool GetValue(string key, bool defaultValue)
+        {
+            return GetValue(key, defaultValue, s => bool.Parse(s));
+        }
+
+        private static string GetValue(string key, string defaultValue)
+        {
+            return GetValue(key, defaultValue, s => s);
         }
 
         private static DateTime GetValue(string key, DateTime defaultValue)
         {
-            var setting = _config.AppSettings.Settings[key];
-            if (setting != null)
+            string setting = GetValue(key, string.Empty);
+            if (!string.IsNullOrEmpty(setting))
             {
                 try
                 {
-                    return DateTime.Parse(setting.Value);
+                    return DateTime.Parse(setting);
                 }
                 catch
                 {
-                    SetValue(key, defaultValue);
+                    _config.AppSettings.Settings.Remove(key);
+                    return defaultValue;
+                }
+            }
+            else return defaultValue;
+        }
+
+        private static System.Drawing.Color GetValue(string key, System.Drawing.Color defaultValue)
+        {
+            string setting = GetValue(key, string.Empty);
+            if (!string.IsNullOrEmpty(setting))
+            {
+                try
+                {
+                    return System.Drawing.ColorTranslator.FromHtml(setting);
+                }
+                catch
+                {
+                    _config.AppSettings.Settings.Remove(key);
                     return defaultValue;
                 }
             }
@@ -333,22 +375,17 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        private static T GetRoamingSetting<T>(string key, T defaultValue)
+        private static object GetRoamingSetting(string key)
         {
             try
             {
                 ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
-                var value = roamingSettings.Values[key];
-                if (value != null)
-                {
-                    return (T)value;
-                }
-                return defaultValue;
+                return roamingSettings.Values[key];
             }
             catch (Exception e)
             {
                 Logging.LogException(e);
-                return defaultValue;
+                return null;
             }
         }
 #endif
