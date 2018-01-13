@@ -14,8 +14,7 @@ namespace GestureSign.TouchInputProvider
         private bool _xAxisDirection;
         private bool _yAxisDirection;
         private bool _isAxisCorresponds;
-        private int _screenHeight;
-        private int _screenWidth;
+        private Screen _currentScr;
 
         private List<RawData> _outputTouchs = new List<RawData>(1);
         private int _requiringContactCount;
@@ -219,9 +218,11 @@ namespace GestureSign.TouchInputProvider
                 {
                     if (_sourceDevice == Devices.None)
                     {
+                        _currentScr = Screen.FromPoint(Cursor.Position);
+                        if (_currentScr == null)
+                            return;
                         _sourceDevice = Devices.TouchScreen;
                         GetCurrentScreenOrientation();
-                        GetScreenSize();
                     }
                     else if (_sourceDevice != Devices.TouchScreen)
                         return;
@@ -271,18 +272,18 @@ namespace GestureSign.TouchInputProvider
                                 int x, y;
                                 if (_isAxisCorresponds)
                                 {
-                                    x = physicalX * _screenWidth / _physicalMax.X;
-                                    y = physicalY * _screenHeight / _physicalMax.Y;
+                                    x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
+                                    y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
                                 }
                                 else
                                 {
-                                    x = physicalY * _screenWidth / _physicalMax.Y;
-                                    y = physicalX * _screenHeight / _physicalMax.X;
+                                    x = physicalY * _currentScr.Bounds.Width / _physicalMax.Y;
+                                    y = physicalX * _currentScr.Bounds.Height / _physicalMax.X;
                                 }
-                                x = _xAxisDirection ? x : _screenWidth - x;
-                                y = _yAxisDirection ? y : _screenHeight - y;
+                                x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
+                                y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
                                 bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x, y)));
+                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
                             }
@@ -294,8 +295,10 @@ namespace GestureSign.TouchInputProvider
                 {
                     if (_sourceDevice == Devices.None)
                     {
+                        _currentScr = Screen.FromPoint(Cursor.Position);
+                        if (_currentScr == null)
+                            return;
                         _sourceDevice = Devices.TouchPad;
-                        GetScreenSize();
                     }
                     else if (_sourceDevice != Devices.TouchPad)
                         return;
@@ -346,11 +349,11 @@ namespace GestureSign.TouchInputProvider
                                 HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
 
                                 int x, y;
-                                x = physicalX * _screenWidth / _physicalMax.X;
-                                y = physicalY * _screenHeight / _physicalMax.Y;
+                                x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
+                                y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
 
                                 bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x, y)));
+                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
                             }
@@ -399,16 +402,6 @@ namespace GestureSign.TouchInputProvider
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void GetScreenSize()
-        {
-            var screen = Screen.FromPoint(Cursor.Position);
-            if (screen != null)
-            {
-                _screenHeight = screen.Bounds.Height;
-                _screenWidth = screen.Bounds.Width;
             }
         }
 
