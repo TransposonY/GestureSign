@@ -148,7 +148,10 @@ namespace GestureSign.ControlPanel
         private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Logging.LogException(e.Exception);
-            MessageBox.Show(e.Exception.Message + Environment.NewLine + Environment.NewLine + GestureSign.Common.Localization.LocalizationProvider.Instance.GetTextValue("Messages.UnexpectedException"), "Error",
+            Exception exception = e.Exception;
+            while (exception.InnerException != null)
+                exception = exception.InnerException;
+            MessageBox.Show(exception + Environment.NewLine + Environment.NewLine + GestureSign.Common.Localization.LocalizationProvider.Instance.GetTextValue("Messages.UnexpectedException"), "Error",
                 MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
 
             e.Handled = true;
