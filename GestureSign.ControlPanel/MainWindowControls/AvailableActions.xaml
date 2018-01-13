@@ -504,6 +504,18 @@
                 Click="btnAddAction_Click"
                 Grid.Row="2"
                 Grid.Column="1">
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem  x:Name="NewCommandMenuItem"
+                               Header="{localization:LocalisedText Action.NewCommand}"
+                               FontSize="16"
+                               Click="NewCommandMenuItem_Click" />
+                    <MenuItem  x:Name="FromSelectedMenuItem"
+                               Header="{localization:LocalisedText Action.FromSelected}"
+                               FontSize="16"
+                               Click="FromSelectedMenuItem_Click" />
+                </ContextMenu>
+            </Button.ContextMenu>
             <Rectangle Width="20"
                        Height="20">
                 <Rectangle.Fill>

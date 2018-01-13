@@ -100,7 +100,7 @@
     <ActionName>动作名称</ActionName>
     <ActionNameWatermark>请输入动作名称</ActionNameWatermark>
     <ApplicationFileNameAndTitle>程序文件名及标题</ApplicationFileNameAndTitle>
-    <EditActionTitle>编辑动作</EditActionTitle>
+    <EditActionTitle>动作设置</EditActionTitle>
     <Icon>图标</Icon>
     <ActivateWindow>激活目标窗口</ActivateWindow>
     <Advanced>高级</Advanced>
@@ -136,6 +136,7 @@
     <Header>动作</Header>
     <NewAction>新动作</NewAction>
     <NewCommand>新命令</NewCommand>
+    <FromSelected>用当前手势创建新命令</FromSelected>
     <ApplicationFile>GestureSign程序文件</ApplicationFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} ({1}程序)</AppCount>

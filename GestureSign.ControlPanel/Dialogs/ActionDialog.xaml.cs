@@ -42,7 +42,7 @@ namespace GestureSign.ControlPanel.Dialogs
         }
 
         public static readonly DependencyProperty CurrentGestureProperty =
-            DependencyProperty.Register(nameof(CurrentGesture), typeof(IGesture), typeof(ActionDialog), new FrameworkPropertyMetadata(new Gesture(), new PropertyChangedCallback(OnCurrentGestureChanged)));
+            DependencyProperty.Register(nameof(CurrentGesture), typeof(IGesture), typeof(ActionDialog), new PropertyMetadata(new Gesture()));
 
         #endregion
 
@@ -70,7 +70,30 @@ namespace GestureSign.ControlPanel.Dialogs
             if (AppConfig.DrawingButton == MouseActions.None)
                 MouseHotKeyTextBlock.Text += LocalizationProvider.Instance.GetTextValue("ActionDialog.MouseGestureNotEnabled");
 
-            SetValue(_sourceAction);
+            if (_sourceAction != null)
+            {
+                ActionNameTextBox.Text = _sourceAction.Name;
+                ConditionTextBox.Text = _sourceAction.Condition;
+                MouseActionComboBox.SelectedValue = _sourceAction.MouseHotkey;
+                ActivateWindowCheckBox.IsChecked = _sourceAction.ActivateWindow;
+
+                if (_sourceAction.ContinuousGesture != null)
+                {
+                    ContinuousGestureSwitch.IsChecked = true;
+                    ContactCountSlider.Value = _sourceAction.ContinuousGesture.ContactCount;
+                    GestureListBox.SelectedIndex = (int)Math.Log((int)_sourceAction.ContinuousGesture.Gesture, 2);
+                }
+                else
+                    ContinuousGestureSwitch.IsChecked = false;
+
+                var gesture = GestureManager.Instance.GetNewestGestureSample(_sourceAction.GestureName);
+                if (gesture != null)
+                    CurrentGesture = gesture;
+
+                var hotkey = _sourceAction.Hotkey;
+                if (hotkey != null)
+                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
+            }
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -98,18 +121,6 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
-        private static void OnCurrentGestureChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.NewValue == null)
-                return;
-            var actionDialog = (ActionDialog)sender;
-            var existingAction = actionDialog._sourceApplication.Actions.FirstOrDefault(a => a.GestureName == ((IGesture)e.NewValue).Name);
-            if (existingAction != null)
-            {
-                actionDialog.SetValue(existingAction);
-            }
-        }
-
         private void ContactCountSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateContinuousGestureText();
@@ -124,34 +135,6 @@ namespace GestureSign.ControlPanel.Dialogs
         #endregion
 
         #region Private Methods
-
-        private void SetValue(IAction action)
-        {
-            if (action != null)
-            {
-                ActionNameTextBox.Text = action.Name;
-                ConditionTextBox.Text = action.Condition;
-                MouseActionComboBox.SelectedValue = action.MouseHotkey;
-                ActivateWindowCheckBox.IsChecked = action.ActivateWindow;
-
-                if (action.ContinuousGesture != null)
-                {
-                    ContinuousGestureSwitch.IsChecked = true;
-                    ContactCountSlider.Value = action.ContinuousGesture.ContactCount;
-                    GestureListBox.SelectedIndex = (int)Math.Log((int)action.ContinuousGesture.Gesture, 2);
-                }
-                else
-                    ContinuousGestureSwitch.IsChecked = false;
-
-                var gesture = GestureManager.Instance.GetNewestGestureSample(action.GestureName);
-                if (gesture != null)
-                    CurrentGesture = gesture;
-
-                var hotkey = action.Hotkey;
-                if (hotkey != null)
-                    HotKeyTextBox.HotKey = new HotKey(KeyInterop.KeyFromVirtualKey(hotkey.KeyCode), (ModifierKeys)hotkey.ModifierKeys);
-            }
-        }
 
         private bool ShowErrorMessage(string title, string message)
         {
@@ -175,8 +158,8 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 return ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ActionDialog.Messages.ConditionError"), exception.Message);
             }
-            // Move command to existing action
-            var sameAction = _sourceApplication.Actions.FirstOrDefault(a => a.GestureName == CurrentGesture?.Name);
+
+            var sameAction = _sourceApplication.Actions.FirstOrDefault(a => a == _sourceAction);
             if (sameAction != null)
                 NewAction = sameAction;
             else

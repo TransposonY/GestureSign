@@ -93,7 +93,7 @@ Email:ccfyzh@gmail.com
     </Messages>
   </ApplicationDialog>
   <ActionDialog>
-    <EditActionTitle>Edit Action</EditActionTitle>
+    <EditActionTitle>Action Setting</EditActionTitle>
     <ActionName>Action Name</ActionName>
     <ActionNameWatermark>Please enter action name</ActionNameWatermark>
     <ApplicationFileNameAndTitle>File Name And Title</ApplicationFileNameAndTitle>
@@ -132,6 +132,7 @@ Email:ccfyzh@gmail.com
     <Header>Action</Header>
     <NewAction>New Action</NewAction>
     <NewCommand>New Command</NewCommand>
+    <FromSelected>New Command From Selected</FromSelected>
     <ApplicationFile>GestureSign Applications</ApplicationFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
@@ -146,7 +147,7 @@ Email:ccfyzh@gmail.com
     <Left>Swipe Left</Left>
     <Up>Swipe Up</Up>
     <Down>Swipe Down</Down>
-    <Fingers>{0} Fingers</Fingers>
+    <Fingers>{0} Fingers </Fingers>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteCommandConfirm>Are you sure you want to delete these {0} Commands?</DeleteCommandConfirm>

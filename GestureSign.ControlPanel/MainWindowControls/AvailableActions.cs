@@ -146,28 +146,67 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (selectedApplication == null) return;
             }
             var ci = lstAvailableActions.SelectedItem as CommandInfo;
+            if (ci == null)
+            {
+                var newCommand = new Command
+                {
+                    Name = LocalizationProvider.Instance.GetTextValue("Action.NewCommand")
+                };
+                Dispatcher.Invoke(() =>
+                {
+                    lstAvailableActions.SelectedItem = null;
+                    var newAction = new GestureSign.Common.Applications.Action();
+                    newAction.AddCommand(newCommand);
+                    selectedApplication.AddAction(newAction);
+                    ApplicationManager.Instance.SaveApplications();
+                }, DispatcherPriority.Input);
+            }
+            else
+            {
+                var element = (FrameworkElement)sender;
+                element.ContextMenu.PlacementTarget = element;
+                element.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Top;
+                element.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void NewCommandMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApplication == null)
+            {
+                lstAvailableApplication.SelectedIndex = 0;
+                selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+                if (selectedApplication == null) return;
+            }
 
             var newCommand = new Command
             {
                 Name = LocalizationProvider.Instance.GetTextValue("Action.NewCommand")
             };
-
             Dispatcher.Invoke(() =>
             {
                 lstAvailableActions.SelectedItem = null;
-                if (ci == null)
-                {
-                    var newAction = new GestureSign.Common.Applications.Action();
-                    newAction.AddCommand(newCommand);
-                    selectedApplication.AddAction(newAction);
-                }
-                else
-                {
-                    int commandIndex = ci.Action.Commands.ToList().IndexOf(ci.Command);
-                    ci.Action.InsertCommand(commandIndex + 1, newCommand);
-                }
+                var newAction = new GestureSign.Common.Applications.Action();
+                newAction.AddCommand(newCommand);
+                selectedApplication.AddAction(newAction);
                 ApplicationManager.Instance.SaveApplications();
             }, DispatcherPriority.Input);
+        }
+
+        private void FromSelectedMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ci = lstAvailableActions.SelectedItem as CommandInfo;
+            if (ci == null) return;
+
+            var newCommand = new Command
+            {
+                Name = LocalizationProvider.Instance.GetTextValue("Action.NewCommand")
+            };
+            lstAvailableActions.SelectedItem = null;
+            int commandIndex = ci.Action.Commands.ToList().IndexOf(ci.Command);
+            ci.Action.InsertCommand(commandIndex + 1, newCommand);
+            ApplicationManager.Instance.SaveApplications();
         }
 
         private void SelectApp(IApplication app)
@@ -212,20 +251,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var collectionViewGroup = groupItem.Content as CollectionViewGroup;
             if (collectionViewGroup == null) return;
 
-            foreach (CommandInfo info in lstAvailableActions.SelectedItems)
+            lstAvailableActions.SelectedItems.Clear();
+            foreach (CommandInfo item in collectionViewGroup.Items)
             {
-                if (collectionViewGroup.Items.Contains(info))
-                    infoList.Add(info);
-            }
-
-            if (infoList.Count == 0)
-            {
-                lstAvailableActions.SelectedItems.Clear();
-                foreach (CommandInfo item in collectionViewGroup.Items)
-                {
-                    lstAvailableActions.SelectedItems.Add(item);
-                    infoList.Add(item);
-                }
+                lstAvailableActions.SelectedItems.Add(item);
+                infoList.Add(item);
             }
 
             var sourceAction = infoList.First().Action;
