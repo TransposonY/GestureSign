@@ -112,7 +112,13 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void ContactCountSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ContactCountText.Text = string.Format(LocalizationProvider.Instance.GetTextValue("Action.Fingers"), (int)e.NewValue);
+            UpdateContinuousGestureText();
+        }
+
+        private void GestureListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+                UpdateContinuousGestureText();
         }
 
         #endregion
@@ -132,7 +138,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     ContinuousGestureSwitch.IsChecked = true;
                     ContactCountSlider.Value = action.ContinuousGesture.ContactCount;
-                    GestureComboBox.SelectedValue = action.ContinuousGesture.Gesture;
+                    GestureListBox.SelectedIndex = (int)Math.Log((int)action.ContinuousGesture.Gesture, 2);
                 }
                 else
                     ContinuousGestureSwitch.IsChecked = false;
@@ -190,7 +196,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 }
                 : null;
             int contactCount = (int)ContactCountSlider.Value;
-            NewAction.ContinuousGesture = ContinuousGestureSwitch.IsChecked.GetValueOrDefault() && contactCount > 1 && (int)GestureComboBox.SelectedValue > 0 ? new ContinuousGesture(contactCount, (Gestures)(GestureComboBox.SelectedValue ?? 0)) : null;
+            NewAction.ContinuousGesture = ContinuousGestureSwitch.IsChecked.GetValueOrDefault() && contactCount > 1 && GestureListBox.SelectedIndex >= 0 ? new ContinuousGesture(contactCount, (Gestures)(1 << GestureListBox.SelectedIndex)) : null;
 
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
@@ -214,6 +220,31 @@ namespace GestureSign.ControlPanel.Dialogs
             GestureManager.Instance.SaveGestures();
 
             return true;
+        }
+
+        private void UpdateContinuousGestureText()
+        {
+            if (GestureListBox == null || ContactCountSlider == null || ContinuousGestureText == null) return;
+            string direction;
+            switch ((Gestures)(1 << GestureListBox.SelectedIndex))
+            {
+                case Gestures.Left:
+                    direction = LocalizationProvider.Instance.GetTextValue("Action.Left");
+                    break;
+                case Gestures.Right:
+                    direction = LocalizationProvider.Instance.GetTextValue("Action.Right");
+                    break;
+                case Gestures.Up:
+                    direction = LocalizationProvider.Instance.GetTextValue("Action.Up");
+                    break;
+                case Gestures.Down:
+                    direction = LocalizationProvider.Instance.GetTextValue("Action.Down");
+                    break;
+                default:
+                    direction = null;
+                    break;
+            }
+            ContinuousGestureText.Text = string.Format(LocalizationProvider.Instance.GetTextValue("Action.Fingers"), (int)ContactCountSlider.Value) + direction;
         }
 
         #endregion

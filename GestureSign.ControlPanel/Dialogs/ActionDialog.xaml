@@ -27,8 +27,6 @@
             <converters:GestureImageConverter x:Key="GestureImageConverter" />
             <ObjectDataProvider x:Key="MouseActionDescription"
                                 ObjectType="{x:Type viewModel:MouseActionDescription}" />
-            <ObjectDataProvider x:Key="ContinuousGestureDesc"
-                                ObjectType="{x:Type viewModel:ContinuousGestureDesc}" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
@@ -62,12 +60,10 @@
                                            OffLabel="{localization:LocalisedText Options.OffLabel}"
                                            OnLabel="{localization:LocalisedText Options.OnLabel}"
                                            HorizontalAlignment="Left" />
-                    <TextBlock x:Name="ContactCountText"
+                    <TextBlock x:Name="ContinuousGestureText"
                                Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
                                HorizontalAlignment="Center"
-                               TextWrapping="Wrap"
-                               FontSize="14"
-                               Text="{localization:LocalisedText Options.Opacity}" />
+                               FontSize="14" />
                     <Slider x:Name="ContactCountSlider"
                             Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
                             common:SliderTools.MoveToPointOnDrag="True"
@@ -79,14 +75,54 @@
                             Width="310"
                             SmallChange="1"
                             IsSnapToTickEnabled="True" />
-                    <ComboBox x:Name="GestureComboBox"
-                              Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                              ItemsSource="{Binding Source={StaticResource ContinuousGestureDesc},Path=Gesture}"
-                              DisplayMemberPath="Value"
-                              SelectedValuePath="Key"
-                              FontSize="14"
-                              Margin="20,10,20,0"
-                              SelectedIndex="0" />
+                    <ListBox x:Name="GestureListBox"
+                             Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
+                             Margin="20,10,20,0"
+                             SelectedIndex="0"
+                             SelectionChanged="GestureListBox_SelectionChanged">
+                        <ListBox.Resources>
+                            <Style x:Key="DirectionPathStyle"
+                                   TargetType="Path">
+                                <Setter Property="Data"
+                                        Value="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+                                <Setter Property="Fill"
+                                        Value="Black" />
+                                <Setter Property="Stretch"
+                                        Value="Uniform" />
+                                <Setter Property="Margin"
+                                        Value="20,10" />
+                                <Setter Property="Width"
+                                        Value="26" />
+                                <Setter Property="Height"
+                                        Value="26" />
+                            </Style>
+                        </ListBox.Resources>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <Path Style="{StaticResource DirectionPathStyle}"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="270" />
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Style="{StaticResource DirectionPathStyle}"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="90" />
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Style="{StaticResource DirectionPathStyle}">
+                        </Path>
+                        <Path Style="{StaticResource DirectionPathStyle}"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="180" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </ListBox>
                 </StackPanel>
             </TabItem>
             <TabItem Header="{localization:LocalisedText ActionDialog.Triggers}"

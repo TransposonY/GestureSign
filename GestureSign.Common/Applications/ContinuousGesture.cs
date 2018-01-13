@@ -26,7 +26,7 @@ namespace GestureSign.Common.Applications
         Left = (1 << 0),
         Right = (1 << 1),
         Up = (1 << 2),
-        Down = (1 << 4),
+        Down = (1 << 3),
         Horizontal = (Left | Right),
         Vertical = (Up | Down),
         All = (Horizontal | Vertical)
