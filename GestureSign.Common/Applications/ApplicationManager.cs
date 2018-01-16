@@ -96,6 +96,11 @@ namespace GestureSign.Common.Applications
 
             foreach (IApplication app in _recognizedApplication)
             {
+                if (app is GlobalApp && AppConfig.IgnoreFullScreen && IsFullScreenWindow(CaptureWindow))
+                {
+                    e.Cancel = true;
+                    return;
+                }
                 var userApplication = app as UserApp;
                 if (userApplication != null)
                 {
@@ -583,6 +588,35 @@ namespace GestureSign.Common.Applications
                 newActions.Add(newAction);
             }
             return newActions;
+        }
+
+        private bool IsFullScreenWindow(SystemWindow window)
+        {
+            var deskWindow = SystemWindow.DesktopWindow;
+
+            if (window.HWnd == IntPtr.Zero || window == deskWindow || window == SystemWindow.ShellWindow)
+                return false;
+
+            var desktopRect = deskWindow.Rectangle;
+            var windowRect = window.Rectangle;
+
+            if (windowRect.Left == 0 && windowRect.Top == 0 && windowRect.Right == desktopRect.Right && windowRect.Bottom == desktopRect.Bottom)
+            {
+                switch (window.ClassName)
+                {
+                    case "Windows.UI.Core.CoreWindow":
+                    case "ApplicationFrameWindow":
+                    case "WorkerW":
+                    case "Progman":
+                    case "CanvasWindow":
+                    case "ImmersiveLauncher":
+                        return false;
+                    default:
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion

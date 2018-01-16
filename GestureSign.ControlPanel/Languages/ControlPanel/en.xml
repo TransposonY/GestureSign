@@ -237,6 +237,9 @@ Email:ccfyzh@gmail.com
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>
+    <IgnoreFullScreen>
+      <Header>Ignore Full Screen Window</Header>
+    </IgnoreFullScreen>
     <ShowTrayIconSwitch>
       <Header>Show Tray Icon</Header>
       <OnLabel>Show</OnLabel>

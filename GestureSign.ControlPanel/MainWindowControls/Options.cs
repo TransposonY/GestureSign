@@ -49,6 +49,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
+                IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
                 if (AppConfig.DrawingButton != MouseActions.None)
                 {
                     MouseSwitch.IsChecked = true;
@@ -324,6 +325,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.RegisterTouchPad = TouchPadSwitch.IsChecked != null && TouchPadSwitch.IsChecked.Value;
+        }
+
+        private void IgnoreFullScreenSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.IgnoreFullScreen = IgnoreFullScreenSwitch.IsChecked.GetValueOrDefault();
         }
 
         private void InitialTimeoutSwitch_Click(object sender, RoutedEventArgs e)

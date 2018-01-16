@@ -241,6 +241,9 @@
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>
+    <IgnoreFullScreen>
+      <Header>全屏下关闭手势识别</Header>
+    </IgnoreFullScreen>
     <ShowTrayIconSwitch>
       <Header>任务栏图标</Header>
       <OnLabel>显示</OnLabel>

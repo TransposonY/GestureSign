@@ -195,6 +195,15 @@
                                    Click="StartupSwitch_OnClick"
                                    Width="300"
                                    FontWeight="Bold" />
+            <controls:ToggleSwitch x:Name="IgnoreFullScreenSwitch"
+                                   Header="{localization:LocalisedText Options.IgnoreFullScreen.Header}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Margin="0,10,0,0"
+                                   FontSize="14"
+                                   Click="IgnoreFullScreenSwitch_Click"
+                                   Width="300"
+                                   FontWeight="Bold" />
             <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"
                                    Header="{localization:LocalisedText Options.ShowTrayIconSwitch.Header}"
                                    OnLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OnLabel}"

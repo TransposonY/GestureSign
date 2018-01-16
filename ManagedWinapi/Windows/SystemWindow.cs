@@ -327,6 +327,19 @@ namespace ManagedWinapi.Windows
         }
 
         /// <summary>
+        /// Retrieves a handle to the Shell's desktop window.
+        /// Go to https://msdn.microsoft.com/en-us/library/windows/desktop/ms633512%28v=vs.85%29.aspx for more
+        /// information
+        /// </summary>
+        public static SystemWindow ShellWindow
+        {
+            get
+            {
+                return new SystemWindow(GetShellWindow());
+            }
+        }
+
+        /// <summary>
         /// Returns all available toplevel windows.
         /// </summary>
         public static SystemWindow[] AllToplevelWindows
@@ -1512,6 +1525,9 @@ namespace ManagedWinapi.Windows
 
         [DllImport("user32.dll", SetLastError = false)]
         static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetShellWindow();
 
         [DllImport("user32.dll")]
         static extern IntPtr GetDC(IntPtr hWnd);

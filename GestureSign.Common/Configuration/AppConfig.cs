@@ -177,6 +177,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool IgnoreFullScreen
+        {
+            get
+            {
+                return GetValue(nameof(IgnoreFullScreen), true);
+            }
+            set
+            {
+                SetValue(nameof(IgnoreFullScreen), value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess
