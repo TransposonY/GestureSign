@@ -273,7 +273,7 @@ namespace GestureSign.Common.Applications
 
         public IApplication[] GetApplicationFromWindow(SystemWindow Window, bool userApplicationOnly = false)
         {
-            if (Applications == null)
+            if (Applications == null || Window == null)
             {
                 return new[] { GetGlobalApplication() };
             }
@@ -305,7 +305,7 @@ namespace GestureSign.Common.Applications
             {
                 return null;
             }
-            var recognizedActions = _recognizedApplication.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions).Where(a => predicate(a)).ToList();
+            var recognizedActions = _recognizedApplication.Where(app => !(app is IgnoredApp) && app.Actions != null).SelectMany(app => app.Actions).Where(a => predicate(a)).ToList();
             // If there is was no action found on given application, try to get an action for global application
             if (recognizedActions.Count == 0)
                 recognizedActions = GetGlobalApplication().Actions.Where(a => predicate(a)).ToList();
@@ -321,7 +321,7 @@ namespace GestureSign.Common.Applications
             }
             // Attempt to retrieve an action on the application passed in
             IEnumerable<IAction> finalAction =
-                application.Where(app => !(app is IgnoredApp)).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName && a.Commands != null && a.Commands.Any(com => com != null && com.IsEnabled)));
+                application.Where(app => !(app is IgnoredApp) && app.Actions != null).SelectMany(app => app.Actions.Where(a => a.GestureName == gestureName && a.Commands != null && a.Commands.Any(com => com != null && com.IsEnabled)));
             // If there is was no action found on given application, try to get an action for global application
             if (!finalAction.Any() && useGlobal)
                 finalAction = GetGlobalApplication().Actions.Where(a => a.GestureName == gestureName);
@@ -594,7 +594,7 @@ namespace GestureSign.Common.Applications
         {
             var deskWindow = SystemWindow.DesktopWindow;
 
-            if (window.HWnd == IntPtr.Zero || window == deskWindow || window == SystemWindow.ShellWindow)
+            if (window == null || window.HWnd == IntPtr.Zero || window == deskWindow || window == SystemWindow.ShellWindow)
                 return false;
 
             var desktopRect = deskWindow.Rectangle;
