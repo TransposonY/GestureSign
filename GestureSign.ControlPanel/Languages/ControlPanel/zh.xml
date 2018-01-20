@@ -237,7 +237,7 @@
     <DrawingButton>鼠标手势键：</DrawingButton>
     <TouchPad>触摸板</TouchPad>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
-    <InitialTimeout>手势起始超时 (秒)</InitialTimeout>
+    <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>

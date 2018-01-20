@@ -7,9 +7,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
@@ -61,7 +59,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (AppConfig.InitialTimeout > 0)
                 {
                     InitialTimeoutSwitch.IsChecked = true;
-                    InitialTimeoutTextBox.Text = (AppConfig.InitialTimeout / 1000f).ToString();
+                    InitialTimeoutSlider.Value = AppConfig.InitialTimeout / 1000f;
                 }
             }
             catch (Exception)
@@ -336,62 +334,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (InitialTimeoutSwitch.IsChecked.GetValueOrDefault())
             {
-                InitialTimeoutTextBox.Text = "0.3";
+                InitialTimeoutSlider.Value = 0.3;
             }
             else
             {
-                InitialTimeoutTextBox.Text = "0";
+                InitialTimeoutSlider.Value = 0;
             }
         }
 
-        private void TimeoutTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void InitialTimeoutSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            const int min = 0;
-            const float max = 2f;
-            var textBox = sender as System.Windows.Controls.TextBox;
-            float num = 0;
-            if (textBox == null || float.TryParse(textBox.Text, out num))
-            {
-                if (num < min)
-                {
-                    num = min;
-                    if (textBox != null) textBox.Text = num.ToString();
-                }
-                else if (num > max)
-                {
-                    num = max;
-                    if (textBox != null) textBox.Text = num.ToString();
-                }
-                AppConfig.InitialTimeout = (int)(num * 1000);
-            }
-        }
-
-        private void TimeoutTextBox_OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            var txt = sender as System.Windows.Controls.TextBox;
-
-            if ((e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)
-            {
-                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.Decimal))
-                {
-                    e.Handled = true;
-                    return;
-                }
-                e.Handled = false;
-            }
-            else if (((e.Key >= Key.D0 && e.Key <= Key.D9) || e.Key == Key.OemPeriod) && e.KeyboardDevice.Modifiers != ModifierKeys.Shift)
-            {
-                if (txt != null && (txt.Text.Contains(".") && e.Key == Key.OemPeriod))
-                {
-                    e.Handled = true;
-                    return;
-                }
-                e.Handled = false;
-            }
-            else
-            {
-                e.Handled = true;
-            }
+            var newValue = (int)Math.Round(e.NewValue * 1000);
+            if (newValue == AppConfig.InitialTimeout) return;
+            AppConfig.InitialTimeout = newValue;
         }
     }
 }

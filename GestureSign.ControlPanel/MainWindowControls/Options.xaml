@@ -164,17 +164,16 @@
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Click="InitialTimeoutSwitch_Click" />
             <TextBlock HorizontalAlignment="Center"
-                       Text="{localization:LocalisedText Options.InitialTimeout}"
                        Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                       FontSize="14" />
-            <TextBox x:Name="InitialTimeoutTextBox"
-                     TextChanged="TimeoutTextBox_OnTextChanged"
-                     KeyDown="TimeoutTextBox_OnKeyDown"
-                     Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                     HorizontalAlignment="Center"
-                     Width="60"
-                     FontSize="14"
-                     Margin="0,5,0,0" />
+                       Text="{Binding ElementName=InitialTimeoutSlider, Path=Value, StringFormat={localization:LocalisedText Options.InitialTimeout}}"
+                       FontSize="14"
+                       Margin="0,5,0,0" />
+            <Slider x:Name="InitialTimeoutSlider"
+                    Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Maximum="2"
+                    TickFrequency="0.1"
+                    IsSnapToTickEnabled="True"
+                    ValueChanged="InitialTimeoutSlider_ValueChanged" />
             <controls:ToggleSwitch x:Name="StartupSwitch"
                                    Header="{localization:LocalisedText Options.WindowsStartup.Header}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
