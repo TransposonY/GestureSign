@@ -235,7 +235,7 @@
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
-    <TouchPad>触摸板</TouchPad>
+    <TouchPad>精密触控板手势</TouchPad>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <WindowsStartup>

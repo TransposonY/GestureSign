@@ -231,7 +231,7 @@ Email:ccfyzh@gmail.com
     <OffLabel>Off</OffLabel>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
-    <TouchPad>TouchPad</TouchPad>
+    <TouchPad>Precision Touchpad Gesture</TouchPad>
     <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Timeout after {0:F1} Second</InitialTimeout>
     <WindowsStartup>
