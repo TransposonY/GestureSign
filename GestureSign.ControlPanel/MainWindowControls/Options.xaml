@@ -119,15 +119,6 @@
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key"
                       DropDownClosed="LanguageComboBox_DropDownClosed" />
-
-            <Button x:Name="btnOpenApplicationData"
-                    Content="{localization:LocalisedText Options.OpenConfigFolder}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Margin="0,15,0,10"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Click="btnOpenApplicationData_Click" />
             <controls:ToggleSwitch x:Name="MouseSwitch"
                                    Header="{localization:LocalisedText Options.MouseGesture}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
@@ -208,6 +199,13 @@
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Checked="SendLogToggleSwitch_Checked"
                                    Unchecked="SendLogToggleSwitch_Unchecked" />
+            <Button x:Name="btnOpenApplicationData"
+                    Content="{localization:LocalisedText Options.OpenConfigFolder}"
+                    HorizontalAlignment="Center"
+                    Margin="0,15,0,10"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Click="btnOpenApplicationData_Click" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
