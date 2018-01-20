@@ -36,10 +36,10 @@ namespace GestureSign.Daemon.Triggers
 
         private void PointCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
         {
-            if (PointCapture.Instance.State != CaptureState.Capturing ||
-                e.Points.Count < 2 ||
-                ApplicationManager.Instance.RecognizedApplication == null ||
-                !ApplicationManager.Instance.RecognizedApplication.Any(app => !(app is IgnoredApp) && app.Actions != null && app.Actions.Any(a => a != null && a.ContinuousGesture != null)))
+            if (PointCapture.Instance.State != CaptureState.Capturing || e.Points.Count < 2)
+                return;
+            var actionsWithContinuousGesture = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a != null && a.ContinuousGesture != null);
+            if (actionsWithContinuousGesture == null || actionsWithContinuousGesture.Count == 0)
                 return;
             if (_lastPoints == null || _lastPoints.Count != e.FirstCapturedPoints.Count)
             {
