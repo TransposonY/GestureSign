@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Storage;
 
@@ -11,6 +12,12 @@ namespace GestureSign.Common.Configuration
 {
     public class AppConfig
     {
+        [DllImport("uxtheme", ExactSpelling = true)]
+        private extern static int IsThemeActive();
+
+        [DllImport("dwmapi.dll", PreserveSig = false)]
+        private static extern void DwmGetColorizationColor(out uint ColorizationColor, [MarshalAs(UnmanagedType.Bool)]out bool ColorizationOpaqueBlend);
+
         static System.Configuration.Configuration _config;
         static Timer Timer;
         public static event EventHandler ConfigChanged;
@@ -341,7 +348,13 @@ namespace GestureSign.Common.Configuration
                     return defaultValue;
                 }
             }
-            else return defaultValue;
+            else
+            {
+                System.Drawing.Color color;
+                if (GetWindowGlassColor(out color))
+                    return color;
+                return defaultValue;
+            }
         }
 
         private static void SetValue<T>(string key, T value)
@@ -401,5 +414,20 @@ namespace GestureSign.Common.Configuration
             }
         }
 #endif
+
+        private static bool GetWindowGlassColor(out System.Drawing.Color windowGlassColor)
+        {
+            if (Environment.OSVersion.Version.Major >= 6 && IsThemeActive() != 0)
+            {
+                uint num;
+                bool flag;
+                DwmGetColorizationColor(out num, out flag);
+                num = num | (flag ? 4278190080u : 0);
+                windowGlassColor = System.Drawing.Color.FromArgb(unchecked((int)num));
+                return true;
+            }
+            windowGlassColor = System.Drawing.Color.Empty;
+            return false;
+        }
     }
 }
