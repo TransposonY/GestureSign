@@ -1,6 +1,18 @@
 # Download
 
-## v5.4 (2017-07-22)
+## v6.0 (23-Jan-2018)
+
+- Precision Touchpad support
+- Continuous gesture support
+- Mouse X1 or X2 button actions
+- Initial drawing gesture timeout option
+- Ignore full-screen window option
+
+**Download**
+
+[GestureSignSetup-6.0.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v6.0/GestureSignSetup-6.0.0.0.zip)
+
+## v5.4 (22-Jul-2017)
 
 - Optimized double tab when Block Touch Input is enabled.
 - Improved compatibility.
@@ -9,7 +21,7 @@
 
 [GestureSignSetup-5.4.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.4/GestureSignSetup-5.4.0.0.zip)
 
-## v5.3 (2017-07-12)
+## v5.3 (12-Jul-2017)
 
 - Optimizing Block Touch Input experience.
 - Fixed bug that cannot be used by multiple users at the same time.
@@ -19,7 +31,7 @@
 
 [GestureSignSetup-5.3.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.3/GestureSignSetup-5.3.0.0.zip)
 
-## v5.2 (2017-06-27)
+## v5.2 (27-Jun-2017)
 
 - Icon for command.
 - Fixed incorrect recognition of window class.
@@ -30,7 +42,7 @@
 
 [GestureSignSetup-5.2.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.2/GestureSignSetup-5.2.0.0.zip)
 
-## v5.1 (2017-06-22)
+## v5.1 (22-Jun-2017)
 
 - Added "Open File or Website" command to open programs, files, folders and URLs and do not need to escape special characters.
 - Fixed touchkeyboard does not show properly when Block Touch Input is enabled.
@@ -40,7 +52,7 @@
 
 [GestureSignSetup-5.1.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.1/GestureSignSetup-5.1.0.0.zip)
 
-## v5.0 (2017-06-17)
+## v5.0 (17-Jun-2017)
 
 - You can download actions and ignored applications directly from the Internet
 - Support matching UWP programs by file name
@@ -54,7 +66,7 @@ Note: you may need to redefine system-wide hotkeys after upgrade to 5.0.
 
 [GestureSignSetup-5.0.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v5.0/GestureSignSetup-5.0.0.0.zip)
 
-## v4.2 (2017-04-18)
+## v4.2 (18-Apr-2017)
 
 - Fix crash when exiting
 - Refine Activate Window command
@@ -63,7 +75,7 @@ Note: you may need to redefine system-wide hotkeys after upgrade to 5.0.
 
 [GestureSignSetup-4.2.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v4.2/GestureSignSetup-4.2.0.0.zip)
 
-## v4.1 (2017-04-01)
+## v4.1 (1-Apr-2017)
 
 - Simplify the selection of gestures.
 - Add Activate Window option.
@@ -73,7 +85,7 @@ Note: you may need to redefine system-wide hotkeys after upgrade to 5.0.
 
 [GestureSignSetup-4.1.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v4.1/GestureSignSetup-4.1.0.0.zip)
 
-## v4.0 (2017-02-20)
+## v4.0 (20-Feb-2017)
 
 - Support mouse gesture.
 - Support system shortcut for gesture.
@@ -90,7 +102,7 @@ Note: you may need to redefine system-wide hotkeys after upgrade to 5.0.
 
 [GestureSignSetup-4.0.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v4.0/GestureSignSetup-4.0.0.0.zip)
 
-## v3.2 (2016-10-03)
+## v3.2 (3-Oct-2016)
 
 **Major changes**
 
@@ -104,7 +116,7 @@ In Windows 10 Anniversary Update, you can not use program to show the touch keyb
 
 [GestureSignSetup-3.2.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v3.2/GestureSignSetup-3.2.0.0.zip)
   
-## v3.1 (2016-09-02)
+## v3.1 (2-Sep-2016)
 
 **Major changes**
 
@@ -116,7 +128,7 @@ In Windows 10 Anniversary Update, you can not use program to show the touch keyb
 [GestureSignSetup-3.1.0.0.zip](https://github.com/TransposonY/GestureSign/files/450179/GestureSignSetup-3.1.0.0.zip)
   
   
-## v3.0 (2016-07-31)
+## v3.0 (31-Jul-2016)
 
 **Major changes**
 
@@ -129,7 +141,7 @@ In Windows 10 Anniversary Update, you can not use program to show the touch keyb
 
 [GestureSignSetup-3.0.0.0.exe](https://github.com/TransposonY/GestureSign/releases/download/v3.0/GestureSignSetup-3.0.0.0.exe)
   
-## v2.2 (2016-04-08)
+## v2.2 (8-Apr-2016)
 
 **Major changes(compare with 1.0)**
 - Multiple gestures support
@@ -144,7 +156,7 @@ In Windows 10 Anniversary Update, you can not use program to show the touch keyb
 
 [GestureSignSetup-2.2.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v2.2/GestureSignSetup-2.2.0.0-Portable.zip)
 
-## v1.0 (2016-03-20)
+## v1.0 (20-Mar-2016)
 **Major changes**
 - Add and edit application in a separate dialog.
 - Action clipboard.
