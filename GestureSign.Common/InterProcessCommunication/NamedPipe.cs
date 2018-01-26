@@ -65,7 +65,7 @@ namespace GestureSign.Common.InterProcessCommunication
         public void RunPersistentPipeConnection(string pipeName, IMessageProcessor messageProcessor)
         {
             string userPipeName = GetUserPipeName(pipeName);
-            _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
 
             AsyncCallback ac = null;
             ac = o =>
@@ -80,7 +80,7 @@ namespace GestureSign.Common.InterProcessCommunication
                 }
 
                 server.Dispose();
-                server = new NamedPipeServerStream(userPipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                server = new NamedPipeServerStream(userPipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
                 server.BeginWaitForConnection(ac, server);
             };
             _persistentPipeServerStream.BeginWaitForConnection(ac, _persistentPipeServerStream);

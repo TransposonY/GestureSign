@@ -24,6 +24,8 @@ namespace GestureSign.TouchInputProvider
         private Devices _sourceDevice;
         private bool _isTouchpadRegistered;
 
+        private Timer _connectionTestTimer;
+
         public event RawPointsDataMessageEventHandler PointsIntercepted;
 
         public bool RegisterTouchPad
@@ -49,6 +51,12 @@ namespace GestureSign.TouchInputProvider
         {
             RegisterDevice(NativeMethods.TouchScreenUsage);
             EnumerateDevices();
+            _connectionTestTimer = new Timer
+            {
+                Interval = 5000
+            };
+            _connectionTestTimer.Tick += (o, e) => { PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(new List<RawData>(), Devices.None)); };
+            _connectionTestTimer.Start();
         }
 
         private void RegisterDevice(ushort usage)

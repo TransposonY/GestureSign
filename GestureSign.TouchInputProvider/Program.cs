@@ -8,7 +8,6 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
-using Timer = System.Threading.Timer;
 
 namespace GestureSign.TouchInputProvider
 {
@@ -18,7 +17,6 @@ namespace GestureSign.TouchInputProvider
 
         private static MessageWindow _messageWindow;
         private static NamedPipeClientStream _pipeClient;
-        private static Timer _connectTimer;
 
         /// <summary>
         /// 应用程序的主入口点。
@@ -39,11 +37,6 @@ namespace GestureSign.TouchInputProvider
                         Logging.OpenLogFile();
 
                         if (!Connect()) return;
-
-                        _connectTimer = new Timer(o =>
-                         {
-                             if (!_pipeClient.IsConnected && !Connect()) Application.Exit();
-                         }, null, 10000, 10000);
 
                         _messageWindow = new MessageWindow();
                         _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
@@ -71,7 +64,11 @@ namespace GestureSign.TouchInputProvider
 
         private static void MessageWindow_PointsIntercepted(object sender, Common.Input.RawPointsDataMessageEventArgs e)
         {
-            if (!_pipeClient.IsConnected) return;
+            if (!_pipeClient.IsConnected && !Connect())
+            {
+                Application.Exit();
+                return;
+            }
             try
             {
                 const int size = 16;
@@ -95,6 +92,7 @@ namespace GestureSign.TouchInputProvider
                 _pipeClient.Flush();
                 _pipeClient.WaitForPipeDrain();
             }
+            catch (IOException) { }
             catch (Exception exception)
             {
                 Logging.LogException(exception);
@@ -107,8 +105,7 @@ namespace GestureSign.TouchInputProvider
             {
                 var pipeName = NamedPipe.GetUserPipeName(TouchInputProvider);
                 if (_pipeClient == null)
-                    _pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut,
-                        PipeOptions.Asynchronous, TokenImpersonationLevel.None);
+                    _pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out, PipeOptions.Asynchronous, TokenImpersonationLevel.None);
 
                 int i = 0;
                 for (; i != 10; i++)
@@ -118,18 +115,6 @@ namespace GestureSign.TouchInputProvider
                 }
                 if (i == 10) return false;
                 _pipeClient.Connect(10);
-
-                ThreadPool.QueueUserWorkItem(delegate
-                {
-                    StreamReader sr = new StreamReader(_pipeClient);
-                    while (true)
-                    {
-                        var result = sr.ReadLine();
-                        if (result == null || result == "Exit")
-                            break;
-                    }
-                    Application.Exit();
-                });
                 return true;
             }
             catch (Exception e)

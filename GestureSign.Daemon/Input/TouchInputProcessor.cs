@@ -32,6 +32,9 @@ namespace GestureSign.Daemon.Input
                     return false;
 
                 int count = BitConverter.ToInt32(buffer, 0);
+                //Connection test
+                if (count < 1)
+                    return true;
                 Devices source = (Devices)BitConverter.ToInt32(buffer, 4);
 
                 buffer = new byte[size * count];
