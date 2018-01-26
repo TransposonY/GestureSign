@@ -334,7 +334,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (InitialTimeoutSwitch.IsChecked.GetValueOrDefault())
             {
-                InitialTimeoutSlider.Value = 0.3;
+                InitialTimeoutSlider.Value = 0.6;
             }
             else
             {
