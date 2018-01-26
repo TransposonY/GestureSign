@@ -28,7 +28,7 @@ namespace GestureSign.Common.Applications
         #region Public Instance Properties
 
         public SystemWindow CaptureWindow { get; private set; }
-        public IEnumerable<IApplication> RecognizedApplication { get { return _recognizedApplication; }  }
+        public IEnumerable<IApplication> RecognizedApplication { get { return _recognizedApplication; } }
         public IApplication CurrentApplication
         {
             get { return _currentApplication; }
@@ -285,7 +285,7 @@ namespace GestureSign.Common.Applications
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
                 ? definedApplications
-                : userApplicationOnly ? null : new IApplication[] { GetGlobalApplication() };
+                : userApplicationOnly ? new IApplication[0] : new IApplication[] { GetGlobalApplication() };
         }
 
         public IEnumerable<IApplication> GetApplicationFromPoint(Point testPoint)
@@ -303,7 +303,7 @@ namespace GestureSign.Common.Applications
         {
             if (_recognizedApplication == null)
             {
-                return null;
+                return new List<IAction>();
             }
             var recognizedActions = _recognizedApplication.Where(app => !(app is IgnoredApp) && app.Actions != null).SelectMany(app => app.Actions).Where(a => predicate(a)).ToList();
             // If there is was no action found on given application, try to get an action for global application
@@ -317,7 +317,7 @@ namespace GestureSign.Common.Applications
         {
             if (application == null)
             {
-                return null;
+                return Enumerable.Empty<IAction>();
             }
             // Attempt to retrieve an action on the application passed in
             IEnumerable<IAction> finalAction =
