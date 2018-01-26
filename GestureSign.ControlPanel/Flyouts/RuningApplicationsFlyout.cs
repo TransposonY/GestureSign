@@ -54,27 +54,30 @@ namespace GestureSign.ControlPanel.Flyouts
         private void GetValidWindows(object s)
         {
             var processInfoMap = new Dictionary<uint, string>();
-            using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, Name FROM Win32_Process"))
-            using (var results = searcher.Get())
+            try
             {
-                foreach (var item in results)
+                using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, Name FROM Win32_Process"))
+                using (var results = searcher.Get())
                 {
-                    var id = item["ProcessID"];
-                    var name = item["Name"] as string;
-
-                    if (name != null)
+                    foreach (var item in results)
                     {
-                        processInfoMap.Add((uint)id, name);
+                        var id = item["ProcessID"];
+                        var name = item["Name"] as string;
+
+                        if (name != null)
+                        {
+                            processInfoMap.Add((uint)id, name);
+                        }
                     }
                 }
             }
+            catch { }
 
             // Get valid running windows
             var windows = SystemWindow.AllToplevelWindows.Where
                 (
                     w => w.Visible && // Must be a visible windows
                          w.Title != "" && // Must have a window title
-                         processInfoMap.ContainsKey((uint)w.ProcessId) &&
                          (w.ExtendedStyle & WindowExStyleFlags.TOOLWINDOW) != WindowExStyleFlags.TOOLWINDOW	// Must not be a tool window
                      );
 
@@ -90,7 +93,18 @@ namespace GestureSign.ControlPanel.Flyouts
                     }
 
                     var pid = (uint)realWindow.ProcessId;
-                    if (!processInfoMap.ContainsKey(pid)) continue;
+                    string fileName;
+                    if (!processInfoMap.TryGetValue(pid, out fileName))
+                    {
+                        try
+                        {
+                            fileName = realWindow.Process.MainModule.FileName;
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
 
                     var icon = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                     icon.Freeze();
