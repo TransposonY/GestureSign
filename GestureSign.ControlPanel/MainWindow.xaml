@@ -79,7 +79,7 @@
                             </Hyperlink> 
                             <Run Text="/" />
                             <Hyperlink Click="Hyperlink_Click"
-                                       CommandParameter="{localization:LocalisedText About.StoreUrl}">
+                                       CommandParameter="ms-windows-store://pdp/?productid=9n45wqvk2qqw">
                                 <Run Text="{localization:LocalisedText About.Store}" />
                             </Hyperlink>
                         </TextBlock>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Language DisplayName="中文" Culture="zh-CN" Version="0.13">
+<Language DisplayName="中文" Culture="zh-CN" Version="6.1">
   <Font>Microsoft YaHei UI</Font>
   <HeaderFontFamily>Microsoft YaHei UI Light</HeaderFontFamily>
   <IsRightToLeft>False</IsRightToLeft>
@@ -35,7 +35,6 @@
     <Homepage>打开官网</Homepage>
     <HomepageUrl>http://transposony.coding.me/GestureSign/</HomepageUrl>
     <Store>Windows应用商店版</Store>
-    <StoreUrl>ms-windows-store://pdp/?productid=9n45wqvk2qqw</StoreUrl>
     <HelpPageUrl>http://transposony.coding.me/GestureSign/#/guide</HelpPageUrl>
     <Version>版本：  </Version>
     <ReleaseDate>发布时间：  </ReleaseDate>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Language DisplayName="English" Culture="en" Version="0.13">
+<Language DisplayName="English" Culture="en" Version="6.1">
   <Font>Segoe UI, Lucida Sans Unicode, Verdana</Font>
   <HeaderFontFamily>Segoe UI Light, Lucida Sans Unicode, Verdana</HeaderFontFamily>
   <IsRightToLeft>False</IsRightToLeft>
@@ -33,7 +33,6 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <Homepage>Homepage</Homepage>
     <HomepageUrl>http://transposony.github.io/GestureSign/</HomepageUrl>
     <Store>Windows Store Version</Store>
-    <StoreUrl>ms-windows-store://pdp/?productid=9n45wqvk2qqw</StoreUrl>
     <HelpPageUrl>http://transposony.github.io/GestureSign/</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
