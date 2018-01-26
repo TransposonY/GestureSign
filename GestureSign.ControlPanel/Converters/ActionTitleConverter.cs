@@ -28,7 +28,7 @@ namespace GestureSign.ControlPanel.Converters
             {
                 triggers += new HotKey(KeyInterop.KeyFromVirtualKey(action.Hotkey.KeyCode), (ModifierKeys)action.Hotkey.ModifierKeys).ToString() + " / ";
             }
-            if ((action.MouseHotkey & AppConfig.DrawingButton) != 0)
+            if (action.MouseHotkey != ManagedWinapi.Hooks.MouseActions.None && AppConfig.DrawingButton != ManagedWinapi.Hooks.MouseActions.None)
             {
                 triggers += ViewModel.MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + " + " + ViewModel.MouseActionDescription.DescriptionDict[action.MouseHotkey] + " / ";
             }
