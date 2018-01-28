@@ -107,6 +107,10 @@ Email:ccfyzh@gmail.com
     <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
     <Default>Default</Default>
     <Continuous>Continuous</Continuous>
+    <DeviceLimit>Device Limit</DeviceLimit>
+    <Mouse>Mouse</Mouse>
+    <TouchScreen>TouchScreen</TouchScreen>
+    <TouchPad>TouchPad</TouchPad>
     <Messages>
       <ConditionError>Condition Error</ConditionError>
     </Messages>

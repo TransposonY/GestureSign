@@ -1,4 +1,5 @@
-﻿using ManagedWinapi;
+﻿using GestureSign.Common.Input;
+using ManagedWinapi;
 using ManagedWinapi.Hooks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -47,6 +48,7 @@ namespace GestureSign.Common.Applications
 
         public MouseActions MouseHotkey { get; set; }
         public ContinuousGesture ContinuousGesture { get; set; }
+        public Devices IgnoredDevices { get; set; }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 

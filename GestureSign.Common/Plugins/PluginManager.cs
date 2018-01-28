@@ -55,14 +55,14 @@ namespace GestureSign.Common.Plugins
             // Get action to be executed
             var executableActions = ApplicationManager.Instance.GetRecognizedDefinedAction(e.GestureName)?.ToList();
             if (executableActions == null) return;
-            ExecuteAction(executableActions, pointCapture.Mode, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
+            ExecuteAction(executableActions, pointCapture.Mode, pointCapture.SourceDevice, e.ContactIdentifiers, e.FirstCapturedPoints, e.Points);
         }
 
         #endregion
 
         #region Public Methods
 
-        public void ExecuteAction(List<IAction> executableActions, CaptureMode mode, List<int> contactIdentifiers, List<Point> firstCapturedPoints, List<List<Point>> points)
+        public void ExecuteAction(List<IAction> executableActions, CaptureMode mode, Devices devices, List<int> contactIdentifiers, List<Point> firstCapturedPoints, List<List<Point>> points)
         {
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
@@ -73,7 +73,7 @@ namespace GestureSign.Common.Plugins
                 foreach (IAction executableAction in executableActions)
                 {
                     // Exit if there is no action configured
-                    if (executableAction?.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
+                    if ((executableAction.IgnoredDevices & devices) != 0 || executableAction?.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
                         continue;
 
                     var commandList = executableAction.Commands.Where(command => command != null && command.IsEnabled).ToList();

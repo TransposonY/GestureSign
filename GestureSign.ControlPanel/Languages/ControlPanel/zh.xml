@@ -111,6 +111,10 @@
     <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
     <Default>默认</Default>
     <Continuous>连续手势</Continuous>
+    <DeviceLimit>设备限定</DeviceLimit>
+    <Mouse>鼠标</Mouse>
+    <TouchScreen>触摸屏</TouchScreen>
+    <TouchPad>触控板</TouchPad>
     <Messages>
       <ConditionError>条件错误</ConditionError>
     </Messages>

@@ -56,7 +56,7 @@ namespace GestureSign.Daemon.Triggers
         {
             if (e.FiredActions == null || e.FiredActions.Count == 0) return;
             var point = new List<Point>(new[] { e.FiredPoint });
-            PluginManager.Instance.ExecuteAction(e.FiredActions, PointCapture.Instance.Mode, new List<int>(new[] { 1 }), point, new List<List<Point>>(new[] { point }));
+            PluginManager.Instance.ExecuteAction(e.FiredActions, PointCapture.Instance.Mode, PointCapture.Instance.SourceDevice, new List<int>(new[] { 1 }), point, new List<List<Point>>(new[] { point }));
         }
 
         #endregion

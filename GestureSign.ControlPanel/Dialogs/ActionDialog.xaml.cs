@@ -12,6 +12,7 @@ using MahApps.Metro.Controls;
 using ManagedWinapi;
 using ManagedWinapi.Hooks;
 using System.Linq;
+using GestureSign.Common.Input;
 
 namespace GestureSign.ControlPanel.Dialogs
 {
@@ -76,6 +77,9 @@ namespace GestureSign.ControlPanel.Dialogs
                 ConditionTextBox.Text = _sourceAction.Condition;
                 MouseActionComboBox.SelectedValue = _sourceAction.MouseHotkey;
                 ActivateWindowCheckBox.IsChecked = _sourceAction.ActivateWindow;
+                MouseCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.Mouse);
+                TouchScreenCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.TouchScreen);
+                TouchPadCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.TouchPad);
 
                 if (_sourceAction.ContinuousGesture != null)
                 {
@@ -180,6 +184,14 @@ namespace GestureSign.ControlPanel.Dialogs
                 : null;
             int contactCount = (int)ContactCountSlider.Value;
             NewAction.ContinuousGesture = ContinuousGestureSwitch.IsChecked.GetValueOrDefault() && contactCount > 1 && GestureListBox.SelectedIndex >= 0 ? new ContinuousGesture(contactCount, (Gestures)(1 << GestureListBox.SelectedIndex)) : null;
+            Devices ignoredDevices = Devices.None;
+            if (!MouseCheckBox.IsChecked.GetValueOrDefault())
+                ignoredDevices |= Devices.Mouse;
+            if (!TouchScreenCheckBox.IsChecked.GetValueOrDefault())
+                ignoredDevices |= Devices.TouchScreen;
+            if (!TouchPadCheckBox.IsChecked.GetValueOrDefault())
+                ignoredDevices |= Devices.TouchPad;
+            NewAction.IgnoredDevices = ignoredDevices;
 
             // Save entire list of applications
             ApplicationManager.Instance.SaveApplications();
