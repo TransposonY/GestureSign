@@ -264,7 +264,7 @@ namespace GestureSign.Daemon.Input
                     return;
                 var systemWindow = new SystemWindow(hwnd);
                 var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow);
-                ForegroundApplicationsChanged.Invoke(this, apps);
+                ForegroundApplicationsChanged?.Invoke(this, apps);
             }
         }
 
