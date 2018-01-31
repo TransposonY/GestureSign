@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Windows.Storage;
 
 namespace GestureSign.Common.Configuration
 {
@@ -278,20 +277,6 @@ namespace GestureSign.Common.Configuration
                     return defaultValue;
                 }
             }
-#if ConvertedDesktopApp
-            var roamingSetting = GetRoamingSetting(key);
-            if (roamingSetting != null)
-            {
-                try
-                {
-                    return (T)roamingSetting;
-                }
-                catch
-                {
-                    return defaultValue;
-                }
-            }
-#endif
             return defaultValue;
         }
 
@@ -368,10 +353,6 @@ namespace GestureSign.Common.Configuration
                 _config.AppSettings.Settings.Add(key, value.ToString());
             }
             Save();
-
-#if ConvertedDesktopApp
-            SetRoamingSetting(key, value);
-#endif
         }
 
         private static void SetValue(string key, System.Drawing.Color value)
@@ -383,37 +364,6 @@ namespace GestureSign.Common.Configuration
         {
             SetValue(key, value.ToString(CultureInfo.InvariantCulture));
         }
-
-#if ConvertedDesktopApp
-        private static bool SetRoamingSetting<T>(string key, T value)
-        {
-            try
-            {
-                ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
-                roamingSettings.Values[key] = value;
-                return true;
-            }
-            catch (Exception e)
-            {
-                Logging.LogException(e);
-                return false;
-            }
-        }
-
-        private static object GetRoamingSetting(string key)
-        {
-            try
-            {
-                ApplicationDataContainer roamingSettings = ApplicationData.Current.RoamingSettings;
-                return roamingSettings.Values[key];
-            }
-            catch (Exception e)
-            {
-                Logging.LogException(e);
-                return null;
-            }
-        }
-#endif
 
         private static bool GetWindowGlassColor(out System.Drawing.Color windowGlassColor)
         {
