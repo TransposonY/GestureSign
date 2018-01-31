@@ -146,7 +146,7 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Background="{Binding BackgroundColor}">
-                            <Image Source="{Binding Logo}"
+                            <Image Source="{Binding Logo, TargetNullValue={x:Null}}"
                                    Height="50"
                                    Stretch="Uniform"
                                    StretchDirection="DownOnly"
