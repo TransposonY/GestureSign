@@ -68,6 +68,12 @@ namespace GestureSign.Common.Log
             }
         }
 
+        public static void LogMessage(string message)
+        {
+            Console.WriteLine(message);
+            Console.WriteLine();
+        }
+
         private static void CheckLogSize(string logPath)
         {
             if (File.Exists(logPath))
