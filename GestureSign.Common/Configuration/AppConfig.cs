@@ -1,36 +1,16 @@
 ﻿using GestureSign.Common.Log;
 using ManagedWinapi.Hooks;
+using Microsoft.Win32;
 using System;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace GestureSign.Common.Configuration
 {
     public class AppConfig
     {
-        [DllImport("uxtheme", ExactSpelling = true)]
-        private extern static int IsThemeActive();
-
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        private static extern void DwmGetColorizationColor(out uint ColorizationColor, [MarshalAs(UnmanagedType.Bool)]out bool ColorizationOpaqueBlend);
-
-        [DllImport("kernel32", BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern IntPtr GetProcAddress([In] NativeModule handle, [In, MarshalAs(UnmanagedType.LPStr)] String lpProcName);
-
-        [DllImport("kernel32", BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern NativeModule LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32", SetLastError = true)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool FreeLibrary(IntPtr handle);
-
         static System.Configuration.Configuration _config;
         static Timer Timer;
         public static event EventHandler ConfigChanged;
@@ -384,22 +364,18 @@ namespace GestureSign.Common.Configuration
             windowGlassColor = System.Drawing.Color.Empty;
             try
             {
-                if (Environment.OSVersion.Version.Major >= 6 && IsThemeActive() != 0)
+                if (Environment.OSVersion.Version.Major >= 6)
                 {
-                    using (var dwmapi = NativeModule.TryLoad("dwmapi.dll"))
+                    using (RegistryKey dwm = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM"))
                     {
-                        if (dwmapi != null)
-                        {
-                            if (dwmapi.ContainsProcedure("DwmIsCompositionEnabled"))
-                            {
-                                uint num;
-                                bool flag;
-                                DwmGetColorizationColor(out num, out flag);
-                                num = num | (flag ? 4278190080u : 0);
-                                windowGlassColor = System.Drawing.Color.FromArgb(unchecked((int)num));
-                                return true;
-                            }
-                        }
+                        if (dwm == null)
+                            return false;
+                        var colorizationColor = dwm.GetValue("ColorizationColor");
+                        if (colorizationColor == null)
+                            return false;
+
+                        windowGlassColor = System.Drawing.Color.FromArgb((int)colorizationColor | -16777216);
+                        return true;
                     }
                 }
             }
@@ -408,46 +384,6 @@ namespace GestureSign.Common.Configuration
                 return false;
             }
             return false;
-        }
-        public sealed class NativeModule : SafeHandle
-        {
-            private NativeModule()
-                : base(IntPtr.Zero, true)
-            {
-            }
-
-            public bool ContainsProcedure(string name)
-            {
-                return GetProcAddress(this, name) != IntPtr.Zero;
-            }
-
-            public override bool IsInvalid
-            {
-                get { return handle == IntPtr.Zero; }
-            }
-
-            protected override bool ReleaseHandle()
-            {
-                return FreeLibrary(handle);
-            }
-
-            public static NativeModule Invalid
-            {
-                get { return new NativeModule(); }
-            }
-
-            public static NativeModule TryLoad(string path)
-            {
-                var handle = LoadLibrary(path);
-
-                if (handle.IsInvalid)
-                {
-                    handle.Dispose();
-                    return null;
-                }
-
-                return handle;
-            }
         }
     }
 }
