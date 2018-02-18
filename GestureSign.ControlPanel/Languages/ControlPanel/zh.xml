@@ -114,7 +114,7 @@
     <DeviceLimit>设备限定</DeviceLimit>
     <Mouse>鼠标</Mouse>
     <TouchScreen>触摸屏</TouchScreen>
-    <TouchPad>触控板</TouchPad>
+    <TouchPad>精确式触摸板</TouchPad>
     <Messages>
       <ConditionError>条件错误</ConditionError>
     </Messages>
@@ -149,7 +149,7 @@
     <PasteAction>粘贴</PasteAction>
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
-    <SelectGesture>(请点击以设置手势)</SelectGesture>
+    <SelectGesture>(请点击此处以设置手势)</SelectGesture>
     <Right>向右滑</Right>
     <Left>向左滑</Left>
     <Up>向上滑</Up>
@@ -238,7 +238,7 @@
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
-    <TouchPad>精密触控板手势</TouchPad>
+    <TouchPad>精确式触摸板手势</TouchPad>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <WindowsStartup>
@@ -288,7 +288,7 @@
       <SpecificDescription>发送快捷键 ({0})</SpecificDescription>
       <Tip>快捷键（请用键盘录入快捷键）</Tip>
       <Reset>重置</Reset>
-      <AddExtraKey>(点击添加一个功能键)</AddExtraKey>
+      <AddExtraKey>(点击此处添加一个功能键)</AddExtraKey>
       <SendByKeybdEvent>用旧方式发送</SendByKeybdEvent>
       <UnauthorizedAccessException>权限不足。请检查安全软件设置。</UnauthorizedAccessException>
       <ExtraKeys>
