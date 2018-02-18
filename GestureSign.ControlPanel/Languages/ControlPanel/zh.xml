@@ -106,7 +106,6 @@
     <TriggerCondition>触发条件</TriggerCondition>
     <KeyboardHotKey>键盘快捷键</KeyboardHotKey>
     <HotKeyWatermark>设置一个触发此动作的快捷键</HotKeyWatermark>
-    <Triggers>触发键</Triggers>
     <MouseHotKey>鼠标快捷键</MouseHotKey>
     <MouseGestureNotEnabled>(请先在“选项”中打开鼠标手势)</MouseGestureNotEnabled>
     <Default>默认</Default>

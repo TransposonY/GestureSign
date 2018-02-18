@@ -125,7 +125,7 @@
                     </ListBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="{localization:LocalisedText ActionDialog.Triggers}"
+            <TabItem Header="{localization:LocalisedText ActionDialog.Advanced}"
                      controls:ControlsHelper.HeaderFontSize="18">
                 <StackPanel>
                     <TextBlock x:Name="KeyboardHotKeyTextBlock"
@@ -146,7 +146,7 @@
                                FontSize="14"
                                DockPanel.Dock="Top"
                                FontWeight="Bold"
-                               Margin="20,20,0,0"
+                               Margin="20,10,0,0"
                                HorizontalAlignment="Left" />
                     <TextBlock x:Name="DrawingButtonTextBlock"
                                FontSize="14"
@@ -160,11 +160,6 @@
                               MaxWidth="150"
                               Margin="0,-21,20,0"
                               HorizontalAlignment="Right" />
-                </StackPanel>
-            </TabItem>
-            <TabItem Header="{localization:LocalisedText ActionDialog.Advanced}"
-                     controls:ControlsHelper.HeaderFontSize="18">
-                <StackPanel>
                     <TextBlock Text="{localization:LocalisedText ActionDialog.TriggerCondition}"
                                FontSize="14"
                                Margin="20,0,0,0"
