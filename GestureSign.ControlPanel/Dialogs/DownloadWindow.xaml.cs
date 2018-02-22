@@ -67,6 +67,9 @@ namespace GestureSign.ControlPanel.Dialogs
             foreach (string url in _source)
             {
                 var client = new WebClient();
+                client.Headers.Add(HttpRequestHeader.Accept, "*/*");
+                client.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
+                client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; .NET4.0E; .NET4.0C; rv:11.0) like Gecko");
                 clientList.Add(client);
                 var downloadTask = client.DownloadDataTaskAsync(url);
                 downloadTask.ContinueWith(checkData).ContinueWith(observeExceptions, TaskContinuationOptions.OnlyOnFaulted);
