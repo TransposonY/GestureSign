@@ -79,10 +79,6 @@ namespace GestureSign.Daemon
                         Application.Exit();
                     }
                 }
-                else
-                {
-                    Application.Exit();
-                }
             }
         }
 

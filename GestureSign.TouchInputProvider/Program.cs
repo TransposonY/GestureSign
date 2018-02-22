@@ -55,10 +55,6 @@ namespace GestureSign.TouchInputProvider
                         Application.Exit();
                     }
                 }
-                else
-                {
-                    Application.Exit();
-                }
             }
         }
 
