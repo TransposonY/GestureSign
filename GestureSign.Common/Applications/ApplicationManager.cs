@@ -604,8 +604,6 @@ namespace GestureSign.Common.Applications
             {
                 switch (window.ClassName)
                 {
-                    case "Windows.UI.Core.CoreWindow":
-                    case "ApplicationFrameWindow":
                     case "WorkerW":
                     case "Progman":
                     case "CanvasWindow":
