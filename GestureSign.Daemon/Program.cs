@@ -41,7 +41,7 @@ namespace GestureSign.Daemon
                         Logging.OpenLogFile();
 
                         if ("Built-in".Equals(AppConfig.CultureName) ||
-                            !LocalizationProvider.Instance.LoadFromFile("Daemon", Properties.Resources.en))
+                            !LocalizationProvider.Instance.LoadFromFile("Daemon"))
                         {
                             LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
                         }

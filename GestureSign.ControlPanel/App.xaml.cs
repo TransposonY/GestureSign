@@ -63,7 +63,7 @@ namespace GestureSign.ControlPanel
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", ControlPanel.Properties.Resources.en))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel"))
             {
                 LocalizationProvider.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
             }

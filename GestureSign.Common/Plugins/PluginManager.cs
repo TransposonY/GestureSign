@@ -181,6 +181,8 @@ namespace GestureSign.Common.Plugins
             byte[] file = File.ReadAllBytes(assemblyLocation);
             Assembly aPlugin = Assembly.Load(file);
 
+            Localization.LocalizationProvider.Instance.AddAssembly(aPlugin.FullName);
+
             Type[] tPluginTypes = aPlugin.GetTypes();
 
             foreach (Type tPluginType in tPluginTypes)

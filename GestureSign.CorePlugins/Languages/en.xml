@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Language DisplayName="English" Culture="en" Version="6.1">
+  <CorePlugins>
+    <ActivateWindow>
+      <Name>Activate Window</Name>
+      <Description>Activate the specified window</Description>
+      <ClassName>Window Class Name</ClassName>
+      <WindowTitle>Window Title</WindowTitle>
+      <UsingRegularExpression>Match as pattern</UsingRegularExpression>
+      <Timeout>Wait for window to exist</Timeout>
+      <Millisecond>milliseconds</Millisecond>
+    </ActivateWindow>
+    <Delay>
+      <Name>Delay</Name>
+      <Description>Delay for {0} milliseconds</Description>
+      <Millisecond>milliseconds</Millisecond>
+    </Delay>
+    <HotKey>
+      <Name>Send Hot Key</Name>
+      <Category>Keyboard</Category>
+      <Description>Send a hot key combination to application</Description>
+      <SpecificDescription>Send the hot key ({0})</SpecificDescription>
+      <Tip>Hot Key(Use keyboard to enter)</Tip>
+      <Reset>Reset</Reset>
+      <AddExtraKey>(Click to add a extra key)</AddExtraKey>
+      <SendByKeybdEvent>Send By Legacy Method</SendByKeybdEvent>
+      <FailureMessage>Failed to send {0}. The most common reason for this happening are insufficient permissions (please try running as admin) or you have a bad antivirus that needs disabled.</FailureMessage>
+      <ResetFailure>Failed to release {0}. Please release the keys by keyboard.</ResetFailure>
+      <ExtraKeys>
+        <BrowserBack>Browser Back</BrowserBack>
+        <BrowserForward>Browser Forward</BrowserForward>
+        <BrowserHome>Browser Start and Home</BrowserHome>
+        <BrowserRefresh>Browser Refresh</BrowserRefresh>
+        <BrowserSearch>Browser Search</BrowserSearch>
+        <BrowserStop>Browser Stop</BrowserStop>
+        <MediaNextTrack>Next Track</MediaNextTrack>
+        <MediaPlayPause>Play/Pause Media</MediaPlayPause>
+        <MediaPreviousTrack>Previous Track</MediaPreviousTrack>
+        <MediaStop>Stop Media</MediaStop>
+        <VolumeDown>Volume Down</VolumeDown>
+        <VolumeMute>Volume Mute</VolumeMute>
+        <VolumeUp>Volume Up</VolumeUp>
+        <Next>Page Down</Next>
+        <PageUp>Page Up</PageUp>
+        <PrintScreen>Print Screen</PrintScreen>
+        <Scroll>Scroll Lock</Scroll>
+      </ExtraKeys>
+    </HotKey>
+    <KeyDownKeyUp>
+      <Name>Key Down/Up</Name>
+      <Category>Keyboard</Category>
+      <Description>
+        <KeyDown>Press ({0})</KeyDown>
+        <KeyUp>Release ({0})</KeyUp>
+      </Description>
+      <KeyDown>Key Down</KeyDown>
+      <KeyUp>Key Up</KeyUp>
+      <Tip>Use keyboard to enter</Tip>
+      <Reset>Reset</Reset>
+    </KeyDownKeyUp>
+    <MouseActions>
+      <Name>Mouse Actions</Name>
+      <Category>Mouse</Category>
+      <Button>Button</Button>
+      <MouseActions>
+        <Click>Click</Click>
+        <DoubleClick>Double Click</DoubleClick>
+        <Down>Presse</Down>
+        <Up>Release</Up>
+        <VerticalScroll>Vertical Scroll</VerticalScroll>
+        <HorizontalScroll>Horizontal Scroll</HorizontalScroll>
+        <MoveMouseTo>Move Mouse To Specified Location</MoveMouseTo>
+        <MoveMouseBy>Move Mouse By Specified Distance</MoveMouseBy>
+      </MouseActions>
+      <Buttons>
+        <LeftButton>Left Button</LeftButton>
+        <MiddleButton>Middle Button</MiddleButton>
+        <RightButton>Right Button</RightButton>
+        <XButton1>X1</XButton1>
+        <XButton2>X2</XButton2>
+      </Buttons>
+      <ClickPositions>
+        <FirstDown>First Finger Down</FirstDown>
+        <FirstUp>First Finger Up</FirstUp>
+        <LastDown>Last Finger Down</LastDown>
+        <LastUp>Last Finger Up</LastUp>
+        <Original>Original Position</Original>
+      </ClickPositions>
+      <Description>
+        <Right>Right</Right>
+        <Left>Left</Left>
+        <Up>Up</Up>
+        <Down>Down</Down>
+        <HorizontalScroll>Horizontal Scroll {0} {1} Clicks</HorizontalScroll>
+        <VerticalScroll>Vertical Scroll {0} {1} Clicks</VerticalScroll>
+        <MoveMouseBy>Move Mouse By</MoveMouseBy>
+        <MoveMouseTo>Move Mouse To</MoveMouseTo>
+      </Description>
+      <SelectAction>Select Mouse Action</SelectAction>
+      <ClickPosition>Click Position</ClickPosition>
+      <ReferencePosition>Reference Position</ReferencePosition>
+      <ScrollAmountTip>Scroll Amount</ScrollAmountTip>
+    </MouseActions>
+    <RunCommand>
+      <Name>Command Prompt Commands</Name>
+      <Description>Runs {0}</Description>
+      <Category>Run</Category>
+      <Command>Command</Command>
+      <InsertVariable>Insert Variable</InsertVariable>
+      <ShowCMD>Show CMD Window</ShowCMD>
+    </RunCommand>
+    <ScreenBrightness>
+      <Name>Screen Brightness</Name>
+      <Category>System</Category>
+      <IncreaseBrightness>Increase Brightness </IncreaseBrightness>
+      <DecreaseBrightness>Decrease Brightness </DecreaseBrightness>
+    </ScreenBrightness>
+    <SendKeystrokes>
+      <Name>Send Keystrokes</Name>
+      <Category>Keyboard</Category>
+      <Description>Send keystrokes to application</Description>
+      <EscapesString>Escapes the literal string</EscapesString>
+      <Tip>Standard SendKeys syntax applies</Tip>
+      <UseSendInput>Use SendInput</UseSendInput>
+    </SendKeystrokes>
+    <TouchKeyboard>
+      <Name>Touch Keyboard</Name>
+      <Category>Keyboard</Category>
+      <Show>Show Keyboard</Show>
+      <Hide>Hide Keyboard</Hide>
+      <Auto>Show/Hide Keyboard</Auto>
+      <Tip>Tip:To show the Touch Keyboard Button in taskbar can accelerate the pop-up speed.</Tip>
+      <DesktopModeAutoInvoke>Desktop Mode Auto Invoke</DesktopModeAutoInvoke>
+    </TouchKeyboard>
+    <Volume>
+      <Name>Adjust Volume</Name>
+      <Category>System</Category>
+      <Increase>Increase the system volume </Increase>
+      <Decrease>Decrease the system volume </Decrease>
+      <Mute>Toggle the system mute</Mute>
+    </Volume>
+    <DefaultBrowser>
+      <Name>Open Web Browser</Name>
+      <Description>Open the default web browser</Description>
+      <Category>Internet</Category>
+    </DefaultBrowser>
+    <ToggleDisableGestures>
+      <Name>Disable/Enable GestureSign</Name>
+      <Description>Disables or enable GestureSign from capturing gestures</Description>
+    </ToggleDisableGestures>
+    <MaximizeRestore>
+      <Name>Maximize or Restore</Name>
+      <Description>Maximize or restore current window</Description>
+    </MaximizeRestore>
+    <Minimize>
+      <Name>Minimize</Name>
+      <Description>Minimize current window</Description>
+    </Minimize>
+    <NextApplication>
+      <Name>Next Window</Name>
+      <Description>Switches to the next window (Same as Alt + Tab)</Description>
+    </NextApplication>
+    <PreviousApplication>
+      <Name>Previous Window</Name>
+      <Description>Switches to the previous window (Same as Shift + Alt + Tab)</Description>
+    </PreviousApplication>
+    <TemporarilyDisable>
+      <Name>Temporarily Disable</Name>
+      <Description>Disables GestureSign for the next contact only</Description>
+    </TemporarilyDisable>
+    <SendMessage>
+      <Name>Send Message</Name>
+      <Category>Message</Category>
+      <DescriptionTemplate>{0} to {1}</DescriptionTemplate>
+      <TargetWindow>Target Window</TargetWindow>
+      <SpecificWindow>Specific Window</SpecificWindow>
+      <CurrentWindow>Current Window</CurrentWindow>
+      <WindowClass>Window Class</WindowClass>
+      <WindowTitle>Title</WindowTitle>
+      <RegEx>Match as pattern</RegEx>
+      <MessageContent>Message</MessageContent>
+      <HotKey>Send Hot Key</HotKey>
+      <Custom>Custom</Custom>
+      <Method>Method</Method>
+      <PostMessage>PostMessage</PostMessage>
+      <SendMessage>SendMessage</SendMessage>
+      <MessageID>Message ID</MessageID>
+    </SendMessage>
+    <LaunchApp>
+      <Name>Launch Windows Store App</Name>
+      <Description>Launch {0}</Description>
+      <Category>Run</Category>
+      <Tip>Please select a Store App.</Tip>
+      <Loading>Loading application list...</Loading>
+    </LaunchApp>
+    <ToggleWindowTopmost>
+      <Name>Toggle Topmost</Name>
+      <Description>Toggle the window topmost flag.</Description>
+    </ToggleWindowTopmost>
+    <OpenFile>
+      <Name>Open File or Website</Name>
+      <Category>Run</Category>
+      <Description>Open {0}</Description>
+      <FileOrWebsite>File or Website</FileOrWebsite>
+      <Arguments>Arguments</Arguments>
+      <Browse>Browse...</Browse>
+    </OpenFile>
+  </CorePlugins>
+</Language>

@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Language DisplayName="中文" Culture="zh-CN" Version="6.1">
+  <CorePlugins>
+    <ActivateWindow>
+      <Name>激活窗口</Name>
+      <Description>使指定窗口前置</Description>
+      <ClassName>窗口类名</ClassName>
+      <WindowTitle>窗口名</WindowTitle>
+      <UsingRegularExpression>使用正则表达式</UsingRegularExpression>
+      <Timeout>等待窗口时间</Timeout>
+      <Millisecond>毫秒</Millisecond>
+    </ActivateWindow>
+    <Delay>
+      <Name>延时</Name>
+      <Description>延迟 {0} 毫秒</Description>
+      <Millisecond>毫秒</Millisecond>
+    </Delay>
+    <HotKey>
+      <Name>发送快捷键</Name>
+      <Category>键盘</Category>
+      <Description>发送快捷键组合到程序</Description>
+      <SpecificDescription>发送快捷键 ({0})</SpecificDescription>
+      <Tip>快捷键（请用键盘录入快捷键）</Tip>
+      <Reset>重置</Reset>
+      <AddExtraKey>(点击此处添加一个功能键)</AddExtraKey>
+      <SendByKeybdEvent>用旧方式发送</SendByKeybdEvent>
+      <FailureMessage>按键 {0} 发送失败。原因是软件权限不足，或受安全软件干扰。请尝试以管理员身份运行、将本软件添加到安全软件白名单或卸载该安全软件。</FailureMessage>
+      <ResetFailure>按键 {0} 未能恢复，可能处于按下未弹起状态，请用键盘按一下进行恢复。</ResetFailure>
+      <ExtraKeys>
+        <BrowserBack>浏览器-后退键</BrowserBack>
+        <BrowserForward>浏览器-前进键</BrowserForward>
+        <BrowserHome>浏览器-主页键</BrowserHome>
+        <BrowserRefresh>浏览器-更新键</BrowserRefresh>
+        <BrowserSearch>浏览器-搜索键</BrowserSearch>
+        <BrowserStop>浏览器-停止键</BrowserStop>
+        <MediaNextTrack>下一首 键</MediaNextTrack>
+        <MediaPlayPause>暂停/播放 键</MediaPlayPause>
+        <MediaPreviousTrack>上一首 键</MediaPreviousTrack>
+        <MediaStop>停止播放 键</MediaStop>
+        <VolumeDown>音量减小键</VolumeDown>
+        <VolumeMute>静音键</VolumeMute>
+        <VolumeUp>音量增加键</VolumeUp>
+      </ExtraKeys>
+    </HotKey>
+    <KeyDownKeyUp>
+      <Name>按下或松开按键</Name>
+      <Category>键盘</Category>
+      <Description>
+        <KeyDown>按下 ({0})</KeyDown>
+        <KeyUp>松开 ({0})</KeyUp>
+      </Description>
+      <KeyDown>按下按键</KeyDown>
+      <KeyUp>松开按键</KeyUp>
+      <Tip>请用键盘录入按键</Tip>
+      <Reset>重置</Reset>
+    </KeyDownKeyUp>
+    <MouseActions>
+      <Name>鼠标动作</Name>
+      <Category>鼠标</Category>
+      <Button>按键</Button>
+      <MouseActions>
+        <Click>单击</Click>
+        <DoubleClick>双击</DoubleClick>
+        <Down>按下</Down>
+        <Up>释放</Up>
+        <VerticalScroll>垂直滚动</VerticalScroll>
+        <HorizontalScroll>水平滚动</HorizontalScroll>
+        <MoveMouseTo>移动鼠标至指定坐标</MoveMouseTo>
+        <MoveMouseBy>将鼠标位移一段距离</MoveMouseBy>
+      </MouseActions>
+      <Buttons>
+        <LeftButton>左键</LeftButton>
+        <MiddleButton>中键</MiddleButton>
+        <RightButton>右键</RightButton>
+        <XButton1>X1</XButton1>
+        <XButton2>X2</XButton2>
+      </Buttons>
+      <ClickPositions>
+        <FirstDown>第一根手指落点</FirstDown>
+        <FirstUp>第一根手指抬起点</FirstUp>
+        <LastDown>最后手指落点</LastDown>
+        <LastUp>最后手指抬起点</LastUp>
+        <Original>不移动鼠标位置</Original>
+      </ClickPositions>
+      <Description>
+        <Right>向右</Right>
+        <Left>向左</Left>
+        <Up>向上</Up>
+        <Down>向下</Down>
+        <HorizontalScroll>水平{0}滚动 {1} 次</HorizontalScroll>
+        <VerticalScroll>垂直{0}滚动 {1} 次</VerticalScroll>
+        <MoveMouseBy>鼠标位移</MoveMouseBy>
+        <MoveMouseTo>鼠标移动至</MoveMouseTo>
+      </Description>
+      <SelectAction>选择鼠标动作</SelectAction>
+      <ClickPosition>鼠标点击位置</ClickPosition>
+      <ReferencePosition>相对位置</ReferencePosition>
+      <ScrollAmountTip>滚动次数</ScrollAmountTip>
+    </MouseActions>
+    <RunCommand>
+      <Name>命令行</Name>
+      <Description>执行{0}</Description>
+      <Category>运行</Category>
+      <Command>命令</Command>
+      <InsertVariable>插入变量</InsertVariable>
+      <ShowCMD>显示CMD窗口</ShowCMD>
+    </RunCommand>
+    <ScreenBrightness>
+      <Name>调整屏幕亮度</Name>
+      <Category>系统</Category>
+      <IncreaseBrightness>增大亮度</IncreaseBrightness>
+      <DecreaseBrightness>减小亮度</DecreaseBrightness>
+    </ScreenBrightness>
+    <SendKeystrokes>
+      <Name>发送文本</Name>
+      <Category>键盘</Category>
+      <Description>发送一段文本或命令到程序</Description>
+      <!--Escapes a literal string-->
+      <EscapesString>转义已输入的文本</EscapesString>
+      <Tip>适用标准的SendKeys语法</Tip>
+      <UseSendInput>使用SendInput</UseSendInput>
+    </SendKeystrokes>
+    <TouchKeyboard>
+      <Name>触摸键盘</Name>
+      <Category>键盘</Category>
+      <Show>显示键盘</Show>
+      <Hide>隐藏键盘</Hide>
+      <Auto>自动显示或隐藏键盘</Auto>
+      <Tip>提示：在任务栏显示“触摸键盘”按钮（任务栏菜单——工具栏——触摸键盘）可加快键盘弹出速度</Tip>
+      <DesktopModeAutoInvoke>桌面模式下自动激活</DesktopModeAutoInvoke>
+    </TouchKeyboard>
+    <Volume>
+      <Name>调整音量</Name>
+      <Category>系统</Category>
+      <Increase>增大音量</Increase>
+      <Decrease>减小音量</Decrease>
+      <Mute>静音</Mute>
+    </Volume>
+    <DefaultBrowser>
+      <Name>打开浏览器</Name>
+      <Description>打开本机默认设置的浏览器</Description>
+      <Category>网络</Category>
+    </DefaultBrowser>
+    <ToggleDisableGestures>
+      <Name>关闭/开启手势</Name>
+      <Description>停止或打开手势识别功能</Description>
+    </ToggleDisableGestures>
+    <MaximizeRestore>
+      <Name>最大化或还原</Name>
+      <Description>最大化或还原当前窗口</Description>
+    </MaximizeRestore>
+    <Minimize>
+      <Name>最小化</Name>
+      <Description>最小化当前窗口</Description>
+    </Minimize>
+    <NextApplication>
+      <Name>下一窗口</Name>
+      <Description>切换到下一个窗口 (相当于 Alt + Tab)</Description>
+    </NextApplication>
+    <PreviousApplication>
+      <Name>上一窗口</Name>
+      <Description>切换到上一窗口 (相当于 Shift + Alt + Tab)</Description>
+    </PreviousApplication>
+    <TemporarilyDisable>
+      <Name>临时禁用手势识别</Name>
+      <Description>停止接收下一次触屏数据</Description>
+    </TemporarilyDisable>
+    <SendMessage>
+      <Name>发送消息指令</Name>
+      <Category>消息</Category>
+      <DescriptionTemplate>{0}到{1}</DescriptionTemplate>
+      <TargetWindow>目标窗口</TargetWindow>
+      <SpecificWindow>指定窗口</SpecificWindow>
+      <CurrentWindow>当前窗口</CurrentWindow>
+      <WindowClass>窗口类</WindowClass>
+      <WindowTitle>标题</WindowTitle>
+      <RegEx>使用通配符</RegEx>
+      <MessageContent>消息内容</MessageContent>
+      <HotKey>发送快捷键</HotKey>
+      <Custom>自定义消息</Custom>
+      <Method>发送方式</Method>
+      <PostMessage>PostMessage</PostMessage>
+      <SendMessage>SendMessage</SendMessage>
+      <MessageID>消息标识符</MessageID>
+    </SendMessage>
+    <LaunchApp>
+      <Name>打开Windows商店应用程序</Name>
+      <Description>打开{0}应用</Description>
+      <Category>运行</Category>
+      <Tip>请选择要运行的商店应用</Tip>
+      <Loading>载入应用列表中...</Loading>
+    </LaunchApp>
+    <ToggleWindowTopmost>
+      <Name>切换顶置</Name>
+      <Description>切换窗口的顶置状态</Description>
+    </ToggleWindowTopmost>
+    <OpenFile>
+      <Name>打开文件或网站</Name>
+      <Category>运行</Category>
+      <Description>打开 {0}</Description>
+      <FileOrWebsite>文件或网站</FileOrWebsite>
+      <Arguments>参数</Arguments>
+      <Browse>浏览..</Browse>
+    </OpenFile>
+  </CorePlugins>
+</Language>

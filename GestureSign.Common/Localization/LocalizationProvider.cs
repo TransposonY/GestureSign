@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using GestureSign.Common.Configuration;
 
@@ -9,12 +11,23 @@ namespace GestureSign.Common.Localization
 {
     public class LocalizationProvider
     {
-        protected static string Resource;
+        private const string defaultLanguageName = "en";
+
         protected static Dictionary<string, string> Texts = new Dictionary<string, string>(10);
         private static LocalizationProvider _instance;
+        private List<string> _assemblyNameList = new List<string>();
+        private CultureInfo _cultureInfo;
 
         protected LocalizationProvider()
         {
+            try
+            {
+                _cultureInfo = String.IsNullOrEmpty(AppConfig.CultureName) ? CultureInfo.CurrentUICulture : CultureInfo.CreateSpecificCulture(AppConfig.CultureName);
+            }
+            catch
+            {
+                _cultureInfo = CultureInfo.CurrentUICulture;
+            }
         }
 
         public bool HasData
@@ -54,15 +67,27 @@ namespace GestureSign.Common.Localization
 
         public string GetTextValue(string key)
         {
-            if (Texts.ContainsKey(key)) return Texts[key];
-            if (Resource != null)
-                LoadFromResource(Resource);
-            return Texts.ContainsKey(key) ? Texts[key] : "";
+            string text;
+            if (Texts.TryGetValue(key, out text))
+                return text;
+
+            LoadFromAssemblyResource();
+
+            return Texts.TryGetValue(key, out text) ? text : "";
         }
 
-        public bool LoadFromFile(string languageFolderName, string resource)
+        public void AddAssembly(string assemblyName)
         {
-            Resource = resource;
+            if (!_assemblyNameList.Contains(assemblyName))
+                _assemblyNameList.Add(assemblyName);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public bool LoadFromFile(string languageFolderName)
+        {
+            Assembly callerAssembly = Assembly.GetCallingAssembly();
+            _assemblyNameList.Add(callerAssembly.FullName);
+
             string languageFile = GetLanguageFilePath(languageFolderName);
             if (languageFile == null) return false;
             using (XmlTextReader xtr = new XmlTextReader(languageFile) { WhitespaceHandling = WhitespaceHandling.None })
@@ -85,8 +110,6 @@ namespace GestureSign.Common.Localization
 
         private string GetLanguageFilePath(string languageFolderName)
         {
-            var culture = String.IsNullOrEmpty(AppConfig.CultureName) ? CultureInfo.CurrentUICulture : CultureInfo.CreateSpecificCulture(AppConfig.CultureName);
-
             var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", languageFolderName);
             if (!Directory.Exists(folderPath)) return null;
             foreach (string file in Directory.GetFiles(folderPath, "*.xml"))
@@ -97,7 +120,7 @@ namespace GestureSign.Common.Localization
                     {
                         if ("language".Equals(xtr.Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (culture.Name.Equals(xtr.GetAttribute("Culture"), StringComparison.OrdinalIgnoreCase))
+                            if (_cultureInfo.Name.Equals(xtr.GetAttribute("Culture"), StringComparison.OrdinalIgnoreCase))
                             {
                                 return file;
                             }
@@ -137,6 +160,39 @@ namespace GestureSign.Common.Localization
             }
         }
 
+        private void LoadFromAssemblyResource()
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (!_assemblyNameList.Contains(assembly.FullName)) continue;
 
+                try
+                {
+                    string[] resNames = assembly.GetManifestResourceNames();
+
+                    foreach (var n in resNames)
+                    {
+                        int index = n.IndexOf(".resource");
+                        if (index < 1) continue;
+                        var typeName = n.Substring(0, index);
+                        var type = assembly.GetType(typeName, false);
+
+                        if (null != type)
+                        {
+                            var res = type.GetProperty(_cultureInfo.TwoLetterISOLanguageName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                            if (res == null)
+                            {
+                                res = type.GetProperty(defaultLanguageName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                                if (res == null)
+                                    continue;
+                            }
+                            var text = res.GetValue(null, null) as string;
+                            LoadFromResource(text);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
     }
 }
