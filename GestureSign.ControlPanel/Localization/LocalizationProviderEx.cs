@@ -7,41 +7,46 @@ namespace GestureSign.ControlPanel.Localization
 {
     class LocalizationProviderEx : LocalizationProvider
     {
-        private static LocalizationProviderEx _instance;
-
-        public FlowDirection FlowDirection
+        public static FlowDirection FlowDirection
         {
             get
             {
-                if (Texts.ContainsKey("IsRightToLeft"))
-                    return Boolean.Parse(Texts["IsRightToLeft"]) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                string value;
+                if (Texts.TryGetValue("IsRightToLeft", out value))
+                {
+                    try
+                    {
+                        return Boolean.Parse(value) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                    }
+                    catch
+                    {
+                        return FlowDirection.LeftToRight;
+                    }
+                }
                 return FlowDirection.LeftToRight;
             }
         }
 
-        public FontFamily Font
+        public static FontFamily Font
         {
             get
             {
-                if (Texts.ContainsKey("Font"))
-                    return new FontFamily(Texts["Font"]);
+                string value;
+                if (Texts.TryGetValue("Font", out value))
+                    return new FontFamily(value);
                 return null;
             }
         }
 
-        public FontFamily HeaderFontFamily
+        public static FontFamily HeaderFontFamily
         {
             get
             {
-                if (Texts.ContainsKey(nameof(HeaderFontFamily)))
-                    return new FontFamily(Texts[nameof(HeaderFontFamily)]);
+                string value;
+                if (Texts.TryGetValue(nameof(HeaderFontFamily), out value))
+                    return new FontFamily(value);
                 return null;
             }
-        }
-
-        public new static LocalizationProviderEx Instance
-        {
-            get { return _instance ?? (_instance = new LocalizationProviderEx()); }
         }
     }
 }

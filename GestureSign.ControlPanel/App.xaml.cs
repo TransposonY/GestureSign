@@ -2,6 +2,7 @@
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Localization;
 using ManagedWinapi.Windows;
@@ -62,14 +63,14 @@ namespace GestureSign.ControlPanel
 
         private void LoadLanguageData()
         {
-            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProviderEx.Instance.LoadFromFile("ControlPanel", ControlPanel.Properties.Resources.en))
+            if ("Built-in".Equals(AppConfig.CultureName) || !LocalizationProvider.Instance.LoadFromFile("ControlPanel", ControlPanel.Properties.Resources.en))
             {
-                LocalizationProviderEx.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
+                LocalizationProvider.Instance.LoadFromResource(ControlPanel.Properties.Resources.en);
             }
 
-            Current.Resources["DefaultFlowDirection"] = LocalizationProviderEx.Instance.FlowDirection;
-            var font = LocalizationProviderEx.Instance.Font;
-            var headerFontFamily = LocalizationProviderEx.Instance.HeaderFontFamily;
+            Current.Resources["DefaultFlowDirection"] = LocalizationProviderEx.FlowDirection;
+            var font = LocalizationProviderEx.Font;
+            var headerFontFamily = LocalizationProviderEx.HeaderFontFamily;
             if (font != null)
                 Current.Resources["DefaultFont"] =
                     Current.Resources["ContentFontFamily"] =
