@@ -1,6 +1,9 @@
 ﻿using WindowsInput;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using ManagedWinapi;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace GestureSign.CorePlugins.Volume
 {
@@ -170,7 +173,33 @@ namespace GestureSign.CorePlugins.Volume
             }
             catch
             {
-                //MessageBox.Show("Could not change volume settings.", "Volume Change Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                int t = settings.Percent / 2;
+
+                switch ((Method)settings.Method)
+                {
+                    case Method.VolumeUp:
+                        var volumeUpKey = new KeyboardKey(Keys.VolumeUp);
+                        for (int i = 0; i < t; i++)
+                        {
+                            volumeUpKey.Press();
+                            Thread.Sleep(3);
+                            volumeUpKey.Release();
+                        }
+                        break;
+                    case Method.VolumeDown:
+                        var volumeDownKey = new KeyboardKey(Keys.VolumeDown);
+                        for (int i = 0; i < t; i++)
+                        {
+                            volumeDownKey.Press();
+                            Thread.Sleep(3);
+                            volumeDownKey.Release();
+                        }
+                        break;
+                    case Method.Mute:
+                        var muteKey = new KeyboardKey(Keys.VolumeMute);
+                        muteKey.PressAndRelease();
+                        break;
+                }
                 return false;
             }
         }

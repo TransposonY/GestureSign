@@ -50,6 +50,8 @@ namespace ManagedWinapi
         /// </summary>
         public short AsyncState { get { return GetAsyncKeyState((short)key); } }
 
+        public bool IsGloballyPressed { get { return (AsyncState & 0x8000) != 0; } }
+
         /// <summary>
         /// Press this key and release it.
         /// </summary>

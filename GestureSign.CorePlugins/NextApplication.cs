@@ -3,6 +3,7 @@ using GestureSign.Common.Plugins;
 using WindowsInput;
 using WindowsInput.Native;
 using GestureSign.Common.Localization;
+using System.Windows.Forms;
 
 namespace GestureSign.CorePlugins
 {
@@ -73,8 +74,10 @@ namespace GestureSign.CorePlugins
             }
             catch (Exception)
             {
-                KeyboardHelper.ResetKeyState(ActionPoint.Window, VirtualKeyCode.LMENU);
-
+                if (!KeyboardHelper.ResendByKeybdEvent(new Keys[] { Keys.LMenu }, new Keys[] { Keys.Tab }))
+                {
+                    KeyboardHelper.ResetKeyState(ActionPoint.Window, Keys.LMenu);
+                }
                 return false;
             }
 

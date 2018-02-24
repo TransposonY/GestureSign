@@ -159,17 +159,20 @@ namespace GestureSign.CorePlugins.HotKey
             }
             catch (Exception)
             {
-                var keyList = new List<VirtualKeyCode>(_Settings.KeyCode.Cast<VirtualKeyCode>());
+                var keyList = new List<Keys>();
                 if (_Settings.Shift)
-                    keyList.Add(VirtualKeyCode.LSHIFT);
+                    keyList.Add(Keys.LShiftKey);
                 if (_Settings.Alt)
-                    keyList.Add(VirtualKeyCode.LMENU);
+                    keyList.Add(Keys.LMenu);
                 if (_Settings.Control)
-                    keyList.Add(VirtualKeyCode.LCONTROL);
+                    keyList.Add(Keys.LControlKey);
                 if (_Settings.Windows)
-                    keyList.Add(VirtualKeyCode.LWIN);
-                KeyboardHelper.ResetKeyState(ActionPoint.Window, keyList.ToArray());
-                throw;
+                    keyList.Add(Keys.LWin);
+                if (!KeyboardHelper.ResendByKeybdEvent(keyList, _Settings.KeyCode))
+                {
+                    keyList.AddRange(_Settings.KeyCode);
+                    KeyboardHelper.ResetKeyState(ActionPoint.Window, keyList.ToArray());
+                }
             }
             return true;
         }

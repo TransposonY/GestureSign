@@ -285,7 +285,8 @@ Email:ccfyzh@gmail.com
       <Reset>Reset</Reset>
       <AddExtraKey>(Click to add a extra key)</AddExtraKey>
       <SendByKeybdEvent>Send By Legacy Method</SendByKeybdEvent>
-      <UnauthorizedAccessException>Insufficient permissions.Please check your virus scanning software settings.</UnauthorizedAccessException>
+      <FailureMessage>Failed to send {0}. The most common reason for this happening are insufficient permissions (please try running as admin) or you have a bad antivirus that needs disabled.</FailureMessage>
+      <ResetFailure>Failed to release {0}. Please release the keys by keyboard.</ResetFailure>
       <ExtraKeys>
         <BrowserBack>Browser Back</BrowserBack>
         <BrowserForward>Browser Forward</BrowserForward>

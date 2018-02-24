@@ -143,7 +143,17 @@ namespace GestureSign.CorePlugins.KeyDownKeyUp
 
                     var key = (VirtualKeyCode)k;
                     if (_settings.IsKeyDown)
-                        simulator.Keyboard.KeyDown(key).Sleep(30);
+                    {
+                        try
+                        {
+                            simulator.Keyboard.KeyDown(key).Sleep(30);
+                        }
+                        catch
+                        {
+                            KeyboardHelper.ResetKeyState(ActionPoint.Window, k);
+                            return false;
+                        }
+                    }
                     else simulator.Keyboard.KeyUp(key).Sleep(30);
                 }
 

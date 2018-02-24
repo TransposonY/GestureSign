@@ -289,7 +289,8 @@
       <Reset>重置</Reset>
       <AddExtraKey>(点击此处添加一个功能键)</AddExtraKey>
       <SendByKeybdEvent>用旧方式发送</SendByKeybdEvent>
-      <UnauthorizedAccessException>权限不足。请检查安全软件设置。</UnauthorizedAccessException>
+      <FailureMessage>按键 {0} 发送失败。原因是软件权限不足，或受安全软件干扰。请尝试以管理员身份运行、将本软件添加到安全软件白名单或卸载该安全软件。</FailureMessage>
+      <ResetFailure>按键 {0} 未能恢复，可能处于按下未弹起状态，请用键盘按一下进行恢复。</ResetFailure>
       <ExtraKeys>
         <BrowserBack>浏览器-后退键</BrowserBack>
         <BrowserForward>浏览器-前进键</BrowserForward>
