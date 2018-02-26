@@ -40,6 +40,10 @@
         <VolumeDown>音量减小键</VolumeDown>
         <VolumeMute>静音键</VolumeMute>
         <VolumeUp>音量增加键</VolumeUp>
+        <Next>下一页键</Next>
+        <PageUp>上一页键</PageUp>
+        <PrintScreen>打印显示屏</PrintScreen>
+        <Scroll>滚动锁定</Scroll>
       </ExtraKeys>
     </HotKey>
     <KeyDownKeyUp>
