@@ -36,11 +36,11 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
                 {
-                    Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*.gsa",
-                    FileName = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + ".gsa",
+                    Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*"+ GestureSign.Common.Constants.ActionExtension,
+                    FileName = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + GestureSign.Common.Constants.ActionExtension,
                     Title = LocalizationProvider.Instance.GetTextValue("Common.Export"),
                     AddExtension = true,
-                    DefaultExt = "gsa",
+                    DefaultExt = GestureSign.Common.Constants.ActionExtension.Remove(0,1),
                     ValidateNames = true
                 };
                 if (sfdApplications.ShowDialog().Value)

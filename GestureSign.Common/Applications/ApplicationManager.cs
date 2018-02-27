@@ -215,7 +215,7 @@ namespace GestureSign.Common.Applications
         {
             // Save application list
             bool flag = FileManager.SaveObject(
-                 Applications, Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true);
+                 Applications, Path.Combine(AppConfig.ApplicationDataPath, Constants.ActionFileName), true);
             if (flag) { ApplicationSaved.Invoke(this, EventArgs.Empty); }
 
         }
@@ -238,14 +238,14 @@ namespace GestureSign.Common.Applications
                 // Load application list from file
                 _applications =
                     FileManager.LoadObject<List<IApplication>>(
-                        Path.Combine(AppConfig.ApplicationDataPath, "Actions.gsa"), true, true);
+                        Path.Combine(AppConfig.ApplicationDataPath, Constants.ActionFileName), true, true);
                 return _applications != null;
             }).ContinueWith(antecendent => loadCompleted(antecendent.Result));
         }
 
         private bool LoadDefaults()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Defaults\Actions.gsa");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Defaults", Constants.ActionFileName);
 
             _applications = FileManager.LoadObject<List<IApplication>>(path, false, true);
             // Ensure we got an object back
@@ -257,7 +257,7 @@ namespace GestureSign.Common.Applications
 
         private bool LoadBackup()
         {
-            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*.gsa");
+            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*" + Constants.ActionExtension);
             foreach (var file in actionfiles)
             {
                 _applications = FileManager.LoadObject<List<IApplication>>(file, false, true);

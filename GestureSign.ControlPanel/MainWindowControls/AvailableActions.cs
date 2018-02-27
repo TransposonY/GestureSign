@@ -292,7 +292,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*.gsa",
+                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*"+ GestureSign.Common.Constants.ActionExtension,
                 Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
                 CheckFileExists = true
             };
@@ -519,7 +519,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     {
                         switch (Path.GetExtension(file).ToLower())
                         {
-                            case ".gsa":
+                            case GestureSign.Common.Constants.ActionExtension:
                                 var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
                                 if (apps != null)
                                 {

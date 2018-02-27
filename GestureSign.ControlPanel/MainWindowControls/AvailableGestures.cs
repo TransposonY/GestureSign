@@ -62,7 +62,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             OpenFileDialog ofdGestures = new OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
+                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*" + GestureSign.Common.Constants.GesturesExtension,
                 Title = LocalizationProvider.Instance.GetTextValue("Gesture.ImportGesture"),
                 CheckFileExists = true
             };
@@ -117,11 +117,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             SaveFileDialog sfdGestures = new SaveFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*.gest",
-                FileName = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + ".gest",
+                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*" + GestureSign.Common.Constants.GesturesExtension,
+                FileName = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + GestureSign.Common.Constants.GesturesExtension,
                 Title = LocalizationProvider.Instance.GetTextValue("Gesture.ExportGestures"),
                 AddExtension = true,
-                DefaultExt = "gest",
+                DefaultExt = GestureSign.Common.Constants.GesturesExtension.Remove(0, 1),
                 ValidateNames = true
             };
             if (sfdGestures.ShowDialog().Value)
@@ -207,7 +207,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     foreach (var file in files)
                     {
-                        if (file.EndsWith(".gest", StringComparison.OrdinalIgnoreCase))
+                        if (file.EndsWith(GestureSign.Common.Constants.GesturesExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             var gestures = FileManager.LoadObject<List<Gesture>>(file, false);
                             var newGestures = gestures?.Cast<IGesture>().ToList();
