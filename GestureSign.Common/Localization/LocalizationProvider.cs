@@ -11,7 +11,7 @@ namespace GestureSign.Common.Localization
 {
     public class LocalizationProvider
     {
-        private const string defaultLanguageName = "en";
+        private const string DefaultLanguageName = "en";
 
         protected static Dictionary<string, string> Texts = new Dictionary<string, string>(10);
         private static LocalizationProvider _instance;
@@ -71,8 +71,11 @@ namespace GestureSign.Common.Localization
             if (Texts.TryGetValue(key, out text))
                 return text;
 
-            LoadFromAssemblyResource();
+            LoadFromAssemblyResource(_cultureInfo.TwoLetterISOLanguageName);
+            if (Texts.TryGetValue(key, out text))
+                return text;
 
+            LoadFromAssemblyResource(DefaultLanguageName);
             return Texts.TryGetValue(key, out text) ? text : "";
         }
 
@@ -160,7 +163,7 @@ namespace GestureSign.Common.Localization
             }
         }
 
-        private void LoadFromAssemblyResource()
+        private void LoadFromAssemblyResource(string languageName)
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -179,13 +182,9 @@ namespace GestureSign.Common.Localization
 
                         if (null != type)
                         {
-                            var res = type.GetProperty(_cultureInfo.TwoLetterISOLanguageName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                            var res = type.GetProperty(languageName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                             if (res == null)
-                            {
-                                res = type.GetProperty(defaultLanguageName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                                if (res == null)
-                                    continue;
-                            }
+                                continue;
                             var text = res.GetValue(null, null) as string;
                             LoadFromResource(text);
                         }
