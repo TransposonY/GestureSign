@@ -149,10 +149,6 @@
                               Header="{localization:LocalisedText Gesture.ImportGesture}"
                               Click="ImportGestureMenuItem_Click"
                               FontSize="16" />
-                    <MenuItem x:Name="ExportGestureMenuItem"
-                              Header="{localization:LocalisedText Gesture.ExportGestures}"
-                              Click="ExportGestureMenuItem_Click"
-                              FontSize="16" />
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.ItemContainerStyle>
@@ -280,32 +276,13 @@
                 </Rectangle.OpacityMask>
             </Rectangle>
         </Button>
-        <Button x:Name="ExportButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="10,0,0,10"
-                Grid.Row="1"
-                Click="ExportGestureMenuItem_Click">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Uniform"
-                                 Visual="{StaticResource Export}">
-                    </VisualBrush>
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
         <Button x:Name="ImportButton"
                 Style="{DynamicResource MetroCircleButtonStyle}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Height="50"
                 Width="50"
-                Margin="65,0,0,10"
+                Margin="10,0,0,10"
                 Grid.Row="1"
                 Click="ImportGestureMenuItem_Click">
             <Rectangle Width="20"

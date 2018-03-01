@@ -113,23 +113,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         });
         }
 
-        private void ExportGestureMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog sfdGestures = new SaveFileDialog()
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + "|*" + GestureSign.Common.Constants.GesturesExtension,
-                FileName = LocalizationProvider.Instance.GetTextValue("Gesture.GestureFile") + GestureSign.Common.Constants.GesturesExtension,
-                Title = LocalizationProvider.Instance.GetTextValue("Gesture.ExportGestures"),
-                AddExtension = true,
-                DefaultExt = GestureSign.Common.Constants.GesturesExtension.Remove(0, 1),
-                ValidateNames = true
-            };
-            if (sfdGestures.ShowDialog().Value)
-            {
-                FileManager.SaveObject(GestureManager.Instance.Gestures, sfdGestures.FileName);
-            }
-        }
-
         private void ViewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem clickedMenuItem = (MenuItem)sender;
