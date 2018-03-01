@@ -1,5 +1,6 @@
 ﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
@@ -288,25 +289,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private void ImportActionMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
-            {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*"+ GestureSign.Common.Constants.ActionExtension,
-                Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
-                CheckFileExists = true
-            };
-            if (ofdApplications.ShowDialog().Value)
-            {
-                var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
-                if (newApps != null)
-                {
-                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
-                    exportImportDialog.ShowDialog();
-                }
-            }
-        }
-
         private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ExportImportDialog exportImportDialog = new ExportImportDialog(true, false, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
@@ -512,6 +494,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var newApps = new List<IApplication>();
+                var newGestures = GestureManager.Instance.Gestures.ToList();
                 try
                 {
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -537,6 +520,24 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                     SelectApp(ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath));
                                 }
                                 break;
+                            case GestureSign.Common.Constants.ArchivesExtension:
+                                {
+                                    IEnumerable<IApplication> applications;
+                                    IEnumerable<IGesture> gestures;
+                                    Archive.LoadFromArchive(file, out applications, out gestures);
+
+                                    if (applications != null)
+                                        newApps.AddRange(applications);
+                                    if (gestures != null)
+                                    {
+                                        foreach (var gesture in gestures)
+                                        {
+                                            if (newGestures.Find(g => g.Name == gesture.Name) == null)
+                                                newGestures.Add(gesture);
+                                        }
+                                    }
+                                    break;
+                                }
                         }
                     }
                 }
@@ -548,7 +549,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
-                        ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+                        ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, newGestures);
                         exportImportDialog.ShowDialog();
                     }, DispatcherPriority.Background);
                 }

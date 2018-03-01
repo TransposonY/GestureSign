@@ -1,7 +1,8 @@
 ﻿using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
+using GestureSign.Common.Extensions;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
@@ -36,23 +37,32 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 Microsoft.Win32.SaveFileDialog sfdApplications = new Microsoft.Win32.SaveFileDialog()
                 {
-                    Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*"+ GestureSign.Common.Constants.ActionExtension,
-                    FileName = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + GestureSign.Common.Constants.ActionExtension,
+                    Filter = LocalizationProvider.Instance.GetTextValue("Action.ArchiveFile") + "|*" + GestureSign.Common.Constants.ArchivesExtension,
+                    FileName = LocalizationProvider.Instance.GetTextValue("Action.ArchiveFile") + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     Title = LocalizationProvider.Instance.GetTextValue("Common.Export"),
                     AddExtension = true,
-                    DefaultExt = GestureSign.Common.Constants.ActionExtension.Remove(0,1),
+                    DefaultExt = GestureSign.Common.Constants.ArchivesExtension.Remove(0, 1),
                     ValidateNames = true
                 };
                 if (sfdApplications.ShowDialog().Value)
                 {
                     var seletedApplications = ApplicationSelector.SeletedApplications;
-                    FileManager.SaveObject(seletedApplications, sfdApplications.FileName, true);
+                    var gestures = seletedApplications.GetRelatedGestures(GestureManager.Instance.Gestures);
 
-                    int actionCount = seletedApplications.Sum(app => app.Actions == null ? 0 : app.Actions.Count());
-                    var message = actionCount == 0 ? String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteWithoutAction"), seletedApplications.Count) :
-                       String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportComplete"), actionCount, seletedApplications.Count);
+                    try
+                    {
+                        Archive.CreateArchive(seletedApplications, gestures, sfdApplications.FileName);
 
-                    this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteTitle"), message);
+                        int actionCount = seletedApplications.Sum(app => app.Actions == null ? 0 : app.Actions.Count());
+                        var message = actionCount == 0 ? String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteWithoutAction"), seletedApplications.Count) :
+                           String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportComplete"), actionCount, seletedApplications.Count);
+
+                        this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteTitle"), message);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Messages.Error"), exception.Message);
+                    }
                     Close();
                 }
             }

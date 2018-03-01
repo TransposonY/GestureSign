@@ -138,6 +138,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\Archive.cs" />
     <Compile Include="Converters\ActionTitleConverter.cs" />
     <Compile Include="Converters\CommandConverter.cs" />
     <Compile Include="Converters\GestureButtonImageConverter.cs" />

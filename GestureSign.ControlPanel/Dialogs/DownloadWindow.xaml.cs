@@ -2,6 +2,7 @@
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Common;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
@@ -139,18 +140,45 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             Microsoft.Win32.OpenFileDialog ofdApplications = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = LocalizationProvider.Instance.GetTextValue("Action.ApplicationFile") + "|*"+ GestureSign.Common.Constants.ActionExtension,
+                Filter = $"{LocalizationProvider.Instance.GetTextValue("Action.ArchiveFile")}|*{GestureSign.Common.Constants.ActionExtension};*{GestureSign.Common.Constants.ArchivesExtension}",
                 Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
                 CheckFileExists = true
             };
             if (ofdApplications.ShowDialog().Value)
             {
-                var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true);
-                if (newApps != null)
+                try
                 {
-                    Close();
-                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureManager.Instance.Gestures);
-                    exportImportDialog.ShowDialog();
+                    switch (Path.GetExtension(ofdApplications.FileName).ToLower())
+                    {
+                        case GestureSign.Common.Constants.ActionExtension:
+                            var newApps = FileManager.LoadObject<List<IApplication>>(ofdApplications.FileName, false, true, true);
+                            if (newApps != null)
+                            {
+                                Hide();
+                                ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, GestureManager.Instance.Gestures);
+                                exportImportDialog.ShowDialog();
+                                Close();
+                            }
+                            break;
+                        case GestureSign.Common.Constants.ArchivesExtension:
+                            {
+                                IEnumerable<IApplication> applications;
+                                IEnumerable<IGesture> gestures;
+                                Archive.LoadFromArchive(ofdApplications.FileName, out applications, out gestures);
+                                if (applications != null && gestures != null)
+                                {
+                                    Hide();
+                                    ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, applications, gestures);
+                                    exportImportDialog.ShowDialog();
+                                    Close();
+                                }
+                                break;
+                            }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Messages.Error"), exception.Message);
                 }
             }
         }

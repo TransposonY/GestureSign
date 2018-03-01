@@ -140,6 +140,7 @@
     <NewCommand>新命令</NewCommand>
     <FromSelected>用当前手势创建新命令</FromSelected>
     <ApplicationFile>GestureSign程序文件</ApplicationFile>
+    <ArchiveFile>GestureSign文件</ArchiveFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>
     <AppCount>{0} ({1}程序)</AppCount>
     <DefaultGroup>(默认)</DefaultGroup>
@@ -186,7 +187,6 @@
     <LargeIcons>大图标</LargeIcons>
     <Details>详细信息</Details>
     <ImportGesture>导入手势文件</ImportGesture>
-    <ExportGestures>导出手势数据</ExportGestures>
     <GestureGroupHeader>{0}指手势 ({1}个)</GestureGroupHeader>
     <Applications>程序</Applications>
     <MouseActions>

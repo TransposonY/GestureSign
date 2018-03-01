@@ -36,18 +36,6 @@
                   BorderThickness="0"
                   Margin="0"
                   SelectionChanged="lstIgnoredApplications_SelectionChanged">
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem x:Name="ImportIgnoredAppsMenuItem"
-                              Header="{localization:LocalisedText Common.Import}"
-                              Click="ImportIgnoredAppsMenuItem_Click"
-                              FontSize="16" />
-                    <MenuItem x:Name="ExportIgnoredAppsMenuItem"
-                              Header="{localization:LocalisedText Common.Export}"
-                              Click="ExportIgnoredAppsMenuItem_Click"
-                              FontSize="16" />
-                </ContextMenu>
-            </ListView.ContextMenu>
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
@@ -176,7 +164,7 @@
                 Margin="10,0,0,10"
                 Grid.Row="1"
                 Grid.Column="0"
-                Click="ExportIgnoredAppsMenuItem_Click">
+                Click="ExportIgnoredButton_Click">
             <Rectangle Width="20"
                        Height="20"
                        Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">

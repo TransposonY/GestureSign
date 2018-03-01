@@ -136,6 +136,7 @@ Email:ccfyzh@gmail.com
     <NewCommand>New Command</NewCommand>
     <FromSelected>New Command From Selected</FromSelected>
     <ApplicationFile>GestureSign Applications</ApplicationFile>
+    <ArchiveFile>GestureSign Archive File</ArchiveFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
     <AppCount>{0} ({1})</AppCount>
     <DefaultGroup>(Default)</DefaultGroup>
@@ -182,7 +183,6 @@ Email:ccfyzh@gmail.com
     <LargeIcons>Large icons</LargeIcons>
     <Details>Details</Details>
     <ImportGesture>Import Gestures...</ImportGesture>
-    <ExportGestures>Export Gestures...</ExportGestures>
     <GestureGroupHeader>{0} Finger(s) Gesture  ( {1} )</GestureGroupHeader>
     <Applications>Applications</Applications>
     <MouseActions>
