@@ -186,21 +186,6 @@ namespace GestureSign.Common.Applications
             Applications.RemoveAll(app => app is IgnoredApp && app.Name == applicationName);
         }
 
-        public void RenameGesture(string newName, string oldName)
-        {
-            foreach (var app in Applications)
-            {
-                if (app.Actions == null) continue;
-                foreach (var action in app.Actions)
-                {
-                    if (action.GestureName == oldName)
-                        action.GestureName = newName;
-                }
-            }
-
-            SaveApplications();
-        }
-
         public bool SaveApplications()
         {
             if (_timer == null)

@@ -1,4 +1,5 @@
 ﻿using GestureSign.Common.Applications;
+using GestureSign.Common.Extensions;
 using GestureSign.Common.Gestures;
 using MahApps.Metro.Controls;
 using System.Windows;
@@ -46,7 +47,8 @@ namespace GestureSign.ControlPanel.Dialogs
                     if (_oldGesture.Name != CurrentGesture.Name)
                     {
                         GestureManager.Instance.DeleteGesture(CurrentGesture.Name);
-                        ApplicationManager.Instance.RenameGesture(_oldGesture.Name, CurrentGesture.Name);
+                        ApplicationManager.Instance.Applications.RenameGestures(CurrentGesture.Name, _oldGesture.Name);
+                        ApplicationManager.Instance.SaveApplications();
                     }
                 }
                 CurrentGesture.Name = _oldGesture.Name;
@@ -66,7 +68,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (string.IsNullOrEmpty(gesture.Name))
             {
-                gesture.Name = GestureManager.GetNewGestureName();
+                gesture.Name = GestureManager.Instance.GetNewGestureName();
             }
 
             if (GestureManager.Instance.GestureExists(gesture.Name))

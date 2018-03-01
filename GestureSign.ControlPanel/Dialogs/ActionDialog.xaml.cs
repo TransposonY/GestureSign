@@ -203,7 +203,7 @@ namespace GestureSign.ControlPanel.Dialogs
         {
             if (string.IsNullOrEmpty(gesture.Name))
             {
-                gesture.Name = GestureManager.GetNewGestureName();
+                gesture.Name = GestureManager.Instance.GetNewGestureName();
             }
 
             if (GestureManager.Instance.GestureExists(gesture.Name))

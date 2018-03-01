@@ -326,14 +326,14 @@ namespace GestureSign.Common.Gestures
             _Gestures.RemoveAll(g => g.Name.Trim() == gestureName.Trim());
         }
 
-        public static string GetNewGestureName()
+        public string GetNewGestureName()
         {
             Random random = new Random();
             string newName;
             do
             {
                 newName = GetRandomString(random, 6);
-            } while (GestureManager.Instance.GestureExists(newName));
+            } while (GestureExists(newName));
             return newName;
         }
 

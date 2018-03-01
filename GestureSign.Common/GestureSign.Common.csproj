@@ -109,6 +109,8 @@
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\FileManager.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions\ApplicationExtensions.cs" />
+    <Compile Include="Extensions\GestureExtensions.cs" />
     <Compile Include="Gestures\Gesture.cs" />
     <Compile Include="Gestures\GestureManager.cs" />
     <Compile Include="Gestures\IGesture.cs" />

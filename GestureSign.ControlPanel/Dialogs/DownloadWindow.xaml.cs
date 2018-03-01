@@ -253,7 +253,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     if (GestureManager.Instance.GestureExists(action.GestureName))
                     {
-                        action.GestureName = GestureManager.GetNewGestureName();
+                        action.GestureName = GestureManager.Instance.GetNewGestureName();
                     }
                     GestureManager.Instance.AddGesture(new Gesture(action.GestureName, gesture));
                     return true;
