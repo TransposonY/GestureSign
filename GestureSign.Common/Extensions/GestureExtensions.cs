@@ -21,14 +21,16 @@ namespace GestureSign.Common.Extensions
                 string matchName = gestureManager.GetMostSimilarGestureName(newGesture);
                 if (!string.IsNullOrEmpty(matchName))
                 {
-                    relatedApplications.RenameGestures(newGesture.Name, matchName);
+                    if (relatedApplications != null && newGesture.Name != matchName)
+                        relatedApplications.RenameGestures(newGesture.Name, matchName);
                 }
                 else
                 {
                     if (gestureManager.GestureExists(newGesture.Name))
                     {
                         string newName = gestureManager.GetNewGestureName();
-                        relatedApplications.RenameGestures(newGesture.Name, newName);
+                        if (relatedApplications != null)
+                            relatedApplications.RenameGestures(newGesture.Name, newName);
                         newGesture.Name = newName;
                     }
                     gestureManager.AddGesture(newGesture);

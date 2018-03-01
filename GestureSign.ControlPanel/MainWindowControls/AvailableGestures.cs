@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Extensions;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
@@ -77,36 +78,12 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ImportGesture(List<IGesture> gestureList)
         {
-            if (gestureList == null || gestureList.Count == 0) return;
+            int count = GestureManager.Instance.ImportGestures(gestureList, null);
 
-            int addcount = 0;
-            int ignoredCount = 0;
-
-            foreach (IGesture newGesture in gestureList)
-            {
-                string matchName = GestureManager.Instance.GetMostSimilarGestureName(newGesture);
-                if (matchName != null)
-                {
-                    ignoredCount++;
-                    continue;
-                }
-
-                if (GestureManager.Instance.GestureExists(newGesture.Name))
-                {
-                    newGesture.Name = GestureManager.GetNewGestureName();
-                }
-                GestureManager.Instance.AddGesture(newGesture);
-                addcount++;
-            }
-
-            if (addcount != 0)
-            {
-                GestureManager.Instance.SaveGestures();
-            }
             UIHelper.GetParentWindow(this).ShowModalMessageExternal(
                     LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportCompleteTitle"),
                     String.Format(LocalizationProvider.Instance.GetTextValue("Gesture.Messages.ImportComplete"),
-                        ignoredCount, addcount), settings: new MetroDialogSettings()
+                        gestureList.Count - count, count), settings: new MetroDialogSettings()
                         {
                             AffirmativeButtonText = LocalizationProvider.Instance.GetTextValue("Common.OK"),
                             ColorScheme = MetroDialogColorScheme.Accented,

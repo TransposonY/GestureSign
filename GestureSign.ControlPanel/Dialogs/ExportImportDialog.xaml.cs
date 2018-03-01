@@ -68,9 +68,12 @@ namespace GestureSign.ControlPanel.Dialogs
             }
             else
             {
-                int newActionCount = 0, newAppCount = 0;
+                int newActionCount = 0;
                 List<IApplication> newApplications = new List<IApplication>();
                 var seletedApplications = ApplicationSelector.SeletedApplications;
+
+                var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values);
+                GestureManager.Instance.ImportGestures(gestures, seletedApplications);
 
                 foreach (IApplication newApp in seletedApplications)
                 {
@@ -79,7 +82,6 @@ namespace GestureSign.ControlPanel.Dialogs
                         var matchApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(newApp.MatchUsing, newApp.MatchString);
                         if (matchApp.Length == 0)
                         {
-                            newAppCount++;
                             newApplications.Add(newApp);
                         }
                     }
@@ -90,49 +92,27 @@ namespace GestureSign.ControlPanel.Dialogs
                         {
                             foreach (IAction newAction in newApp.Actions)
                             {
-                                var existingAction = existingApp.Actions.FirstOrDefault(action => action.Name == newAction.Name);
-                                if (existingAction != null)
-                                {
-                                    var result =
-                                        MessageBox.Show(String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirm"),
-                                        existingAction.Name, existingApp.Name),
-                                        LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ReplaceConfirmTitle"),
-                                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                                    if (result == MessageBoxResult.Yes)
-                                    {
-                                        existingApp.RemoveAction(existingAction);
-                                        existingApp.AddAction(newAction);
-                                        newActionCount++;
-                                    }
-                                    else if (result == MessageBoxResult.Cancel) goto End;
-                                }
-                                else
-                                {
-                                    existingApp.AddAction(newAction);
-                                    newActionCount++;
-                                }
+                                existingApp.AddAction(newAction);
+                                newActionCount++;
                             }
-                            newAppCount++;
                         }
                         else
                         {
                             newActionCount += newApp.Actions.Count();
-                            newAppCount++;
                             newApplications.Add(newApp);
                         }
                     }
                 }
 
-                End:
                 if (newApplications.Count != 0)
                 {
                     ApplicationManager.Instance.AddApplicationRange(newApplications);
                 }
-                if (newAppCount + newActionCount != 0)
+                if (newApplications.Count + newActionCount != 0)
                     ApplicationManager.Instance.SaveApplications();
 
                 this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"),
-                    String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newAppCount));
+                    String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newApplications.Count));
                 Close();
             }
         }

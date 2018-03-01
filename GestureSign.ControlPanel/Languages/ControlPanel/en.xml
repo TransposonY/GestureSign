@@ -167,8 +167,6 @@ Email:ccfyzh@gmail.com
     <Commands>Commands</Commands>
     <ImportButton>Import</ImportButton>
     <ExportButton>Export</ExportButton>
-    <ReplaceConfirmTitle>Action Conflict</ReplaceConfirmTitle>
-    <ReplaceConfirm>There is already a {0} action in {1}.Replace it?</ReplaceConfirm>
     <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
     <ImportComplete>{0} actions in {1} applications have been added</ImportComplete>
     <ExportCompleteTitle>Export Complete</ExportCompleteTitle>
