@@ -20,7 +20,7 @@ namespace GestureSign.Common.Configuration
 
         #region Public Methods
 
-        public static bool SaveObject(object serializableObject, string filePath, bool typeName = false)
+        public static bool SaveObject(object serializableObject, string filePath, bool typeName = false, bool throwException = false)
         {
             try
             {
@@ -55,11 +55,13 @@ namespace GestureSign.Common.Configuration
             catch (Exception ex)
             {
                 Logging.LogException(ex);
+                if (throwException)
+                    throw;
                 return false;
             }
         }
 
-        public static T LoadObject<T>(string filePath, bool backup, bool typeName = false)
+        public static T LoadObject<T>(string filePath, bool backup, bool typeName = false, bool throwException = false)
         {
             try
             {
@@ -81,6 +83,8 @@ namespace GestureSign.Common.Configuration
                 Logging.LogException(e);
                 if (backup)
                     BackupFile(filePath);
+                if (throwException)
+                    throw;
                 return default(T);
             }
         }
