@@ -16,7 +16,7 @@ namespace GestureSign.ControlPanel.UserControls
     /// </summary>
     public partial class ApplicationSelector : UserControl
     {
-        public Dictionary<string, PointPattern[]> PatternMap { get; set; }
+        public Dictionary<string, IGesture> GestureMap { get; set; }
 
         public List<AppListItem> UserAppList
         {
@@ -116,7 +116,7 @@ namespace GestureSign.ControlPanel.UserControls
                     newUserAppList.Add(ali);
                 }
             }
-            PatternMap = gestures.ToDictionary(g => g.Name, g => g.PointPatterns);
+            GestureMap = gestures.ToDictionary(g => g.Name);
             UserAppList = newUserAppList;
             IgnoredAppList = newIgnoredApp;
         }

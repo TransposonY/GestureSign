@@ -12,15 +12,15 @@ namespace GestureSign.ControlPanel.Converters
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var patternMap = values[0] as Dictionary<string, PointPattern[]>;
+            var gestureMap = values[0] as Dictionary<string, IGesture>;
             string gestureName = values[1] as string;
-            if (gestureName == null || patternMap == null)
+            if (gestureName == null || gestureMap == null)
                 return null;
 
-            PointPattern[] pattern = null;
-            if (patternMap.ContainsKey(gestureName))
-                pattern = patternMap[gestureName];
-            return GestureImageConverter.Convert(pattern, targetType, parameter, culture);
+            IGesture gesture = null;
+            if (gestureMap.TryGetValue(gestureName, out gesture))
+                return GestureImageConverter.Convert(gesture.PointPatterns, targetType, parameter, culture);
+            return null;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

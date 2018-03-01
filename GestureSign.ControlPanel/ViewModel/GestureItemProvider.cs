@@ -36,10 +36,10 @@ namespace GestureSign.ControlPanel.ViewModel
 
         public GestureItemProvider()
         {
-            PatternMap = GestureManager.Instance.LoadingTask.IsCompleted ? GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern) : new Dictionary<string, PointPattern[]>();
+            GestureMap = GestureManager.Instance.LoadingTask.IsCompleted ? GestureItems.ToDictionary(gi => gi.Gesture.Name, gi => gi.Gesture) : new Dictionary<string, IGesture>();
             GlobalPropertyChanged += (sender, propertyName) =>
             {
-                PatternMap = GestureItems.ToDictionary(gi => gi.Name, gi => gi.PointPattern);
+                GestureMap = GestureItems.ToDictionary(gi => gi.Gesture.Name, gi => gi.Gesture);
                 OnPropertyChanged(propertyName);
             };
         }
@@ -50,7 +50,7 @@ namespace GestureSign.ControlPanel.ViewModel
             set { _gestureItems = value; }
         }
 
-        public Dictionary<string, PointPattern[]> PatternMap { get; set; }
+        public Dictionary<string, IGesture> GestureMap { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
@@ -82,12 +82,11 @@ namespace GestureSign.ControlPanel.ViewModel
                 GestureItem newItem = new GestureItem()
                 {
                     Applications = result,
-                    PointPattern = gesture.PointPatterns,
-                    Name = gesture.Name,
+                    Gesture = gesture
                 };
                 GestureItems.Add(newItem);
             }
-            GlobalPropertyChanged?.Invoke(typeof(GestureItemProvider), nameof(PatternMap));
+            GlobalPropertyChanged?.Invoke(typeof(GestureItemProvider), nameof(GestureMap));
         }
     }
 }

@@ -21,7 +21,7 @@
         <CollectionViewSource x:Key="GestureViewSource"
                               Source="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="PointPattern"
+                <PropertyGroupDescription PropertyName="Gesture"
                                           Converter="{StaticResource GestureGroupConverter}" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
@@ -31,7 +31,7 @@
         <DataTemplate x:Key="IconTemplate">
             <Grid Width="200"
                   Height="70">
-                <Image Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=60}"
+                <Image Source="{Binding Path=Gesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=60}"
                        Stretch="Uniform"
                        StretchDirection="DownOnly"
                        VerticalAlignment="Center"
@@ -47,7 +47,7 @@
                                Margin="5"
                                Stretch="Uniform"
                                StretchDirection="DownOnly"
-                               Source="{Binding Path=PointPattern,Converter={StaticResource GestureImageConverter},ConverterParameter=45}" />
+                               Source="{Binding Path=Gesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=45}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
@@ -67,7 +67,7 @@
                   SelectionChanged="lstAvailableGestures_SelectionChanged"
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   BorderThickness="0"
-                  SelectedValuePath="Name">
+                  SelectedValuePath="Gesture">
             <ListView.Style>
                 <Style TargetType="ListView"
                        BasedOn="{StaticResource {x:Type ListView}}">

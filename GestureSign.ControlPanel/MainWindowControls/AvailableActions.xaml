@@ -396,7 +396,7 @@
                                                                     <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
                                                                                   ConverterParameter="56">
                                                                         <Binding Source="{StaticResource GestureItemProvider}"
-                                                                                 Path="PatternMap"
+                                                                                 Path="GestureMap"
                                                                                  Mode="OneWay" />
                                                                         <Binding  Path="Name.GestureName"
                                                                                   Mode="OneWay" />

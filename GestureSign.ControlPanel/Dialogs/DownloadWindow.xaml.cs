@@ -269,8 +269,8 @@ namespace GestureSign.ControlPanel.Dialogs
         /// <returns>Indicates whether the new gesture was added</returns>
         private bool UpdateGesture(IAction action)
         {
-            PointPattern[] gesture;
-            if (ApplicationSelector.PatternMap.TryGetValue(action.GestureName, out gesture))
+            IGesture gesture;
+            if (ApplicationSelector.GestureMap.TryGetValue(action.GestureName, out gesture))
             {
                 var existingGesture = GestureManager.Instance.GetMostSimilarGestureName(gesture);
                 if (existingGesture != null)
@@ -283,7 +283,7 @@ namespace GestureSign.ControlPanel.Dialogs
                     {
                         action.GestureName = GestureManager.Instance.GetNewGestureName();
                     }
-                    GestureManager.Instance.AddGesture(new Gesture(action.GestureName, gesture));
+                    GestureManager.Instance.AddGesture(new Gesture(action.GestureName, gesture.PointPatterns));
                     return true;
                 }
             }

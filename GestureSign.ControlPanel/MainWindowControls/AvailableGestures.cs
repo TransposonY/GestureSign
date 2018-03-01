@@ -48,7 +48,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         }) == MessageDialogResult.Affirmative)
             {
                 foreach (GestureItem listItem in lstAvailableGestures.SelectedItems)
-                    GestureManager.Instance.DeleteGesture(listItem.Name);
+                    GestureManager.Instance.DeleteGesture(listItem.Gesture.Name);
 
                 GestureManager.Instance.SaveGestures();
             }
@@ -169,11 +169,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             GestureDefinition gd =
                 new GestureDefinition(
-                    GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Name));
+                    GestureManager.Instance.GetNewestGestureSample(((GestureItem)lstAvailableGestures.SelectedItems[0]).Gesture.Name));
             var result = gd.ShowDialog();
             if (result != null && result.Value)
             {
-                lstAvailableGestures.SelectedValue = gd.CurrentGesture.Name;
+                lstAvailableGestures.SelectedValue = gd.CurrentGesture;
                 lstAvailableGestures.Dispatcher.Invoke(DispatcherPriority.Input,
                     new Action(() => lstAvailableGestures.ScrollIntoView(lstAvailableGestures.SelectedItem)));
             }

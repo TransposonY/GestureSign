@@ -11,8 +11,8 @@ namespace GestureSign.ControlPanel.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var pattern = (PointPattern[])value;
-            int strokeCount = pattern?.Max(p => p.Points.Count) ?? 0;
+            var gesture = (IGesture)value;
+            int strokeCount = gesture?.PointPatterns.Max(p => p.Points.Count) ?? 0;
             return strokeCount;
         }
 
