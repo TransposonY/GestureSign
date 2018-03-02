@@ -118,25 +118,38 @@ namespace GestureSign.CorePlugins.OpenFile
         {
             if (string.IsNullOrWhiteSpace(command)) return command;
 
-            string clipboardString = string.Empty;
-            pointInfo.SyncContext.Send(state =>
+            if (command.Contains("%GS_Clipboard%"))
             {
-                IDataObject iData = Clipboard.GetDataObject();
-                if (iData != null && iData.GetDataPresent(DataFormats.Text))
+                string clipboardString = string.Empty;
+                pointInfo.SyncContext.Send(state =>
                 {
-                    clipboardString = (string)iData.GetData(DataFormats.Text);
-                }
-            }, null);
+                    IDataObject iData = Clipboard.GetDataObject();
+                    if (iData != null && iData.GetDataPresent(DataFormats.Text))
+                    {
+                        clipboardString = (string)iData.GetData(DataFormats.Text);
+                    }
+                }, null);
+                command = command.Replace("%GS_Clipboard%", clipboardString);
+            }
+
+            if (command.Contains("%GS_ClassName%"))
+            {
+                command = command.Replace("%GS_ClassName%", pointInfo.Window.ClassName);
+            }
+            if (command.Contains("%GS_Title%"))
+            {
+                command = command.Replace("%GS_Title%", pointInfo.Window.Title);
+            }
+            if (command.Contains("%GS_PID%"))
+            {
+                command = command.Replace("%GS_PID%", pointInfo.Window.ProcessId.ToString());
+            }
 
             return command.Replace("%GS_StartPoint_X%", pointInfo.PointLocation.First().X.ToString()).
               Replace("%GS_StartPoint_Y%", pointInfo.PointLocation.First().Y.ToString()).
               Replace("%GS_EndPoint_X%", pointInfo.Points[0].Last().X.ToString()).
               Replace("%GS_EndPoint_Y%", pointInfo.Points[0].Last().Y.ToString()).
-              Replace("%GS_ClassName%", pointInfo.Window.ClassName).
-              Replace("%GS_Title%", pointInfo.Window.Title).
-              Replace("%GS_PID%", pointInfo.Window.ProcessId.ToString()).
-              Replace("%GS_WindowHandle%", pointInfo.WindowHandle.ToString()).
-              Replace("%GS_Clipboard%", clipboardString);
+              Replace("%GS_WindowHandle%", pointInfo.WindowHandle.ToString());
         }
 
         #endregion
