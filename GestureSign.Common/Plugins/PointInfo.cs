@@ -12,6 +12,7 @@ namespace GestureSign.Common.Plugins
 
         private List<Point> _pointLocation;
         private SystemWindow _window;
+        private SynchronizationContext _syncContext;
 
         #endregion
 
@@ -21,7 +22,7 @@ namespace GestureSign.Common.Plugins
         {
             _pointLocation = pointLocation;
             Points = points;
-            SyncContext = syncContext;
+            _syncContext = syncContext;
         }
 
         #endregion
@@ -43,7 +44,14 @@ namespace GestureSign.Common.Plugins
 
         public List<List<Point>> Points { get; set; }
 
-        public SynchronizationContext SyncContext { get; set; }
+        #endregion
+
+        #region Public Methods
+
+        public void Invoke(Action action)
+        {
+            _syncContext.Send((o) => action.Invoke(), null);
+        }
 
         #endregion
     }

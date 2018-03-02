@@ -100,14 +100,14 @@ namespace GestureSign.CorePlugins.RunCommand
                     }
                     if (_Settings.Command.Contains("GS_Clipboard"))
                     {
-                        pointInfo.SyncContext.Send(state =>
+                        pointInfo.Invoke(() =>
                         {
                             IDataObject iData = Clipboard.GetDataObject();
                             if (iData != null && iData.GetDataPresent(DataFormats.Text))
                             {
                                 clipboardString = (string)iData.GetData(DataFormats.Text);
                             }
-                        }, null);
+                        });
                         process.StartInfo.EnvironmentVariables.Add("GS_Clipboard", clipboardString);
                     }
                     process.Start();

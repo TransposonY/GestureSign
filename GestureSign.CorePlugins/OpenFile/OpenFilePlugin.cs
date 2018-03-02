@@ -121,14 +121,14 @@ namespace GestureSign.CorePlugins.OpenFile
             if (command.Contains("%GS_Clipboard%"))
             {
                 string clipboardString = string.Empty;
-                pointInfo.SyncContext.Send(state =>
+                pointInfo.Invoke(() =>
                 {
                     IDataObject iData = Clipboard.GetDataObject();
                     if (iData != null && iData.GetDataPresent(DataFormats.Text))
                     {
                         clipboardString = (string)iData.GetData(DataFormats.Text);
                     }
-                }, null);
+                });
                 command = command.Replace("%GS_Clipboard%", clipboardString);
             }
 
