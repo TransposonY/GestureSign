@@ -103,10 +103,10 @@ namespace GestureSign.Common.Configuration
         {
             try
             {
-                string backupFileName = Path.Combine(Path.GetDirectoryName(filePath),
-                    Path.GetFileNameWithoutExtension(filePath) +
-            DateTime.Now.ToString("yyMMddHHmmssffff") +
-            Path.GetExtension(filePath));
+                var backupDirectory = new DirectoryInfo(AppConfig.BackupPath);
+                if (!backupDirectory.Exists)
+                    backupDirectory.Create();
+                string backupFileName = Path.Combine(backupDirectory.FullName, DateTime.Now.ToString("yyMMddHHmmss") + Path.GetExtension(filePath));
                 File.Copy(filePath, backupFileName, true);
                 return backupFileName;
             }

@@ -242,11 +242,15 @@ namespace GestureSign.Common.Applications
 
         private bool LoadBackup()
         {
-            var actionfiles = Directory.GetFiles(AppConfig.ApplicationDataPath, "Actions*" + Constants.ActionExtension);
-            foreach (var file in actionfiles)
+            var directory = new DirectoryInfo(AppConfig.BackupPath);
+            if (directory.Exists)
             {
-                _applications = FileManager.LoadObject<List<IApplication>>(file, false, true);
-                if (_applications != null) return true;
+                var actionfiles = directory.EnumerateFiles("*" + Constants.ActionExtension).OrderByDescending(f => f.LastWriteTime);
+                foreach (var file in actionfiles)
+                {
+                    _applications = FileManager.LoadObject<List<IApplication>>(file.FullName, false, true);
+                    if (_applications != null) return true;
+                }
             }
             return false;
         }

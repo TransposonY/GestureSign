@@ -4,7 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Drawing;
 using System.Threading.Tasks;
-using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.PointPatterns;
 using GestureSign.Common.Input;
@@ -129,14 +128,18 @@ namespace GestureSign.Common.Gestures
 
         private bool LoadBackup()
         {
-            var files = Directory.GetFiles(AppConfig.ApplicationDataPath, "Gestures*" + Constants.GesturesExtension);
-            foreach (var file in files)
+            var directory = new DirectoryInfo(AppConfig.BackupPath);
+            if (directory.Exists)
             {
-                var gestures = FileManager.LoadObject<List<IApplication>>(file, false);
-                if (gestures != null)
+                var files = directory.EnumerateFiles("*" + Constants.GesturesExtension).OrderByDescending(f => f.LastWriteTime);
+                foreach (var file in files)
                 {
-                    _Gestures = gestures.Cast<IGesture>().ToList();
-                    return true;
+                    var gestures = FileManager.LoadObject<List<Gesture>>(file.FullName, false);
+                    if (gestures != null)
+                    {
+                        _Gestures = gestures.Cast<IGesture>().ToList();
+                        return true;
+                    }
                 }
             }
             return false;

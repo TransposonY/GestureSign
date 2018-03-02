@@ -23,6 +23,8 @@ namespace GestureSign.Common.Configuration
 
         public static string LocalApplicationDataPath { private set; get; }
 
+        public static string BackupPath { private set; get; }
+
         public static System.Drawing.Color VisualFeedbackColor
         {
             get
@@ -197,7 +199,7 @@ namespace GestureSign.Common.Configuration
             ConfigPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
             ApplicationDataPath = System.IO.Path.GetDirectoryName(ConfigPath);
             LocalApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GestureSign");
-
+            BackupPath = LocalApplicationDataPath + "\\Backup";
             if (!Directory.Exists(ApplicationDataPath))
                 Directory.CreateDirectory(ApplicationDataPath);
 
