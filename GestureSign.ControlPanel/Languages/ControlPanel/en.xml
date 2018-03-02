@@ -168,9 +168,9 @@ Email:ccfyzh@gmail.com
     <ImportButton>Import</ImportButton>
     <ExportButton>Export</ExportButton>
     <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
-    <ImportComplete>{0} actions in {1} applications have been added</ImportComplete>
+    <ImportComplete>{0} actions and {1} applications have been added</ImportComplete>
     <ExportCompleteTitle>Export Complete</ExportCompleteTitle>
-    <ExportComplete>{0} actions in {1} applications have been exported</ExportComplete>
+    <ExportComplete>{0} actions and {1} applications have been exported</ExportComplete>
     <ExportCompleteWithoutAction>{0} applications have been exported</ExportCompleteWithoutAction>
     <FromFile>From File...</FromFile>
 </ExportImportDialog>

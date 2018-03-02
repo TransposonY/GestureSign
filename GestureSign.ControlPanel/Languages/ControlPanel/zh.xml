@@ -172,11 +172,11 @@
     <ImportButton>导入</ImportButton>
     <ExportButton>导出</ExportButton>
     <ImportCompleteTitle>导入完成</ImportCompleteTitle>
-    <ImportComplete>已导入 {1} 个程序中的 {0} 个动作</ImportComplete>
+    <ImportComplete>已导入 {1} 个程序 {0} 个动作</ImportComplete>
     <ExportCompleteTitle>导出完成</ExportCompleteTitle>
-    <ExportComplete>已导出 {1} 个程序中的 {0} 个动作</ExportComplete>
+    <ExportComplete>已导出 {1} 个程序 {0} 个动作</ExportComplete>
     <ExportCompleteWithoutAction>已经导出 {0} 个程序</ExportCompleteWithoutAction>
-    <FromFile>导入文件...</FromFile>
+    <FromFile>从文件导入...</FromFile>
   </ExportImportDialog>
   <Gesture>
     <Header>手势</Header>
