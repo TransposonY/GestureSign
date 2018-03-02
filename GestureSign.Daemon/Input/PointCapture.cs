@@ -263,6 +263,8 @@ namespace GestureSign.Daemon.Input
                 if (State != CaptureState.Ready || Mode != CaptureMode.Normal || hwnd.Equals(IntPtr.Zero))
                     return;
                 var systemWindow = new SystemWindow(hwnd);
+                if (!systemWindow.Visible)
+                    return;
                 var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow);
                 ForegroundApplicationsChanged?.Invoke(this, apps);
             }
