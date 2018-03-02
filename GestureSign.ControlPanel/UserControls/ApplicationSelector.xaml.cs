@@ -102,7 +102,7 @@ namespace GestureSign.ControlPanel.UserControls
 
             var newUserAppList = new List<AppListItem>();
             var newIgnoredApp = new List<AppListItem>();
-            foreach (var app in apps)
+            foreach (var app in apps.OrderBy(app => app.Name))
             {
                 IgnoredApp ignoredApp = app as IgnoredApp;
                 if (ignoredApp != null)
