@@ -3,6 +3,7 @@ using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Hooks;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GestureSign.Daemon.Input
 {
@@ -20,9 +21,11 @@ namespace GestureSign.Daemon.Input
 
             AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             LowLevelMouseHook = new LowLevelMouseHook();
-
             if (AppConfig.DrawingButton != MouseActions.None)
-                LowLevelMouseHook.StartHook();
+                Task.Delay(1000).ContinueWith((t) =>
+                {
+                    LowLevelMouseHook.StartHook();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void AppConfig_ConfigChanged(object sender, System.EventArgs e)
