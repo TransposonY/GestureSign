@@ -102,14 +102,22 @@
                                       MaxWidth="300" />
                     <ColumnDefinition Width="1.25*" />
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="AppFilterTextBox"
-                         FontSize="14"
-                         Background="{StaticResource AccentColorBrush}"
-                         Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.SearchApplication}"
-                         TextChanged="AppFilterTextBox_TextChanged"
-                         VerticalAlignment="Top"
-                         BorderThickness="0"
-                         Foreground="White" />
+                <Grid VerticalAlignment="Top"
+                      Background="{StaticResource AccentColorBrush}">
+                    <CheckBox x:Name="AllAppCheckBox"
+                              Margin="10,0,0,0"
+                              Click="AllAppCheckBox_Click"
+                              HorizontalAlignment="Left" />
+                    <TextBox x:Name="AppFilterTextBox"
+                             FontSize="14"
+                             Custom:TextBoxHelper.Watermark="{localization:LocalisedText ExportImportDialog.SearchApplication}"
+                             TextChanged="AppFilterTextBox_TextChanged"
+                             VerticalAlignment="Top"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             Foreground="White"
+                             Margin="34,0,0,0" />
+                </Grid>
                 <ListBox x:Name="AppListBox"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -152,8 +160,7 @@
                                 <CheckBox x:Name="AppCheckBox"
                                           IsChecked="{Binding IsSelected,Mode=TwoWay}"
                                           Margin="10,0,0,0"
-                                          VerticalAlignment="Stretch"
-                                          Click="AppCheckBox_Click" />
+                                          VerticalAlignment="Stretch" />
                                 <TextBlock Text="{Binding Application.Name}"
                                            VerticalAlignment="Center"
                                            Margin="5,0,0,0"

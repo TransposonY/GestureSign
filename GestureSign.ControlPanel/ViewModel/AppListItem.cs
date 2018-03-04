@@ -18,7 +18,14 @@ namespace GestureSign.ControlPanel.ViewModel
             {
                 return _isSelected;
             }
-            set { SetProperty(ref _isSelected, value); }
+            set
+            {
+                if (value.HasValue)
+                {
+                    ActionItemList.ForEach(ali => ali.IsSelected = value.Value);
+                }
+                SetProperty(ref _isSelected, value);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

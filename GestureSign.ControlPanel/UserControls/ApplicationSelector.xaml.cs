@@ -165,12 +165,11 @@ namespace GestureSign.ControlPanel.UserControls
             }
         }
 
-        private void AppCheckBox_Click(object sender, RoutedEventArgs e)
+        private void AllAppCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = (CheckBox)sender;
-            var appListItem = UIHelper.GetParentDependencyObject<ListBoxItem>(checkBox).Content as AppListItem;
-            if (appListItem == null) return;
-            appListItem.ActionItemList.ForEach(ail => ail.IsSelected = checkBox.IsChecked.Value);
+            bool? isChecked = checkBox.IsChecked;
+            UserAppList.ForEach(ali => ali.IsSelected = isChecked);
         }
 
         private void ActionCheckBox_Click(object sender, RoutedEventArgs e)
