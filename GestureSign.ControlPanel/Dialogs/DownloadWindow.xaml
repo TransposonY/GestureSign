@@ -1,20 +1,21 @@
-﻿<controls:MetroWindow x:Class="GestureSign.ControlPanel.Dialogs.DownloadWindow"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
-                      xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
-                      mc:Ignorable="d"
-                      Title="{localization:LocalisedText Common.Import}"
-                      FlowDirection="{StaticResource DefaultFlowDirection}"
-                      BorderBrush="{StaticResource AccentColorBrush}"
-                      WindowStartupLocation="CenterScreen"
-                      BorderThickness="1"
-                      Height="380"
-                      Width="600"
-                      Loaded="MetroWindow_Loaded">
+﻿<common:TouchWindow x:Class="GestureSign.ControlPanel.Dialogs.DownloadWindow"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                    xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
+                    xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
+                    mc:Ignorable="d"
+                    Title="{localization:LocalisedText Common.Import}"
+                    FlowDirection="{StaticResource DefaultFlowDirection}"
+                    BorderBrush="{StaticResource AccentColorBrush}"
+                    WindowStartupLocation="CenterScreen"
+                    BorderThickness="1"
+                    Height="380"
+                    Width="600"
+                    Loaded="MetroWindow_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -41,4 +42,4 @@
                 MinWidth="90"
                 HorizontalAlignment="Right" />
     </Grid>
-</controls:MetroWindow>
+</common:TouchWindow>

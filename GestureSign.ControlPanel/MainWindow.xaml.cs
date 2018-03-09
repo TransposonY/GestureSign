@@ -1,8 +1,8 @@
 ﻿using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
+using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using System;
@@ -20,7 +20,7 @@ namespace GestureSign.ControlPanel
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow : TouchWindow
     {
         public MainWindow()
         {

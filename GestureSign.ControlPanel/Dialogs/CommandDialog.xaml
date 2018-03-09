@@ -4,7 +4,7 @@
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+                      xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
                       mc:Ignorable="d"
                       x:Class="GestureSign.ControlPanel.Dialogs.CommandDialog"
                       Title="{localization:LocalisedText CommandDialog.EditCommandTitle}"
@@ -20,6 +20,11 @@
                       BorderBrush="{StaticResource AccentColorBrush}"
                       ResizeMode="CanMinimize">
     <controls:MetroWindow.Resources>
+        <Style TargetType="ScrollViewer"
+               BasedOn="{StaticResource {x:Type ScrollViewer}}">
+            <Setter Property="common:DragScrolling.IsEnabled"
+                    Value="True" />
+        </Style>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>

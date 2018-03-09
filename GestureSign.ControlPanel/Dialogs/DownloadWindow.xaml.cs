@@ -21,7 +21,7 @@ namespace GestureSign.ControlPanel.Dialogs
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml
     /// </summary>
-    public partial class DownloadWindow : MetroWindow
+    public partial class DownloadWindow : TouchWindow
     {
         private object _thisLock = new object();
         private bool _isDownloaded;

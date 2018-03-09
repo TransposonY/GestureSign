@@ -1,28 +1,28 @@
-﻿<controls:MetroWindow x:Name="AppDialog"
-                      x:Class="GestureSign.ControlPanel.Dialogs.ApplicationDialog"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-                      xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
-                      xmlns:flyouts="clr-namespace:GestureSign.ControlPanel.Flyouts"
-                      xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
-                      xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
-                      xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
-                      mc:Ignorable="d"
-                      Icon="/GestureSign;component/Resources/normal.ico"
-                      SizeToContent="Height"
-                      Width="600"
-                      ShowIconOnTitleBar="False"
-                      WindowStyle="ToolWindow"
-                      WindowStartupLocation="CenterScreen"
-                      FlowDirection="{StaticResource DefaultFlowDirection}"
-                      BorderBrush="{StaticResource AccentColorBrush}"
-                      Loaded="ApplicationDialog_OnLoaded"
-                      ResizeMode="CanMinimize"
-                      MaxHeight="400"
-                      AllowDrop="True">
+﻿<common:TouchWindow x:Name="AppDialog"
+                    x:Class="GestureSign.ControlPanel.Dialogs.ApplicationDialog"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+                    xmlns:flyouts="clr-namespace:GestureSign.ControlPanel.Flyouts"
+                    xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
+                    xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+                    xmlns:usercontrols="clr-namespace:GestureSign.ControlPanel.UserControls"
+                    mc:Ignorable="d"
+                    Icon="/GestureSign;component/Resources/normal.ico"
+                    SizeToContent="Height"
+                    Width="600"
+                    ShowIconOnTitleBar="False"
+                    WindowStyle="ToolWindow"
+                    WindowStartupLocation="CenterScreen"
+                    FlowDirection="{StaticResource DefaultFlowDirection}"
+                    BorderBrush="{StaticResource AccentColorBrush}"
+                    Loaded="ApplicationDialog_OnLoaded"
+                    ResizeMode="CanMinimize"
+                    MaxHeight="400"
+                    AllowDrop="True">
     <controls:MetroWindow.Resources>
         <converters:MatchStringConverter x:Key="MatchStringConverter" />
     </controls:MetroWindow.Resources>
@@ -61,12 +61,12 @@
                        FontWeight="Bold"
                        Margin="10,5,0,0" />
             <usercontrols:Crosshair x:Name="chCrosshair"
-                              HorizontalAlignment="Right"
-                              Height="36"
-                              Width="36"
-                              CrosshairDragged="chCrosshair_CrosshairDragged"
-                              CrosshairDragging="ChCrosshair_OnCrosshairDragging"
-                              Margin="0,0,20,0" />
+                                    HorizontalAlignment="Right"
+                                    Height="36"
+                                    Width="36"
+                                    CrosshairDragged="chCrosshair_CrosshairDragged"
+                                    CrosshairDragging="ChCrosshair_OnCrosshairDragging"
+                                    Margin="0,0,20,0" />
             <TextBlock TextWrapping="Wrap"
                        Text="{localization:LocalisedText ApplicationDialog.DragCrosshair}"
                        Margin="10,-31,60,0" />
@@ -121,8 +121,8 @@
                        FontWeight="Bold"
                        Margin="10,5,0,0" />
             <usercontrols:MatchUsingRadio x:Name="matchUsingRadio"
-                                    Height="27"
-                                    Margin="10,5,10,0" />
+                                          Height="27"
+                                          Margin="10,5,10,0" />
             <TextBlock HorizontalAlignment="Left"
                        Text="{localization:LocalisedText ApplicationDialog.MatchString}"
                        FontSize="14"
@@ -212,4 +212,4 @@
                 Grid.Row="1"
                 Grid.Column="1" />
     </Grid>
-</controls:MetroWindow>
+</common:TouchWindow>

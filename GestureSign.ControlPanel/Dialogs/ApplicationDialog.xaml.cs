@@ -24,7 +24,7 @@ namespace GestureSign.ControlPanel.Dialogs
     /// <summary>
     /// Interaction logic for ApplicationDialog.xaml
     /// </summary>
-    public partial class ApplicationDialog : MetroWindow
+    public partial class ApplicationDialog : TouchWindow
     {
         private IApplication _currentApplication;
         private bool _isUserApp;

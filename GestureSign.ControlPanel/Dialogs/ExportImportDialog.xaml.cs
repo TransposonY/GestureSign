@@ -3,7 +3,6 @@ using GestureSign.Common.Extensions;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace GestureSign.ControlPanel.Dialogs
     /// <summary>
     /// Interaction logic for ExportImportDialog.xaml
     /// </summary>
-    public partial class ExportImportDialog : MetroWindow
+    public partial class ExportImportDialog : TouchWindow
     {
         private bool _isExportMode;
 
