@@ -240,6 +240,9 @@ Email:ccfyzh@gmail.com
     <IgnoreFullScreen>
       <Header>Ignore Full Screen Window</Header>
     </IgnoreFullScreen>
+    <IgnoreTouchInputWhenUsingPen>
+      <Header>Ignore Touch Input When Using Pen</Header>
+    </IgnoreTouchInputWhenUsingPen>
     <ShowTrayIconSwitch>
       <Header>Show Tray Icon</Header>
       <OnLabel>Show</OnLabel>

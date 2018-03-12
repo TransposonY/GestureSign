@@ -244,6 +244,9 @@
     <IgnoreFullScreen>
       <Header>全屏下关闭手势识别</Header>
     </IgnoreFullScreen>
+    <IgnoreTouchInputWhenUsingPen>
+      <Header>使用笔时忽略触摸输入</Header>
+    </IgnoreTouchInputWhenUsingPen>
     <ShowTrayIconSwitch>
       <Header>任务栏图标</Header>
       <OnLabel>显示</OnLabel>

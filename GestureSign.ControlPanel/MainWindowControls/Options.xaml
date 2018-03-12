@@ -175,6 +175,11 @@
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Click="IgnoreFullScreenSwitch_Click" />
+            <controls:ToggleSwitch x:Name="IgnoreTouchInputWhenUsingPenSwitch"
+                                   Header="{localization:LocalisedText Options.IgnoreTouchInputWhenUsingPen.Header}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Click="IgnoreTouchInputWhenUsingPenSwitch_Click" />
             <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"
                                    Header="{localization:LocalisedText Options.ShowTrayIconSwitch.Header}"
                                    OnLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OnLabel}"

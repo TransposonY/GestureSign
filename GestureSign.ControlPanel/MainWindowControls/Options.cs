@@ -48,6 +48,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
                 IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
+                IgnoreTouchInputWhenUsingPenSwitch.IsChecked = AppConfig.IgnoreTouchInputWhenUsingPen;
                 if (AppConfig.DrawingButton != MouseActions.None)
                 {
                     MouseSwitch.IsChecked = true;
@@ -328,6 +329,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void IgnoreFullScreenSwitch_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.IgnoreFullScreen = IgnoreFullScreenSwitch.IsChecked.GetValueOrDefault();
+        }
+
+        private void IgnoreTouchInputWhenUsingPenSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.IgnoreTouchInputWhenUsingPen = IgnoreTouchInputWhenUsingPenSwitch.IsChecked.GetValueOrDefault();
         }
 
         private void InitialTimeoutSwitch_Click(object sender, RoutedEventArgs e)

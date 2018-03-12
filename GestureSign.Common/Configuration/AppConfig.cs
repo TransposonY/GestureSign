@@ -191,6 +191,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool IgnoreTouchInputWhenUsingPen
+        {
+            get
+            {
+                return GetValue(nameof(IgnoreTouchInputWhenUsingPen), true);
+            }
+            set
+            {
+                SetValue(nameof(IgnoreTouchInputWhenUsingPen), value);
+            }
+        }
+
         static AppConfig()
         {
 #if uiAccess

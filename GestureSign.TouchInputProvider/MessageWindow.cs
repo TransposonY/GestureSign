@@ -23,6 +23,7 @@ namespace GestureSign.TouchInputProvider
 
         private Devices _sourceDevice;
         private bool _isTouchpadRegistered;
+        private int? _penLastActivity;
 
         private Timer _connectionTestTimer;
 
@@ -50,6 +51,8 @@ namespace GestureSign.TouchInputProvider
         public MessageWindow()
         {
             RegisterDevice(NativeMethods.TouchScreenUsage);
+            if (Common.Configuration.AppConfig.IgnoreTouchInputWhenUsingPen)
+                RegisterDevice(NativeMethods.PenUsage);
             EnumerateDevices();
             _connectionTestTimer = new Timer
             {
@@ -117,7 +120,7 @@ namespace GestureSign.TouchInputProvider
                         {
                             NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICEINFO, pInfo, ref pcbSize);
                             var info = (RID_DEVICE_INFO)Marshal.PtrToStructure(pInfo, typeof(RID_DEVICE_INFO));
-                            if (info.hid.usUsage != NativeMethods.TouchPadUsage && info.hid.usUsage != NativeMethods.TouchScreenUsage) continue;
+                            if (info.hid.usUsage != NativeMethods.TouchPadUsage && info.hid.usUsage != NativeMethods.TouchScreenUsage && info.hid.usUsage != NativeMethods.PenUsage) continue;
 
                             NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
                             if (pcbSize <= 0) continue;
@@ -222,8 +225,14 @@ namespace GestureSign.TouchInputProvider
                 ushort usage;
                 if (!_validDevices.TryGetValue(raw.header.hDevice, out usage)) return;
 
-                if (usage == NativeMethods.TouchScreenUsage)
+                if (usage == NativeMethods.PenUsage)
                 {
+                    _penLastActivity = Environment.TickCount;
+                }
+                else if (usage == NativeMethods.TouchScreenUsage)
+                {
+                    if (_penLastActivity != null && Environment.TickCount - _penLastActivity < 100)
+                        return;
                     if (_sourceDevice == Devices.None)
                     {
                         _currentScr = Screen.FromPoint(Cursor.Position);

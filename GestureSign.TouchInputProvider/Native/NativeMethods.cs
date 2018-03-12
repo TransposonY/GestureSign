@@ -36,6 +36,7 @@ namespace GestureSign.TouchInputProvider.Native
 
         internal const ushort TouchPadUsage = 0x05;
         internal const ushort TouchScreenUsage = 0x04;
+        internal const ushort PenUsage = 0x02;
 
         #endregion const definitions
 
