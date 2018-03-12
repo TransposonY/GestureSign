@@ -73,7 +73,7 @@ namespace GestureSign.ExtraPlugins.ClipboardMatch
         public bool Gestured(PointInfo actionPoint)
         {
             bool success = false;
-            actionPoint.SyncContext.Send(state =>
+            actionPoint.Invoke(() =>
             {
                 IDataObject iData = Clipboard.GetDataObject();
                 if (iData != null && iData.GetDataPresent(DataFormats.Text))
@@ -91,7 +91,7 @@ namespace GestureSign.ExtraPlugins.ClipboardMatch
                         }
                     }
                 }
-            }, null);
+            });
 
             return success;
         }

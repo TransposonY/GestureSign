@@ -79,12 +79,12 @@ namespace GestureSign.ExtraPlugins.TextCopyer
             if (string.IsNullOrEmpty(text)) return false;
 
             bool success = false;
-            actionPoint.SyncContext.Send(state =>
+            actionPoint.Invoke(() =>
             {
                 Clipboard.SetText(text);
                 Clipboard.Flush();
                 success = true;
-            }, null);
+            });
 
             return success;
         }

@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
              d:DesignWidth="320"
              Height="145">
     <StackPanel>
         <TextBlock HorizontalAlignment="Left"
                    TextWrapping="Wrap"
-                   Text="Pattern String"
+                   Text="{localization:LocalisedText ClipboardMatch.PatternString}"
                    VerticalAlignment="Top"
                    FontSize="14" />
         <TextBox x:Name="MatchTextBox"

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Language DisplayName="中文" Culture="zh-CN" Version="6.1">
+  <ClipboardMatch>
+    <PatternString>正则表达式</PatternString>
+  </ClipboardMatch>
+</Language>
