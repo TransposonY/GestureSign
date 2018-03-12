@@ -107,7 +107,7 @@ namespace GestureSign.TouchInputProvider
                 for (; i != 10; i++)
                 {
                     if (!NamedPipe.NamedPipeDoesNotExist(pipeName)) break;
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                 }
                 if (i == 10) return false;
                 _pipeClient.Connect(10);

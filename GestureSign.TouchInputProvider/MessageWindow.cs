@@ -56,7 +56,7 @@ namespace GestureSign.TouchInputProvider
             EnumerateDevices();
             _connectionTestTimer = new Timer
             {
-                Interval = 5000
+                Interval = 1000
             };
             _connectionTestTimer.Tick += (o, e) => { PointsIntercepted?.Invoke(this, new RawPointsDataMessageEventArgs(new List<RawData>(), Devices.None)); };
             _connectionTestTimer.Start();
