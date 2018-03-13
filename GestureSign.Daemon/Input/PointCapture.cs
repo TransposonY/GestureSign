@@ -203,6 +203,8 @@ namespace GestureSign.Daemon.Input
             _pointEventTranslator.PointUp += (PointEventTranslator_PointUp);
             _pointEventTranslator.PointMove += (PointEventTranslator_PointMove);
 
+            _currentContext = SynchronizationContext.Current;
+
             _winEventDele = WinEventProc;
             _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_MINIMIZEEND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
@@ -319,7 +321,6 @@ namespace GestureSign.Daemon.Input
                 {
                     if (_initialTimeoutTimer == null)
                     {
-                        _currentContext = SynchronizationContext.Current;
                         _initialTimeoutTimer = new System.Threading.Timer(InitialTimeoutCallback, null, Timeout.Infinite, Timeout.Infinite);
                     }
                     _initialTimeoutTimer.Change(timeout, Timeout.Infinite);
@@ -441,8 +442,11 @@ namespace GestureSign.Daemon.Input
         {
             if (!_blockTouchInputThreshold.HasValue) return;
 
-            _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.Value;
-            _blockTouchInputThreshold = null;
+            _currentContext.Post((state) =>
+            {
+                _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.Value;
+                _blockTouchInputThreshold = null;
+            }, null);
         }
 
         private void InitialTimeoutCallback(object o)
