@@ -8,6 +8,7 @@ using GestureSign.Daemon.Filtration;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Hooks;
 using ManagedWinapi.Windows;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -216,6 +217,7 @@ namespace GestureSign.Daemon.Input
                 if (e.Mode == CaptureMode.UserDisabled)
                     _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
             };
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         }
 
         #endregion
@@ -234,6 +236,7 @@ namespace GestureSign.Daemon.Input
                     _inputProvider?.Dispose();
                 }
 
+                SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 if (_hWinEventHook != IntPtr.Zero)
                     UnhookWinEvent(_hWinEventHook);
 
@@ -267,6 +270,24 @@ namespace GestureSign.Daemon.Input
                     return;
                 var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow);
                 ForegroundApplicationsChanged?.Invoke(this, apps);
+            }
+        }
+
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            switch (e.Reason)
+            {
+                case SessionSwitchReason.RemoteConnect:
+                case SessionSwitchReason.SessionLogon:
+                case SessionSwitchReason.SessionUnlock:
+                    if (State == CaptureState.Disabled)
+                        State = CaptureState.Ready;
+                    break;
+                case SessionSwitchReason.SessionLock:
+                    State = CaptureState.Disabled;
+                    break;
+                default:
+                    break;
             }
         }
 
