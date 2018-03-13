@@ -103,7 +103,7 @@ Email:ccfyzh@gmail.com
     <KeyboardHotKey>Keyboard HotKey</KeyboardHotKey>
     <HotKeyWatermark>You can enter a HotKey to trigger this action</HotKeyWatermark>
     <MouseHotKey>Mouse HotKey</MouseHotKey>
-    <MouseGestureNotEnabled>(Please enable mouse gestures in Options)</MouseGestureNotEnabled>
+    <MouseGestureNotEnabled>(Need to enable mouse gesture)</MouseGestureNotEnabled>
     <Default>Default</Default>
     <Continuous>Continuous</Continuous>
     <DeviceLimit>Device Limit</DeviceLimit>
