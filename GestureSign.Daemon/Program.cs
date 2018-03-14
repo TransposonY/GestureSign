@@ -40,8 +40,7 @@ namespace GestureSign.Daemon
                         Application.ApplicationExit += Application_ApplicationExit;
                         Logging.OpenLogFile();
 
-                        if ("Built-in".Equals(AppConfig.CultureName) ||
-                            !LocalizationProvider.Instance.LoadFromFile("Daemon"))
+                        if (!LocalizationProvider.Instance.LoadFromFile("Daemon"))
                         {
                             LocalizationProvider.Instance.LoadFromResource(Properties.Resources.en);
                         }

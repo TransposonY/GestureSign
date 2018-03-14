@@ -43,7 +43,7 @@ namespace GestureSign.Common.Localization
 
         public Dictionary<string, string> GetLanguageList(string languageFolderName)
         {
-            var languageList = new Dictionary<string, string>(2) { { "Built-in", "English (Built-in)" } };
+            var languageList = new Dictionary<string, string>(2);
             var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", languageFolderName);
             if (!Directory.Exists(folderPath)) return null;
             foreach (string file in Directory.GetFiles(folderPath, "*.xml"))
