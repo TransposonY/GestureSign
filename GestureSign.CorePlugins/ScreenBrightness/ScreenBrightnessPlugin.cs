@@ -12,14 +12,20 @@
 using System;
 using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using Microsoft.Win32;
 
 namespace GestureSign.CorePlugins.ScreenBrightness
 {
     class ScreenBrightnessPlugin : IPlugin
     {
         #region Private Variables
+
+        private static int? _currentBrightness;
+        private static int _brightnessSetting;
         private ScreenBrightnessUI _GUI = null;
         private BrightnessSettings _Settings = null;
 
@@ -28,6 +34,13 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             BrightnessUp = 0,
             BrightnessDown = 1
         }
+        #endregion
+
+        #region PInvoke Declarations
+
+        [DllImport("powrprof.dll")]
+        public static extern uint PowerGetActiveScheme(IntPtr UserPowerKey, out IntPtr ActivePolicyGuid);
+
         #endregion
 
         #region Public Properties
@@ -155,7 +168,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                 byte minLevel = level.Min();
                 int levelChange = Settings.Percent * maxLevel / 100;
                 int targetValue;
-                byte targetLevel;
+                byte targetLevel = 0;
 
                 switch ((Method)_Settings.Method)
                 {
@@ -170,7 +183,7 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                         SetBrightness(targetLevel);
                         break;
                 }
-
+                _currentBrightness = targetLevel;
                 return true;
             }
             catch
@@ -180,10 +193,58 @@ namespace GestureSign.CorePlugins.ScreenBrightness
             }
         }
 
+        private static int GetBrightness()
+        {
+            int brightness = GetSettingBrightness();
+            if (brightness >= 0 && brightness != _brightnessSetting)
+            {
+                _brightnessSetting = brightness;
+                return brightness;
+            }
 
+            if (_currentBrightness != null)
+                return _currentBrightness.Value;
+
+            if (brightness < 0)
+                brightness = GetActualBrightness();
+
+            _currentBrightness = brightness;
+            return brightness;
+        }
+
+        /// <summary>
+        /// Get brightness from registry, which can not be change by WmiSetBrightness
+        /// </summary>
+        /// <returns></returns>
+        private static int GetSettingBrightness()
+        {
+            try
+            {
+                Guid guid = GetActiveSchemeGuid();
+                var powerStatus = SystemInformation.PowerStatus.PowerLineStatus;
+                if (guid != Guid.Empty)
+                {
+                    using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\" + guid +
+                        @"\7516b95f-f776-4464-8c53-06167f40cc99\aded5e82-b909-4619-9949-f5d71dac0bcb"))
+                    {
+                        if (rk != null)
+                        {
+                            var result = rk.GetValue(powerStatus == PowerLineStatus.Online ? "ACSettingIndex" : "DCSettingIndex");
+                            if (result != null)
+                                return (int)result;
+                        }
+                    }
+                }
+                return -1;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
 
         //get the actual percentage of brightness
-        static int GetBrightness()
+        static int GetActualBrightness()
         {
             //define scope (namespace)
             ManagementScope s = new ManagementScope("root\\WMI");
@@ -276,6 +337,28 @@ namespace GestureSign.CorePlugins.ScreenBrightness
                     inParams["Timeout"] = 1;
                     mo.InvokeMethod("WmiSetBrightness", inParams, null);
                     break;
+                }
+            }
+        }
+
+        private static Guid GetActiveSchemeGuid()
+        {
+            Guid activeScheme = Guid.Empty;
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Guid)));
+                if (PowerGetActiveScheme((IntPtr)null, out ptr) == 0)
+                {
+                    activeScheme = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
+                }
+                return activeScheme;
+            }
+            finally
+            {
+                if (ptr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(ptr);
                 }
             }
         }
