@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.InterProcessCommunication;
-using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 
 namespace GestureSign.TouchInputProvider
@@ -50,8 +49,7 @@ namespace GestureSign.TouchInputProvider
                     catch (Exception e)
                     {
                         Logging.LogException(e);
-                        MessageBox.Show(e.ToString(), LocalizationProvider.Instance.GetTextValue("Messages.Error"),
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         Application.Exit();
                     }
                 }
