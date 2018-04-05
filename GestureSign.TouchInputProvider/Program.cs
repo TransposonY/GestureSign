@@ -39,9 +39,8 @@ namespace GestureSign.TouchInputProvider
 
                         _messageWindow = new MessageWindow();
                         _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
+                        AppConfig.ConfigChanged += (o, e) => _messageWindow.Invoke(new Action(() => _messageWindow.UpdateRegistration()));
 
-                        _messageWindow.RegisterTouchPad = AppConfig.RegisterTouchPad;
-                        AppConfig.ConfigChanged += (o, e) => _messageWindow.RegisterTouchPad = AppConfig.RegisterTouchPad;
                         NamedPipe.Instance.RunNamedPipeServer("TouchInputProviderMessage", new MessageProcessor());
 
                         Application.Run();

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.TouchInputProvider.Native;
 
@@ -22,38 +24,17 @@ namespace GestureSign.TouchInputProvider
         private Point _physicalMax;
 
         private Devices _sourceDevice;
-        private bool _isTouchpadRegistered;
+        private List<ushort> _registeredDeviceList = new List<ushort>(1);
         private int? _penLastActivity;
 
         private Timer _connectionTestTimer;
 
         public event RawPointsDataMessageEventHandler PointsIntercepted;
 
-        public bool RegisterTouchPad
-        {
-            get { return _isTouchpadRegistered; }
-            set
-            {
-                if (value == _isTouchpadRegistered) return;
-
-                if (value)
-                {
-                    Invoke(new Action(() => RegisterDevice(NativeMethods.TouchPadUsage)));
-                }
-                else
-                {
-                    Invoke(new Action(() => UnregisterDevice(NativeMethods.TouchPadUsage)));
-                }
-                _isTouchpadRegistered = value;
-            }
-        }
-
         public MessageWindow()
         {
-            RegisterDevice(NativeMethods.TouchScreenUsage);
-            if (Common.Configuration.AppConfig.IgnoreTouchInputWhenUsingPen)
-                RegisterDevice(NativeMethods.PenUsage);
-            EnumerateDevices();
+            UpdateRegistration();
+
             _connectionTestTimer = new Timer
             {
                 Interval = 1000
@@ -62,33 +43,62 @@ namespace GestureSign.TouchInputProvider
             _connectionTestTimer.Start();
         }
 
+        public void UpdateRegistration()
+        {
+            EnumerateDevices();
+
+            UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
+            UpdateRegisterState(AppConfig.IgnoreTouchInputWhenUsingPen, NativeMethods.PenUsage);
+            UpdateRegisterState(AppConfig.RegisterTouchPad, NativeMethods.TouchPadUsage);
+        }
+
+        private void UpdateRegisterState(bool register, ushort usage)
+        {
+            if (_validDevices.Values.Contains(usage) && register)
+            {
+                RegisterDevice(usage);
+            }
+            else
+            {
+                UnregisterDevice(usage);
+            }
+        }
+
         private void RegisterDevice(ushort usage)
         {
-            RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
-
-            rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
-            rid[0].usUsage = usage;
-            rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK | NativeMethods.RIDEV_DEVNOTIFY;
-            rid[0].hwndTarget = Handle;
-
-            if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
+            if (!_registeredDeviceList.Contains(usage))
             {
-                throw new ApplicationException("Failed to register raw input device(s).");
+                RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
+
+                rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
+                rid[0].usUsage = usage;
+                rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK | NativeMethods.RIDEV_DEVNOTIFY;
+                rid[0].hwndTarget = Handle;
+
+                if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
+                {
+                    throw new ApplicationException("Failed to register raw input device(s).");
+                }
+                _registeredDeviceList.Add(usage);
             }
         }
 
         private void UnregisterDevice(ushort usage)
         {
-            RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
-
-            rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
-            rid[0].usUsage = usage;
-            rid[0].dwFlags = NativeMethods.RIDEV_REMOVE;
-            rid[0].hwndTarget = IntPtr.Zero;
-
-            if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
+            if (_registeredDeviceList.Contains(usage))
             {
-                throw new ApplicationException("Failed to unregister raw input device.");
+                RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
+
+                rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
+                rid[0].usUsage = usage;
+                rid[0].dwFlags = NativeMethods.RIDEV_REMOVE;
+                rid[0].hwndTarget = IntPtr.Zero;
+
+                if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
+                {
+                    throw new ApplicationException("Failed to unregister raw input device.");
+                }
+                _registeredDeviceList.Remove(usage);
             }
         }
 
