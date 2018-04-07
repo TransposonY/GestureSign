@@ -19,6 +19,9 @@ namespace GestureSign.ControlPanel.Common
 
             FileManager.SaveObject(applications, Path.Combine(tempArchivePath, Constants.ActionFileName), true, true);
             FileManager.SaveObject(gestures, Path.Combine(tempArchivePath, Constants.GesturesFileName), false, true);
+
+            if (File.Exists(destinationArchiveFileName))
+                File.Delete(destinationArchiveFileName);
             ZipFile.CreateFromDirectory(tempArchivePath, destinationArchiveFileName);
 
             Directory.Delete(tempArchivePath, true);
