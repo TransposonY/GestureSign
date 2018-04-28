@@ -402,7 +402,7 @@ namespace GestureSign.Daemon.Surface
             get
             {
                 CreateParams myParams = base.CreateParams;
-                myParams.ExStyle = myParams.ExStyle | (int)WindowExStyleFlags.NOACTIVATE |
+                myParams.ExStyle = (int)WindowExStyleFlags.NOACTIVATE |
                                     (int)WindowExStyleFlags.TOOLWINDOW |
                                     (int)WindowExStyleFlags.LAYERED;
                 return myParams;
