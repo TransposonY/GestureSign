@@ -292,10 +292,8 @@ namespace GestureSign.TouchInputProvider
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
-                                int usageLength = 0;
-                                HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, null, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                                HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
-                                HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                                ushort[] usageList = GetButtonList(pPreparsedData, pRawData, nodeIndex, raw.hid.dwSizHid);
+
                                 int x, y;
                                 if (_isAxisCorresponds)
                                 {
@@ -309,7 +307,7 @@ namespace GestureSign.TouchInputProvider
                                 }
                                 x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
                                 y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
-                                bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
+                                bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
                                 _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
@@ -370,16 +368,13 @@ namespace GestureSign.TouchInputProvider
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
                                 HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
-                                int usageLength = 0;
-                                HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, null, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                                HidNativeApi.HIDP_DATA[] hd = new HidNativeApi.HIDP_DATA[usageLength];
-                                HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, hd, ref usageLength, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                                ushort[] usageList = GetButtonList(pPreparsedData, pRawData, nodeIndex, raw.hid.dwSizHid);
 
                                 int x, y;
                                 x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
                                 y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
 
-                                bool tip = hd.Length != 0 && hd[0].DataIndex == NativeMethods.TipId;
+                                bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
                                 _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
@@ -403,6 +398,15 @@ namespace GestureSign.TouchInputProvider
             {
                 Marshal.FreeHGlobal(buffer);
             }
+        }
+
+        private static ushort[] GetButtonList(IntPtr pPreparsedData, IntPtr pRawData, short nodeIndex, int rawDateSize)
+        {
+            int usageLength = 0;
+            HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, null, ref usageLength, pPreparsedData, pRawData, rawDateSize);
+            var usageList = new ushort[usageLength];
+            HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, usageList, ref usageLength, pPreparsedData, pRawData, rawDateSize);
+            return usageList;
         }
 
         private void GetCurrentScreenOrientation()

@@ -122,7 +122,7 @@ namespace GestureSign.TouchInputProvider.Native
             public int Reserved;
 
             [FieldOffset(16)]
-            public int UserContext;
+            public IntPtr UserContext;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -838,7 +838,7 @@ namespace GestureSign.TouchInputProvider.Native
         /// IDP_STATUS_REPORT_DOES_NOT_EXIST, HIDP_STATUS_BUFFER_TOO_SMALL,
         /// HIDP_STATUS_INCOMPATIBLE_REPORT_ID, HIDP_STATUS_USAGE_NOT_FOUND</returns>
         [DllImport("hid.dll", SetLastError = true)]
-        static public extern int HidP_GetUsages(HidReportType ReportType, ushort UsagePage, short LinkCollection, [Out] HIDP_DATA[] UsageList, ref int UsageLength, IntPtr PreparsedData, IntPtr Report, int ReportLength);
+        static public extern int HidP_GetUsages(HidReportType ReportType, ushort UsagePage, short LinkCollection, [Out] ushort[] UsageList, ref int UsageLength, IntPtr PreparsedData, IntPtr Report, int ReportLength);
 
         /// <summary>
         /// This function returns the binary values (buttons) in a HID report.
