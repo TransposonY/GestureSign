@@ -78,7 +78,7 @@ namespace GestureSign.Common.Log
         {
             if (File.Exists(logPath))
             {
-                if (new FileInfo(logPath).Length > 100 * 1024)
+                if (new FileInfo(logPath).Length > 10240)
                     File.Delete(logPath);
             }
         }
