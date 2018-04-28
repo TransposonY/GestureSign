@@ -33,6 +33,7 @@ namespace GestureSign.TouchInputProvider
 
         public MessageWindow()
         {
+            CreateHandle();
             UpdateRegistration();
 
             _connectionTestTimer = new Timer
