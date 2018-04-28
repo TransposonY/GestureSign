@@ -193,6 +193,12 @@
                               FontSize="14"
                               HorizontalAlignment="Left"
                               Content="{localization:LocalisedText ActionDialog.TouchPad}" />
+                    <CheckBox x:Name="PenCheckBox"
+                              IsChecked="True"
+                              Margin="20,10,0,0"
+                              FontSize="14"
+                              HorizontalAlignment="Left"
+                              Content="{localization:LocalisedText ActionDialog.Pen}" />
                     <CheckBox x:Name="ActivateWindowCheckBox"
                               Margin="20,20,0,0"
                               FontSize="14"

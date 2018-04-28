@@ -78,30 +78,68 @@ namespace GestureSign.Daemon.Input
 
         private void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
-            int releaseCount = e.RawData.Count(rtd => !rtd.Tip);
-            if (releaseCount != 0)
+            if ((e.SourceDevice & Devices.TouchDevice) != 0)
             {
-                if (e.RawData.Count <= _lastPointsCount)
+                int releaseCount = e.RawData.Count(rtd => rtd.State == 0);
+                if (releaseCount != 0)
                 {
-                    OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
-                    _lastPointsCount = _lastPointsCount - releaseCount;
-                }
-                return;
-            }
-
-            if (e.RawData.Count > _lastPointsCount)
-            {
-                if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
-                {
-                    OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    if (e.RawData.Count <= _lastPointsCount)
+                    {
+                        OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                        _lastPointsCount = _lastPointsCount - releaseCount;
+                    }
                     return;
                 }
-                _lastPointsCount = e.RawData.Count;
-                OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+
+                if (e.RawData.Count > _lastPointsCount)
+                {
+                    if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
+                    {
+                        OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                        return;
+                    }
+                    _lastPointsCount = e.RawData.Count;
+                    OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                }
+                else if (e.RawData.Count == _lastPointsCount)
+                {
+                    OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                }
             }
-            else if (e.RawData.Count == _lastPointsCount)
+            else if (e.SourceDevice == Devices.Pen)
             {
-                OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                bool release = (e.RawData[0].State & (DeviceStates.Invert | DeviceStates.RightClickButton)) == 0;
+                bool tip = (e.RawData[0].State & (DeviceStates.Eraser | DeviceStates.Tip)) != 0;
+
+                if (release)
+                {
+                    OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    _lastPointsCount = 0;
+                    return;
+                }
+
+                if (_lastPointsCount == 1)
+                {
+                    if (tip)
+                    {
+                        OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                        _lastPointsCount = -1;
+                    }
+                    else
+                    {
+                        OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    }
+                }
+                else if (_lastPointsCount >= 0)
+                {
+                    if (tip)
+                    {
+                        _lastPointsCount = -1;
+                        return;
+                    }
+                    _lastPointsCount = 1;
+                    OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                }
             }
         }
 

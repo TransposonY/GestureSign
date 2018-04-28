@@ -33,6 +33,10 @@ namespace GestureSign.TouchInputProvider.Native
         internal const ushort TipId = 0x42;
         internal const ushort XCoordinateId = 0x30;
         internal const ushort YCoordinateId = 0x31;
+        internal const ushort InRangeId = 0x32;
+        internal const ushort BarrelButtonId = 0x44;
+        internal const ushort InvertId = 0x3C;
+        internal const ushort EraserId = 0x45;
 
         internal const ushort TouchPadUsage = 0x05;
         internal const ushort TouchScreenUsage = 0x04;

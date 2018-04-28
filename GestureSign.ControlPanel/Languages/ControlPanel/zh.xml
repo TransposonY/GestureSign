@@ -114,6 +114,7 @@
     <Mouse>鼠标</Mouse>
     <TouchScreen>触摸屏</TouchScreen>
     <TouchPad>精确式触摸板</TouchPad>
+    <Pen>触控笔</Pen>
     <Messages>
       <ConditionError>条件错误</ConditionError>
     </Messages>
@@ -236,6 +237,10 @@
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
     <TouchPad>精确式触摸板手势</TouchPad>
+    <PenGesture>触控笔手势</PenGesture>
+    <PenGestureButtonDescription>保持笔悬空并按住以下按键画出手势:</PenGestureButtonDescription>
+    <RightClickButton>右键单击按钮</RightClickButton>
+    <Eraser>将笔颠倒/橡皮擦按钮</Eraser>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <WindowsStartup>

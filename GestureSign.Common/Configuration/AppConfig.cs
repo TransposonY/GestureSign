@@ -1,4 +1,5 @@
-﻿using GestureSign.Common.Log;
+﻿using GestureSign.Common.Input;
+using GestureSign.Common.Log;
 using ManagedWinapi.Hooks;
 using Microsoft.Win32;
 using System;
@@ -200,6 +201,18 @@ namespace GestureSign.Common.Configuration
             set
             {
                 SetValue(nameof(IgnoreTouchInputWhenUsingPen), value);
+            }
+        }
+
+        public static DeviceStates PenGestureButton
+        {
+            get
+            {
+                return (DeviceStates)GetValue(nameof(PenGestureButton), 0);
+            }
+            set
+            {
+                SetValue(nameof(PenGestureButton), (int)value);
             }
         }
 

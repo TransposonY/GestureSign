@@ -75,7 +75,7 @@ namespace GestureSign.TouchInputProvider
                 for (int i = 0; i < rawDataCount; i++)
                 {
                     var current = e.RawData[i];
-                    BitConverter.GetBytes(current.Tip).CopyTo(buffer, offset + i * size);
+                    BitConverter.GetBytes((int)current.State).CopyTo(buffer, offset + i * size);
                     BitConverter.GetBytes(current.ContactIdentifier).CopyTo(buffer, offset + 4 + i * size);
                     BitConverter.GetBytes(current.RawPoints.X).CopyTo(buffer, offset + 4 * 2 + i * size);
                     BitConverter.GetBytes(current.RawPoints.Y).CopyTo(buffer, offset + 4 * 3 + i * size);

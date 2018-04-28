@@ -149,6 +149,31 @@
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Click="TouchPadSwitch_Click" />
+            <controls:ToggleSwitch x:Name="PenGestureSwitch"
+                                   Header="{localization:LocalisedText Options.PenGesture}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Click="PenGestureSwitch_Click" />
+            <DockPanel Visibility="{Binding ElementName=PenGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
+                       HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center"
+                           Text="{localization:LocalisedText Options.PenGestureButtonDescription}"
+                           FontSize="14"
+                           Margin="0,5,0,0"
+                           DockPanel.Dock="Top" />
+                <CheckBox x:Name="RightClickButtonCheckBox"
+                          Click="RightClickButtonCheckBox_Click"
+                          IsChecked="True"
+                          Margin="20,10,0,0"
+                          FontSize="14"
+                          Content="{localization:LocalisedText Options.RightClickButton}" />
+                <CheckBox x:Name="EraserCheckBox"
+                          Click="EraserCheckBox_Click"
+                          Margin="20,10,0,0"
+                          FontSize="14"
+                          Content="{localization:LocalisedText Options.Eraser}"
+                          DockPanel.Dock="Right" />
+            </DockPanel>
             <controls:ToggleSwitch x:Name="InitialTimeoutSwitch"
                                    Header="{localization:LocalisedText Options.InitialTimeoutTitle}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

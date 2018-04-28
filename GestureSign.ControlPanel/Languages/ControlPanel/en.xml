@@ -110,6 +110,7 @@ Email:ccfyzh@gmail.com
     <Mouse>Mouse</Mouse>
     <TouchScreen>TouchScreen</TouchScreen>
     <TouchPad>TouchPad</TouchPad>
+    <Pen>Pen</Pen>
     <Messages>
       <ConditionError>Condition Error</ConditionError>
     </Messages>
@@ -232,6 +233,10 @@ Email:ccfyzh@gmail.com
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
     <TouchPad>Precision Touchpad Gesture</TouchPad>
+    <PenGesture>Pen Gesture</PenGesture>
+    <PenGestureButtonDescription>Draw gesture by hovering pen and holding:</PenGestureButtonDescription>
+    <RightClickButton>Right Click Button</RightClickButton>
+    <Eraser>Flip Pen Over / Eraser Button</Eraser>
     <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Timeout after {0:F1} Second</InitialTimeout>
     <WindowsStartup>

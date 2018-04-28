@@ -80,6 +80,7 @@ namespace GestureSign.ControlPanel.Dialogs
                 MouseCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.Mouse);
                 TouchScreenCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.TouchScreen);
                 TouchPadCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.TouchPad);
+                PenCheckBox.IsChecked = !_sourceAction.IgnoredDevices.HasFlag(Devices.Pen);
 
                 if (_sourceAction.ContinuousGesture != null)
                 {
@@ -191,6 +192,8 @@ namespace GestureSign.ControlPanel.Dialogs
                 ignoredDevices |= Devices.TouchScreen;
             if (!TouchPadCheckBox.IsChecked.GetValueOrDefault())
                 ignoredDevices |= Devices.TouchPad;
+            if (!PenCheckBox.IsChecked.GetValueOrDefault())
+                ignoredDevices |= Devices.Pen;
             NewAction.IgnoredDevices = ignoredDevices;
 
             // Save entire list of applications

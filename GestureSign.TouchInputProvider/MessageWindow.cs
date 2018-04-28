@@ -26,6 +26,8 @@ namespace GestureSign.TouchInputProvider
         private Devices _sourceDevice;
         private List<ushort> _registeredDeviceList = new List<ushort>(1);
         private int? _penLastActivity;
+        private bool _ignoreTouchInputWhenUsingPen;
+        private DeviceStates _penGestureButton;
 
         private Timer _connectionTestTimer;
 
@@ -48,8 +50,11 @@ namespace GestureSign.TouchInputProvider
         {
             EnumerateDevices();
 
+            _ignoreTouchInputWhenUsingPen = AppConfig.IgnoreTouchInputWhenUsingPen;
+            _penGestureButton = AppConfig.PenGestureButton;
+
             UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
-            UpdateRegisterState(AppConfig.IgnoreTouchInputWhenUsingPen, NativeMethods.PenUsage);
+            UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0, NativeMethods.PenUsage);
             UpdateRegisterState(AppConfig.RegisterTouchPad, NativeMethods.TouchPadUsage);
         }
 
@@ -238,7 +243,102 @@ namespace GestureSign.TouchInputProvider
 
                 if (usage == NativeMethods.PenUsage)
                 {
-                    _penLastActivity = Environment.TickCount;
+                    if (_ignoreTouchInputWhenUsingPen)
+                        _penLastActivity = Environment.TickCount;
+                    else
+                        _penLastActivity = null;
+
+                    if (_penGestureButton == 0)
+                        return;
+
+                    switch (_sourceDevice)
+                    {
+                        case Devices.TouchScreen:
+                        case Devices.None:
+                        case Devices.Pen:
+                            break;
+                        default:
+                            return;
+                    }
+
+                    uint pcbSize = 0;
+                    NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
+                    IntPtr pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
+                    using (new SafeUnmanagedMemoryHandle(pPreparsedData))
+                    {
+                        NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
+                        IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
+
+                        ushort[] usageList = GetButtonList(pPreparsedData, pRawData, 0, raw.hid.dwSizHid);
+                        DeviceStates state = DeviceStates.None;
+                        foreach (var u in usageList)
+                        {
+                            switch (u)
+                            {
+                                case NativeMethods.TipId:
+                                    state |= DeviceStates.Tip;
+                                    break;
+                                case NativeMethods.InRangeId:
+                                    state |= DeviceStates.InRange;
+                                    break;
+                                case NativeMethods.BarrelButtonId:
+                                    state |= DeviceStates.RightClickButton;
+                                    break;
+                                case NativeMethods.InvertId:
+                                    state |= DeviceStates.Invert;
+                                    break;
+                                case NativeMethods.EraserId:
+                                    state |= DeviceStates.Eraser;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        if (_sourceDevice == Devices.None || _sourceDevice == Devices.TouchScreen)
+                        {
+                            if ((state & _penGestureButton) != 0)
+                            {
+                                _currentScr = Screen.FromPoint(Cursor.Position);
+                                if (_currentScr == null)
+                                    return;
+                                _sourceDevice = Devices.Pen;
+                                GetCurrentScreenOrientation();
+                            }
+                            else
+                                return;
+                        }
+                        else if (_sourceDevice == Devices.Pen)
+                        {
+                            if ((state & _penGestureButton) == 0)
+                            {
+                                state = DeviceStates.None;
+                            }
+                        }
+                        if (_physicalMax.IsEmpty)
+                            _physicalMax = GetPhysicalMax(1, pPreparsedData);
+
+                        int physicalX = 0;
+                        int physicalY = 0;
+
+                        HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                        HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawData, raw.hid.dwSizHid);
+
+                        int x, y;
+                        if (_isAxisCorresponds)
+                        {
+                            x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
+                            y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
+                        }
+                        else
+                        {
+                            x = physicalY * _currentScr.Bounds.Width / _physicalMax.Y;
+                            y = physicalX * _currentScr.Bounds.Height / _physicalMax.X;
+                        }
+                        x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
+                        y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
+                        _outputTouchs = new List<RawData>(1);
+                        _outputTouchs.Add(new RawData(state, 0, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
+                    }
                 }
                 else if (usage == NativeMethods.TouchScreenUsage)
                 {
@@ -309,7 +409,7 @@ namespace GestureSign.TouchInputProvider
                                 x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
                                 y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
                                 bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
+                                _outputTouchs.Add(new RawData(tip ? DeviceStates.Tip : DeviceStates.None, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
                             }
@@ -376,7 +476,7 @@ namespace GestureSign.TouchInputProvider
                                 y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
 
                                 bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
+                                _outputTouchs.Add(new RawData(tip ? DeviceStates.Tip : DeviceStates.None, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
 
                                 if (--_requiringContactCount == 0) break;
                             }
@@ -388,7 +488,7 @@ namespace GestureSign.TouchInputProvider
                 if (_requiringContactCount == 0 && PointsIntercepted != null)
                 {
                     PointsIntercepted(this, new RawPointsDataMessageEventArgs(_outputTouchs, _sourceDevice));
-                    if (_outputTouchs.TrueForAll(rd => !rd.Tip))
+                    if (_outputTouchs.TrueForAll(rd => rd.State == DeviceStates.None))
                     {
                         _sourceDevice = Devices.None;
                         _physicalMax = Point.Empty;

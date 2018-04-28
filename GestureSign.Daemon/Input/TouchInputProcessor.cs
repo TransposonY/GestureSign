@@ -43,12 +43,12 @@ namespace GestureSign.Daemon.Input
 
                 for (int i = 0; i < count; i++)
                 {
-                    bool tip = BitConverter.ToBoolean(buffer, size * i);
+                    int state = BitConverter.ToInt32(buffer, size * i);
                     int contactIdentifier = BitConverter.ToInt32(buffer, size * i + 4);
                     int x = BitConverter.ToInt32(buffer, size * i + 8);
                     int y = BitConverter.ToInt32(buffer, size * i + 12);
 
-                    rawTouchDatas.Add(new RawData(tip, contactIdentifier, new Point(x, y)));
+                    rawTouchDatas.Add(new RawData((DeviceStates)state, contactIdentifier, new Point(x, y)));
                 }
 
                 _synchronizationContext.Post(o =>
