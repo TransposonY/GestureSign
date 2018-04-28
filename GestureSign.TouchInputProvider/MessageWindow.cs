@@ -182,7 +182,7 @@ namespace GestureSign.TouchInputProvider
                     {
                         //GIDC_ARRIVAL=1
                         if (message.WParam.ToInt32() == 1)
-                            EnumerateDevices();
+                            UpdateRegistration();
                         break;
                     }
             }
