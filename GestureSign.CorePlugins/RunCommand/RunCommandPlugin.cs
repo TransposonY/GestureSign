@@ -73,47 +73,43 @@ namespace GestureSign.CorePlugins.RunCommand
 
         public bool Gestured(PointInfo pointInfo)
         {
-            Thread newThread = new Thread(new ParameterizedThreadStart(delegate
+            if (_Settings == null) return false;
+
+            string clipboardString = string.Empty;
+
+            using (Process process = new Process())
             {
-                if (_Settings == null) return;
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = $"{(_Settings.ShowCmd ? "/K " : "/C ")}\"{string.Join(" & ", _Settings.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))}\"";
+                process.StartInfo.WindowStyle = _Settings.ShowCmd ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
+                process.StartInfo.CreateNoWindow = !_Settings.ShowCmd;
+                process.StartInfo.UseShellExecute = false;
 
-                string clipboardString = string.Empty;
-
-                using (Process process = new Process())
+                process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_X", pointInfo.PointLocation.First().X.ToString());
+                process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_Y", pointInfo.PointLocation.First().Y.ToString());
+                process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_X", pointInfo.Points[0].Last().X.ToString());
+                process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_Y", pointInfo.Points[0].Last().Y.ToString());
+                process.StartInfo.EnvironmentVariables.Add("GS_Title", pointInfo.Window.Title);
+                process.StartInfo.EnvironmentVariables.Add("GS_PID", pointInfo.Window.ProcessId.ToString());
+                process.StartInfo.EnvironmentVariables.Add("GS_WindowHandle", pointInfo.WindowHandle.ToString());
+                if (_Settings.Command.Contains("GS_ClassName"))
                 {
-                    process.StartInfo.FileName = "cmd.exe";
-                    process.StartInfo.Arguments = $"{(_Settings.ShowCmd ? "/K " : "/C ")}\"{string.Join(" & ", _Settings.Command.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))}\"";
-                    process.StartInfo.WindowStyle = _Settings.ShowCmd ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
-                    process.StartInfo.CreateNoWindow = !_Settings.ShowCmd;
-                    process.StartInfo.UseShellExecute = false;
-
-                    process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_X", pointInfo.PointLocation.First().X.ToString());
-                    process.StartInfo.EnvironmentVariables.Add("GS_StartPoint_Y", pointInfo.PointLocation.First().Y.ToString());
-                    process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_X", pointInfo.Points[0].Last().X.ToString());
-                    process.StartInfo.EnvironmentVariables.Add("GS_EndPoint_Y", pointInfo.Points[0].Last().Y.ToString());
-                    process.StartInfo.EnvironmentVariables.Add("GS_Title", pointInfo.Window.Title);
-                    process.StartInfo.EnvironmentVariables.Add("GS_PID", pointInfo.Window.ProcessId.ToString());
-                    process.StartInfo.EnvironmentVariables.Add("GS_WindowHandle", pointInfo.WindowHandle.ToString());
-                    if (_Settings.Command.Contains("GS_ClassName"))
-                    {
-                        process.StartInfo.EnvironmentVariables.Add("GS_ClassName", pointInfo.Window.ClassName);
-                    }
-                    if (_Settings.Command.Contains("GS_Clipboard"))
-                    {
-                        pointInfo.Invoke(() =>
-                        {
-                            IDataObject iData = Clipboard.GetDataObject();
-                            if (iData != null && iData.GetDataPresent(DataFormats.Text))
-                            {
-                                clipboardString = (string)iData.GetData(DataFormats.Text);
-                            }
-                        });
-                        process.StartInfo.EnvironmentVariables.Add("GS_Clipboard", clipboardString);
-                    }
-                    process.Start();
+                    process.StartInfo.EnvironmentVariables.Add("GS_ClassName", pointInfo.Window.ClassName);
                 }
-            }));
-            newThread.Start(_Settings);
+                if (_Settings.Command.Contains("GS_Clipboard"))
+                {
+                    pointInfo.Invoke(() =>
+                    {
+                        IDataObject iData = Clipboard.GetDataObject();
+                        if (iData != null && iData.GetDataPresent(DataFormats.Text))
+                        {
+                            clipboardString = (string)iData.GetData(DataFormats.Text);
+                        }
+                    });
+                    process.StartInfo.EnvironmentVariables.Add("GS_Clipboard", clipboardString);
+                }
+                process.Start();
+            }
 
             return true;
         }
