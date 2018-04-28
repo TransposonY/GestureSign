@@ -7,7 +7,6 @@ using System.Management;
 using System.Text;
 using System.Windows;
 using GestureSign.Common.Configuration;
-using GestureSign.Common.Localization;
 using Microsoft.Win32;
 using SharpRaven;
 using SharpRaven.Data;
@@ -47,7 +46,7 @@ namespace GestureSign.Common.Log
             if (rk != null)
                 result.AppendLine(rk.GetValue("ProductName") + " " + rk.GetValue("BuildLabEx") + " " + rk.GetValue("UBR"));
 
-            string version = LocalizationProvider.Instance.GetTextValue("About.Version") +
+            string version = FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location).FileVersion +
                            (Environment.Is64BitProcess ? " X64" : " x86") +
                         (AppConfig.UiAccess ? " UIAccess" : "");
 
@@ -63,12 +62,6 @@ namespace GestureSign.Common.Log
             if (directoryPath != null)
             {
                 result.AppendLine(directoryPath);
-
-                var components = Directory.EnumerateFiles(directoryPath).Where(s => s.EndsWith(".dll") || s.EndsWith(".exe"));
-                foreach (var com in components)
-                {
-                    result.AppendLine($"{Path.GetFileName(com)} {FileVersionInfo.GetVersionInfo(com).FileVersion}");
-                }
             }
             result.AppendLine();
 
