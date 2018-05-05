@@ -74,7 +74,7 @@ namespace GestureSign.Daemon.Input
 
         #region Public Instance Properties
 
-        public Devices SourceDevice { get; set; }
+        public Devices SourceDevice { get { return _pointEventTranslator.SourceDevice; } }
 
         public LowLevelMouseHook MouseHook
         {
@@ -309,9 +309,6 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointDown(object sender, InputPointsEventArgs e)
         {
-            if (SourceDevice != Devices.None && SourceDevice != e.PointSource) return;
-            SourceDevice = e.PointSource;
-
             if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
@@ -340,7 +337,6 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointMove(object sender, InputPointsEventArgs e)
         {
-            if (SourceDevice != e.PointSource) return;
             // Only add point if we're capturing
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
@@ -351,8 +347,6 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
         {
-            if (SourceDevice != Devices.None && SourceDevice != e.PointSource) return;
-
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && (SourceDevice & Devices.TouchDevice) != 0)
             {
                 e.Handled = Mode != CaptureMode.UserDisabled;
@@ -416,8 +410,6 @@ namespace GestureSign.Daemon.Input
                 e.Handled = Mode != CaptureMode.UserDisabled;
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             }
-
-            SourceDevice = Devices.None;
 
             UpdateBlockTouchInputThreshold();
             if (_initialTimeoutTimer != null)

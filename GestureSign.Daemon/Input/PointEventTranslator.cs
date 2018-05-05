@@ -12,6 +12,8 @@ namespace GestureSign.Daemon.Input
         private int _lastPointsCount;
         private HashSet<MouseActions> _pressedMouseButton;
 
+        internal Devices SourceDevice { get; private set; }
+
         internal PointEventTranslator(InputProvider inputProvider)
         {
             _pressedMouseButton = new HashSet<MouseActions>();
@@ -27,21 +29,27 @@ namespace GestureSign.Daemon.Input
 
         protected virtual void OnPointDown(InputPointsEventArgs args)
         {
-            if (PointDown != null) PointDown(this, args);
+            SourceDevice = args.PointSource;
+            PointDown?.Invoke(this, args);
         }
 
         public event EventHandler<InputPointsEventArgs> PointUp;
 
         protected virtual void OnPointUp(InputPointsEventArgs args)
         {
-            if (PointUp != null) PointUp(this, args);
+            if (SourceDevice != Devices.None && SourceDevice != args.PointSource) return;
+
+            PointUp?.Invoke(this, args);
+
+            SourceDevice = Devices.None;
         }
 
         public event EventHandler<InputPointsEventArgs> PointMove;
 
         protected virtual void OnPointMove(InputPointsEventArgs args)
         {
-            if (PointMove != null) PointMove(this, args);
+            if (SourceDevice != args.PointSource) return;
+            PointMove?.Invoke(this, args);
         }
 
         #endregion

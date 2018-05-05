@@ -11,7 +11,7 @@ namespace GestureSign.Common.Input
         event RecognitionEventHandler GestureRecognized;
         event PointsCapturedEventHandler PointCaptured;
         bool TemporarilyDisableCapture { get; set; }
-        Devices SourceDevice { get; set; }
+        Devices SourceDevice { get; }
         CaptureState State { get; set; }
         CaptureMode Mode { get; set; }
     }
