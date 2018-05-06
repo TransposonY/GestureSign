@@ -116,7 +116,7 @@ namespace GestureSign.Daemon.Input
             }
             else if (e.SourceDevice == Devices.Pen)
             {
-                bool release = (e.RawData[0].State & (DeviceStates.Invert | DeviceStates.RightClickButton)) == 0;
+                bool release = (e.RawData[0].State & (DeviceStates.Invert | DeviceStates.RightClickButton)) == 0|| (e.RawData[0].State & DeviceStates.InRange ) == 0;
                 bool tip = (e.RawData[0].State & (DeviceStates.Eraser | DeviceStates.Tip)) != 0;
 
                 if (release)
@@ -126,7 +126,7 @@ namespace GestureSign.Daemon.Input
                     return;
                 }
 
-                if (_lastPointsCount == 1)
+                if (_lastPointsCount == 1 && SourceDevice == Devices.Pen)
                 {
                     if (tip)
                     {

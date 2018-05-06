@@ -51,7 +51,7 @@ namespace GestureSign.TouchInputProvider
             EnumerateDevices();
 
             _ignoreTouchInputWhenUsingPen = AppConfig.IgnoreTouchInputWhenUsingPen;
-            _penGestureButton = AppConfig.PenGestureButton;
+            _penGestureButton = AppConfig.PenGestureButton & (DeviceStates.Invert | DeviceStates.RightClickButton);
 
             UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
             UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0, NativeMethods.PenUsage);
@@ -309,7 +309,7 @@ namespace GestureSign.TouchInputProvider
                         }
                         else if (_sourceDevice == Devices.Pen)
                         {
-                            if ((state & _penGestureButton) == 0)
+                            if ((state & _penGestureButton) == 0 || (state & DeviceStates.InRange) == 0)
                             {
                                 state = DeviceStates.None;
                             }
