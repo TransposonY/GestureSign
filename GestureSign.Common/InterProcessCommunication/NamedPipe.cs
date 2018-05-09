@@ -62,30 +62,6 @@ namespace GestureSign.Common.InterProcessCommunication
             _pipeServer.BeginWaitForConnection(ac, _pipeServer);
         }
 
-        public void RunPersistentPipeConnection(string pipeName, IMessageProcessor messageProcessor)
-        {
-            string userPipeName = GetUserPipeName(pipeName);
-            _persistentPipeServerStream = new NamedPipeServerStream(userPipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-
-            AsyncCallback ac = null;
-            ac = o =>
-            {
-                if (disposed) return;
-                NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
-                server.EndWaitForConnection(o);
-
-                while (true)
-                {
-                    if (!messageProcessor.ProcessMessages(server)) break;
-                }
-
-                server.Dispose();
-                server = new NamedPipeServerStream(userPipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-                server.BeginWaitForConnection(ac, server);
-            };
-            _persistentPipeServerStream.BeginWaitForConnection(ac, _persistentPipeServerStream);
-        }
-
         public static Task<bool> SendMessageAsync(object message, string pipeName, bool wait = true)
         {
             string userPipeName = GetUserPipeName(pipeName);

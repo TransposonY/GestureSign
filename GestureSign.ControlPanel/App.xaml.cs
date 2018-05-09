@@ -47,7 +47,6 @@ namespace GestureSign.ControlPanel
                 GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
                 AppConfig.ConfigChanged += (o, ea) =>
                 {
-                    NamedPipe.SendMessageAsync("LoadConfiguration", "TouchInputProviderMessage");
                     NamedPipe.SendMessageAsync("LoadConfiguration", "GestureSignDaemon");
                 };
                 MainWindow mainWindow = new MainWindow();

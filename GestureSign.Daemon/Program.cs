@@ -50,8 +50,6 @@ namespace GestureSign.Daemon
                         SynchronizationContext uiContext = SynchronizationContext.Current;
                         TriggerManager.Instance.Load();
 
-                        if (!StartTouchInputProvider()) return;
-
                         GestureManager.Instance.Load(PointCapture.Instance);
                         ApplicationManager.Instance.Load(PointCapture.Instance);
                         // Create host control class and pass to plugins
@@ -114,50 +112,6 @@ namespace GestureSign.Daemon
             // Exits the program when the user clicks Abort.
             if (result == DialogResult.Abort)
                 Application.Exit();
-        }
-
-        private static bool StartTouchInputProvider()
-        {
-            bool createdNewProvider;
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.TouchInputProvider.exe");
-            try
-            {
-                using (new Mutex(false, TouchInputProvider, out createdNewProvider))
-                    if (createdNewProvider)
-                    {
-                        if (!File.Exists(path))
-                        {
-                            MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindTouchInputProviderMessage"),
-                                LocalizationProvider.Instance.GetTextValue("Messages.Error"));
-                            return false;
-                        }
-                        using (Process daemon = new Process())
-                        {
-                            daemon.StartInfo.FileName = path;
-
-                            //daemon.StartInfo.UseShellExecute = false;
-                            if (IsAdministrator())
-                                daemon.StartInfo.Verb = "runas";
-                            daemon.StartInfo.CreateNoWindow = false;
-                            daemon.Start();
-                        }
-                    }
-            }
-            catch (Exception e)
-            {
-                Logging.LogException(e);
-                MessageBox.Show(string.Format(e.Message + Environment.NewLine + LocalizationProvider.Instance.GetTextValue("Messages.StartupError"), path),
-                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            return true;
-        }
-
-        private static bool IsAdministrator()
-        {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }

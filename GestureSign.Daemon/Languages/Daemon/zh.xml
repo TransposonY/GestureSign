@@ -2,8 +2,6 @@
 <Language DisplayName="中文" Culture="zh-CN" Version="0.13">
   <Messages>
     <Error>错误</Error>
-    <CannotFindTouchInputProviderMessage>未找到组件GestureSign.TouchInputProvider.exe，请重新下载或安装本软件。</CannotFindTouchInputProviderMessage>
-    <StartupError>未能启动 "{0}". 请检查是否被安全软件拦截或存在文件损坏。</StartupError>
   </Messages>
   <TrayMenu>
     <Disable>关闭手势识别</Disable>

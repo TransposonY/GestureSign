@@ -2,8 +2,6 @@
 <Language DisplayName="English" Culture="en" Version="0.13">
   <Messages>
     <Error>Error</Error>
-    <CannotFindTouchInputProviderMessage>Can not find GestureSign.TouchInputProvider.exe.Try to redownload or reinstall GestureSign.</CannotFindTouchInputProviderMessage>
-    <StartupError>Can not launch "{0}". Please check if you have some antivirus blocking the startup or try reinstalling GestureSign. </StartupError>
   </Messages>
   <TrayMenu>
     <Disable>Disable GestureSign</Disable>
