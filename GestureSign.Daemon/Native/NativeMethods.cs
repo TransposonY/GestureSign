@@ -61,6 +61,41 @@ namespace GestureSign.Daemon.Native
 
         internal const uint ANRUS_TOUCH_MODIFICATION_ACTIVE = 0x0000002;
 
+        internal const int RIDEV_REMOVE = 0x00000001;
+        internal const int RIDEV_INPUTSINK = 0x00000100;
+        internal const int RIDEV_DEVNOTIFY = 0x00002000;
+        internal const int RID_INPUT = 0x10000003;
+
+        internal const int RIM_TYPEHID = 2;
+
+        internal const uint RIDI_DEVICENAME = 0x20000007;
+        internal const uint RIDI_DEVICEINFO = 0x2000000b;
+        internal const uint RIDI_PREPARSEDDATA = 0x20000005;
+
+        internal const int WM_KEYDOWN = 0x0100;
+        internal const int WM_SYSKEYDOWN = 0x0104;
+        internal const int WM_INPUT = 0x00FF;
+        internal const int WM_INPUT_DEVICE_CHANGE = 0x00FE;
+        internal const int VK_OEM_CLEAR = 0xFE;
+        internal const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
+
+        internal const ushort GenericDesktopPage = 0x01;
+        internal const ushort DigitizerUsagePage = 0x0D;
+        internal const ushort ContactIdentifierId = 0x51;
+        internal const ushort ContactCountId = 0x54;
+        internal const ushort ScanTimeId = 0x56;
+        internal const ushort TipId = 0x42;
+        internal const ushort XCoordinateId = 0x30;
+        internal const ushort YCoordinateId = 0x31;
+        internal const ushort InRangeId = 0x32;
+        internal const ushort BarrelButtonId = 0x44;
+        internal const ushort InvertId = 0x3C;
+        internal const ushort EraserId = 0x45;
+
+        internal const ushort TouchPadUsage = 0x05;
+        internal const ushort TouchScreenUsage = 0x04;
+        internal const ushort PenUsage = 0x02;
+
         #endregion const definitions
 
         #region DllImports
@@ -87,6 +122,18 @@ namespace GestureSign.Daemon.Native
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool InjectTouchInput(int count, [MarshalAs(UnmanagedType.LPArray), In] POINTER_TOUCH_INFO[] contacts);
+
+        [DllImport("User32.dll")]
+        internal static extern uint GetRawInputData(IntPtr hRawInput, uint uiCommand, IntPtr pData, ref uint pcbSize, uint cbSizeHeader);
+
+        [DllImport("User32.dll")]
+        internal static extern bool RegisterRawInputDevices(RAWINPUTDEVICE[] pRawInputDevice, uint uiNumDevices, uint cbSize);
+
+        [DllImport("User32.dll")]
+        internal static extern uint GetRawInputDeviceList(IntPtr pRawInputDeviceList, ref uint uiNumDevices, uint cbSize);
+
+        [DllImport("User32.dll")]
+        internal static extern uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
 
         #endregion DllImports
 

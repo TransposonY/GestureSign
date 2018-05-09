@@ -17,7 +17,7 @@ namespace GestureSign.Daemon.Input
         internal PointEventTranslator(InputProvider inputProvider)
         {
             _pressedMouseButton = new HashSet<MouseActions>();
-            inputProvider.TouchInputProcessor.PointsIntercepted += TranslateTouchEvent;
+            inputProvider.PointsIntercepted += TranslateTouchEvent;
             inputProvider.LowLevelMouseHook.MouseDown += LowLevelMouseHook_MouseDown;
             inputProvider.LowLevelMouseHook.MouseMove += LowLevelMouseHook_MouseMove;
             inputProvider.LowLevelMouseHook.MouseUp += LowLevelMouseHook_MouseUp;

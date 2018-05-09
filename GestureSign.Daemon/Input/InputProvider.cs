@@ -1,8 +1,7 @@
 ﻿using GestureSign.Common.Configuration;
-using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Input;
 using ManagedWinapi.Hooks;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace GestureSign.Daemon.Input
@@ -10,14 +9,15 @@ namespace GestureSign.Daemon.Input
     internal class InputProvider : IDisposable
     {
         private bool disposedValue = false; // To detect redundant calls
+        private MessageWindow _messageWindow;
 
-        public TouchInputProcessor TouchInputProcessor;
-        private const string TouchInputProvider = "GestureSign_TouchInputProvider";
         public LowLevelMouseHook LowLevelMouseHook;
+        public event RawPointsDataMessageEventHandler PointsIntercepted;
 
         public InputProvider()
         {
-            RunPipeServer();
+            _messageWindow = new MessageWindow();
+            _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
 
             AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             LowLevelMouseHook = new LowLevelMouseHook();
@@ -33,14 +33,15 @@ namespace GestureSign.Daemon.Input
             if (AppConfig.DrawingButton != MouseActions.None)
                 LowLevelMouseHook.StartHook();
             else LowLevelMouseHook.Unhook();
+
+            _messageWindow.UpdateRegistration();
         }
 
-        private void RunPipeServer()
+        private void MessageWindow_PointsIntercepted(object sender, RawPointsDataMessageEventArgs e)
         {
-            SynchronizationContext uiContext = SynchronizationContext.Current;
-            TouchInputProcessor = new TouchInputProcessor(uiContext);
-
-            NamedPipe.Instance.RunPersistentPipeConnection(TouchInputProvider, TouchInputProcessor);
+            if (e.RawData.Count == 0)
+                return;
+            PointsIntercepted?.Invoke(this, e);
         }
 
         #region IDisposable Support
