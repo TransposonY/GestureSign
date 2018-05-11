@@ -45,6 +45,43 @@ namespace GestureSign.CorePlugins.TouchKeyboard
             void Toggle(IntPtr hwnd);
         }
 
+        private enum ABE : uint
+        {
+            Left = 0,
+            Top = 1,
+            Right = 2,
+            Bottom = 3
+        }
+
+        private enum ABM : uint
+        {
+            New = 0x00000000,
+            Remove = 0x00000001,
+            QueryPos = 0x00000002,
+            SetPos = 0x00000003,
+            GetState = 0x00000004,
+            GetTaskbarPos = 0x00000005,
+            Activate = 0x00000006,
+            GetAutoHideBar = 0x00000007,
+            SetAutoHideBar = 0x00000008,
+            WindowPosChanged = 0x00000009,
+            SetState = 0x0000000A,
+        }
+
+        [DllImport("shell32.dll", SetLastError = true)]
+        private static extern IntPtr SHAppBarMessage(ABM dwMessage, ref APPBARDATA pData);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct APPBARDATA
+        {
+            public uint cbSize;
+            public IntPtr hWnd;
+            public uint uCallbackMessage;
+            public ABE uEdge;
+            public RECT rc;
+            public IntPtr lParam;
+        }
+
         #endregion
 
         #region Public Properties
@@ -149,6 +186,20 @@ namespace GestureSign.CorePlugins.TouchKeyboard
         {
             //find taskbar 
             IntPtr hwndTaskbar = FindWindow("Shell_TrayWnd", null);
+            if (hwndTaskbar == IntPtr.Zero)
+                return false;
+
+            //Retrieves the autohide states of the Windows taskbar
+            const int Autohide = 0x0000001;
+            APPBARDATA data = new APPBARDATA
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)),
+                hWnd = hwndTaskbar
+            };
+            var result = SHAppBarMessage(ABM.GetState, ref data);
+            if ((result.ToInt64() & Autohide) == Autohide)
+                return false;
+
             //Win 10
             IntPtr hwndTrayNotifyWnd = FindWindowEx(hwndTaskbar, IntPtr.Zero, "TrayNotifyWnd", null);
             IntPtr hwndTIPBand = FindWindowEx(hwndTrayNotifyWnd, IntPtr.Zero, "TIPBand", null);
