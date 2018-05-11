@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -30,7 +31,15 @@ namespace GestureSign.Common.Log
                 Compression = true
             };
 
-            ravenClient.Capture(new SentryEvent(report));
+            const int chunkSize = 4096;
+            if (!String.IsNullOrWhiteSpace(report))
+            {
+                foreach (string s in Split(report, chunkSize))
+                {
+                    if (s != string.Empty)
+                        ravenClient.Capture(new SentryEvent(s));
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(message))
                 ravenClient.Capture(new SentryEvent(message) { Level = ErrorLevel.Info });
@@ -125,6 +134,12 @@ namespace GestureSign.Common.Log
             }
 
             return result.ToString();
+        }
+
+        private static IEnumerable<string> Split(string str, int chunkSize)
+        {
+            return Enumerable.Range(0, str.Length / chunkSize + 1)
+                .Select(i => str.Substring(i * chunkSize, (i * chunkSize + chunkSize <= str.Length) ? chunkSize : str.Length - i * chunkSize));
         }
     }
 }
