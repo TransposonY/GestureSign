@@ -1,5 +1,6 @@
 ﻿using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -117,6 +118,8 @@ namespace GestureSign.CorePlugins.OpenFile
         private string ExpandEnvironmentVariables(string command, PointInfo pointInfo)
         {
             if (string.IsNullOrWhiteSpace(command)) return command;
+
+            command = Environment.ExpandEnvironmentVariables(command);
 
             if (command.Contains("%GS_Clipboard%"))
             {
