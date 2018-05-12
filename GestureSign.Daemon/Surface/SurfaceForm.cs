@@ -404,6 +404,7 @@ namespace GestureSign.Daemon.Surface
                 CreateParams myParams = base.CreateParams;
                 myParams.ExStyle = (int)WindowExStyleFlags.NOACTIVATE |
                                     (int)WindowExStyleFlags.TOOLWINDOW |
+                                    (int)WindowExStyleFlags.TRANSPARENT |
                                     (int)WindowExStyleFlags.LAYERED;
                 return myParams;
             }
