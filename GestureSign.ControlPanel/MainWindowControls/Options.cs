@@ -38,6 +38,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 //  Common.Configuration.AppConfig.Reload();
                 CheckStartupStatus();
 
+                GestureTrailSwitch.IsChecked = AppConfig.VisualFeedbackWidth > 0;
                 _VisualFeedbackColor = AppConfig.VisualFeedbackColor;
                 VisualFeedbackWidthSlider.Value = AppConfig.VisualFeedbackWidth;
                 MinimumPointDistanceSlider.Value = AppConfig.MinimumPointDistance;
@@ -263,7 +264,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         }
 
 #endif
-        
+
         private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
@@ -379,6 +380,18 @@ namespace GestureSign.ControlPanel.MainWindowControls
             else
             {
                 AppConfig.PenGestureButton &= ~GestureSign.Common.Input.DeviceStates.Invert;
+            }
+        }
+
+        private void GestureTrailSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (GestureTrailSwitch.IsChecked.GetValueOrDefault())
+            {
+                VisualFeedbackWidthSlider.Value = 9;
+            }
+            else
+            {
+                VisualFeedbackWidthSlider.Value = 0;
             }
         }
     }

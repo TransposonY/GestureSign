@@ -257,6 +257,7 @@
       <OnLabel>显示</OnLabel>
       <OffLabel>隐藏</OffLabel>
     </ShowTrayIconSwitch>
+    <GestureTrail>显示手势轨迹</GestureTrail>
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>

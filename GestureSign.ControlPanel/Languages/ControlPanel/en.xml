@@ -253,6 +253,7 @@ Email:ccfyzh@gmail.com
       <OnLabel>Show</OnLabel>
       <OffLabel>Hide</OffLabel>
     </ShowTrayIconSwitch>
+    <GestureTrail>Show Gesture Trail</GestureTrail>
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>
