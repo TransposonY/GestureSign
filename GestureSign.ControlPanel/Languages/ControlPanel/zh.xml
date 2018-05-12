@@ -257,9 +257,6 @@
       <OnLabel>显示</OnLabel>
       <OffLabel>隐藏</OffLabel>
     </ShowTrayIconSwitch>
-    <ShowBalloonTipSwitch>
-      <Header>启动时提示</Header>
-    </ShowBalloonTipSwitch>
     <OrderByLocation>
       <Header>手指识别顺序</Header>
       <OnLabel>按左右位置顺序</OnLabel>

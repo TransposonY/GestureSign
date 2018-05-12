@@ -211,12 +211,6 @@
                                    OffLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OffLabel}"
                                    Checked="ShowTrayIconSwitch_Checked"
                                    Unchecked="ShowTrayIconSwitch_Unchecked" />
-            <controls:ToggleSwitch x:Name="ShowBalloonTipSwitch"
-                                   Header="{localization:LocalisedText Options.ShowBalloonTipSwitch.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Unchecked="ShowBalloonTipSwitch_Unchecked"
-                                   Checked="ShowBalloonTipSwitch_Checked" />
             <controls:ToggleSwitch x:Name="chkOrderByLocation"
                                    Header="{localization:LocalisedText Options.OrderByLocation.Header}"
                                    OnLabel="{localization:LocalisedText Options.OrderByLocation.OnLabel}"

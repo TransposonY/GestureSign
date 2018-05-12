@@ -253,9 +253,6 @@ Email:ccfyzh@gmail.com
       <OnLabel>Show</OnLabel>
       <OffLabel>Hide</OffLabel>
     </ShowTrayIconSwitch>
-    <ShowBalloonTipSwitch>
-      <Header>Show Tip on Startup</Header>
-    </ShowBalloonTipSwitch>
     <OrderByLocation>
       <Header>Stroke Order</Header>
       <OnLabel>Left to Right</OnLabel>

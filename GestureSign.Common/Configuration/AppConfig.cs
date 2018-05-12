@@ -97,17 +97,7 @@ namespace GestureSign.Common.Configuration
                 SetValue("ShowTrayIcon", value);
             }
         }
-        public static bool ShowBalloonTip
-        {
-            get
-            {
-                return (bool)GetValue("ShowBalloonTip", false);
-            }
-            set
-            {
-                SetValue("ShowBalloonTip", value);
-            }
-        }
+
         public static string CultureName
         {
             get

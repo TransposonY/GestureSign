@@ -7,7 +7,5 @@
     <Disable>Disable GestureSign</Disable>
     <ControlPanel>Control Panel</ControlPanel>
     <Exit>Exit</Exit>
-    <BalloonTipTitle>GestureSign</BalloonTipTitle>
-    <BalloonTip>GestureSign has started.</BalloonTip>
   </TrayMenu>
 </Language>

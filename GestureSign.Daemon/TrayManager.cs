@@ -152,10 +152,6 @@ namespace GestureSign.Daemon
         {
             SetupTrayIconAndTrayMenu();
             _trayIcon.Visible = AppConfig.ShowTrayIcon;
-            if (AppConfig.ShowBalloonTip)
-                _trayIcon.ShowBalloonTip(1000, LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTipTitle"),
-                    LocalizationProvider.Instance.GetTextValue("TrayMenu.BalloonTip"), ToolTipIcon.Info);
-
         }
 
         #endregion

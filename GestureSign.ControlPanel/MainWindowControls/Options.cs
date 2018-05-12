@@ -43,7 +43,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 MinimumPointDistanceSlider.Value = AppConfig.MinimumPointDistance;
                 OpacitySlider.Value = AppConfig.Opacity;
                 chkOrderByLocation.IsChecked = AppConfig.IsOrderByLocation;
-                ShowBalloonTipSwitch.IsChecked = AppConfig.ShowBalloonTip;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
@@ -291,16 +290,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             NamedPipe.SendMessageAsync("HideTrayIcon", "GestureSignDaemon");
             AppConfig.ShowTrayIcon = false;
-        }
-
-        private void ShowBalloonTipSwitch_Checked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.ShowBalloonTip = true;
-        }
-
-        private void ShowBalloonTipSwitch_Unchecked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.ShowBalloonTip = false;
         }
 
         private void SendLogToggleSwitch_Checked(object sender, RoutedEventArgs e)
