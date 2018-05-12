@@ -211,12 +211,6 @@
                                    OffLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OffLabel}"
                                    Checked="ShowTrayIconSwitch_Checked"
                                    Unchecked="ShowTrayIconSwitch_Unchecked" />
-            <controls:ToggleSwitch x:Name="chkOrderByLocation"
-                                   Header="{localization:LocalisedText Options.OrderByLocation.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OrderByLocation.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OrderByLocation.OffLabel}"
-                                   Checked="chkOrderByLocation_Checked"
-                                   Unchecked="chkOrderByLocation_Unchecked" />
             <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
                                    Header="{localization:LocalisedText About.SendLogTitle}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

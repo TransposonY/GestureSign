@@ -257,11 +257,6 @@
       <OnLabel>显示</OnLabel>
       <OffLabel>隐藏</OffLabel>
     </ShowTrayIconSwitch>
-    <OrderByLocation>
-      <Header>手指识别顺序</Header>
-      <OnLabel>按左右位置顺序</OnLabel>
-      <OffLabel>按接触先后顺序</OffLabel>
-    </OrderByLocation>
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>

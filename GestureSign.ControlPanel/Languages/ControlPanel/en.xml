@@ -253,11 +253,6 @@ Email:ccfyzh@gmail.com
       <OnLabel>Show</OnLabel>
       <OffLabel>Hide</OffLabel>
     </ShowTrayIconSwitch>
-    <OrderByLocation>
-      <Header>Stroke Order</Header>
-      <OnLabel>Left to Right</OnLabel>
-      <OffLabel>In Contact Chronological Order</OffLabel>
-    </OrderByLocation>
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>

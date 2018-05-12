@@ -42,7 +42,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 VisualFeedbackWidthSlider.Value = AppConfig.VisualFeedbackWidth;
                 MinimumPointDistanceSlider.Value = AppConfig.MinimumPointDistance;
                 OpacitySlider.Value = AppConfig.Opacity;
-                chkOrderByLocation.IsChecked = AppConfig.IsOrderByLocation;
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
@@ -264,17 +263,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         }
 
 #endif
-
-        private void chkOrderByLocation_Checked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.IsOrderByLocation = true;
-        }
-
-        private void chkOrderByLocation_Unchecked(object sender, RoutedEventArgs e)
-        {
-            AppConfig.IsOrderByLocation = false;
-        }
-
+        
         private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
