@@ -21,7 +21,7 @@ namespace GestureSign.ControlPanel.ViewModel
             }
             set
             {
-                if (value.HasValue)
+                if (value.HasValue && ActionItemList != null)
                 {
                     ActionItemList.ForEach(ali => ali.IsSelected = value.Value);
                 }
