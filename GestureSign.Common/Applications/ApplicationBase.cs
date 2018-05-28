@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace GestureSign.Common.Applications
 {
-    public abstract class ApplicationBase : IApplication, INotifyCollectionChanged
+    public abstract class ApplicationBase : IApplication, INotifyCollectionChanged, IComparable, IComparable<ApplicationBase>
     {
         #region Private Instance Fields
 
@@ -99,6 +99,26 @@ namespace GestureSign.Common.Applications
             catch
             {
                 return false;
+            }
+        }
+
+        public int CompareTo(object obj)
+        {
+            var item = obj as ApplicationBase;
+            return CompareTo(item);
+        }
+
+        public int CompareTo(ApplicationBase item)
+        {
+            if (this is GlobalApp)
+            {
+                return -1;
+            }
+            else
+            {
+                if (item is GlobalApp)
+                    return 1;
+                return string.Compare(Name, item.Name, false, System.Globalization.CultureInfo.CurrentCulture);
             }
         }
 

@@ -25,6 +25,9 @@
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Application.Group" />
             </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="." />
+            </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
         <CollectionViewSource x:Key="ActionViewSource"
                               Culture="{x:Static common:UIHelper.CurrentCulture}"
@@ -38,7 +41,7 @@
                               Culture="{x:Static common:UIHelper.CurrentCulture}"
                               Source="{Binding IgnoredAppList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}">
             <CollectionViewSource.SortDescriptions>
-                <componentmodel:SortDescription PropertyName="Application.Name" />
+                <componentmodel:SortDescription PropertyName="." />
             </CollectionViewSource.SortDescriptions>
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Application.MatchUsing" />

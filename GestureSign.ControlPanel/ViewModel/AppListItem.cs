@@ -1,4 +1,5 @@
 ﻿using GestureSign.Common.Applications;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
-    public class AppListItem : INotifyPropertyChanged
+    public class AppListItem : INotifyPropertyChanged, IComparable, IComparable<AppListItem>
     {
         private bool? _isSelected;
 
@@ -36,6 +37,26 @@ namespace GestureSign.ControlPanel.ViewModel
             if (application?.Actions != null)
                 ActionItemList = application.Actions.Select(a => new ActionListItem(a, info)).ToList();
             _isSelected = isSeleted;
+        }
+
+        public int CompareTo(object obj)
+        {
+            var item = obj as AppListItem;
+            return CompareTo(item);
+        }
+
+        public int CompareTo(AppListItem item)
+        {
+            if (Application is GlobalApp)
+            {
+                return -1;
+            }
+            else
+            {
+                if (item.Application is GlobalApp)
+                    return 1;
+                return string.Compare(Application.Name, item.Application.Name, false, System.Globalization.CultureInfo.CurrentCulture);
+            }
         }
 
         protected void OnPropertyChanged(string propertyName)
