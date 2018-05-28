@@ -36,11 +36,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void btnEditIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
-            var ia = this.lstIgnoredApplications.SelectedItem as IgnoredApp;
-            if (ia == null) return;
-
-            ApplicationDialog applicationDialog = new ApplicationDialog(ia);
-            applicationDialog.ShowDialog();
+            EditIgnoredApp();
         }
 
         private void btnAddIgnoredApp_Click(object sender, RoutedEventArgs e)
@@ -82,6 +78,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             DownloadWindow DownloadWindow = new DownloadWindow();
             DownloadWindow.Show();
+        }
+
+        private void lstIgnoredApplications_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Dispatcher.InvokeAsync(EditIgnoredApp, DispatcherPriority.Input);
+        }
+
+        private void EditIgnoredApp()
+        {
+            var ia = this.lstIgnoredApplications.SelectedItem as IgnoredApp;
+            if (ia == null) return;
+
+            ApplicationDialog applicationDialog = new ApplicationDialog(ia);
+            applicationDialog.ShowDialog();
         }
 
         protected override void OnDrop(DragEventArgs e)

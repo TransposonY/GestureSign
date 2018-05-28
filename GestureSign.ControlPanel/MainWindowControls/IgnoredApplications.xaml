@@ -39,6 +39,7 @@
                   ScrollViewer.PanningMode="VerticalOnly"
                   BorderThickness="0"
                   Margin="0"
+                  MouseDoubleClick="lstIgnoredApplications_MouseDoubleClick"
                   SelectionChanged="lstIgnoredApplications_SelectionChanged">
             <ListView.GroupStyle>
                 <GroupStyle>
