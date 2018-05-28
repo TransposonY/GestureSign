@@ -77,11 +77,11 @@ namespace GestureSign.ControlPanel.Dialogs
                 if (currentApplication != null)
                 {
                     GroupComboBox.Text = _currentApplication.Group;
-                    ApplicationNameTextBox.Text = _currentApplication.Name;
 
                     BlockTouchInputSlider.Value = currentApplication.BlockTouchInputThreshold;
                     LimitNumberOfFingersSlider.Value = currentApplication.LimitNumberOfFingers;
                 }
+                ApplicationNameTextBox.Text = _currentApplication.Name;
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
                 RegexCheckBox.IsChecked = _currentApplication.IsRegEx;
                 MatchStringTextBox.Text = _currentApplication.MatchString;
