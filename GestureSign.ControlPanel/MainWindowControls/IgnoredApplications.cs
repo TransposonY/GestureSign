@@ -24,6 +24,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
             InitializeComponent();
         }
 
+        private void UserControl_Initialized(object sender, EventArgs eArgs)
+        {
+            ApplicationManager.Instance.CollectionChanged += (o, e) =>
+            {
+                if (e.NewItems != null && e.NewItems.Count > 0 && e.NewItems[0] is IgnoredApp)
+                    lstIgnoredApplications.SelectedItem = (IApplication)e.NewItems[0];
+            };
+        }
+
         private void btnDeleteIgnoredApp_Click(object sender, RoutedEventArgs e)
         {
             var ignoredApps = lstIgnoredApplications.SelectedItems.Cast<IgnoredApp>().ToList();
