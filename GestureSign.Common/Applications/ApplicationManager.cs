@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ using ManagedWinapi.Windows;
 
 namespace GestureSign.Common.Applications
 {
-    public class ApplicationManager : IApplicationManager
+    public class ApplicationManager : IApplicationManager, INotifyCollectionChanged
     {
         #region Private Variables
 
@@ -137,7 +138,7 @@ namespace GestureSign.Common.Applications
 
         #region Custom Events
 
-        public static event ApplicationChangedEventHandler ApplicationChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
         public static event EventHandler ApplicationSaved;
         public static event EventHandler OnLoadApplicationsCompleted;
 
@@ -159,26 +160,32 @@ namespace GestureSign.Common.Applications
         public void AddApplication(IApplication application)
         {
             Applications.Add(application);
-            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(application));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, application));
         }
 
         public void AddApplicationRange(List<IApplication> applications)
         {
             Applications.AddRange(applications);
-            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(applications.FirstOrDefault()));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, applications));
         }
 
         public void RemoveApplication(IApplication application)
         {
             Applications.Remove(application);
-            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(application));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, application));
         }
 
         public void ReplaceApplication(IApplication oldApplication, IApplication newApplication)
         {
             Applications.Remove(oldApplication);
             Applications.Add(newApplication);
-            ApplicationChanged?.Invoke(this, new ApplicationChangedEventArgs(newApplication));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newApplication, oldApplication));
+        }
+
+        public void RemoveAllApplication()
+        {
+            Applications.Clear();
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public void RemoveIgnoredApplications(string applicationName)

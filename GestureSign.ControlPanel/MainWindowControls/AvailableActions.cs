@@ -37,9 +37,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void UserControl_Initialized(object sender, EventArgs eArgs)
         {
-            ApplicationManager.ApplicationChanged += (o, e) =>
+            ApplicationManager.Instance.CollectionChanged += (o, e) =>
             {
-                lstAvailableApplication.SelectedItem=(e.Application);
+                if (e.NewItems != null && e.NewItems.Count > 0 && !(e.NewItems[0] is IgnoredApp))
+                    lstAvailableApplication.SelectedItem = (IApplication)e.NewItems[0];
             };
         }
 

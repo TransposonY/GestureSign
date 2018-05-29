@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
+﻿using GestureSign.Common.Applications;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
-using GestureSign.Common.Applications;
-using System.Collections.Generic;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
@@ -13,18 +12,11 @@ namespace GestureSign.ControlPanel.ViewModel
             ApplicationItems = new ObservableCollection<IApplication>();
             IgnoredApplicationItems = new ObservableCollection<IgnoredApp>();
 
-            ApplicationManager.ApplicationChanged += (o, e) =>
-            {
-                if (e.Application is IgnoredApp)
-                    UpdateIgnoredApplicationItems();
-                else
-                    UpdateApplicationItems();
-            };
+            ApplicationManager.Instance.CollectionChanged += ApplicationManager_CollectionChanged;
 
             ApplicationManager.Instance.LoadingTask.ContinueWith((task) =>
             {
-                Application.Current.Dispatcher.Invoke(UpdateApplicationItems);
-                Application.Current.Dispatcher.Invoke(UpdateIgnoredApplicationItems);
+                Application.Current.Dispatcher.Invoke(ReloadApplicationItems);
             });
         }
 
@@ -32,33 +24,73 @@ namespace GestureSign.ControlPanel.ViewModel
 
         public static ObservableCollection<IgnoredApp> IgnoredApplicationItems { get; set; }
 
-        private static void UpdateApplicationItems()
+        private static void ReloadApplicationItems()
         {
             if (ApplicationItems == null)
                 ApplicationItems = new ObservableCollection<IApplication>();
-            else
-                ApplicationItems.Clear();
+            if (IgnoredApplicationItems == null)
+                IgnoredApplicationItems = new ObservableCollection<IgnoredApp>();
 
-            var newApps = new List<IApplication>();
-            newApps.Add(ApplicationManager.Instance.GetGlobalApplication());
-            newApps.AddRange(ApplicationManager.Instance.Applications.Where(app => (app is UserApp)).OrderBy(app => app.Name));
+            ApplicationItems.Clear();
+            IgnoredApplicationItems.Clear();
 
-            foreach (var app in newApps)
+            ApplicationItems.Add(ApplicationManager.Instance.GetGlobalApplication());
+            foreach (IApplication app in ApplicationManager.Instance.Applications)
             {
-                ApplicationItems.Add(app);
+                if (app is UserApp)
+                {
+                    ApplicationItems.Add(app);
+                }
+                else if (app is IgnoredApp)
+                {
+                    IgnoredApplicationItems.Add((IgnoredApp)app);
+                }
             }
         }
 
-        private static void UpdateIgnoredApplicationItems()
+        private static void ApplicationManager_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (IgnoredApplicationItems == null)
-                IgnoredApplicationItems = new ObservableCollection<IgnoredApp>();
-            else
-                IgnoredApplicationItems.Clear();
-
-            foreach (var app in ApplicationManager.Instance.GetIgnoredApplications())
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                IgnoredApplicationItems.Add(app);
+                ApplicationItems.Clear();
+                IgnoredApplicationItems.Clear();
+                return;
+            }
+
+            if (e.NewItems != null)
+                foreach (var item in e.NewItems)
+                {
+                    AddApplication((IApplication)item);
+                }
+
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                {
+                    RemoveApplication((IApplication)item);
+                }
+        }
+
+        private static void AddApplication(IApplication application)
+        {
+            if (application is IgnoredApp)
+            {
+                IgnoredApplicationItems.Add((IgnoredApp)application);
+            }
+            else
+            {
+                ApplicationItems.Add(application);
+            }
+        }
+
+        private static void RemoveApplication(IApplication application)
+        {
+            if (application is IgnoredApp)
+            {
+                IgnoredApplicationItems.Remove((IgnoredApp)application);
+            }
+            else
+            {
+                ApplicationItems.Remove(application);
             }
         }
     }
