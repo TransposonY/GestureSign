@@ -1,9 +1,14 @@
-﻿using GestureSign.Common.Configuration;
+﻿using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
+using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
+using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Hooks;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -265,11 +270,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
 #endif
 
-        private void btnOpenApplicationData_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
-        }
-
         private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
         {
             NamedPipe.SendMessageAsync("ShowTrayIcon", "GestureSignDaemon");
@@ -392,6 +392,87 @@ namespace GestureSign.ControlPanel.MainWindowControls
             else
             {
                 VisualFeedbackWidthSlider.Value = 0;
+            }
+        }
+
+        private void BackupButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = LocalizationProvider.Instance.GetTextValue("Options.BackupFile") + "|*" + GestureSign.Common.Constants.BackupFileExtension,
+                FileName = LocalizationProvider.Instance.GetTextValue("Options.BackupFile") + " " + DateTime.Now.ToString("MMddHHmm"),
+                Title = LocalizationProvider.Instance.GetTextValue("Options.Backup"),
+                AddExtension = true,
+                DefaultExt = GestureSign.Common.Constants.BackupFileExtension.Remove(0, 1),
+                ValidateNames = true
+            };
+            if (saveFileDialog.ShowDialog().Value)
+            {
+                try
+                {
+                    Archive.CreateArchive(ApplicationManager.Instance.Applications, GestureManager.Instance.Gestures, saveFileDialog.FileName, AppConfig.ConfigPath);
+
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.Messages.BackupCompleteTitle"), null);
+                }
+                catch (Exception exception)
+                {
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Messages.Error"), exception.Message);
+                }
+            }
+        }
+
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = $"{LocalizationProvider.Instance.GetTextValue("Options.BackupFile")}|*{GestureSign.Common.Constants.BackupFileExtension}",
+                Title = LocalizationProvider.Instance.GetTextValue("Common.Import"),
+                CheckFileExists = true
+            };
+            if (openFileDialog.ShowDialog().Value)
+            {
+                try
+                {
+                    string tempArchivePath = Archive.ExtractToTempDirectory(openFileDialog.FileName);
+
+                    string configPath = Path.Combine(tempArchivePath, Path.GetFileName(AppConfig.ConfigPath));
+                    if (File.Exists(configPath))
+                        File.Copy(configPath, AppConfig.ConfigPath, true);
+                    AppConfig.Reload();
+                    LoadSettings();
+
+                    var applications = FileManager.LoadObject<List<IApplication>>(Path.Combine(tempArchivePath, GestureSign.Common.Constants.ActionFileName), false, true, true);
+                    var gestures = FileManager.LoadObject<List<Gesture>>(Path.Combine(tempArchivePath, GestureSign.Common.Constants.GesturesFileName), false, false, true);
+
+                    if (gestures != null)
+                    {
+                        var oldGestures = GestureManager.Instance.Gestures;
+                        foreach (var g in oldGestures)
+                        {
+                            GestureManager.Instance.DeleteGesture(g.Name);
+                        }
+                        foreach (var g in gestures)
+                        {
+                            GestureManager.Instance.AddGesture(g);
+                        }
+
+                        GestureManager.Instance.SaveGestures();
+                    }
+                    if (applications != null)
+                    {
+                        ApplicationManager.Instance.RemoveAllApplication();
+                        ApplicationManager.Instance.AddApplicationRange(applications);
+
+                        ApplicationManager.Instance.SaveApplications();
+                    }
+
+                    Directory.Delete(tempArchivePath, true);
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Options.Messages.RestoreCompleteTitle"), null);
+                }
+                catch (Exception exception)
+                {
+                    UIHelper.GetParentWindow(this).ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("Messages.Error"), exception.Message);
+                }
             }
         }
     }

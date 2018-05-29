@@ -223,13 +223,21 @@
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Checked="SendLogToggleSwitch_Checked"
                                    Unchecked="SendLogToggleSwitch_Unchecked" />
-            <Button x:Name="btnOpenApplicationData"
-                    Content="{localization:LocalisedText Options.OpenConfigFolder}"
-                    HorizontalAlignment="Center"
-                    Margin="0,15,0,10"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Click="btnOpenApplicationData_Click" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,20,0,10">
+                <Button x:Name="BackupButton"
+                        Content="{localization:LocalisedText Options.Backup}"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Click="BackupButton_Click" />
+                <Button x:Name="RestoreButton"
+                        Margin="20,0,0,0"
+                        Content="{localization:LocalisedText Options.Restore}"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Click="RestoreButton_Click" />
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

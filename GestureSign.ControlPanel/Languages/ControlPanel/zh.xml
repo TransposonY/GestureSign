@@ -231,7 +231,9 @@
     <Off>关闭</Off>
     <PickColor>选择颜色..</PickColor>
     <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
-    <OpenConfigFolder>打开设置文件文件夹</OpenConfigFolder>
+    <Backup>备份所有设置</Backup>
+    <Restore>导入设置</Restore>
+    <BackupFile>GestureSign备份文件</BackupFile>
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
@@ -261,6 +263,8 @@
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>
+      <BackupCompleteTitle>备份完成</BackupCompleteTitle>
+      <RestoreCompleteTitle>恢复成功</RestoreCompleteTitle>
       <TaskUserDisabled>开机启动已被用户禁用，请先在任务管理器中启用。</TaskUserDisabled>
     </Messages>
   </Options>

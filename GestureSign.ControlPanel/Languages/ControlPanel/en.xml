@@ -227,7 +227,9 @@ Email:ccfyzh@gmail.com
     <Off>Off</Off>
     <PickColor>Pick Color...</PickColor>
     <MinimumPointDistance>Minimum Point Distance {0:F0} px</MinimumPointDistance>
-    <OpenConfigFolder>Open Configuration Folder</OpenConfigFolder>
+    <Backup>Backup All User Data</Backup>
+    <Restore>Restore User Data</Restore>
+    <BackupFile>GestureSign Backup File</BackupFile>
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
     <MouseGesture>Mouse Gesture</MouseGesture>
@@ -257,6 +259,8 @@ Email:ccfyzh@gmail.com
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>
+      <BackupCompleteTitle>Backup Complete</BackupCompleteTitle>
+      <RestoreCompleteTitle>Restore Complete</RestoreCompleteTitle>
       <TaskUserDisabled>The task has been disabled by user, please enable it in the Startup section of Task Manager. </TaskUserDisabled>
     </Messages>
   </Options>

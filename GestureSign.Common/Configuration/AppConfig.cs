@@ -16,8 +16,6 @@ namespace GestureSign.Common.Configuration
         static Timer Timer;
         public static event EventHandler ConfigChanged;
 
-        private static string ConfigPath;
-
         private static ExeConfigurationFileMap ExeMap;
 
         public static string ApplicationDataPath { private set; get; }
@@ -25,6 +23,8 @@ namespace GestureSign.Common.Configuration
         public static string LocalApplicationDataPath { private set; get; }
 
         public static string BackupPath { private set; get; }
+
+        public static string ConfigPath { private set; get; }
 
         public static System.Drawing.Color VisualFeedbackColor
         {

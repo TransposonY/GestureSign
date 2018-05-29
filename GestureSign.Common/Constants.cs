@@ -8,5 +8,6 @@
         public const string ActionExtension = ".gsa";
         public const string ArchivesName = "GestureSign.ges";
         public const string ArchivesExtension = ".ges";
+        public const string BackupFileExtension = ".gsb";
     }
 }
