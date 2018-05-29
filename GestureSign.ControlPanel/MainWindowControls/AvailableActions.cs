@@ -39,7 +39,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             ApplicationManager.ApplicationChanged += (o, e) =>
             {
-                SelectApp(e.Application);
+                lstAvailableApplication.SelectedItem=(e.Application);
             };
         }
 
@@ -210,12 +210,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ApplicationManager.Instance.SaveApplications();
         }
 
-        private void SelectApp(IApplication app)
-        {
-            lstAvailableApplication.SelectedItem = app;
-            Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(lstAvailableApplication.SelectedItem), DispatcherPriority.Background);
-        }
-
         private void EnableRelevantButtons()
         {
             cmdDelete.IsEnabled = cmdEdit.IsEnabled = lstAvailableActions.SelectedItems.Count != 0;
@@ -383,6 +377,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             ToggleAllActionsToggleSwitch.IsEnabled = true;
             ToggleAllActionsToggleSwitch.IsChecked = selectedApp.Actions.SelectMany(a => a.Commands).All(c => c.IsEnabled);
+
+            Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(selectedApp), DispatcherPriority.Background);
         }
 
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
@@ -510,14 +506,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 }
                                 break;
                             case ".exe":
-                                SelectApp(ApplicationManager.Instance.AddApplication(new UserApp(), file));
+                                lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), file);
                                 break;
                             case ".lnk":
                                 WshShell shell = new WshShell();
                                 IWshShortcut link = (IWshShortcut)shell.CreateShortcut(file);
                                 if (Path.GetExtension(link.TargetPath).ToLower() == ".exe")
                                 {
-                                    SelectApp(ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath));
+                                    lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath);
                                 }
                                 break;
                             case GestureSign.Common.Constants.ArchivesExtension:
