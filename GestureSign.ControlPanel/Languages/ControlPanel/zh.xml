@@ -216,7 +216,6 @@
   </GestureDefinition>
   <Ignored>
     <Header>忽略</Header>
-    <Count>({0})</Count>
     <Enable>启用</Enable>
     <Messages>
       <ImportCompleteTitle>导入完成</ImportCompleteTitle>

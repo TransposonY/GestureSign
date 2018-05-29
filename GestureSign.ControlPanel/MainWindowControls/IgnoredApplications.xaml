@@ -19,10 +19,8 @@
         </ObjectDataProvider>
         <CollectionViewSource x:Key="IgnoredApplicationViewSource"
                               Source="{Binding Source={StaticResource ApplicationItemProvider},Path=IgnoredApplicationItems}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="MatchUsing" />
-            </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="MatchUsing" />
                 <componentmodel:SortDescription PropertyName="." />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
@@ -41,35 +39,6 @@
                   Margin="0"
                   MouseDoubleClick="lstIgnoredApplications_MouseDoubleClick"
                   SelectionChanged="lstIgnoredApplications_SelectionChanged">
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Margin"
-                                    Value="0,0,0,5" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True"
-                                                  BorderBrush="#FFA4B97F"
-                                                  BorderThickness="0,0,0,1">
-                                            <Expander.Header>
-                                                <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}">
-                                                        <Run Text="{Binding Path=Name, Converter={StaticResource MatchUsingToStringConverter},Mode=OneWay}" />
-                                                        <Run Text="{Binding Path=ItemCount, StringFormat={localization:LocalisedText Ignored.Count},Mode=OneWay}" />
-                                                </TextBlock>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListView.GroupStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn>
@@ -88,10 +57,13 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding Path=IsEnabled}"
-                                          Click="IgnoredAppCheckBox_Click" />
+                                          Click="IgnoredAppCheckBox_Click"
+                                          Margin="4,0,0,0" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.MatchUsing}"
+                                    DisplayMemberBinding="{Binding Path=MatchUsing, Converter={StaticResource MatchUsingToStringConverter},Mode=OneWay}" />
                     <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.AppName}"
                                     DisplayMemberBinding="{Binding Name}" />
                     <GridViewColumn Header="{localization:LocalisedText ApplicationDialog.MatchString}">

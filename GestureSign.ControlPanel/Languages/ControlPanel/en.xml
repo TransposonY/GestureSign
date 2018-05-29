@@ -212,7 +212,6 @@ Email:ccfyzh@gmail.com
   </GestureDefinition>
   <Ignored>
     <Header>Ignored</Header>
-    <Count>  ( {0} )</Count>
     <Enable>Enable</Enable>
     <Messages>
       <ImportCompleteTitle>Import Complete</ImportCompleteTitle>
