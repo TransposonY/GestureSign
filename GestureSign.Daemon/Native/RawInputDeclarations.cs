@@ -51,7 +51,7 @@ namespace GestureSign.Daemon.Native
         [MarshalAs(UnmanagedType.U4)]
         public int dwSize;
         public IntPtr hDevice;
-        public int wParam;
+        public IntPtr wParam;
     }
 
     /// <summary>
