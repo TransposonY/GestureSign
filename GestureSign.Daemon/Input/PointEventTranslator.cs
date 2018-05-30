@@ -29,6 +29,7 @@ namespace GestureSign.Daemon.Input
 
         protected virtual void OnPointDown(InputPointsEventArgs args)
         {
+            if (SourceDevice != Devices.None && SourceDevice != args.PointSource && SourceDevice != Devices.Pen) return;
             SourceDevice = args.PointSource;
             PointDown?.Invoke(this, args);
         }
