@@ -105,7 +105,7 @@ Email:ccfyzh@gmail.com
     <MouseHotKey>Mouse HotKey</MouseHotKey>
     <MouseGestureNotEnabled>(Need to enable mouse gesture)</MouseGestureNotEnabled>
     <Default>Default</Default>
-    <Continuous>Continuous</Continuous>
+    <Continuous>Continuous Gesture</Continuous>
     <DeviceLimit>Device Limit</DeviceLimit>
     <Mouse>Mouse</Mouse>
     <TouchScreen>TouchScreen</TouchScreen>
