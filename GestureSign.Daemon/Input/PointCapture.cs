@@ -591,14 +591,16 @@ namespace GestureSign.Daemon.Input
         private void AddPoint(List<InputPoint> point)
         {
             bool getNewPoint = false;
+            int threshold = AppConfig.MinimumPointDistance;
             foreach (var p in point)
-            {                // Don't accept point if it's within specified distance of last point unless it's the first point
+            {
+                // Don't accept point if it's within specified distance of last point unless it's the first point
                 if (_pointsCaptured.ContainsKey(p.ContactIdentifier))
                 {
                     var stroke = _pointsCaptured[p.ContactIdentifier];
                     if (stroke.Count != 0)
                     {
-                        if (PointPatternMath.GetDistance(stroke.Last(), p.Point) < AppConfig.MinimumPointDistance)
+                        if (PointPatternMath.GetDistance(stroke.Last(), p.Point) < threshold)
                             continue;
 
                         if (State == CaptureState.CapturingInvalid)
