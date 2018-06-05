@@ -42,10 +42,11 @@ namespace GestureSign.Daemon.Input
             EnumerateDevices();
 
             _ignoreTouchInputWhenUsingPen = AppConfig.IgnoreTouchInputWhenUsingPen;
-            _penGestureButton = AppConfig.PenGestureButton & (DeviceStates.Invert | DeviceStates.RightClickButton);
+            var penSetting = AppConfig.PenGestureButton;
+            _penGestureButton = penSetting & (DeviceStates.Invert | DeviceStates.RightClickButton);
 
             UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
-            UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0, NativeMethods.PenUsage);
+            UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0 && (penSetting & (DeviceStates.InRange | DeviceStates.Tip)) != 0, NativeMethods.PenUsage);
             UpdateRegisterState(AppConfig.RegisterTouchPad, NativeMethods.TouchPadUsage);
         }
 

@@ -239,9 +239,12 @@
     <DrawingButton>鼠标手势键：</DrawingButton>
     <TouchPad>精确式触摸板手势</TouchPad>
     <PenGesture>触控笔手势</PenGesture>
-    <PenGestureButtonDescription>保持笔悬空并按住以下按键画出手势:</PenGestureButtonDescription>
-    <RightClickButton>右键单击按钮</RightClickButton>
-    <Eraser>将笔颠倒/橡皮擦按钮</Eraser>
+    <PenGestureButtonDescription>请选择画出手势的方式:</PenGestureButtonDescription>
+    <RightClickButton>按住触控笔右键按钮</RightClickButton>
+    <Eraser>将笔颠倒/按住橡皮擦按钮</Eraser>
+    <And>同时</And>
+    <Tip>在屏幕上画手势</Tip>
+    <Hover>保持悬空画出手势</Hover>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <WindowsStartup>

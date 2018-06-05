@@ -29,7 +29,7 @@ namespace GestureSign.Daemon.Input
 
         protected virtual void OnPointDown(InputPointsEventArgs args)
         {
-            if (SourceDevice != Devices.None && SourceDevice != args.PointSource && SourceDevice != Devices.Pen) return;
+            if (SourceDevice != Devices.None && SourceDevice != args.PointSource && args.PointSource != Devices.Pen) return;
             SourceDevice = args.PointSource;
             PointDown?.Invoke(this, args);
         }
@@ -117,7 +117,7 @@ namespace GestureSign.Daemon.Input
             }
             else if (e.SourceDevice == Devices.Pen)
             {
-                bool release = (e.RawData[0].State & (DeviceStates.Invert | DeviceStates.RightClickButton)) == 0|| (e.RawData[0].State & DeviceStates.InRange ) == 0;
+                bool release = (e.RawData[0].State & (DeviceStates.Invert | DeviceStates.RightClickButton)) == 0 || (e.RawData[0].State & DeviceStates.InRange) == 0;
                 bool tip = (e.RawData[0].State & (DeviceStates.Eraser | DeviceStates.Tip)) != 0;
 
                 if (release)
@@ -127,27 +127,68 @@ namespace GestureSign.Daemon.Input
                     return;
                 }
 
-                if (_lastPointsCount == 1 && SourceDevice == Devices.Pen)
+                var penSetting = AppConfig.PenGestureButton;
+                bool drawByTip = (penSetting & DeviceStates.Tip) != 0;
+                bool drawByHover = (penSetting & DeviceStates.InRange) != 0;
+
+                if (drawByHover && drawByTip)
                 {
-                    if (tip)
-                    {
-                        OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
-                        _lastPointsCount = -1;
-                    }
-                    else
+                    if (_lastPointsCount == 1 && SourceDevice == Devices.Pen)
                     {
                         OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                     }
-                }
-                else if (_lastPointsCount >= 0)
-                {
-                    if (tip)
+                    else if (_lastPointsCount >= 0)
                     {
-                        _lastPointsCount = -1;
+                        _lastPointsCount = 1;
+                        OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    }
+                }
+                else if (drawByTip)
+                {
+                    if (!tip)
+                    {
+                        if (SourceDevice == Devices.Pen)
+                        {
+                            OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                            _lastPointsCount = 0;
+                        }
                         return;
                     }
-                    _lastPointsCount = 1;
-                    OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+
+                    if (_lastPointsCount == 1 && SourceDevice == Devices.Pen)
+                    {
+                        OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    }
+                    else if (_lastPointsCount >= 0)
+                    {
+                        _lastPointsCount = 1;
+                        OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    }
+                }
+                else if (drawByHover)
+                {
+                    if (_lastPointsCount == 1 && SourceDevice == Devices.Pen)
+                    {
+                        if (tip)
+                        {
+                            OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                            _lastPointsCount = -1;
+                        }
+                        else
+                        {
+                            OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                        }
+                    }
+                    else if (_lastPointsCount >= 0)
+                    {
+                        if (tip)
+                        {
+                            _lastPointsCount = -1;
+                            return;
+                        }
+                        _lastPointsCount = 1;
+                        OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    }
                 }
             }
         }

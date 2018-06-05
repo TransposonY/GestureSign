@@ -1,6 +1,7 @@
 ﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
+using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
@@ -66,11 +67,15 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     InitialTimeoutSwitch.IsChecked = true;
                     InitialTimeoutSlider.Value = AppConfig.InitialTimeout / 1000f;
                 }
-                if (AppConfig.PenGestureButton > 0)
+
+                var penState = AppConfig.PenGestureButton;
+                if ((penState & (DeviceStates.InRange | DeviceStates.Tip)) != 0 && (penState & (DeviceStates.RightClickButton | DeviceStates.Invert)) != 0)
                 {
                     PenGestureSwitch.IsChecked = true;
-                    RightClickButtonCheckBox.IsChecked = AppConfig.PenGestureButton.HasFlag(GestureSign.Common.Input.DeviceStates.RightClickButton);
-                    EraserCheckBox.IsChecked = AppConfig.PenGestureButton.HasFlag(GestureSign.Common.Input.DeviceStates.Invert);
+                    TipCheckBox.IsChecked = penState.HasFlag(DeviceStates.Tip);
+                    HoverCheckBox.IsChecked = penState.HasFlag(DeviceStates.InRange);
+                    RightClickButtonCheckBox.IsChecked = penState.HasFlag(DeviceStates.RightClickButton);
+                    EraserCheckBox.IsChecked = penState.HasFlag(DeviceStates.Invert);
                 }
                 else
                 {
@@ -348,14 +353,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (PenGestureSwitch.IsChecked.GetValueOrDefault())
             {
-                AppConfig.PenGestureButton = GestureSign.Common.Input.DeviceStates.RightClickButton;
-                RightClickButtonCheckBox.IsChecked = true;
-                EraserCheckBox.IsChecked = false;
+                AppConfig.PenGestureButton = DeviceStates.RightClickButton | DeviceStates.Tip;
+                RightClickButtonCheckBox.IsChecked = TipCheckBox.IsChecked = true;
+                EraserCheckBox.IsChecked = HoverCheckBox.IsChecked = false;
             }
             else
             {
-                AppConfig.PenGestureButton = GestureSign.Common.Input.DeviceStates.None;
-                RightClickButtonCheckBox.IsChecked = EraserCheckBox.IsChecked = false;
+                AppConfig.PenGestureButton = DeviceStates.None;
+                RightClickButtonCheckBox.IsChecked = EraserCheckBox.IsChecked = HoverCheckBox.IsChecked = TipCheckBox.IsChecked = false;
             }
         }
 
@@ -363,11 +368,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (RightClickButtonCheckBox.IsChecked.GetValueOrDefault())
             {
-                AppConfig.PenGestureButton |= GestureSign.Common.Input.DeviceStates.RightClickButton;
+                AppConfig.PenGestureButton |= DeviceStates.RightClickButton;
             }
             else
             {
-                AppConfig.PenGestureButton &= ~GestureSign.Common.Input.DeviceStates.RightClickButton;
+                AppConfig.PenGestureButton &= ~DeviceStates.RightClickButton;
             }
         }
 
@@ -375,11 +380,35 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             if (EraserCheckBox.IsChecked.GetValueOrDefault())
             {
-                AppConfig.PenGestureButton |= GestureSign.Common.Input.DeviceStates.Invert;
+                AppConfig.PenGestureButton |= DeviceStates.Invert;
             }
             else
             {
-                AppConfig.PenGestureButton &= ~GestureSign.Common.Input.DeviceStates.Invert;
+                AppConfig.PenGestureButton &= ~DeviceStates.Invert;
+            }
+        }
+
+        private void TipCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (TipCheckBox.IsChecked.GetValueOrDefault())
+            {
+                AppConfig.PenGestureButton |= DeviceStates.Tip;
+            }
+            else
+            {
+                AppConfig.PenGestureButton &= ~DeviceStates.Tip;
+            }
+        }
+
+        private void HoverCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (HoverCheckBox.IsChecked.GetValueOrDefault())
+            {
+                AppConfig.PenGestureButton |= DeviceStates.InRange;
+            }
+            else
+            {
+                AppConfig.PenGestureButton &= ~DeviceStates.InRange;
             }
         }
 

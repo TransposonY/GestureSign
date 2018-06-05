@@ -235,9 +235,12 @@ Email:ccfyzh@gmail.com
     <DrawingButton>Draw gesture by holding: </DrawingButton>
     <TouchPad>Precision Touchpad Gesture</TouchPad>
     <PenGesture>Pen Gesture</PenGesture>
-    <PenGestureButtonDescription>Draw gesture by hovering pen and holding:</PenGestureButtonDescription>
-    <RightClickButton>Right Click Button</RightClickButton>
-    <Eraser>Flip Pen Over / Eraser Button</Eraser>
+    <PenGestureButtonDescription>Start drawing gesture by:</PenGestureButtonDescription>
+    <RightClickButton>Press and hold the right-click button</RightClickButton>
+    <Eraser>Flip Pen Over / Press and hold the eraser button</Eraser>
+    <And>And</And>
+    <Tip>Draw on the screen</Tip>
+    <Hover>Hover over the screen</Hover>
     <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Timeout after {0:F1} Second</InitialTimeout>
     <WindowsStartup>
