@@ -1,6 +1,7 @@
 ﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
+using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
 using IWshRuntimeLibrary;
 using MahApps.Metro.Controls.Dialogs;
@@ -91,6 +92,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void lstIgnoredApplications_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (UIHelper.GetParentDependencyObject<ListViewItem>((DependencyObject)e.OriginalSource) == null)
+                return;
             Dispatcher.InvokeAsync(EditIgnoredApp, DispatcherPriority.Input);
         }
 
