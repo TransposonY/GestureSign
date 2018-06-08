@@ -7,10 +7,10 @@ sidebar: false
 <img style="margin-left:auto; margin-right:auto; display:block;" src="logo.png" width="200" alt="GestureSign"/>
 
 <div style="display:table;margin: 0 auto;">
-<table><tr><td bgcolor=#ccf2fe><font color=#ffffff size=4>[Download](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw)</font></td></tr></table>
+<table><tr><td bgcolor=#ccf2fe><font color=#ffffff size=4>[Download](./#/download)</font></td></tr></table>
 </div>
 
-GestureSign is a gesture recognition software for Windows. You can automate repetitive tasks by simply drawing a gesture with your fingers or mouse.
+GestureSign is a gesture recognition software for Windows. You can automate repetitive tasks by simply drawing a gesture with your fingers, pen or mouse.
 
 ## Feature
 GestureSign supports the following commands:
