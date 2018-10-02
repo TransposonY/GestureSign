@@ -255,7 +255,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
 
             var sourceAction = infoList.First().Action;
-            var selectedApplication = (IApplication)lstAvailableApplication.SelectedItem;
+            var selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (selectedApplication == null)
+            {
+                selectedApplication = ApplicationManager.Instance.GetAvailableUserApplications().FirstOrDefault(app => app.Actions.Contains(sourceAction));
+                if (selectedApplication == null)
+                    return;
+            }
             ActionDialog actionDialog = new ActionDialog(sourceAction, selectedApplication);
             var result = actionDialog.ShowDialog();
 
