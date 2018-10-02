@@ -436,7 +436,7 @@ namespace GestureSign.Daemon.Input
 
             _currentContext.Post((state) =>
             {
-                _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.Value;
+                _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.GetValueOrDefault();
                 _blockTouchInputThreshold = null;
             }, null);
         }
