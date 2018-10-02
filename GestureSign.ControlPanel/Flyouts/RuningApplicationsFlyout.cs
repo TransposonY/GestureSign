@@ -106,15 +106,23 @@ namespace GestureSign.ControlPanel.Flyouts
                         }
                     }
 
-                    var icon = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    icon.Freeze();
+                    BitmapSource iconSource;
+                    try
+                    {
+                        iconSource = Imaging.CreateBitmapSourceFromHIcon(realWindow.Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                        iconSource.Freeze();
+                    }
+                    catch
+                    {
+                        continue;
+                    }
 
                     ApplicationListViewItem lItem = new ApplicationListViewItem
                     {
                         WindowClass = realWindow.ClassName,
                         WindowTitle = realWindow.Title,
                         WindowFilename = processInfoMap[pid],
-                        ApplicationIcon = icon
+                        ApplicationIcon = iconSource
                     };
 
                     //lItem.ApplicationName = sWind.Process.MainModule.FileVersionInfo.FileDescription;
