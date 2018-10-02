@@ -132,11 +132,11 @@ namespace GestureSign.ControlPanel
 
             LogWindow logWin = new LogWindow(result);
             var dialogResult = logWin.ShowDialog();
-            string msg = logWin.Message;
 
             while (dialogResult != null && dialogResult.Value)
             {
-                var sendReportTask = Task.Factory.StartNew(() => Feedback.Send(result, msg));
+                result = logWin.Message + "\n" + result;
+                var sendReportTask = Task.Factory.StartNew(() => Feedback.Send(result));
 
                 controller = await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("About.Waiting"),
                         LocalizationProvider.Instance.GetTextValue("About.Sending"));

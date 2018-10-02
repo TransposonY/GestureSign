@@ -18,7 +18,7 @@ namespace GestureSign.Common.Log
     {
         private const string Dsn = "https://a828c0c755fc493fa93c0f2ac7963e6d:4e74093b0f6a4a438a95b3bb85273e69@sentry.io/141461";
 
-        public static string Send(string report, string message)
+        public static string Send(string report)
         {
             string sendError = null;
             var ravenClient = new RavenClient(Dsn)
@@ -40,9 +40,6 @@ namespace GestureSign.Common.Log
                         ravenClient.Capture(new SentryEvent(s));
                 }
             }
-
-            if (!string.IsNullOrWhiteSpace(message))
-                ravenClient.Capture(new SentryEvent(message) { Level = ErrorLevel.Info });
 
             return sendError;
         }
