@@ -52,7 +52,7 @@ Email:ccfyzh@gmail.com
     <SendSuccessTitle>Log Send Success</SendSuccessTitle>
     <SendSuccess>Thank you! The logs were sent successfully! </SendSuccess>
     <SendFailed>Send Failed</SendFailed>
-    <FeedbackTip>Description about the exception. (can be blank)</FeedbackTip>
+    <FeedbackTip>Description about the exception. </FeedbackTip>
     <Retry>Retry</Retry>
   </About>
   <ApplicationDialog>
@@ -243,6 +243,7 @@ Email:ccfyzh@gmail.com
     <Hover>Hover over the screen</Hover>
     <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Timeout after {0:F1} Second</InitialTimeout>
+    <ErrorLogPrompt>Error Log Prompt</ErrorLogPrompt>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>
     </WindowsStartup>

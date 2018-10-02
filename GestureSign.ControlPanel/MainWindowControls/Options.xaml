@@ -231,7 +231,7 @@
                                    Checked="ShowTrayIconSwitch_Checked"
                                    Unchecked="ShowTrayIconSwitch_Unchecked" />
             <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
-                                   Header="{localization:LocalisedText About.SendLogTitle}"
+                                   Header="{localization:LocalisedText Options.ErrorLogPrompt}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Checked="SendLogToggleSwitch_Checked"

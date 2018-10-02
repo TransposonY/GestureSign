@@ -247,6 +247,7 @@
     <Hover>保持悬空画出手势</Hover>
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
+    <ErrorLogPrompt>错误日志提示</ErrorLogPrompt>
     <WindowsStartup>
       <Header>开机启动</Header>
     </WindowsStartup>
