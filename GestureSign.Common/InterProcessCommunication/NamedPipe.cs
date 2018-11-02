@@ -22,7 +22,6 @@ namespace GestureSign.Common.InterProcessCommunication
         private static extern bool WaitNamedPipe(string name, int timeout);
 
         private static NamedPipeServerStream _pipeServer;
-        private static NamedPipeServerStream _persistentPipeServerStream;
         private static readonly NamedPipe instance = new NamedPipe();
 
         private bool disposed = false; // To detect redundant calls
@@ -153,7 +152,6 @@ namespace GestureSign.Common.InterProcessCommunication
             {
                 if (disposing)
                 {
-                    _persistentPipeServerStream?.Dispose();
                     _pipeServer?.Dispose();
                 }
 
