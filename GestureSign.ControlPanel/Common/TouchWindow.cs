@@ -9,6 +9,7 @@ using System.Windows.Media;
 
 namespace GestureSign.ControlPanel.Common
 {
+#pragma warning disable CS0108
     /// <summary>
     /// https://devdept.zendesk.com/hc/en-us/articles/217843288-Enable-multitouch-on-WPF-controls
     /// </summary>

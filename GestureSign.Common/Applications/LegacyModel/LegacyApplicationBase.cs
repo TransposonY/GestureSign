@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+#pragma warning disable CS0618
+
 namespace GestureSign.Common.Applications
 {
     public abstract class LegacyApplicationBase

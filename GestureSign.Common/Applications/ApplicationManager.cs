@@ -507,6 +507,7 @@ namespace GestureSign.Common.Applications
                 : string.Equals(windowMatchString.Trim(), compareMatchString.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
+#pragma warning disable CS0618
         private bool LoadLegacy()
         {
             var legacyApps = FileManager.LoadObject<List<LegacyApplicationBase>>(Path.Combine(AppConfig.ApplicationDataPath, "Actions.act"), true, true);
@@ -585,6 +586,7 @@ namespace GestureSign.Common.Applications
             }
             return newActions;
         }
+#pragma warning restore CS0618  
 
         private bool IsFullScreenWindow(SystemWindow window)
         {

@@ -432,6 +432,7 @@ namespace ManagedWinapi.Hooks
             }
         }
 
+#pragma warning disable CS3021
         /// <summary>
         /// Mouse event flags needed to replay this message.
         /// </summary>
