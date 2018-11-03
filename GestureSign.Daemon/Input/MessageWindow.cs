@@ -39,8 +39,6 @@ namespace GestureSign.Daemon.Input
 
         public void UpdateRegistration()
         {
-            EnumerateDevices();
-
             _ignoreTouchInputWhenUsingPen = AppConfig.IgnoreTouchInputWhenUsingPen;
             var penSetting = AppConfig.PenGestureButton;
             _penGestureButton = penSetting & (DeviceStates.Invert | DeviceStates.RightClickButton);
@@ -52,7 +50,7 @@ namespace GestureSign.Daemon.Input
 
         private void UpdateRegisterState(bool register, ushort usage)
         {
-            if (_validDevices.Values.Contains(usage) && register)
+            if (register)
             {
                 RegisterDevice(usage);
             }
@@ -100,57 +98,35 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        private void EnumerateDevices()
+        private ushort ValidateDevice(IntPtr hDevice)
         {
-            uint deviceCount = 0;
-            int dwSize = Marshal.SizeOf(typeof(RAWINPUTDEVICELIST));
+            uint pcbSize = 0;
+            NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICEINFO, IntPtr.Zero, ref pcbSize);
+            if (pcbSize <= 0)
+                return 0;
 
-            if (NativeMethods.GetRawInputDeviceList(IntPtr.Zero, ref deviceCount, (uint)dwSize) == 0)
+            IntPtr pInfo = Marshal.AllocHGlobal((int)pcbSize);
+            using (new SafeUnmanagedMemoryHandle(pInfo))
             {
-                IntPtr pRawInputDeviceList = Marshal.AllocHGlobal((int)(dwSize * deviceCount));
-                using (new SafeUnmanagedMemoryHandle(pRawInputDeviceList))
+                NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICEINFO, pInfo, ref pcbSize);
+                var info = (RID_DEVICE_INFO)Marshal.PtrToStructure(pInfo, typeof(RID_DEVICE_INFO));
+                if (info.hid.usUsage != NativeMethods.TouchPadUsage && info.hid.usUsage != NativeMethods.TouchScreenUsage && info.hid.usUsage != NativeMethods.PenUsage)
+                    return 0;
+
+                NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
+                if (pcbSize <= 0)
+                    return 0;
+
+                IntPtr pData = Marshal.AllocHGlobal((int)pcbSize);
+                using (new SafeUnmanagedMemoryHandle(pData))
                 {
-                    _validDevices.Clear();
+                    NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
+                    string deviceName = Marshal.PtrToStringAnsi(pData);
 
-                    NativeMethods.GetRawInputDeviceList(pRawInputDeviceList, ref deviceCount, (uint)dwSize);
-
-                    for (int i = 0; i < deviceCount; i++)
-                    {
-                        RAWINPUTDEVICELIST rid = (RAWINPUTDEVICELIST)Marshal.PtrToStructure(new IntPtr(pRawInputDeviceList.ToInt64() + dwSize * i), typeof(RAWINPUTDEVICELIST));
-                        if (rid.dwType != NativeMethods.RIM_TYPEHID) continue;
-
-                        uint pcbSize = 0;
-                        NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICEINFO, IntPtr.Zero, ref pcbSize);
-                        if (pcbSize <= 0) continue;
-
-                        IntPtr pInfo = Marshal.AllocHGlobal((int)pcbSize);
-                        using (new SafeUnmanagedMemoryHandle(pInfo))
-                        {
-                            NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICEINFO, pInfo, ref pcbSize);
-                            var info = (RID_DEVICE_INFO)Marshal.PtrToStructure(pInfo, typeof(RID_DEVICE_INFO));
-                            if (info.hid.usUsage != NativeMethods.TouchPadUsage && info.hid.usUsage != NativeMethods.TouchScreenUsage && info.hid.usUsage != NativeMethods.PenUsage) continue;
-
-                            NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
-                            if (pcbSize <= 0) continue;
-
-                            IntPtr pData = Marshal.AllocHGlobal((int)pcbSize);
-                            using (new SafeUnmanagedMemoryHandle(pData))
-                            {
-                                NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
-                                string deviceName = Marshal.PtrToStringAnsi(pData);
-
-                                if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
-                                    continue;
-
-                                _validDevices.Add(rid.hDevice, info.hid.usUsage);
-                            }
-                        }
-                    }
+                    if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
+                        return 0;
+                    return info.hid.usUsage;
                 }
-            }
-            else
-            {
-                throw new ApplicationException("Error!");
             }
         }
 
@@ -177,9 +153,7 @@ namespace GestureSign.Daemon.Input
                     }
                 case NativeMethods.WM_INPUT_DEVICE_CHANGE:
                     {
-                        //GIDC_ARRIVAL=1
-                        if (message.WParam.ToInt32() == 1)
-                            UpdateRegistration();
+                        _validDevices.Clear();
                         break;
                     }
             }
@@ -231,8 +205,14 @@ namespace GestureSign.Daemon.Input
                 RAWINPUT raw = (RAWINPUT)Marshal.PtrToStructure(buffer, typeof(RAWINPUT));
 
                 ushort usage;
-                if (!_validDevices.TryGetValue(raw.header.hDevice, out usage)) return;
+                if (!_validDevices.TryGetValue(raw.header.hDevice, out usage))
+                {
+                    usage = ValidateDevice(raw.header.hDevice);
+                    _validDevices.Add(raw.header.hDevice, usage);
+                }
 
+                if (usage == 0)
+                    return;
                 if (usage == NativeMethods.PenUsage)
                 {
                     if (_ignoreTouchInputWhenUsingPen)
