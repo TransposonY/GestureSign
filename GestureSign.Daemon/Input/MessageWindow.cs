@@ -511,7 +511,7 @@ namespace GestureSign.Daemon.Input
 
         private Point GetPhysicalMax(int collectionCount, IntPtr pPreparsedData)
         {
-            short valueCapsLength = (short)collectionCount;
+            short valueCapsLength = (short)(collectionCount > 0 ? collectionCount : 1);
             Point p = new Point();
             HidNativeApi.HidP_Value_Caps[] hvc = new HidNativeApi.HidP_Value_Caps[valueCapsLength];
 
