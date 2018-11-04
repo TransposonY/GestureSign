@@ -36,6 +36,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Centennial|Any CPU = Centennial|Any CPU
 		Debug|Any CPU = Debug|Any CPU
+		Portable|Any CPU = Portable|Any CPU
 		Release|Any CPU = Release|Any CPU
 		uiAccessRelease|Any CPU = uiAccessRelease|Any CPU
 	EndGlobalSection
@@ -44,6 +45,8 @@ Global
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9A2BC20-B457-4B39-AE1B-274FA961E346}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -52,6 +55,8 @@ Global
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBD3EC1E-47E2-4D2D-81C9-D6506125A09A}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -60,6 +65,8 @@ Global
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69F91BD1-6986-4079-9537-ED1A1D8EBE06}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -68,6 +75,8 @@ Global
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60070AF1-C987-4C5B-AFD1-B9DFAF47E35C}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -76,6 +85,8 @@ Global
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{038047A4-E3F8-4B49-9762-7F63971B8319}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{038047A4-E3F8-4B49-9762-7F63971B8319}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.Release|Any CPU.Build.0 = Release|Any CPU
 		{038047A4-E3F8-4B49-9762-7F63971B8319}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -84,6 +95,8 @@ Global
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Centennial|Any CPU.Build.0 = Centennial|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}.uiAccessRelease|Any CPU.ActiveCfg = uiAccessRelease|Any CPU
@@ -92,6 +105,8 @@ Global
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Centennial|Any CPU.Build.0 = Release|Any CPU
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.uiAccessRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -100,6 +115,8 @@ Global
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Centennial|Any CPU.Build.0 = Release|Any CPU
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Portable|Any CPU.ActiveCfg = Portable|Any CPU
+		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Portable|Any CPU.Build.0 = Portable|Any CPU
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5B38192-6F83-4A45-B75F-213F9EEFEF31}.uiAccessRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -108,6 +125,7 @@ Global
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Centennial|Any CPU.Build.0 = Release|Any CPU
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Portable|Any CPU.ActiveCfg = Debug|Any CPU
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46CED5B0-5546-4838-9AA8-8669FD2E880A}.uiAccessRelease|Any CPU.ActiveCfg = Release|Any CPU

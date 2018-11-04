@@ -9,5 +9,7 @@
         public const string ArchivesName = "GestureSign.ges";
         public const string ArchivesExtension = ".ges";
         public const string BackupFileExtension = ".gsb";
+        public const string ConfigFileName = "GestureSign.config";
+
     }
 }

@@ -26,6 +26,8 @@ namespace GestureSign.Common.Configuration
 
         public static string ConfigPath { private set; get; }
 
+        public static string CurrentFolderPath { private set; get; }
+
         public static System.Drawing.Color VisualFeedbackColor
         {
             get
@@ -211,10 +213,21 @@ namespace GestureSign.Common.Configuration
 #if uiAccess
             UiAccess = true;
 #endif
-            ConfigPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"GestureSign\GestureSign.config");
-            ApplicationDataPath = System.IO.Path.GetDirectoryName(ConfigPath);
+            CurrentFolderPath = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+#if Portable
+            ApplicationDataPath = Path.Combine(CurrentFolderPath, "AppData");
+            LocalApplicationDataPath = ApplicationDataPath;
+
+            ConfigPath = Path.Combine(ApplicationDataPath, Constants.ConfigFileName);
+            BackupPath = Path.Combine(LocalApplicationDataPath, "Backup");
+#else
+            ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GestureSign");
             LocalApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GestureSign");
+
+            ConfigPath = Path.Combine(ApplicationDataPath, Constants.ConfigFileName);
             BackupPath = LocalApplicationDataPath + "\\Backup";
+
+#endif
             if (!Directory.Exists(ApplicationDataPath))
                 Directory.CreateDirectory(ApplicationDataPath);
 
@@ -224,7 +237,7 @@ namespace GestureSign.Common.Configuration
             {
                 ExeConfigFilename = ConfigPath,
                 RoamingUserConfigFilename = ConfigPath,
-                LocalUserConfigFilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GestureSign\GestureSign.config")
+                LocalUserConfigFilename = Path.Combine(LocalApplicationDataPath, Constants.ConfigFileName)
             };
 
             _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
