@@ -44,18 +44,18 @@ namespace GestureSign.CorePlugins.MouseActions
                 flag = int.TryParse(ScrollAmountComboBox.Text, out scrollAmount);
                 scrollAmount = flag ? NegativeRadioButton.IsChecked.Value ? -scrollAmount : scrollAmount : 0;
 
-                string action;
+                MouseActions action = MouseActions.None;
                 if (ActionComboBox.SelectedIndex < 4)
                 {
-                    action = $"{MouseButtonComboBox.SelectedValue}{ActionComboBox.SelectedValue}";
+                    action = (MouseActions)(MouseButtonComboBox.SelectedValue ?? 0) | (MouseActions)(ActionComboBox.SelectedValue ?? 0);
                 }
                 else
-                    action = (string)ActionComboBox.SelectedValue;
+                    action = (MouseActions)(ActionComboBox.SelectedValue ?? 0);
 
                 _settings = new MouseActionsSettings
                 {
-                    ClickPosition = (ClickPositions)PositionComboBox.SelectedValue,
-                    MouseAction = (MouseActions)Enum.Parse(typeof(MouseActions), action),
+                    ActionLocation = action == MouseActions.MoveMouseBy ? (ClickPositions)RelativePositionComboBox.SelectedValue : (ClickPositions)PositionComboBox.SelectedValue,
+                    MouseAction = action,
                     MovePoint = new System.Drawing.Point(x, y),
                     ScrollAmount = scrollAmount
                 };
@@ -65,16 +65,14 @@ namespace GestureSign.CorePlugins.MouseActions
             {
                 _settings = value ?? new MouseActionsSettings();
 
-                var action = _settings.MouseAction.ToString();
-                if (action.Contains("Button"))
-                {
-                    ActionComboBox.SelectedValue = action.Split(MouseActionDescription.ButtonDescription.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-                    MouseButtonComboBox.SelectedValue = action.Split(MouseActionDescription.DescriptionDict.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-                }
-                else
-                    ActionComboBox.SelectedValue = action;
+                var action = _settings.MouseAction.GetActions();
+                var button = _settings.MouseAction.GetButtons();
+                ActionComboBox.SelectedValue = action != 0 ? action : MouseActions.Click;
+                MouseButtonComboBox.SelectedValue = button != 0 ? button : MouseActions.LeftButton;
 
-                PositionComboBox.SelectedValue = _settings.ClickPosition;
+                PositionComboBox.SelectedValue = _settings.ActionLocation != 0 && Enum.IsDefined(typeof(ClickPositions), _settings.ActionLocation) ? _settings.ActionLocation : ClickPositions.Custom;
+                RelativePositionComboBox.SelectedValue = _settings.MouseAction == MouseActions.MoveMouseBy ? _settings.ActionLocation : ClickPositions.Current;
+
                 XTextBox.Text = _settings.MovePoint.X.ToString();
                 YTextBox.Text = _settings.MovePoint.Y.ToString();
                 ScrollAmountComboBox.Text = Math.Abs(_settings.ScrollAmount).ToString();
@@ -138,32 +136,46 @@ namespace GestureSign.CorePlugins.MouseActions
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            switch (((KeyValuePair<string, string>)e.AddedItems[0]).Key)
+            switch (((KeyValuePair<MouseActions, string>)e.AddedItems[0]).Key)
             {
-                case "HorizontalScroll":
+                case MouseActions.HorizontalScroll:
                     PositiveRadioButton.Content = LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Right");
                     NegativeRadioButton.Content = LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Left");
                     ScrollPanel.Visibility = Visibility.Visible;
-                    ButtonPanel.Visibility = ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
                     break;
-                case "VerticalScroll":
+                case MouseActions.VerticalScroll:
                     PositiveRadioButton.Content = LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Up");
                     NegativeRadioButton.Content = LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.Down");
                     ScrollPanel.Visibility = Visibility.Visible;
-                    ButtonPanel.Visibility = ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = Visibility.Collapsed;
                     break;
-                case "MoveMouseBy":
-                    ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = PositionComboBox.Visibility = Visibility.Visible;
-                    ButtonPanel.Visibility = ClickPositionText.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
+                case MouseActions.MoveMouseBy:
+                    ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = Visibility.Visible;
+                    ButtonPanel.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
                     break;
-                case "MoveMouseTo":
+                case MouseActions.MoveMouseTo:
                     MoveMouseCanvas.Visibility = Visibility.Visible;
-                    ButtonPanel.Visibility = ClickPositionText.Visibility = ReferencePositionText.Visibility = PositionComboBox.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
+                    ButtonPanel.Visibility = ReferencePositionText.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
                     break;
                 default:
-                    ButtonPanel.Visibility = ClickPositionText.Visibility = PositionComboBox.Visibility = Visibility.Visible;
-                    ReferencePositionText.Visibility = MoveMouseCanvas.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
+                    MoveMouseCanvas.Visibility = PositionComboBox.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+                    ButtonPanel.Visibility = Visibility.Visible;
+                    ReferencePositionText.Visibility = ScrollPanel.Visibility = Visibility.Collapsed;
                     break;
+            }
+        }
+
+        private void PositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0 || ActionComboBox.SelectedIndex >= 4) return;
+            if (((KeyValuePair<ClickPositions, string>)e.AddedItems[0]).Key == ClickPositions.Custom)
+            {
+                MoveMouseCanvas.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MoveMouseCanvas.Visibility = Visibility.Collapsed;
             }
         }
 

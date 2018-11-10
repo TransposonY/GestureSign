@@ -112,9 +112,11 @@
     <Compile Include="LaunchApp\LaunchAppView.xaml.cs">
       <DependentUpon>LaunchAppView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MouseActions\ClickPositions.cs" />
     <Compile Include="MouseActions\Crosshair.xaml.cs">
       <DependentUpon>Crosshair.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MouseActions\MouseActionEnum.cs" />
     <Compile Include="MouseActions\MouseActionsPlugin.cs" />
     <Compile Include="MouseActions\MouseActionsSettings.cs" />
     <Compile Include="MouseActions\MouseActionsUI.xaml.cs">

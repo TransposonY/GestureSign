@@ -80,11 +80,12 @@
         <XButton2>X2</XButton2>
       </Buttons>
       <ClickPositions>
+        <Custom>Specified Point</Custom>
         <FirstDown>First Finger Down</FirstDown>
         <FirstUp>First Finger Up</FirstUp>
         <LastDown>Last Finger Down</LastDown>
         <LastUp>Last Finger Up</LastUp>
-        <Original>Original Position</Original>
+        <Current>Current Point</Current>
       </ClickPositions>
       <Description>
         <Right>Right</Right>
@@ -98,7 +99,7 @@
       </Description>
       <SelectAction>Select Mouse Action</SelectAction>
       <ClickPosition>Click Position</ClickPosition>
-      <ReferencePosition>Reference Position</ReferencePosition>
+      <ReferencePosition>Move From</ReferencePosition>
       <ScrollAmountTip>Scroll Amount</ScrollAmountTip>
     </MouseActions>
     <RunCommand>

@@ -48,12 +48,12 @@
                           DisplayMemberPath="Value"
                           SelectedValuePath="Key"
                           FontSize="14"
-                          SelectionChanged="ActionComboBox_SelectionChanged"
                           Margin="5,5,0,0" />
             </StackPanel>
         </Grid>
 
         <TextBlock x:Name="ClickPositionText"
+                   Visibility="{Binding ElementName=ButtonPanel,Path=Visibility}"
                    TextWrapping="Wrap"
                    Text="{localization:LocalisedText CorePlugins.MouseActions.ClickPosition}"
                    FontSize="14"
@@ -63,7 +63,16 @@
                    FontSize="14"
                    Margin="0,5,0,0" />
         <ComboBox x:Name="PositionComboBox"
+                  Visibility="{Binding ElementName=ButtonPanel,Path=Visibility}"
+                  SelectionChanged="PositionComboBox_SelectionChanged"
                   ItemsSource="{Binding Source={StaticResource PositionDescription},Path=DescriptionDict}"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"
+                  FontSize="14"
+                  Margin="0,5,0,0" />
+        <ComboBox x:Name="RelativePositionComboBox"
+                  Visibility="{Binding ElementName=ReferencePositionText,Path=Visibility}"
+                  ItemsSource="{Binding Source={StaticResource PositionDescription},Path=RelativePositionDict}"
                   DisplayMemberPath="Value"
                   SelectedValuePath="Key"
                   FontSize="14"

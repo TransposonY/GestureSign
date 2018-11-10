@@ -75,10 +75,15 @@ namespace GestureSign.CorePlugins.MouseActions
             InputSimulator simulator = new InputSimulator();
             try
             {
-                var referencePoint = GetReferencePoint(_settings.ClickPosition, actionPoint);
-                int buttonId = 1;
-                if (_settings.MouseAction.ToString().Contains('2'))
-                    buttonId = 2;
+                int buttonId = (_settings.MouseAction & MouseActions.XButton1) != 0 ? 1 : 2;
+                var referencePoint = GetReferencePoint(_settings.ActionLocation, actionPoint);
+
+                if (_settings.MouseAction.GetButtons() != 0)
+                {
+                    if (_settings.ActionLocation != ClickPositions.Current)
+                        Cursor.Position = referencePoint;
+                }
+
                 switch (_settings.MouseAction)
                 {
                     case MouseActions.HorizontalScroll:
@@ -96,33 +101,22 @@ namespace GestureSign.CorePlugins.MouseActions
                         break;
                     case MouseActions.XButton1Click:
                     case MouseActions.XButton2Click:
-                        if (_settings.ClickPosition != ClickPositions.Original)
-                            Cursor.Position = referencePoint;
                         simulator.Mouse.XButtonClick(buttonId).Sleep(30);
                         break;
                     case MouseActions.XButton1DoubleClick:
                     case MouseActions.XButton2DoubleClick:
-                        if (_settings.ClickPosition != ClickPositions.Original)
-                            Cursor.Position = referencePoint;
                         simulator.Mouse.XButtonDoubleClick(buttonId).Sleep(30);
                         break;
                     case MouseActions.XButton1Down:
                     case MouseActions.XButton2Down:
-                        if (_settings.ClickPosition != ClickPositions.Original)
-                            Cursor.Position = referencePoint;
                         simulator.Mouse.XButtonDown(buttonId).Sleep(30);
                         break;
                     case MouseActions.XButton1Up:
                     case MouseActions.XButton2Up:
-                        if (_settings.ClickPosition != ClickPositions.Original)
-                            Cursor.Position = referencePoint;
                         simulator.Mouse.XButtonUp(buttonId).Sleep(30);
                         break;
                     default:
                         {
-                            if (_settings.ClickPosition != ClickPositions.Original)
-                                Cursor.Position = referencePoint;
-
                             MethodInfo clickMethod = typeof(IMouseSimulator).GetMethod(_settings.MouseAction.ToString());
                             clickMethod.Invoke(simulator.Mouse, null);
                             Thread.Sleep(30);
@@ -137,9 +131,22 @@ namespace GestureSign.CorePlugins.MouseActions
             return true;
         }
 
-        public bool Deserialize(string SerializedData)
+        public bool Deserialize(string serializedData)
         {
-            return PluginHelper.DeserializeSettings(SerializedData, out _settings);
+            if (serializedData.Contains("ClickPosition"))
+            {
+                LegacyMouseActionsSettings legacySettings;
+                bool flag = PluginHelper.DeserializeSettings(serializedData, out legacySettings);
+                _settings = new MouseActionsSettings()
+                {
+                    MouseAction = legacySettings.MouseAction.ToNewMouseActions(),
+                    ActionLocation = legacySettings.ClickPosition.ToClickPositions(),
+                    MovePoint = legacySettings.MovePoint,
+                    ScrollAmount = legacySettings.ScrollAmount
+                };
+                return flag;
+            }
+            return PluginHelper.DeserializeSettings(serializedData, out _settings);
         }
 
         public string Serialize()
@@ -174,6 +181,8 @@ namespace GestureSign.CorePlugins.MouseActions
                 case ClickPositions.FirstDown:
                     referencePoint = actionPoint.Points.First().First();
                     break;
+                case ClickPositions.Custom:
+                    return _settings.MovePoint;
                 default:
                     referencePoint = Cursor.Position;
                     break;
@@ -220,10 +229,11 @@ namespace GestureSign.CorePlugins.MouseActions
                     return LocalizationProvider.Instance.GetTextValue("CorePlugins.MouseActions.Description.MoveMouseTo") + _settings.MovePoint;
             }
 
-            var description = _settings.MouseAction.ToString();
-            var button = MouseActionDescription.ButtonDescription[description.Split(MouseActionDescription.DescriptionDict.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0]];
-            var action = MouseActionDescription.DescriptionDict[description.Split(MouseActionDescription.ButtonDescription.Keys.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0]];
-            return string.Format("{0} {1} {2}", ClickPositionDescription.DescriptionDict[_settings.ClickPosition], action, button);
+            string button, action, location;
+            MouseActionDescription.ButtonDescription.TryGetValue(_settings.MouseAction.GetButtons(), out button);
+            MouseActionDescription.DescriptionDict.TryGetValue(_settings.MouseAction.GetActions(), out action);
+            ClickPositionDescription.DescriptionDict.TryGetValue(_settings.ActionLocation, out location);
+            return string.Format("{0} {1} {2}", location, action, button);
         }
 
         #endregion

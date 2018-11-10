@@ -80,11 +80,12 @@
         <XButton2>X2</XButton2>
       </Buttons>
       <ClickPositions>
+        <Custom>指定点</Custom>
         <FirstDown>第一根手指落点</FirstDown>
         <FirstUp>第一根手指抬起点</FirstUp>
         <LastDown>最后手指落点</LastDown>
         <LastUp>最后手指抬起点</LastUp>
-        <Original>不移动鼠标位置</Original>
+        <Current>当前位置</Current>
       </ClickPositions>
       <Description>
         <Right>向右</Right>
