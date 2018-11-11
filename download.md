@@ -1,12 +1,12 @@
-# Version
+# Difference
 
-|   | [Store Version](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | [Standalone Installer](#Standalone Installer) | 
-| - | :-: | :-: | 
-| System | Windows10 (version 1607 or later) | Windows 8 or later | 
-| Automatic updating | ¡Ì | | 
-| Block Touch Input | | ¡Ì | 
-| Control high priority programs | Need to be manually run as administrator | ¡Ì | 
-| Show gesture trail on high priority programs | Need to be manually run as administrator | ¡Ì | 
+| Difference | [Store Version](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | Portable Version | Standalone Installer | 
+| - | :-: | :-: | :-: | 
+| System | Windows10 (version 1607 or later) | Windows 8 or later | Windows 8 or later | 
+| Automatic updating | âœ“ | | |
+| Block Touch Input | | | âœ“ | 
+| Control high priority programs | Need to be manually run as administrator | Need to be manually run as administrator | âœ“ | 
+| Show gesture trail on high priority programs | Need to be manually run as administrator | Need to be manually run as administrator | âœ“ | 
 
 > You can only launch the store version if you install both standalone installer version and store version.
 
@@ -15,7 +15,20 @@
 
 [Microsoft Store](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw)
 
-## Standalone Installer
+## Standalone Installer and Portable Version
+### v7.1 (11-Nov-2018)
+
+- Mouse Actions command can set the click coordinates.
+- Fixed action download.
+- Portable version
+- Improved compatibility. 
+
+**Download**
+
+[GestureSignSetup-7.1.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.1/GestureSignSetup-7.1.0.0.zip)
+
+[GestureSign-7.1.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.1/GestureSign-7.1.0.0-Portable.zip)
+
 ### v7.0 (06-Jun-2018)
 
 - Pen gesture support
