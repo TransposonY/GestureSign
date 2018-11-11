@@ -209,7 +209,7 @@
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Edit>编辑手势</Edit>
+    <Edit>重画手势</Edit>
     <ExistingGesture>已保存有相似的手势，是否使用该手势？</ExistingGesture>
     <DrawGesture>请画出手势</DrawGesture>
     <Redraw>重画</Redraw>

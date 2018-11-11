@@ -205,7 +205,7 @@ Email:ccfyzh@gmail.com
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
   <GestureDefinition>
-    <Edit>Edit Gesture</Edit>
+    <Edit>Redraw Gesture</Edit>
     <ExistingGesture>Exist similar gesture.Use it?</ExistingGesture>
     <DrawGesture>Please draw a gesture</DrawGesture>
     <Redraw>Redraw</Redraw>
