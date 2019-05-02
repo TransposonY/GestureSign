@@ -139,7 +139,7 @@
     <Header>动作</Header>
     <NewAction>新动作</NewAction>
     <NewCommand>新命令</NewCommand>
-    <FromSelected>用当前手势创建新命令</FromSelected>
+    <FromSelected>为当前动作添加新命令</FromSelected>
     <ApplicationFile>GestureSign程序文件</ApplicationFile>
     <ArchiveFile>GestureSign文件</ArchiveFile>
     <ActionCount>  ( {0}个动作 )</ActionCount>

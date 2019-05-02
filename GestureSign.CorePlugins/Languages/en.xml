@@ -65,7 +65,7 @@
       <MouseActions>
         <Click>Click</Click>
         <DoubleClick>Double Click</DoubleClick>
-        <Down>Presse</Down>
+        <Down>Press</Down>
         <Up>Release</Up>
         <VerticalScroll>Vertical Scroll</VerticalScroll>
         <HorizontalScroll>Horizontal Scroll</HorizontalScroll>

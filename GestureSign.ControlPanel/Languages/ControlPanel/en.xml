@@ -135,7 +135,7 @@ Email:ccfyzh@gmail.com
     <Header>Action</Header>
     <NewAction>New Action</NewAction>
     <NewCommand>New Command</NewCommand>
-    <FromSelected>New Command From Selected</FromSelected>
+    <FromSelected>New Command To Selected Action</FromSelected>
     <ApplicationFile>GestureSign Applications</ApplicationFile>
     <ArchiveFile>GestureSign Archive File</ArchiveFile>
     <ActionCount>  ( {0} Actions )</ActionCount>
