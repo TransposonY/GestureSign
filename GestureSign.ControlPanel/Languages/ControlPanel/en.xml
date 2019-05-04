@@ -143,6 +143,7 @@ Email:ccfyzh@gmail.com
     <DefaultGroup>(Default)</DefaultGroup>
     <CutAction>Cut</CutAction>
     <CopyAction>Copy</CopyAction>
+    <CopyCommandToNew>Copy To New Action</CopyCommandToNew>
     <PasteAction>Paste</PasteAction>
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>

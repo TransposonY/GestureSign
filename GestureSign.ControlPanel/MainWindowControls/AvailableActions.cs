@@ -368,6 +368,38 @@ namespace GestureSign.ControlPanel.MainWindowControls
             ApplicationManager.Instance.SaveApplications();
         }
 
+        private void CopyCommandToNewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
+            if (targetApplication == null) return;
+            if (lstAvailableActions.SelectedItems.Count < 1) return;
+
+            var selectedCommandInfos = lstAvailableActions.SelectedItems.Cast<CommandInfo>().ToList();
+            lstAvailableActions.SelectedItem = null;
+
+            var sourceAction = selectedCommandInfos[0].Action;
+            var newAction = new GestureSign.Common.Applications.Action()
+            {
+                Condition = sourceAction.Condition,
+                ContinuousGesture = sourceAction.ContinuousGesture,
+                GestureName = sourceAction.GestureName,
+                Commands = new List<ICommand>(),
+            };
+            targetApplication.AddAction(newAction);
+
+            foreach (CommandInfo commandInfo in selectedCommandInfos)
+            {
+                if (commandInfo?.Command != null)
+                {
+                    var newCommand = ((Command)commandInfo.Command).Clone() as Command;
+                    newCommand.Name = ApplicationManager.GetNextCommandName(newCommand.Name, commandInfo.Action);
+                    newAction.AddCommand(newCommand);
+                }
+            }
+
+            ApplicationManager.Instance.SaveApplications();
+        }
+
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;

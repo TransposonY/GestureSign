@@ -147,6 +147,7 @@
     <DefaultGroup>(默认)</DefaultGroup>
     <CutAction>剪切</CutAction>
     <CopyAction>复制</CopyAction>
+    <CopyCommandToNew>复制为新动作</CopyCommandToNew>
     <PasteAction>粘贴</PasteAction>
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
