@@ -267,16 +267,19 @@ namespace GestureSign.Common.Applications
             return SystemWindow.FromPointEx(point.X, point.Y, true, true);
         }
 
-        public IApplication[] GetApplicationFromWindow(SystemWindow Window, bool userApplicationOnly = false)
+        public IApplication[] GetApplicationFromWindow(SystemWindow window, bool userApplicationOnly = false)
         {
-            if (Applications == null || Window == null)
+            if (Applications == null || window == null)
             {
                 return new[] { GetGlobalApplication() };
             }
-            var realWindow = GetRealWindow(Window);
+
+            string className, title, fileName;
+            GetWindowInfo(window, out className, out title, out fileName);
+
             IApplication[] definedApplications = userApplicationOnly
-                ? FindMatchApplications(Applications.Where(a => a is UserApp), realWindow)
-                : FindMatchApplications(Applications.Where(a => !(a is GlobalApp)), realWindow);
+                ? FindMatchApplications(Applications.Where(a => a is UserApp), className, title, fileName)
+                : FindMatchApplications(Applications.Where(a => !(a is GlobalApp)), className, title, fileName);
             // Try to find any user or ignored applications that match the given system window
             // If not user or ignored application could be found, return the global application
             return definedApplications.Length != 0
@@ -430,11 +433,37 @@ namespace GestureSign.Common.Applications
             }
         }
 
+        public static SystemWindow GetWindowInfo(SystemWindow window, out string className, out string title, out string fileName)
+        {
+            var realWindow = GetRealWindow(window);
+            className = fileName = null;
+
+            if (Environment.OSVersion.Version >= new Version(10, 0, 17134))
+            {
+                title = window.Title;
+            }
+            else
+                title = realWindow.Title;
+
+            try
+            {
+                className = realWindow.ClassName;
+            }
+            catch { }
+
+            try
+            {
+                fileName = Path.GetFileName(realWindow.GetProcessFilePath());
+            }
+            catch { }
+            return realWindow;
+        }
+
         #endregion
 
         #region Private Methods
 
-        private IApplication[] FindMatchApplications(IEnumerable<IApplication> applications, SystemWindow window)
+        private IApplication[] FindMatchApplications(IEnumerable<IApplication> applications, string className, string title, string fileName)
         {
             var byFileName = new List<IApplication>();
             var byTitle = new List<IApplication>();
@@ -459,13 +488,11 @@ namespace GestureSign.Common.Applications
                 }
             }
             List<IApplication> result = new List<IApplication>();
-            string windowMatchString;
             if (byClass.Count != 0)
             {
                 try
                 {
-                    windowMatchString = window.ClassName;
-                    result.AddRange(byClass.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                    result.AddRange(byClass.Where(a => a.MatchString != null && CompareString(a.MatchString, className, a.IsRegEx)));
                 }
                 catch
                 {
@@ -476,8 +503,7 @@ namespace GestureSign.Common.Applications
             {
                 try
                 {
-                    windowMatchString = window.Title;
-                    result.AddRange(byTitle.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                    result.AddRange(byTitle.Where(a => a.MatchString != null && CompareString(a.MatchString, title, a.IsRegEx)));
                 }
                 catch
                 {
@@ -488,8 +514,7 @@ namespace GestureSign.Common.Applications
             {
                 try
                 {
-                    windowMatchString = Path.GetFileName(window.GetProcessFilePath());
-                    result.AddRange(byFileName.Where(a => a.MatchString != null && CompareString(a.MatchString, windowMatchString, a.IsRegEx)));
+                    result.AddRange(byFileName.Where(a => a.MatchString != null && CompareString(a.MatchString, fileName, a.IsRegEx)));
                 }
                 catch
                 {

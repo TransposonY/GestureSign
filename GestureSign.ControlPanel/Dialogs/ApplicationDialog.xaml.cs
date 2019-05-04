@@ -127,23 +127,25 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void ChCrosshair_OnCrosshairDragging(object sender, MouseEventArgs e)
         {
+            string className, title, fileName;
             var window = GetTargetWindow();
+            var realWindow = ApplicationManager.GetWindowInfo(window, out className, out title, out fileName);
             try
             {
                 // Set application name from filename
-                ApplicationNameTextBox.Text = GetDescription(window);
+                ApplicationNameTextBox.Text = GetDescription(realWindow);
                 switch (matchUsingRadio.MatchUsing)
                 {
                     case MatchUsing.WindowClass:
-                        MatchStringTextBox.Text = window.ClassName;
+                        MatchStringTextBox.Text = className;
 
                         break;
                     case MatchUsing.WindowTitle:
-                        MatchStringTextBox.Text = window.Title;
+                        MatchStringTextBox.Text = title;
 
                         break;
                     case MatchUsing.ExecutableFilename:
-                        MatchStringTextBox.Text = GetProcessFilename((uint)window.ProcessId);
+                        MatchStringTextBox.Text = GetProcessFilename((uint)realWindow.ProcessId);
                         MatchStringTextBox.SelectionStart = MatchStringTextBox.Text.Length;
                         break;
                 }
@@ -274,7 +276,7 @@ namespace GestureSign.ControlPanel.Dialogs
             GetCursorPos(out cursorPosition);
 
             SystemWindow window = SystemWindow.FromPointEx(cursorPosition.X, cursorPosition.Y, true, true);
-            return ApplicationManager.GetRealWindow(window);
+            return window;
         }
 
         private bool ShowErrorMessage(string title, string message)

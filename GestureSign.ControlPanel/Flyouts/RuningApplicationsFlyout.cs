@@ -83,17 +83,14 @@ namespace GestureSign.ControlPanel.Flyouts
 
             foreach (SystemWindow sWind in windows)
             {
-                SystemWindow realWindow = sWind;
                 try
                 {
-                    if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(realWindow.ClassName))
-                    {
-                        realWindow = sWind.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
-                        if (realWindow == null) continue;
-                    }
+                    string className, title, fileName;
+                    SystemWindow realWindow = GestureSign.Common.Applications.ApplicationManager.GetWindowInfo(sWind, out className, out title, out fileName);
+                    if ("ApplicationFrameWindow".Equals(className) || realWindow == null)
+                        continue;
 
                     var pid = (uint)realWindow.ProcessId;
-                    string fileName;
                     if (!processInfoMap.TryGetValue(pid, out fileName))
                     {
                         try
@@ -119,9 +116,9 @@ namespace GestureSign.ControlPanel.Flyouts
 
                     ApplicationListViewItem lItem = new ApplicationListViewItem
                     {
-                        WindowClass = realWindow.ClassName,
-                        WindowTitle = realWindow.Title,
-                        WindowFilename = processInfoMap[pid],
+                        WindowClass = className,
+                        WindowTitle = title,
+                        WindowFilename = fileName,
                         ApplicationIcon = iconSource
                     };
 
