@@ -63,18 +63,7 @@ namespace GestureSign.CorePlugins
             InputSimulator simulator = new InputSimulator();
             try
             {
-                simulator.Keyboard.KeyDown(VirtualKeyCode.LSHIFT)
-                    .Sleep(20)
-                    .KeyDown(VirtualKeyCode.LMENU)
-                    .Sleep(20)
-                    .KeyDown(VirtualKeyCode.TAB)
-                    .Sleep(20)
-                    .KeyUp(VirtualKeyCode.TAB)
-                    .Sleep(20)
-                    .KeyUp(VirtualKeyCode.LMENU)
-                    .Sleep(20)
-                    .KeyUp(VirtualKeyCode.LSHIFT)
-                    .Sleep(20);
+                simulator.Keyboard.ModifiedKeyStroke(new VirtualKeyCode[] { VirtualKeyCode.LSHIFT, VirtualKeyCode.LMENU }, VirtualKeyCode.TAB);
             }
             catch (Exception)
             {

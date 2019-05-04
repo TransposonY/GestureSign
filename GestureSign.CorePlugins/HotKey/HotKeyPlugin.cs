@@ -305,50 +305,46 @@ namespace GestureSign.CorePlugins.HotKey
             }
             else
             {
-
                 InputSimulator simulator = new InputSimulator();
+                List<VirtualKeyCode> modifiedKeys = new List<VirtualKeyCode>();
+                List<VirtualKeyCode> keys = new List<VirtualKeyCode>();
 
-                // Deceide which keys to press
-                // Windows
-                if (settings.Windows)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LWIN).Sleep(30);
-
-                // Control
-                if (settings.Control)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LCONTROL).Sleep(30);
-
-                // Alt
-                if (settings.Alt)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU).Sleep(30);
-
-                // Shift
-                if (settings.Shift)
-                    simulator.Keyboard.KeyDown(VirtualKeyCode.LSHIFT).Sleep(30);
-
-                // Modifier
                 if (settings.KeyCode != null)
                     foreach (var k in settings.KeyCode)
                     {
                         if (!Enum.IsDefined(typeof(VirtualKeyCode), k.GetHashCode())) continue;
 
                         var key = (VirtualKeyCode)k;
-                        simulator.Keyboard.KeyPress(key).Sleep(30);
+                        keys.Add(key);
                     }
-                // Release Shift
-                if (settings.Shift)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LSHIFT).Sleep(30);
 
-                // Release Alt
-                if (settings.Alt)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU).Sleep(30);
-
-                // Release Control
-                if (settings.Control)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LCONTROL).Sleep(30);
-
-                // Release Windows
                 if (settings.Windows)
-                    simulator.Keyboard.KeyUp(VirtualKeyCode.LWIN).Sleep(30);
+                    modifiedKeys.Add(VirtualKeyCode.LWIN);
+                if (settings.Control)
+                    modifiedKeys.Add(VirtualKeyCode.LCONTROL);
+                if (settings.Alt)
+                    modifiedKeys.Add(VirtualKeyCode.LMENU);
+                if (settings.Shift)
+                    modifiedKeys.Add(VirtualKeyCode.LSHIFT);
+
+                if (modifiedKeys.Count == 0)
+                {
+                    if (keys.Count != 0)
+                    {
+                        simulator.Keyboard.KeyPress(keys.ToArray()).Sleep(30);
+                    }
+                }
+                else
+                {
+                    if (keys.Count != 0)
+                    {
+                        simulator.Keyboard.ModifiedKeyStroke(modifiedKeys, keys).Sleep(30);
+                    }
+                    else
+                    {
+                        simulator.Keyboard.KeyPress(modifiedKeys.ToArray()).Sleep(30);
+                    }
+                }
             }
         }
 
