@@ -127,6 +127,7 @@ Email:ccfyzh@gmail.com
   </CommandDialog>
   <EditConditionDialog>
     <Title>Edit Condition</Title>
+    <FingerID>Finger ID</FingerID>
     <Variables>Variables</Variables>
     <Insert>Insert</Insert>
     <Sample>Sample: finger_2_start_X>100</Sample>

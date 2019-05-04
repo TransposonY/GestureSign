@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Applications;
@@ -221,31 +220,37 @@ namespace GestureSign.Common.Plugins
 
         private string GetExpression(string condition, List<List<Point>> pointList, List<int> contactIdentifiers)
         {
-            StringBuilder sb = new StringBuilder(condition);
-
             for (int i = 1; i <= pointList.Count; i++)
             {
-                var format = "finger_{0}_start_X";
-                string variable = string.Format(format, i);
-                sb.Replace(variable, pointList[i - 1].FirstOrDefault().X.ToString());
+                int startX = pointList[i - 1].FirstOrDefault().X;
+                int startY = pointList[i - 1].FirstOrDefault().Y;
+                int endX = pointList[i - 1].LastOrDefault().X;
+                int endY = pointList[i - 1].LastOrDefault().Y;
 
-                format = "finger_{0}_start_Y";
-                variable = string.Format(format, i);
-                sb.Replace(variable, pointList[i - 1].FirstOrDefault().Y.ToString());
+                if (condition.Contains('%'))
+                {
+                    int width = (int)System.Windows.SystemParameters.VirtualScreenWidth;
+                    int height = (int)System.Windows.SystemParameters.VirtualScreenHeight;
+                    condition = ReplaceVariables(condition, i, "start_X%", startX * 100 / width);
+                    condition = ReplaceVariables(condition, i, "start_Y%", startY * 100 / height);
+                    condition = ReplaceVariables(condition, i, "end_X%", endX * 100 / width);
+                    condition = ReplaceVariables(condition, i, "end_Y%", endY * 100 / height);
+                }
 
-                format = "finger_{0}_end_X";
-                variable = string.Format(format, i);
-                sb.Replace(variable, pointList[i - 1].LastOrDefault().X.ToString());
+                condition = ReplaceVariables(condition, i, "start_X", startX);
+                condition = ReplaceVariables(condition, i, "start_Y", startY);
+                condition = ReplaceVariables(condition, i, "end_X", endX);
+                condition = ReplaceVariables(condition, i, "end_Y", endY);
 
-                format = "finger_{0}_end_Y";
-                variable = string.Format(format, i);
-                sb.Replace(variable, pointList[i - 1].LastOrDefault().Y.ToString());
-
-                format = "finger_{0}_ID";
-                variable = string.Format(format, i);
-                sb.Replace(variable, contactIdentifiers[i - 1].ToString());
+                condition = ReplaceVariables(condition, i, "ID", contactIdentifiers[i - 1]);
             }
-            return sb.ToString();
+            return condition;
+        }
+
+        private string ReplaceVariables(string str, int id, string key, int value)
+        {
+            string variable = $"finger_{id}_{key}";
+            return str.Replace(variable, value.ToString());
         }
 
         #endregion

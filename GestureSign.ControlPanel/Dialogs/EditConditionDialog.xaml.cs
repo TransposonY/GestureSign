@@ -17,7 +17,7 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void InsertButton_Click(object sender, RoutedEventArgs e)
         {
-            string variable = VariableComboBox.Text;
+            string variable = $"finger_{FingerIDComboBox.Text}_{VariableComboBox.Text}";
             int caretIndex = ConditionTextBox.CaretIndex;
             ConditionTextBox.Text = ConditionTextBox.Text.Insert(caretIndex, variable);
             ConditionTextBox.CaretIndex = caretIndex + variable.Length;
@@ -38,15 +38,26 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private void VariableComboBox_Loaded(object sender, RoutedEventArgs e)
         {
+            VariableComboBox.Items.Add("start_X");
+            VariableComboBox.Items.Add("start_X%");
+            VariableComboBox.Items.Add("start_Y");
+            VariableComboBox.Items.Add("start_Y%");
+            VariableComboBox.Items.Add("end_X");
+            VariableComboBox.Items.Add("end_X%");
+            VariableComboBox.Items.Add("end_Y");
+            VariableComboBox.Items.Add("end_Y%");
+            VariableComboBox.Items.Add("ID");
+
+            VariableComboBox.SelectedIndex = 0;
+        }
+
+        private void FingerIDComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
             for (int i = 1; i <= 10; i++)
             {
-                VariableComboBox.Items.Add($"finger_{i}_start_X");
-                VariableComboBox.Items.Add($"finger_{i}_start_Y");
-                VariableComboBox.Items.Add($"finger_{i}_end_X");
-                VariableComboBox.Items.Add($"finger_{i}_end_Y");
-                VariableComboBox.Items.Add($"finger_{i}_ID");
+                FingerIDComboBox.Items.Add(i);
             }
-            VariableComboBox.SelectedIndex = 0;
+            FingerIDComboBox.SelectedIndex = 0;
         }
     }
 }

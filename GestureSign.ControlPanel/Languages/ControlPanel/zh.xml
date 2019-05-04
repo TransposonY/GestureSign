@@ -131,6 +131,7 @@
   </CommandDialog>
   <EditConditionDialog>
     <Title>编辑条件</Title>
+    <FingerID>手指ID</FingerID>
     <Variables>变量</Variables>
     <Insert>插入</Insert>
     <Sample>示例：finger_2_start_X>100</Sample>
