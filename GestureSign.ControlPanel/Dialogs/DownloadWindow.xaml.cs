@@ -66,10 +66,6 @@ namespace GestureSign.ControlPanel.Dialogs
                 Dispatcher.InvokeAsync(() => this.ShowModalMessageExternal(t.Exception.InnerException.GetType().Name, t.Exception.InnerException.Message), DispatcherPriority.Input);
             });
 
-            //should never implicitly depend on using a particular protection level, or on the assumption that a given security level is used by default
-            //https://docs.microsoft.com/en-us/dotnet/api/system.net.servicepointmanager.securityprotocol
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             foreach (string url in _source)
             {
                 var client = new WebClient();
