@@ -19,7 +19,7 @@ namespace GestureSign.ControlPanel.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -62,7 +62,7 @@ namespace GestureSign.ControlPanel.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;0.13&quot;&gt;
+        ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;6.1&quot;&gt;
         ///  &lt;Font&gt;Segoe UI, Lucida Sans Unicode, Verdana&lt;/Font&gt;
         ///  &lt;HeaderFontFamily&gt;Segoe UI Light, Lucida Sans Unicode, Verdana&lt;/HeaderFontFamily&gt;
         ///  &lt;IsRightToLeft&gt;False&lt;/IsRightToLeft&gt;
@@ -70,7 +70,7 @@ namespace GestureSign.ControlPanel.Properties {
         ///  &lt;Messages&gt;
         ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.&lt;/CannotFindDaemonMessage&gt;
         ///    &lt;Error&gt;Error&lt;/Error&gt;
-        ///    &lt;Compa [rest of string was truncated]&quot;;.
+        ///    &lt;Compat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string en {
             get {

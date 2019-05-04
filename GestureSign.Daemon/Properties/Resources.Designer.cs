@@ -19,7 +19,7 @@ namespace GestureSign.Daemon.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -75,15 +75,13 @@ namespace GestureSign.Daemon.Properties {
         ///&lt;Language DisplayName=&quot;English&quot; Culture=&quot;en&quot; Version=&quot;0.13&quot;&gt;
         ///  &lt;Messages&gt;
         ///    &lt;Error&gt;Error&lt;/Error&gt;
-        ///    &lt;TouchscreenNotFoundTitle&gt;Error&lt;/TouchscreenNotFoundTitle&gt;
-        ///    &lt;TouchscreenNotFound&gt;Can not find Touchscreen!&lt;/TouchscreenNotFound&gt;
         ///  &lt;/Messages&gt;
         ///  &lt;TrayMenu&gt;
-        ///    &lt;Text&gt;GestureSign Tray Menu&lt;/Text&gt;
-        ///    &lt;TrainingMode&gt;Training Mode&lt;/TrainingMode&gt;
         ///    &lt;Disable&gt;Disable GestureSign&lt;/Disable&gt;
         ///    &lt;ControlPanel&gt;Control Panel&lt;/ControlPanel&gt;
-        ///    &lt;Exit&gt;Exit&lt;/Exit&gt;        /// [rest of string was truncated]&quot;;.
+        ///    &lt;Exit&gt;Exit&lt;/Exit&gt;
+        ///  &lt;/TrayMenu&gt;
+        ///&lt;/Language&gt;.
         /// </summary>
         internal static string en {
             get {
