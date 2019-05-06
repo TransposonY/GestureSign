@@ -86,7 +86,7 @@ namespace GestureSign.ExtraPlugins.ClipboardMatch
                         string result = match.Value;
                         if (!string.IsNullOrWhiteSpace(result))
                         {
-                            Clipboard.SetDataObject(result);
+                            Clipboard.SetText(result);
                             success = true;
                         }
                     }
