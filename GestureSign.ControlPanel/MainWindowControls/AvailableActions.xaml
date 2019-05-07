@@ -205,7 +205,7 @@
                     <MenuItem  x:Name="PasteActionMenuItem2"
                                Header="{localization:LocalisedText Action.PasteAction}"
                                FontSize="16"
-                               Click="PasteActionMenuItem_Click" />
+                               Click="PasteToNewActionMenuItem_Click" />
                     <Separator />
                     <MenuItem  x:Name="DeleteMenuItem"
                                Header="{localization:LocalisedText Action.Delete}"
@@ -429,15 +429,14 @@
                                Header="{localization:LocalisedText Action.CopyAction}"
                                FontSize="16"
                                Click="CopyActionMenuItem_Click" />
-                    <MenuItem  x:Name="PasteActionMenuItem"
-                               Header="{localization:LocalisedText Action.PasteAction}"
+                    <MenuItem  x:Name="PasteToNewActionMenuItem"
+                               Header="{localization:LocalisedText Action.PasteToNewAction}"
                                FontSize="16"
-                               Click="PasteActionMenuItem_Click" />
-                    <Separator></Separator>
-                    <MenuItem  x:Name="CopyCommandToNewMenuItem"
-                               Header="{localization:LocalisedText Action.CopyCommandToNew}"
+                               Click="PasteToNewActionMenuItem_Click" />
+                    <MenuItem  x:Name="PasteToSelectedActionMenuItem"
+                               Header="{localization:LocalisedText Action.PasteToSelectedAction}"
                                FontSize="16"
-                               Click="CopyCommandToNewMenuItem_Click" />
+                               Click="PasteToSelectedActionMenuItem_Click" />
                     <Separator></Separator>
                     <MenuItem x:Name="ExportActionMenuItem"
                               Header="{localization:LocalisedText Common.Export}"

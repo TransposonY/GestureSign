@@ -144,8 +144,9 @@ Email:ccfyzh@gmail.com
     <DefaultGroup>(Default)</DefaultGroup>
     <CutAction>Cut</CutAction>
     <CopyAction>Copy</CopyAction>
-    <CopyCommandToNew>Copy To New Action</CopyCommandToNew>
     <PasteAction>Paste</PasteAction>
+    <PasteToNewAction>Paste To New Action</PasteToNewAction>
+    <PasteToSelectedAction>Paste To Selected Action</PasteToSelectedAction>
     <Delete>Delete</Delete>
     <Edit>Edit</Edit>
     <SelectGesture>(Click to select a gesture)</SelectGesture>

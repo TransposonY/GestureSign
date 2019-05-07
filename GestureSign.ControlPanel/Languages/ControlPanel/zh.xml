@@ -148,8 +148,9 @@
     <DefaultGroup>(默认)</DefaultGroup>
     <CutAction>剪切</CutAction>
     <CopyAction>复制</CopyAction>
-    <CopyCommandToNew>复制为新动作</CopyCommandToNew>
     <PasteAction>粘贴</PasteAction>
+    <PasteToNewAction>粘贴为新动作</PasteToNewAction>
+    <PasteToSelectedAction>粘贴到当前动作</PasteToSelectedAction>
     <Delete>删除</Delete>
     <Edit>编辑</Edit>
     <SelectGesture>(请点击此处以设置手势)</SelectGesture>
