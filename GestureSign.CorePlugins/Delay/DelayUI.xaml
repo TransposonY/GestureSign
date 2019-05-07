@@ -8,13 +8,21 @@
              d:DesignHeight="70"
              d:DesignWidth="300">
     <StackPanel Orientation="Horizontal">
-        <TextBox x:Name="TimeoutTextBox"
-                 InputMethod.IsInputMethodEnabled="False"
-                 TextAlignment="Left"
-                 Width="71"
-                 KeyDown="TimeoutTextBox_KeyDown"
-                 TextChanged="TimeoutTextBox_TextChanged"
-                 VerticalAlignment="Center" />
+        <ComboBox x:Name="DelayComboBox"
+                  InputMethod.IsInputMethodEnabled="False"
+                  KeyDown="DelayComboBox_KeyDown"
+                  TextBoxBase.TextChanged="DelayComboBox_TextChanged"
+                  VerticalAlignment="Center"
+                  Width="70"
+                  IsEditable="True">
+            <ComboBoxItem>10</ComboBoxItem>
+            <ComboBoxItem>30</ComboBoxItem>
+            <ComboBoxItem>50</ComboBoxItem>
+            <ComboBoxItem>100</ComboBoxItem>
+            <ComboBoxItem>300</ComboBoxItem>
+            <ComboBoxItem>500</ComboBoxItem>
+            <ComboBoxItem>1000</ComboBoxItem>
+        </ComboBox>
         <TextBlock Text="{localization:LocalisedText CorePlugins.Delay.Millisecond}"
                    VerticalAlignment="Center"
                    Margin="10,0,0,0" />

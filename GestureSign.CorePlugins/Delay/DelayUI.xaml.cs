@@ -31,19 +31,19 @@ namespace GestureSign.CorePlugins.Delay
             get
             {
                 int timeout;
-                bool flag = int.TryParse(TimeoutTextBox.Text, out timeout);
+                bool flag = int.TryParse(DelayComboBox.Text, out timeout);
                 _timeout = flag ? timeout : 0;
                 return _timeout;
             }
             set
             {
                 _timeout = value;
-                TimeoutTextBox.Text = _timeout.ToString();
+                DelayComboBox.Text = _timeout.ToString();
             }
         }
-        private void TimeoutTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void DelayComboBox_KeyDown(object sender, KeyEventArgs e)
         {
-            TextBox txt = sender as TextBox;
+            ComboBox txt = sender as ComboBox;
 
             if ((e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Decimal)
             {
@@ -69,9 +69,9 @@ namespace GestureSign.CorePlugins.Delay
             }
         }
 
-        private void TimeoutTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void DelayComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            ComboBox textBox = sender as ComboBox;
             var change = new TextChange[e.Changes.Count];
             e.Changes.CopyTo(change, 0);
 
@@ -88,8 +88,7 @@ namespace GestureSign.CorePlugins.Delay
                     //else if (num > 10000) if (textBox != null) textBox.Text = 10000.ToString();
                     return;
                 }
-                textBox.Text = textBox.Text.Remove(offset, change[0].AddedLength);
-                textBox.Select(offset, 0);
+                //textBox.Text = textBox.Text.Remove(offset, change[0].AddedLength);
             }
         }
     }
