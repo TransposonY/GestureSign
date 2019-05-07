@@ -195,6 +195,8 @@ namespace GestureSign.Common.Applications
 
         public bool SaveApplications()
         {
+            TrimActions(Applications);
+
             if (_timer == null)
             {
                 _timer = new Timer(new TimerCallback(SaveFile), true, 200, Timeout.Infinite);
@@ -638,6 +640,16 @@ namespace GestureSign.Common.Applications
             }
 
             return false;
+        }
+
+        private void TrimActions(IEnumerable<IApplication> applications)
+        {
+            foreach (var app in applications)
+            {
+                if (app.Actions == null) continue;
+                var emptyActions = app.Actions.Where(a => a.Commands == null || !a.Commands.Any()).ToList();
+                emptyActions.ForEach(a => app.RemoveAction(a));
+            }
         }
 
         #endregion

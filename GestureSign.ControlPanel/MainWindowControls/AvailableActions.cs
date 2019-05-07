@@ -280,12 +280,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                         newAction.AddCommand(info.Command);
                     }
                 }
-
-                var emptyActions = selectedApplication.Actions.Where(a => a.Commands == null || a.Commands.Count() == 0).ToList();
-                foreach (var action in emptyActions)
-                {
-                    selectedApplication.RemoveAction(action);
-                }
                 ApplicationManager.Instance.SaveApplications();
             }
         }
@@ -346,8 +340,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     if (_cutActionSource != null)
                     {
                         info.Action.RemoveCommand(info.Command);
-                        if (_cutActionSource != targetApplication && info.Action.Commands.Count() == 0)
-                            _cutActionSource.RemoveAction(info.Action);
                     }
 
                     var newCommand = ((Command)info.Command).Clone() as Command;
@@ -383,8 +375,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     if (_cutActionSource != null)
                     {
                         info.Action.RemoveCommand(info.Command);
-                        if (_cutActionSource != targetApplication && info.Action.Commands.Count() == 0)
-                            _cutActionSource.RemoveAction(info.Action);
                     }
 
                     var newCommand = ((Command)info.Command).Clone() as Command;
