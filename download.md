@@ -1,6 +1,5 @@
-# Difference
 
-| Difference | [Store Version](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | Portable Version | Standalone Installer | 
+|  | [Store Version](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | Portable Version | Standalone Installer | 
 | - | :-: | :-: | :-: | 
 | System | Windows10 (version 1607 or later) | Windows 8 or later | Windows 8 or later | 
 | Automatic updating | ✓ | | |
@@ -16,6 +15,29 @@
 [Microsoft Store](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw)
 
 ## Standalone Installer and Portable Version
+### v7.3 (8-May-2019)
+
+- "Paste To New Action" and "Paste To Selected Action" right click menu item.
+- Improved compatibility of "Send Hot Key" command for Windows 10 1809 Microsoft Edge.
+
+**Download**
+
+[GestureSignSetup-7.3.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.3/GestureSignSetup-7.3.0.0.zip)
+
+[GestureSign-7.3.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.3/GestureSign-7.3.0.0-Portable.zip)
+
+### v7.2 (4-May-2019)
+
+- Improved compatibility of Send Hot Key command.
+- "Copy To New Action" right click menu item.
+- New Trigger Condition variables: percentage coordinates.
+
+**Download**
+
+[GestureSignSetup-7.2.0.0.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.2/GestureSignSetup-7.2.0.0.zip)
+
+[GestureSign-7.2.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.2/GestureSign-7.2.0.0-Portable.zip)
+
 ### v7.1 (11-Nov-2018)
 
 - Mouse Actions command can set the click coordinates.
