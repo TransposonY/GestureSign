@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
+using GestureSign.Common.Localization;
 using GestureSign.Daemon.Native;
 
 namespace GestureSign.Daemon.Input
@@ -346,8 +347,11 @@ namespace GestureSign.Daemon.Input
 
                         int contactCount = 0;
                         IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
-                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                        if (HidNativeApi.HIDP_STATUS_SUCCESS != HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
+                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid))
+                        {
+                            throw new ApplicationException(LocalizationProvider.Instance.GetTextValue("Messages.ContactCountError"));
+                        }
                         int linkCount = 0;
                         HidNativeApi.HidP_GetLinkCollectionNodes(null, ref linkCount, pPreparsedData);
                         HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
@@ -419,8 +423,11 @@ namespace GestureSign.Daemon.Input
 
                         int contactCount = 0;
                         IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
-                        HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
-                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid);
+                        if (HidNativeApi.HIDP_STATUS_SUCCESS != HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
+                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid))
+                        {
+                            throw new ApplicationException(LocalizationProvider.Instance.GetTextValue("Messages.ContactCountError"));
+                        }
 
                         int linkCount = 0;
                         HidNativeApi.HidP_GetLinkCollectionNodes(null, ref linkCount, pPreparsedData);

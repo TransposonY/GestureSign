@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Language DisplayName="中文" Culture="zh-CN" Version="0.13">
+<Language DisplayName="中文" Culture="zh-CN" Version="0.14">
   <Messages>
-    <Error>错误</Error>
+    <Error>错误</Error>	
+    <ContactCountError>无法获取触控手指数量！可尝试重新安装设备驱动以修复该问题。</ContactCountError>
   </Messages>
   <TrayMenu>
     <Disable>关闭手势识别</Disable>
