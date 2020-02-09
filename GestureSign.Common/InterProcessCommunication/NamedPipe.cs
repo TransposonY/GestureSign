@@ -141,7 +141,8 @@ namespace GestureSign.Common.InterProcessCommunication
 
         public static string GetUserPipeName(string pipeName)
         {
-            return pipeName + "\\" + Environment.UserName;
+            var currentUser = WindowsIdentity.GetCurrent();
+            return pipeName + "-" + currentUser.User.ToString();
         }
 
         #region IDisposable Support
