@@ -98,24 +98,32 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        private ushort ValidateDevice(IntPtr hDevice)
+        private bool ValidateDevice(IntPtr hDevice, out ushort usage)
         {
+            usage = 0;
             uint pcbSize = 0;
             NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICEINFO, IntPtr.Zero, ref pcbSize);
             if (pcbSize <= 0)
-                return 0;
+                return false;
 
             IntPtr pInfo = Marshal.AllocHGlobal((int)pcbSize);
             using (new SafeUnmanagedMemoryHandle(pInfo))
             {
                 NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICEINFO, pInfo, ref pcbSize);
                 var info = (RID_DEVICE_INFO)Marshal.PtrToStructure(pInfo, typeof(RID_DEVICE_INFO));
-                if (info.hid.usUsage != NativeMethods.TouchPadUsage && info.hid.usUsage != NativeMethods.TouchScreenUsage && info.hid.usUsage != NativeMethods.PenUsage)
-                    return 0;
+                switch (info.hid.usUsage)
+                {
+                    case NativeMethods.TouchPadUsage:
+                    case NativeMethods.TouchScreenUsage:
+                    case NativeMethods.PenUsage:
+                        break;
+                    default:
+                        return true;
+                }
 
                 NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICENAME, IntPtr.Zero, ref pcbSize);
                 if (pcbSize <= 0)
-                    return 0;
+                    return false;
 
                 IntPtr pData = Marshal.AllocHGlobal((int)pcbSize);
                 using (new SafeUnmanagedMemoryHandle(pData))
@@ -124,8 +132,9 @@ namespace GestureSign.Daemon.Input
                     string deviceName = Marshal.PtrToStringAnsi(pData);
 
                     if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
-                        return 0;
-                    return info.hid.usUsage;
+                        return true;
+                    usage = info.hid.usUsage;
+                    return true;
                 }
             }
         }
@@ -207,8 +216,8 @@ namespace GestureSign.Daemon.Input
                 ushort usage;
                 if (!_validDevices.TryGetValue(raw.header.hDevice, out usage))
                 {
-                    usage = ValidateDevice(raw.header.hDevice);
-                    _validDevices.Add(raw.header.hDevice, usage);
+                    if (ValidateDevice(raw.header.hDevice, out usage))
+                        _validDevices.Add(raw.header.hDevice, usage);
                 }
 
                 if (usage == 0)
