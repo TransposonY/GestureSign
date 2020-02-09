@@ -72,7 +72,8 @@ namespace GestureSign.Common.Plugins
                 foreach (IAction executableAction in executableActions)
                 {
                     // Exit if there is no action configured
-                    if ((executableAction.IgnoredDevices & devices) != 0 || executableAction?.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
+                    if (executableAction == null || (executableAction.IgnoredDevices & devices) != 0 ||
+                    executableAction.Commands == null || !Compute(executableAction.Condition, points, contactIdentifiers))
                         continue;
 
                     var commandList = executableAction.Commands.Where(command => command != null && command.IsEnabled).ToList();
