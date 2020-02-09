@@ -107,7 +107,7 @@ namespace GestureSign.Common.Configuration
                 if (!backupDirectory.Exists)
                     backupDirectory.Create();
                 string backupFileName = Path.Combine(backupDirectory.FullName, DateTime.Now.ToString("yyMMddHHmmss") + Path.GetExtension(filePath));
-                File.Copy(filePath, backupFileName, true);
+                File.Copy(filePath, backupFileName, false);
                 return backupFileName;
             }
             catch (Exception e)
