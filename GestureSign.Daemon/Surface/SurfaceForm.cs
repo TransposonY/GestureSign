@@ -105,10 +105,18 @@ namespace GestureSign.Daemon.Surface
                 AppConfig.VisualFeedbackWidth > 0 &&
                 !(e.Points.Count == 1 && e.Points.First().Count == 1))
             {
+
                 if (_bitmap == null || _lastStroke == null)
                 {
                     ClearSurfaces();
-                    _bitmap = new DiBitmap(this.Size);
+                    try
+                    {
+                        _bitmap = new DiBitmap(this.Size);
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        Logging.LogException(ex);
+                    }
                 }
                 DrawSegments(e.Points);
             }
