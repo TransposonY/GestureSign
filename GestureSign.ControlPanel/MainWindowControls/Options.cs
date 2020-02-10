@@ -277,13 +277,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
         {
-            NamedPipe.SendMessageAsync("ShowTrayIcon", "GestureSignDaemon");
             AppConfig.ShowTrayIcon = true;
         }
 
         private void ShowTrayIconSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
-            NamedPipe.SendMessageAsync("HideTrayIcon", "GestureSignDaemon");
             AppConfig.ShowTrayIcon = false;
         }
 

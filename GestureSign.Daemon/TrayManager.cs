@@ -152,6 +152,11 @@ namespace GestureSign.Daemon
         {
             SetupTrayIconAndTrayMenu();
             _trayIcon.Visible = AppConfig.ShowTrayIcon;
+
+            AppConfig.ConfigChanged += (o, ea) =>
+            {
+                _trayIcon.Visible = AppConfig.ShowTrayIcon;
+            };
         }
 
         #endregion

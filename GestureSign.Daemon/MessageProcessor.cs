@@ -55,12 +55,6 @@ namespace GestureSign.Daemon
                             case "LoadConfiguration":
                                 AppConfig.Reload();
                                 break;
-                            case "ShowTrayIcon":
-                                TrayManager.Instance.TrayIconVisible = true;
-                                break;
-                            case "HideTrayIcon":
-                                TrayManager.Instance.TrayIconVisible = false;
-                                break;
                         }
                     }, null);
                 }
