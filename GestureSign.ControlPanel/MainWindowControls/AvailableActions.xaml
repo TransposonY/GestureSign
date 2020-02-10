@@ -353,7 +353,8 @@
                                             <Expander.Header>
                                                 <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
                                                            HorizontalAlignment="Center"
-                                                           Text="{Binding Name,Converter={StaticResource ActionTitleConverter}}" />
+                                                           Text="{Binding Name,Converter={StaticResource ActionTitleConverter}}"
+                                                           TextAlignment="Center" />
                                             </Expander.Header>
                                             <Expander.Content>
                                                 <DockPanel>
