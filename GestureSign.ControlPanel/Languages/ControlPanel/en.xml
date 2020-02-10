@@ -27,6 +27,7 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <Yes>Yes</Yes>
     <Import>Import...</Import>
     <Export>Export...</Export>
+    <Reset>Reset</Reset>
   </Common>
   <About>
     <Header>About</Header>

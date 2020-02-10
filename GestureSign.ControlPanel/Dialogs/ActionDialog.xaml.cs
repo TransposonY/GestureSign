@@ -117,6 +117,11 @@ namespace GestureSign.ControlPanel.Dialogs
             }
         }
 
+        private void ResetHotKeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            HotKeyTextBox.HotKey = null;
+        }
+
         private void ConditionTextBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             EditConditionDialog editConditionDialog = new EditConditionDialog(ConditionTextBox.Text);

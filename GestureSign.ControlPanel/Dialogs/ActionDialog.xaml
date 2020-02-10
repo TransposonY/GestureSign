@@ -135,12 +135,21 @@
                                Margin="20,0,0,0"
                                HorizontalAlignment="Left" />
                     <controls:HotKeyBox x:Name="HotKeyTextBox"
-                                        Width="313"
                                         AreModifierKeysRequired="True"
                                         Watermark="{localization:LocalisedText ActionDialog.HotKeyWatermark}"
                                         FontSize="14"
-                                        Margin="0,5,0,0">
+                                        Margin="20,5,100,0">
                     </controls:HotKeyBox>
+                    <Button x:Name="ResetHotKeyButton"
+                            Content="{localization:LocalisedText Common.Reset}"
+                            FontSize="14"
+                            MinWidth="60"
+                            Height="27"
+                            HorizontalAlignment="Right"
+                            BorderBrush="{StaticResource HighlightBrush}"
+                            Click="ResetHotKeyButton_Click"
+                            Focusable="False"
+                            Margin="0,-26,14,0" />
                     <TextBlock x:Name="MouseHotKeyTextBlock"
                                Text="{localization:LocalisedText ActionDialog.MouseHotKey}"
                                FontSize="14"

@@ -29,6 +29,7 @@
     <Yes>是</Yes>
     <Import>导入...</Import>
     <Export>导出...</Export>
+    <Reset>重置</Reset>
   </Common>
   <About>
     <Header>关于</Header>
