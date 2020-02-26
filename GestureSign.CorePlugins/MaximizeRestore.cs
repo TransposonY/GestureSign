@@ -59,7 +59,7 @@ namespace GestureSign.CorePlugins
             // Nothing to do here
         }
 
-        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        public bool Gestured(PointInfo ActionPoint)
         {
             // Toggle window state
             if (ActionPoint.Window.WindowState == System.Windows.Forms.FormWindowState.Maximized)

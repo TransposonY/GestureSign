@@ -97,6 +97,7 @@
     <Compile Include="ActivateWindow\ActivateWindowUI.xaml.cs">
       <DependentUpon>ActivateWindowUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\EnvironmentVariablesParser.cs" />
     <Compile Include="IconSource.cs" />
     <Compile Include="KeyboardHelper.cs" />
     <Compile Include="Delay\Delay.cs" />

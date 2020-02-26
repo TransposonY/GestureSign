@@ -60,7 +60,7 @@ namespace GestureSign.CorePlugins
             // Nothing to do here
         }
 
-        public bool Gestured(Common.Plugins.PointInfo ActionPoint)
+        public bool Gestured(PointInfo ActionPoint)
         {
             try
             {
