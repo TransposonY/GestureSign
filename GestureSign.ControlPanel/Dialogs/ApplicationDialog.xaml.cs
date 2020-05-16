@@ -26,8 +26,8 @@ namespace GestureSign.ControlPanel.Dialogs
     /// </summary>
     public partial class ApplicationDialog : TouchWindow
     {
+        private bool _newApplication;
         private IApplication _currentApplication;
-        private bool _isUserApp;
         private Dictionary<uint, string> _processInfoMap;
 
         public ApplicationListViewItem ApplicationListViewItem
@@ -49,38 +49,52 @@ namespace GestureSign.ControlPanel.Dialogs
             RuningApplicationsFlyout.RuningAppSelectionChanged += (o, e) => { if (e != null) ApplicationListViewItem = e; };
         }
 
-        public ApplicationDialog(IApplication targetApplication) : this()
+        public ApplicationDialog(IApplication targetApplication, bool newApplication = false) : this()
         {
             _currentApplication = targetApplication;
-
-            Title = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.EditApplication");
-
-            _isUserApp = _currentApplication is UserApp;
-        }
-
-        public ApplicationDialog(bool addUserApp) : this()
-        {
-            _isUserApp = addUserApp;
-
-            Title = _isUserApp
-                ? LocalizationProvider.Instance.GetTextValue("ApplicationDialog.AddApplication")
-                : LocalizationProvider.Instance.GetTextValue("ApplicationDialog.AddIgnoredAppTitle");
+            _newApplication = newApplication;
+            switch (_currentApplication)
+            {
+                case UserApp app when _newApplication:
+                    Title = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.AddApplication");
+                    break;
+                case IgnoredApp app when _newApplication:
+                    Title = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.AddIgnoredAppTitle");
+                    break;
+                default:
+                    Title = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.EditApplication");
+                    break;
+            }
         }
 
         #region Events
 
         private void ApplicationDialog_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_currentApplication != null)
+            bool isUserApp = false;
+            bool showLimitNumberOfFingers = false;
+            switch (_currentApplication)
             {
-                var currentApplication = _currentApplication as UserApp;
-                if (currentApplication != null)
-                {
-                    GroupComboBox.Text = _currentApplication.Group;
+                case UserApp userApp:
+                    if (!_newApplication)
+                    {
+                        GroupComboBox.Text = _currentApplication.Group;
 
-                    BlockTouchInputSlider.Value = currentApplication.BlockTouchInputThreshold;
-                    LimitNumberOfFingersSlider.Value = currentApplication.LimitNumberOfFingers;
-                }
+                        BlockTouchInputSlider.Value = userApp.BlockTouchInputThreshold;
+                        LimitNumberOfFingersSlider.Value = userApp.LimitNumberOfFingers;
+                    }
+                    isUserApp = true;
+                    showLimitNumberOfFingers = true;
+                    break;
+                case GlobalApp globalApp:
+                    showLimitNumberOfFingers = true;
+                    LimitNumberOfFingersSlider.Value = globalApp.LimitNumberOfFingers;
+                    List<FrameworkElement> elements = new List<FrameworkElement> { chCrosshair, ApplicationNameTextBox, ShowRunningButton, BrowseButton, matchUsingRadio, MatchStringTextBox, RegexCheckBox };
+                    elements.ForEach(el => el.IsEnabled = false);
+                    break;
+            }
+            if (!_newApplication)
+            {
                 ApplicationNameTextBox.Text = _currentApplication.Name;
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
                 RegexCheckBox.IsChecked = _currentApplication.IsRegEx;
@@ -92,12 +106,12 @@ namespace GestureSign.ControlPanel.Dialogs
                     .Distinct()
                     .OrderBy(g => g);
 
-            LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility = LimitNumberOfFingersTextBlock.Visibility =
-                            GroupNameTextBlock.Visibility = GroupComboBox.Visibility =
-                                _isUserApp ? Visibility.Visible : Visibility.Collapsed;
+            LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility =
+                LimitNumberOfFingersTextBlock.Visibility = showLimitNumberOfFingers ? Visibility.Visible : Visibility.Collapsed;
+            GroupNameTextBlock.Visibility = GroupComboBox.Visibility = isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
             BlockTouchInputSlider.Visibility = BlockTouchInputInfoTextBlock.Visibility = BlockTouchInputTextBlock.Visibility =
-                    AppConfig.UiAccess && _isUserApp ? Visibility.Visible : Visibility.Collapsed;
+                    AppConfig.UiAccess && isUserApp ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void MatchStringTextBox_OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -289,6 +303,18 @@ namespace GestureSign.ControlPanel.Dialogs
 
         private bool SaveApplication()
         {
+            if (_currentApplication is GlobalApp)
+            {
+                GlobalApp globalApp = (GlobalApp)_currentApplication;
+                int newValue = (int)LimitNumberOfFingersSlider.Value; ;
+                if (newValue != globalApp.LimitNumberOfFingers)
+                {
+                    globalApp.LimitNumberOfFingers = newValue;
+                    ApplicationManager.Instance.SaveApplications();
+                }
+                return true;
+            }
+
             string matchString = MatchStringTextBox.Text.Trim();
 
             if (string.IsNullOrEmpty(matchString))
@@ -299,92 +325,97 @@ namespace GestureSign.ControlPanel.Dialogs
             }
 
             string name = ApplicationNameTextBox.Text.Trim();
-            if (_isUserApp)
+            switch (_currentApplication)
             {
-                string groupName = string.IsNullOrWhiteSpace(GroupComboBox.Text) ? null : GroupComboBox.Text.Trim();
-
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return ShowErrorMessage(
-                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationNameTitle"),
-                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationName"));
-                }
-
-                var newApplication = new UserApp
-                {
-                    BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
-                    LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
-                    Name = name,
-                    Group = groupName,
-                    MatchString = matchString,
-                    MatchUsing = matchUsingRadio.MatchUsing,
-                    IsRegEx = RegexCheckBox.IsChecked.Value
-                };
-
-                if (_currentApplication == null)
-                {
-                    //Add new UserApplication
-                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString);
-                    if (sameMatchApplications.Length != 0)
+                case UserApp userApp:
                     {
-                        string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
-                        return
-                            ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflictTitle"),
-                                string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflict"), matchString, sameApp));
+                        string groupName = string.IsNullOrWhiteSpace(GroupComboBox.Text) ? null : GroupComboBox.Text.Trim();
+
+                        if (string.IsNullOrWhiteSpace(name))
+                        {
+                            return ShowErrorMessage(
+                                LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationNameTitle"),
+                                LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.NoApplicationName"));
+                        }
+
+                        var newApplication = new UserApp
+                        {
+                            BlockTouchInputThreshold = (int)BlockTouchInputSlider.Value,
+                            LimitNumberOfFingers = (int)LimitNumberOfFingersSlider.Value,
+                            Name = name,
+                            Group = groupName,
+                            MatchString = matchString,
+                            MatchUsing = matchUsingRadio.MatchUsing,
+                            IsRegEx = RegexCheckBox.IsChecked.Value
+                        };
+
+                        if (_newApplication)
+                        {
+                            //Add new UserApplication
+                            var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString);
+                            if (sameMatchApplications.Length != 0)
+                            {
+                                string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
+                                return
+                                    ShowErrorMessage(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflictTitle"),
+                                        string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflict"), matchString, sameApp));
+                            }
+
+                            if (ApplicationManager.Instance.ApplicationExists(name))
+                                return ShowErrorMessage(
+                                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
+                                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
+                            ApplicationManager.Instance.AddApplication(newApplication);
+                        }
+                        else
+                        {
+                            var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
+                            if (sameMatchApplications.Length != 0)
+                            {
+                                string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
+                                return ShowErrorMessage(
+                                    LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflictTitle"),
+                                    string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflict"), matchString, sameApp));
+                            }
+
+                            if (name != _currentApplication.Name && ApplicationManager.Instance.ApplicationExists(name))
+                            {
+                                return ShowErrorMessage(
+                                    LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
+                                    LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
+                            }
+
+                            newApplication.Actions = _currentApplication.Actions;
+                            ApplicationManager.Instance.ReplaceApplication(_currentApplication, newApplication);
+                        }
+                        break;
                     }
-
-                    if (ApplicationManager.Instance.ApplicationExists(name))
-                        return ShowErrorMessage(
-                                LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
-                                LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
-                    ApplicationManager.Instance.AddApplication(newApplication);
-                }
-                else
-                {
-                    var sameMatchApplications = ApplicationManager.Instance.FindMatchApplications<UserApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
-                    if (sameMatchApplications.Length != 0)
+                case IgnoredApp ignoredApp:
                     {
-                        string sameApp = sameMatchApplications.Aggregate<IApplication, string>(null, (current, app) => current + (app.Name + " "));
-                        return ShowErrorMessage(
-                            LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflictTitle"),
-                            string.Format(LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.StringConflict"), matchString, sameApp));
-                    }
+                        if (string.IsNullOrEmpty(name))
+                            name = matchString;
 
-                    if (name != _currentApplication.Name && ApplicationManager.Instance.ApplicationExists(name))
-                    {
-                        return ShowErrorMessage(
-                            LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExistsTitle"),
-                            LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.AppExists"));
-                    }
-
-                    newApplication.Actions = _currentApplication.Actions;
-                    ApplicationManager.Instance.ReplaceApplication(_currentApplication, newApplication);
-                }
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(name))
-                    name = matchString;
-
-                if (_currentApplication != null)
-                {
-                    var existingApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
-                    if (existingApp.Length != 0)
-                    {
-                        return ShowErrorMessage(
+                        if (!_newApplication)
+                        {
+                            var existingApp = ApplicationManager.Instance.FindMatchApplications<IgnoredApp>(matchUsingRadio.MatchUsing, matchString, _currentApplication.Name);
+                            if (existingApp.Length != 0)
+                            {
+                                return ShowErrorMessage(
+                                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
+                                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExists"));
+                            }
+                            ApplicationManager.Instance.RemoveApplication(_currentApplication);
+                        }
+                        else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.MatchUsing == matchUsingRadio.MatchUsing && app.MatchString == matchString))
+                        {
+                            return ShowErrorMessage(
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExists"));
-                    }
-                    ApplicationManager.Instance.RemoveApplication(_currentApplication);
-                }
-                else if (ApplicationManager.Instance.GetIgnoredApplications().Any(app => app.MatchUsing == matchUsingRadio.MatchUsing && app.MatchString == matchString))
-                {
-                    return ShowErrorMessage(
-                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExistsTitle"),
-                        LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExists"));
-                }
+                        }
 
-                ApplicationManager.Instance.AddApplication(new IgnoredApp(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
+                        ApplicationManager.Instance.AddApplication(new IgnoredApp(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
+                        break;
+                    }
             }
             ApplicationManager.Instance.SaveApplications();
             return true;

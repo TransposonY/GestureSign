@@ -92,38 +92,36 @@ namespace GestureSign.Common.Applications
             CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
             _recognizedApplication = GetApplicationFromWindow(CaptureWindow);
 
-            int maxThreshold = 0;
-            bool? limitNumberFlag = null;
+            int maxThreshold = 0, maxLimitNumber = 2;
 
             foreach (IApplication app in _recognizedApplication)
             {
-                if (app is GlobalApp && AppConfig.IgnoreFullScreen && IsFullScreenWindow(CaptureWindow))
+                switch (app)
                 {
-                    e.Cancel = true;
-                    return;
-                }
-                var userApplication = app as UserApp;
-                if (userApplication != null)
-                {
-                    maxThreshold = userApplication.BlockTouchInputThreshold > maxThreshold ? userApplication.BlockTouchInputThreshold : maxThreshold;
-
-                    //Got UserApplication
-                    if (limitNumberFlag == null)
-                        limitNumberFlag = e.Points.Count < userApplication.LimitNumberOfFingers;
-                    else
-                        limitNumberFlag |= e.Points.Count < userApplication.LimitNumberOfFingers;
-                }
-                else
-                {
-                    var ignoredApplication = app as IgnoredApp;
-                    if (ignoredApplication != null && ignoredApplication.IsEnabled)
-                    {
-                        e.Cancel = true;
+                    case GlobalApp a:
+                        maxLimitNumber = a.LimitNumberOfFingers > maxLimitNumber ? a.LimitNumberOfFingers : maxLimitNumber;
+                        if (AppConfig.IgnoreFullScreen && IsFullScreenWindow(CaptureWindow))
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        break;
+                    case UserApp a:
+                        maxThreshold = a.BlockTouchInputThreshold > maxThreshold ? a.BlockTouchInputThreshold : maxThreshold;
+                        maxLimitNumber = a.LimitNumberOfFingers > maxLimitNumber ? a.LimitNumberOfFingers : maxLimitNumber;
+                        break;
+                    case IgnoredApp a:
+                        if (a.IsEnabled)
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        break;
+                    default:
                         return;
-                    }
                 }
             }
-            e.Cancel = (pointCapture.SourceDevice & Devices.TouchDevice) != 0 && (limitNumberFlag ?? e.Points.Count == 1);
+            e.Cancel = (pointCapture.SourceDevice & Devices.TouchDevice) != 0 && (e.Points.Count < maxLimitNumber);
             e.BlockTouchInputThreshold = maxThreshold;
         }
 

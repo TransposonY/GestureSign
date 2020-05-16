@@ -294,7 +294,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             PasteActionMenuItem2.IsEnabled = _commandClipboard.Count != 0;
 
-            EditMenuItem.IsEnabled = DeleteMenuItem.IsEnabled = lstAvailableApplication.SelectedItem is UserApp;
+            DeleteMenuItem.IsEnabled = lstAvailableApplication.SelectedItem is UserApp;
         }
 
         private void LstAvailableActions_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -415,7 +415,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
         {
-            ApplicationDialog applicationDialog = new ApplicationDialog(true);
+            ApplicationDialog applicationDialog = new ApplicationDialog(new UserApp(), true);
             applicationDialog.ShowDialog();
         }
 
@@ -426,10 +426,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void EditApplication()
         {
-            var userapp = lstAvailableApplication.SelectedItem as UserApp;
-            if (userapp != null)
+            var app = lstAvailableApplication.SelectedItem as IApplication;
+            if (app != null)
             {
-                ApplicationDialog applicationDialog = new ApplicationDialog(userapp);
+                ApplicationDialog applicationDialog = new ApplicationDialog(app);
                 applicationDialog.ShowDialog();
             }
         }

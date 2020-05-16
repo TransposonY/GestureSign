@@ -53,7 +53,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             this.lstIgnoredApplications.SelectedIndex = -1;
 
-            ApplicationDialog applicationDialog = new ApplicationDialog(false);
+            ApplicationDialog applicationDialog = new ApplicationDialog(new IgnoredApp(), true);
             applicationDialog.ShowDialog();
         }
 

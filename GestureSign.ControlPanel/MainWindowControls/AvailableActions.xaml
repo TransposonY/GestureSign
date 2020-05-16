@@ -18,8 +18,8 @@
         <ResourceDictionary>
             <converters:ActionTitleConverter x:Key="ActionTitleConverter" />
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
-            <converters:Application2VisibilityConverter x:Key="Application2VisibilityConverter" />
             <converters:GestureImageConverter x:Key="GestureImageConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter"
                                                     GestureImageConverter="{StaticResource GestureImageConverter}" />
             <Canvas x:Key="Chevron-Up"
@@ -273,21 +273,12 @@
                                 Width="18">
                             <Button.Template>
                                 <ControlTemplate>
-                                    <Rectangle Fill="{StaticResource AccentColorBrush}">
+                                    <Rectangle Visibility="{Binding Path=IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Converter={StaticResource BooleanToVisibilityConverter}}"
+                                               Fill="{StaticResource AccentColorBrush}">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
                                                          Visual="{StaticResource EditIcon}" />
                                         </Rectangle.OpacityMask>
-                                        <Rectangle.Visibility>
-                                            <MultiBinding Converter="{StaticResource Application2VisibilityConverter}">
-                                                <Binding  Path="DataContext"
-                                                          RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"
-                                                          Mode="OneWay" />
-                                                <Binding  Path="IsSelected"
-                                                          RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"
-                                                          Mode="OneWay" />
-                                            </MultiBinding>
-                                        </Rectangle.Visibility>
                                     </Rectangle>
                                 </ControlTemplate>
                             </Button.Template>
