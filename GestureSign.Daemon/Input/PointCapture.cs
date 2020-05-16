@@ -51,6 +51,7 @@ namespace GestureSign.Daemon.Input
 
         readonly WinEventDelegate _winEventDele;
         private readonly IntPtr _hWinEventHook;
+        private GCHandle _winEventGch;
 
         private bool _isGestureStackTimeout;
 
@@ -206,6 +207,7 @@ namespace GestureSign.Daemon.Input
             _currentContext = SynchronizationContext.Current;
 
             _winEventDele = WinEventProc;
+            _winEventGch = GCHandle.Alloc(_winEventDele);
             _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_MINIMIZEEND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
             if (AppConfig.UiAccess)
@@ -241,6 +243,7 @@ namespace GestureSign.Daemon.Input
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 if (_hWinEventHook != IntPtr.Zero)
                     UnhookWinEvent(_hWinEventHook);
+                _winEventGch.Free();
 
                 disposedValue = true;
             }
