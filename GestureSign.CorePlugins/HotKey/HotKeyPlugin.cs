@@ -183,11 +183,10 @@ namespace GestureSign.CorePlugins.HotKey
                     keyList.Add(Keys.LControlKey);
                 if (_Settings.Windows)
                     keyList.Add(Keys.LWin);
-                if (!KeyboardHelper.ResendByKeybdEvent(keyList, _Settings.KeyCode))
-                {
-                    keyList.AddRange(_Settings.KeyCode);
-                    KeyboardHelper.ResetKeyState(ActionPoint.Window, keyList.ToArray());
-                }
+
+                keyList.AddRange(_Settings.KeyCode);
+
+                KeyboardHelper.ResetKeyState(ActionPoint.Window, keyList.ToArray());
             }
             return true;
         }

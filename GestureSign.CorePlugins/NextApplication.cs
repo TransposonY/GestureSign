@@ -67,10 +67,8 @@ namespace GestureSign.CorePlugins
             }
             catch (Exception)
             {
-                if (!KeyboardHelper.ResendByKeybdEvent(new Keys[] { Keys.LMenu }, new Keys[] { Keys.Tab }))
-                {
-                    KeyboardHelper.ResetKeyState(ActionPoint.Window, Keys.LMenu);
-                }
+                KeyboardHelper.ResetKeyState(ActionPoint.Window, Keys.LMenu);
+
                 return false;
             }
 
