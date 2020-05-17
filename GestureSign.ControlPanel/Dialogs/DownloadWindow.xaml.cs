@@ -27,7 +27,7 @@ namespace GestureSign.ControlPanel.Dialogs
         private bool _isDownloaded;
         private string _tempDirectory;
 
-        private string[] _source = new string[] { "https://coding.net/u/TransposonY/p/GestureSignSettings/git/archive/master",
+        private string[] _source = new string[] { "https://transposony.coding.net/p/GestureSignSettings/d/GestureSignSettings/git/archive/master",
             "https://github.com/TransposonY/GestureSignSettings/archive/master.zip" };
 
         public DownloadWindow()

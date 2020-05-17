@@ -32,9 +32,9 @@ This may lead to function failure(e.g. Start application at Windows startup).
   <About>
     <Header>About</Header>
     <Homepage>Homepage</Homepage>
-    <HomepageUrl>http://transposony.github.io/GestureSign/</HomepageUrl>
+    <HomepageUrl>https://gesturesign.win</HomepageUrl>
     <Store>Windows Store Version</Store>
-    <HelpPageUrl>http://transposony.github.io/GestureSign/</HelpPageUrl>
+    <HelpPageUrl>https://gesturesign.win/#/guide</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>
     <Information>Author:TransposonY
