@@ -12,12 +12,14 @@ using GestureSign.Daemon.Native;
 
 namespace GestureSign.Daemon.Input
 {
-    public class MessageWindow : Form
+    public class MessageWindow : NativeWindow
     {
         private bool _xAxisDirection;
         private bool _yAxisDirection;
         private bool _isAxisCorresponds;
         private Screen _currentScr;
+
+        private static readonly HandleRef HwndMessage = new HandleRef(null, new IntPtr(-3));
 
         private List<RawData> _outputTouchs = new List<RawData>(1);
         private int _requiringContactCount;
@@ -34,8 +36,78 @@ namespace GestureSign.Daemon.Input
 
         public MessageWindow()
         {
-            CreateHandle();
+            CreateWindow();
             UpdateRegistration();
+        }
+
+        ~MessageWindow()
+        {
+            DestroyWindow();
+        }
+
+        public bool CreateWindow()
+        {
+            if (Handle == IntPtr.Zero)
+            {
+                const int WS_EX_NOACTIVATE = 0x08000000;
+                CreateHandle(new CreateParams
+                {
+                    Style = 0,
+                    ExStyle = WS_EX_NOACTIVATE,
+                    ClassStyle = 0,
+                    Caption = "GSMessageWindow",
+                    Parent = (IntPtr)HwndMessage
+                });
+            }
+            return Handle != IntPtr.Zero;
+        }
+
+        public void DestroyWindow()
+        {
+            DestroyWindow(true, IntPtr.Zero);
+        }
+
+        public override void DestroyHandle()
+        {
+            DestroyWindow(false, IntPtr.Zero);
+            base.DestroyHandle();
+        }
+
+        protected override void OnHandleChange()
+        {
+
+            base.OnHandleChange();
+        }
+
+        private bool GetInvokeRequired(IntPtr hWnd)
+        {
+            if (hWnd == IntPtr.Zero) return false;
+            int pid;
+            var hwndThread = NativeMethods.GetWindowThreadProcessId(new HandleRef(this, hWnd), out pid);
+            var currentThread = NativeMethods.GetCurrentThreadId();
+            return (hwndThread != currentThread);
+        }
+
+        private void DestroyWindow(bool destroyHwnd, IntPtr hWnd)
+        {
+            if (hWnd == IntPtr.Zero)
+            {
+                hWnd = Handle;
+            }
+
+            if (GetInvokeRequired(hWnd))
+            {
+                NativeMethods.PostMessage(new HandleRef(this, hWnd), NativeMethods.WmClose, 0, 0);
+                return;
+            }
+
+            lock (this)
+            {
+                if (destroyHwnd)
+                {
+                    base.DestroyHandle();
+                }
+            }
         }
 
         public void UpdateRegistration()
@@ -138,18 +210,6 @@ namespace GestureSign.Daemon.Input
                     return true;
                 }
             }
-        }
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            ChangeToMessageOnlyWindow();
-        }
-
-        private void ChangeToMessageOnlyWindow()
-        {
-            IntPtr HWND_MESSAGE = new IntPtr(-3);
-            NativeMethods.SetParent(this.Handle, HWND_MESSAGE);
         }
 
         protected override void WndProc(ref Message message)
@@ -540,17 +600,6 @@ namespace GestureSign.Daemon.Input
         }
 
         #endregion ProcessInput
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                const int WS_EX_NOACTIVATE = 0x08000000;
-                CreateParams myParams = base.CreateParams;
-                myParams.ExStyle = myParams.ExStyle | WS_EX_NOACTIVATE;
-                return myParams;
-            }
-        }
     }
 }
 

@@ -79,6 +79,8 @@ namespace GestureSign.Daemon.Native
         internal const int VK_OEM_CLEAR = 0xFE;
         internal const int VK_LAST_KEY = VK_OEM_CLEAR; // this is a made up value used as a sentinal
 
+        internal const int WmClose = 0x0010;
+
         internal const ushort GenericDesktopPage = 0x01;
         internal const ushort DigitizerUsagePage = 0x0D;
         internal const ushort ContactIdentifierId = 0x51;
@@ -99,6 +101,16 @@ namespace GestureSign.Daemon.Native
         #endregion const definitions
 
         #region DllImports
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr PostMessage(HandleRef hwnd, int msg, int wparam, int lparam);
+
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        internal static extern int GetWindowThreadProcessId(HandleRef hWnd, out int lpdwProcessId);
+
+        [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        internal static extern int GetCurrentThreadId();
 
         [DllImport("user32.dll")]
         internal static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
