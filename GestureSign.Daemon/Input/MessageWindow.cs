@@ -9,6 +9,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Common.Localization;
 using GestureSign.Daemon.Native;
+using Microsoft.Win32;
 
 namespace GestureSign.Daemon.Input
 {
@@ -38,10 +39,12 @@ namespace GestureSign.Daemon.Input
         {
             CreateWindow();
             UpdateRegistration();
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
         }
 
         ~MessageWindow()
         {
+            SystemEvents.PowerModeChanged -= OnPowerModeChanged;
             DestroyWindow();
         }
 
@@ -75,7 +78,7 @@ namespace GestureSign.Daemon.Input
 
         protected override void OnHandleChange()
         {
-
+            UpdateRegistration();
             base.OnHandleChange();
         }
 
@@ -116,6 +119,8 @@ namespace GestureSign.Daemon.Input
             var penSetting = AppConfig.PenGestureButton;
             _penGestureButton = penSetting & (DeviceStates.Invert | DeviceStates.RightClickButton);
 
+            _validDevices.Clear();
+
             UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
             UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0 && (penSetting & (DeviceStates.InRange | DeviceStates.Tip)) != 0, NativeMethods.PenUsage);
             UpdateRegisterState(AppConfig.RegisterTouchPad, NativeMethods.TouchPadUsage);
@@ -135,21 +140,20 @@ namespace GestureSign.Daemon.Input
 
         private void RegisterDevice(ushort usage)
         {
-            if (!_registeredDeviceList.Contains(usage))
+            UnregisterDevice(usage);
+
+            RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
+
+            rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
+            rid[0].usUsage = usage;
+            rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK | NativeMethods.RIDEV_DEVNOTIFY;
+            rid[0].hwndTarget = Handle;
+
+            if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
             {
-                RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
-
-                rid[0].usUsagePage = NativeMethods.DigitizerUsagePage;
-                rid[0].usUsage = usage;
-                rid[0].dwFlags = NativeMethods.RIDEV_INPUTSINK | NativeMethods.RIDEV_DEVNOTIFY;
-                rid[0].hwndTarget = Handle;
-
-                if (!NativeMethods.RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
-                {
-                    throw new ApplicationException("Failed to register raw input device(s).");
-                }
-                _registeredDeviceList.Add(usage);
+                throw new ApplicationException("Failed to register raw input device(s).");
             }
+            _registeredDeviceList.Add(usage);
         }
 
         private void UnregisterDevice(ushort usage)
@@ -209,6 +213,14 @@ namespace GestureSign.Daemon.Input
                     usage = info.hid.usUsage;
                     return true;
                 }
+            }
+        }
+
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Resume)
+            {
+                UpdateRegistration();
             }
         }
 
