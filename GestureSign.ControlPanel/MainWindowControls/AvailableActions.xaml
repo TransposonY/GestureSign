@@ -430,6 +430,11 @@
                                FontSize="16"
                                Click="PasteToSelectedActionMenuItem_Click" />
                     <Separator></Separator>
+                    <MenuItem  x:Name="DelActionMenuItem"
+                               Header="{localization:LocalisedText Action.Delete}"
+                               FontSize="16"
+                               Click="cmdDeleteCommand_Click" />
+                    <Separator></Separator>
                     <MenuItem x:Name="ExportActionMenuItem"
                               Header="{localization:LocalisedText Common.Export}"
                               Click="ExportActionMenuItem_Click"
