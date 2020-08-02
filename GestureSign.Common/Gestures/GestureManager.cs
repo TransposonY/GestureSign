@@ -340,6 +340,53 @@ namespace GestureSign.Common.Gestures
             return newName;
         }
 
+        public string GetNewGestureId(PointPattern[] pointPatterns)
+        {
+            string features = "";
+            foreach (var pattern in pointPatterns)
+            {
+                features += GetPatternFeatures(pattern.Points);
+            }
+            int num = 0;
+            string newId = features;
+            while (GestureExists(newId))
+            {
+                newId = features + num;
+                num++;
+            };
+            return newId;
+        }
+
+        public static string GetPatternFeatures(List<List<Point>> pattern)
+        {
+            string output = "";
+            for (int i = 0; i < pattern.Count; i++)
+            {
+                var currentStroke = pattern[i];
+                if (currentStroke.Count == 1)
+                {
+                    output += 0;
+                    continue;
+                }
+                var strokeFeature = PointPatternMath.GetPointArrayAngularMargins(PointPatternMath.GetInterpolatedPointArray(currentStroke.ToArray(), 9));
+                uint feature = 0;
+                for (int j = 0; j < strokeFeature.Length; j++)
+                {
+                    var feat = strokeFeature[j] / Math.PI + 1 - 3.0 / 8.0;
+                    if (feat < 0)
+                    {
+                        feat = 2 + feat;
+                    }
+                    feature = feature << 4;
+                    feature |= (uint)(feat / 2 * 8) << 1;
+                    feature++;
+                }
+                output += feature.ToString("x8");
+            }
+
+            return output;
+        }
+
         #endregion
     }
 }
