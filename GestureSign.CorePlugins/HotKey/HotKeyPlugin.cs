@@ -19,7 +19,7 @@ namespace GestureSign.CorePlugins.HotKey
         private HotKey _GUI;
         private HotKeySettings _Settings;
         private const string User32 = "user32.dll";
-        private readonly string[] _blackList = new string[] { "Microsoft Edge" };
+        private readonly string _exceptionWindow = "Microsoft Edge";
 
         #endregion
 
@@ -165,7 +165,7 @@ namespace GestureSign.CorePlugins.HotKey
                     return true;
                 }
 
-                if (_blackList.Any(s => ActionPoint.Window.Title.Contains(s)))
+                if (ActionPoint.Window.Title.Contains(_exceptionWindow))
                 {
                     SendKeysSeparately(_Settings);
                 }
