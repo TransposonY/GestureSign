@@ -121,13 +121,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
                 {
-                    string header = (headerClicked.Column.DisplayMemberBinding as Binding)?.Path.Path;
+                    string header = headerClicked.Tag as string;
                     ICollectionView dataView = CollectionViewSource.GetDefaultView(lstAvailableGestures.ItemsSource);
-                    if (dataView.SortDescriptions.Count != 0)
+                    if (dataView.SortDescriptions.Count > 1)
                     {
-                        var lastDirection = dataView.SortDescriptions[0].Direction;
-                        direction = lastDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                        direction = dataView.SortDescriptions[0].Direction == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
                         dataView.SortDescriptions.Clear();
+                        dataView.SortDescriptions.Add(new SortDescription("PatternCount", direction));
                     }
                     if (header != null)
                     {

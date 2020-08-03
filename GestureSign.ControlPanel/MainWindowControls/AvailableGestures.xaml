@@ -6,6 +6,7 @@
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
+             xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="450"
@@ -24,6 +25,12 @@
                 <PropertyGroupDescription PropertyName="Gesture"
                                           Converter="{StaticResource GestureGroupConverter}" />
             </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="PatternCount"
+                                                Direction="Ascending" />
+                <componentmodel:SortDescription PropertyName="Features"
+                                                Direction="Ascending" />
+            </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
         <ItemsPanelTemplate x:Key="IconPanelTemplate">
             <WrapPanel IsItemsHost="True" />
@@ -39,7 +46,7 @@
             </Grid>
         </DataTemplate>
         <GridView x:Key="GridView">
-            <GridViewColumn Header="{localization:LocalisedText Gesture.Header}">
+            <GridViewColumn>
                 <GridViewColumn.CellTemplate>
                     <DataTemplate>
                         <Image Height="45"
@@ -50,9 +57,13 @@
                                Source="{Binding Path=Gesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=45}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
+                <GridViewColumnHeader Content="{localization:LocalisedText Gesture.Header}"
+                                      Tag="Features" />
             </GridViewColumn>
-            <GridViewColumn Header="{localization:LocalisedText Gesture.Applications}"
-                            DisplayMemberBinding="{Binding Path=Applications}" />
+            <GridViewColumn DisplayMemberBinding="{Binding Path=Applications}">
+                <GridViewColumnHeader Content="{localization:LocalisedText Gesture.Applications}"
+                                      Tag="Applications" />
+            </GridViewColumn>
         </GridView>
     </UserControl.Resources>
     <Grid>
