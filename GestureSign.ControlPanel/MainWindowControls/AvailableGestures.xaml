@@ -12,18 +12,11 @@
              d:DesignWidth="450"
              AllowDrop="True">
     <UserControl.Resources>
-        <converters:GestureImageConverter x:Key="GestureImageConverter" />
-        <converters:GestureGroupConverter x:Key="GestureGroupConverter" />
         <converters:GroupHeaderConverter x:Key="GroupHeaderConverter" />
-        <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
-                            x:Key="GestureItemProvider"
-                            IsAsynchronous="True">
-        </ObjectDataProvider>
         <CollectionViewSource x:Key="GestureViewSource"
-                              Source="{Binding Source={StaticResource GestureItemProvider},Path=GestureItems}">
+                              Source="{Binding Path=(viewModel:GestureItemProvider.GestureItems)}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Gesture"
-                                          Converter="{StaticResource GestureGroupConverter}" />
+                <PropertyGroupDescription PropertyName="PatternCount" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
                 <componentmodel:SortDescription PropertyName="PatternCount"
@@ -38,7 +31,7 @@
         <DataTemplate x:Key="IconTemplate">
             <Grid Width="200"
                   Height="70">
-                <Image Source="{Binding Path=Gesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=60}"
+                <Image Source="{Binding Path=GestureImage}"
                        Stretch="Uniform"
                        StretchDirection="DownOnly"
                        VerticalAlignment="Center"
@@ -54,7 +47,7 @@
                                Margin="5"
                                Stretch="Uniform"
                                StretchDirection="DownOnly"
-                               Source="{Binding Path=Gesture.PointPatterns,Converter={StaticResource GestureImageConverter},ConverterParameter=45}" />
+                               Source="{Binding Path=GestureImage}" />
                     </DataTemplate>
                 </GridViewColumn.CellTemplate>
                 <GridViewColumnHeader Content="{localization:LocalisedText Gesture.Header}"

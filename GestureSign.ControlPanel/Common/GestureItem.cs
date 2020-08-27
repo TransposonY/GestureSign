@@ -1,4 +1,5 @@
 ﻿using GestureSign.Common.Gestures;
+using System.Windows.Media;
 
 namespace GestureSign.ControlPanel.Common
 {
@@ -6,5 +7,8 @@ namespace GestureSign.ControlPanel.Common
     {
         public IGesture Gesture { get; set; }
         public string Applications { get; set; }
+        public string Features { get; set; }
+        public int PatternCount { get; set; }
+        public DrawingImage GestureImage { get; set; }
     }
 }

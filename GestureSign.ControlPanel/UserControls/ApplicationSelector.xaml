@@ -15,9 +15,7 @@
     <UserControl.Resources>
         <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter" />
         <converters:CommandConverter x:Key="CommandConverter" />
-        <converters:GestureImageConverter x:Key="GestureImageConverter" />
-        <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter"
-                                                GestureImageConverter="{StaticResource GestureImageConverter}" />
+        <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter" />
         <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
         <CollectionViewSource x:Key="ApplicationViewSource"
                               Filter="AppCollectionViewSource_Filter"

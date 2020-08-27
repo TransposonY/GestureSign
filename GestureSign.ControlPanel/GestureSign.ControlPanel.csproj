@@ -155,7 +155,6 @@
     <Compile Include="Converters\CommandConverter.cs" />
     <Compile Include="Converters\GestureButtonImageConverter.cs" />
     <Compile Include="Converters\GroupHeaderConverter.cs" />
-    <Compile Include="Converters\GestureGroupConverter.cs" />
     <Compile Include="Converters\GestureImageConverter.cs" />
     <Compile Include="Dialogs\ActionDialog.xaml.cs">
       <DependentUpon>ActionDialog.xaml</DependentUpon>

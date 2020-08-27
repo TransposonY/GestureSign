@@ -190,7 +190,7 @@ namespace GestureSign.ControlPanel.Dialogs
             List<IApplication> newApplications = new List<IApplication>();
             var seletedApplications = ApplicationSelector.SeletedApplications;
 
-            var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values);
+            var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values.Select(gi=>gi.Gesture));
             GestureManager.Instance.ImportGestures(gestures, seletedApplications);
 
             foreach (IApplication newApp in seletedApplications)

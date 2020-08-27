@@ -2,24 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
-using GestureSign.Common.Gestures;
+using GestureSign.ControlPanel.Common;
 
 namespace GestureSign.ControlPanel.Converters
 {
     public class GestureButtonImageConverter : IMultiValueConverter
     {
-        public GestureImageConverter GestureImageConverter { get; set; }
-
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var gestureMap = values[0] as Dictionary<string, IGesture>;
+            var gestureMap = values[0] as Dictionary<string, GestureItem>;
             string gestureName = values[1] as string;
             if (gestureName == null || gestureMap == null)
                 return null;
 
-            IGesture gesture = null;
-            if (gestureMap.TryGetValue(gestureName, out gesture))
-                return GestureImageConverter.Convert(gesture.PointPatterns, targetType, parameter, culture);
+            GestureItem gi = null;
+            if (gestureMap.TryGetValue(gestureName, out gi))
+                return gi?.GestureImage;
             return null;
         }
 

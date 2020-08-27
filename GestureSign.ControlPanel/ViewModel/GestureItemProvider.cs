@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.ControlPanel.Common;
@@ -36,10 +37,8 @@ namespace GestureSign.ControlPanel.ViewModel
 
         public GestureItemProvider()
         {
-            GestureMap = GestureManager.Instance.LoadingTask.IsCompleted ? GestureItems.ToDictionary(gi => gi.Gesture.Name, gi => gi.Gesture) : new Dictionary<string, IGesture>();
             GlobalPropertyChanged += (sender, propertyName) =>
             {
-                GestureMap = GestureItems.ToDictionary(gi => gi.Gesture.Name, gi => gi.Gesture);
                 OnPropertyChanged(propertyName);
             };
         }
@@ -50,7 +49,15 @@ namespace GestureSign.ControlPanel.ViewModel
             set { _gestureItems = value; }
         }
 
-        public Dictionary<string, IGesture> GestureMap { get; set; }
+        public static Dictionary<string, GestureItem> GestureMap { get; private set; } = new Dictionary<string, GestureItem>();
+
+        public Dictionary<string, GestureItem> InstanceGestureMap
+        {
+            get
+            {
+                return GestureMap;
+            }
+        }
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
@@ -65,10 +72,11 @@ namespace GestureSign.ControlPanel.ViewModel
                 _gestureItems.Clear();
 
             // Get all available gestures from gesture manager
-            IEnumerable<IGesture> results = GestureManager.Instance.Gestures.OrderBy(g => g.PointPatterns?.Max(p => p.Points.Count));
             var apps = ApplicationManager.Instance.Applications.Where(app => !(app is IgnoredApp)).ToList();
 
-            foreach (var g in results)
+            var color = (Color)Application.Current.Resources["HighlightColor"];
+
+            foreach (var g in GestureManager.Instance.Gestures)
             {
                 var gesture = (Gesture)g;
                 string result = string.Empty;
@@ -81,12 +89,16 @@ namespace GestureSign.ControlPanel.ViewModel
 
                 GestureItem newItem = new GestureItem()
                 {
+                    GestureImage = GestureImage.CreateImage(gesture.PointPatterns, new Size(60, 60), color),
+                    Features = GestureManager.Instance.GetNewGestureId(gesture.PointPatterns),
+                    PatternCount = gesture?.PointPatterns.Max(p => p.Points.Count) ?? 0,
                     Applications = result,
                     Gesture = gesture
                 };
                 GestureItems.Add(newItem);
             }
-            GlobalPropertyChanged?.Invoke(typeof(GestureItemProvider), nameof(GestureMap));
+            GestureMap = GestureItems.ToDictionary(gi => gi.Gesture.Name);
+            GlobalPropertyChanged?.Invoke(typeof(GestureItemProvider), nameof(InstanceGestureMap));
         }
     }
 }

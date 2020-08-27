@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace GestureSign.ControlPanel.UserControls
 {
@@ -16,7 +17,7 @@ namespace GestureSign.ControlPanel.UserControls
     /// </summary>
     public partial class ApplicationSelector : UserControl
     {
-        public Dictionary<string, IGesture> GestureMap { get; set; }
+        public Dictionary<string, GestureItem> GestureMap { get; set; }
 
         public List<AppListItem> UserAppList
         {
@@ -116,7 +117,12 @@ namespace GestureSign.ControlPanel.UserControls
                     newUserAppList.Add(ali);
                 }
             }
-            GestureMap = gestures.ToDictionary(g => g.Name);
+            var color = (Color)Application.Current.Resources["HighlightColor"];
+            GestureMap = gestures.ToDictionary(g => g.Name, g => new GestureItem()
+            {
+                Gesture = g,
+                GestureImage = GestureImage.CreateImage(g.PointPatterns, new Size(56, 56), color),
+            });
             UserAppList = newUserAppList;
             IgnoredAppList = newIgnoredApp;
         }
