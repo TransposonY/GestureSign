@@ -156,6 +156,7 @@ Email:ccfyzh@gmail.com
     <Up>Swipe Up</Up>
     <Down>Swipe Down</Down>
     <Fingers>{0} Fingers </Fingers>
+    <Sort>Sort by</Sort>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteCommandConfirm>Are you sure you want to delete these {0} Commands?</DeleteCommandConfirm>

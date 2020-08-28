@@ -18,10 +18,8 @@
         <ResourceDictionary>
             <converters:ActionTitleConverter x:Key="ActionTitleConverter" />
             <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
-            <converters:GestureImageConverter x:Key="GestureImageConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter"
-                                                    GestureImageConverter="{StaticResource GestureImageConverter}" />
+            <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter" />
             <Canvas x:Key="Chevron-Up"
                     Width="24"
                     Height="24">
@@ -96,6 +94,8 @@
                     <PropertyGroupDescription PropertyName="Action" />
                 </CollectionViewSource.GroupDescriptions>
                 <CollectionViewSource.SortDescriptions>
+                    <componentmodel:SortDescription PropertyName="ActionName"
+                                                    Direction="Ascending" />
                     <componentmodel:SortDescription PropertyName="."
                                                     Direction="Ascending" />
                 </CollectionViewSource.SortDescriptions>
@@ -388,10 +388,9 @@
                                                                    HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center">
                                                                 <Image.Source>
-                                                                    <MultiBinding Converter="{StaticResource GestureButtonImageConverter}"
-                                                                                  ConverterParameter="56">
+                                                                    <MultiBinding Converter="{StaticResource GestureButtonImageConverter}">
                                                                         <Binding Source="{StaticResource GestureItemProvider}"
-                                                                                 Path="GestureMap"
+                                                                                 Path="InstanceGestureMap"
                                                                                  Mode="OneWay" />
                                                                         <Binding  Path="Name.GestureName"
                                                                                   Mode="OneWay" />
@@ -413,6 +412,24 @@
             </ListBox.GroupStyle>
             <ListBox.ContextMenu>
                 <ContextMenu>
+                    <MenuItem  x:Name="SortMenuItem"
+                               Header="{localization:LocalisedText Action.Sort}"
+                               FontSize="16">
+                        <MenuItem  x:Name="SortByNameMenuItem"
+                                   Header="{localization:LocalisedText ActionDialog.ActionName}"
+                                   IsCheckable="True"
+                                   IsChecked="True"
+                                   Click="SortMenuItem_Click"
+                                   Checked="SortMenuItem_Checked"
+                                   FontSize="16" />
+                        <MenuItem  x:Name="SortByGestureMenuItem"
+                                   Header="{localization:LocalisedText Gesture.Header}"
+                                   IsCheckable="True"
+                                   Click="SortMenuItem_Click"
+                                   Checked="SortMenuItem_Checked"
+                                   FontSize="16" />
+                    </MenuItem>
+                    <Separator></Separator>
                     <MenuItem  x:Name="CutActionMenuItem"
                                Header="{localization:LocalisedText Action.CutAction}"
                                FontSize="16"

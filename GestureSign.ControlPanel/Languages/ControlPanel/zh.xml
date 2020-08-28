@@ -160,6 +160,7 @@
     <Up>向上滑</Up>
     <Down>向下滑</Down>
     <Fingers>{0}根手指</Fingers>
+    <Sort>排列方式</Sort>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteCommandConfirm>确定要删除这 {0} 个命令吗？</DeleteCommandConfirm>

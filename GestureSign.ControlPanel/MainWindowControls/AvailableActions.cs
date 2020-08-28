@@ -10,6 +10,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -391,6 +392,40 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
 
             ApplicationManager.Instance.SaveApplications();
+        }
+
+        private void SortMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem clickedMenuItem = (MenuItem)sender;
+            if (!clickedMenuItem.IsChecked)
+                clickedMenuItem.IsChecked = true;
+
+            MenuItem parentMenuItem = clickedMenuItem.Parent as MenuItem;
+            if (parentMenuItem != null)
+                foreach (var item in parentMenuItem.Items)
+                {
+                    var current = item as MenuItem;
+                    if (!ReferenceEquals(current, clickedMenuItem))
+                        if (current != null)
+                            current.IsChecked = false;
+                }
+        }
+
+        private void SortMenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            var lcv = lstAvailableActions.ItemsSource as ListCollectionView;
+            string propertyName = sender == SortByNameMenuItem ? nameof(CommandInfo.ActionName) : nameof(CommandInfo.GestureFeatures);
+            if (lcv.SortDescriptions.Any(sd => sd.PropertyName == propertyName))
+                return;
+
+            lcv.SortDescriptions.Clear();
+            if (sender == SortByGestureMenuItem)
+            {
+                lcv.SortDescriptions.Add(new SortDescription(nameof(CommandInfo.PatternCount), ListSortDirection.Ascending));
+            }
+            lcv.SortDescriptions.Add(new SortDescription(".", ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new SortDescription(propertyName, ListSortDirection.Ascending));
+            lcv.Refresh();
         }
 
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)

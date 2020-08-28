@@ -1,4 +1,5 @@
 ﻿using GestureSign.Common.Applications;
+using GestureSign.ControlPanel.Common;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -49,7 +50,7 @@ namespace GestureSign.ControlPanel.ViewModel
                         {
                             Application.Current.Dispatcher.Invoke(() =>
                             {
-                                CommandInfos.Add(info);
+                                AddCommandInfo(info);
                             }, DispatcherPriority.Input);
                         }
                         catch { }
@@ -85,7 +86,7 @@ namespace GestureSign.ControlPanel.ViewModel
                 foreach (var newCommand in e.NewItems)
                 {
                     var newInfo = CommandInfo.FromCommand((ICommand)newCommand, action);
-                    CommandInfos.Add(newInfo);
+                    AddCommandInfo(newInfo);
                     _listBox.SelectedItems.Add(newInfo);
                 }
                 _listBox.Dispatcher.InvokeAsync(() => _listBox.ScrollIntoView(_listBox.SelectedItem), DispatcherPriority.Background);
@@ -117,12 +118,32 @@ namespace GestureSign.ControlPanel.ViewModel
                     foreach (ICommand newCommand in newAction.Commands)
                     {
                         var newInfo = CommandInfo.FromCommand(newCommand, newAction);
-                        CommandInfos.Add(newInfo);
+                        AddCommandInfo(newInfo);
                         _listBox.SelectedItems.Add(newInfo);
                     }
                 }
                 _listBox.Dispatcher.InvokeAsync(() => _listBox.ScrollIntoView(_listBox.SelectedItem), DispatcherPriority.Background);
             }
+        }
+
+        private void AddCommandInfo(CommandInfo commandInfo)
+        {
+            string features;
+            int patternCount;
+            GestureItem gi = null;
+            if (commandInfo.Action?.GestureName != null && GestureItemProvider.GestureMap.TryGetValue(commandInfo.Action.GestureName, out gi))
+            {
+                features = gi.Features;
+                patternCount = gi.PatternCount;
+            }
+            else
+            {
+                features = string.Empty;
+                patternCount = 0;
+            }
+            commandInfo.GestureFeatures = features;
+            commandInfo.PatternCount = patternCount;
+            CommandInfos.Add(commandInfo);
         }
     }
 }

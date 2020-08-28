@@ -3,7 +3,6 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Plugins;
 using System;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace GestureSign.ControlPanel.ViewModel
@@ -41,6 +40,18 @@ namespace GestureSign.ControlPanel.ViewModel
             get { return _action; }
             set { SetProperty(ref _action, value); }
         }
+
+        public string ActionName
+        {
+            get
+            {
+                return Action?.Name;
+            }
+        }
+
+        public string GestureFeatures { get; set; }
+
+        public int PatternCount { get; set; }
 
         public ICommand Command { get; set; }
 
@@ -83,7 +94,7 @@ namespace GestureSign.ControlPanel.ViewModel
             }
             else
             {
-                return string.Compare(Action.Name, info.Action.Name, false, CultureInfo.CurrentCulture);
+                return 0;
             }
         }
 
