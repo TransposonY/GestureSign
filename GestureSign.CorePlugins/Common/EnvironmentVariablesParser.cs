@@ -30,14 +30,15 @@ namespace GestureSign.CorePlugins.Common
                         clipboardString = (string)iData.GetData(DataFormats.Text);
                     }
                 });
-                command = command.Replace("%GS_Clipboard%", clipboardString);
+                if (!string.IsNullOrEmpty(clipboardString))
+                    command = command.Replace("%GS_Clipboard%", clipboardString);
             }
 
-            if (command.Contains("%GS_ClassName%"))
+            if (command.Contains("%GS_ClassName%") && !string.IsNullOrEmpty(_pointInfo.Window.ClassName))
             {
                 command = command.Replace("%GS_ClassName%", _pointInfo.Window.ClassName);
             }
-            if (command.Contains("%GS_Title%"))
+            if (command.Contains("%GS_Title%") && !string.IsNullOrEmpty(_pointInfo.Window.Title))
             {
                 command = command.Replace("%GS_Title%", _pointInfo.Window.Title);
             }
