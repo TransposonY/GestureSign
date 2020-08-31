@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GestureSign.Common.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,12 @@ namespace GestureSign.CorePlugins.Delay
         public DelayUI()
         {
             InitializeComponent();
+            var waitTypes = new List<KeyValuePair<WaitSetting, string>>();
+            foreach (WaitSetting v in Enum.GetValues(typeof(WaitSetting)))
+            {
+                waitTypes.Add(new KeyValuePair<WaitSetting, string>(v, LocalizationProvider.Instance.GetTextValue("CorePlugins.Delay." + v)));
+            }
+            WaitTypeComboBox.ItemsSource = waitTypes;
         }
 
         public int Timeout
@@ -41,6 +48,19 @@ namespace GestureSign.CorePlugins.Delay
                 DelayComboBox.Text = _timeout.ToString();
             }
         }
+
+        public WaitSetting WaitType
+        {
+            get
+            {
+                return (WaitSetting)WaitTypeComboBox.SelectedValue;
+            }
+            set
+            {
+                WaitTypeComboBox.SelectedValue = value;
+            }
+        }
+
         private void DelayComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             ComboBox txt = sender as ComboBox;

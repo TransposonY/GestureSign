@@ -12,8 +12,15 @@
     </ActivateWindow>
     <Delay>
       <Name>Delay</Name>
-      <Description>Delay for {0} milliseconds</Description>
-      <Millisecond>milliseconds</Millisecond>
+      <Description>Delay for {0} milliseconds </Description>
+      <Timeout>Timeout (milliseconds)</Timeout>
+      <WaitUntil>Stop delaying if </WaitUntil>
+      <NotSet>(Not set)</NotSet>
+      <ForegroundWinChanged>The foreground window has changed</ForegroundWinChanged>
+      <MenuDisplayed>A menu has been displayed</MenuDisplayed>
+      <MenuClosed>A menu has been closed</MenuClosed>
+      <MouseCaptured>A window has received mouse capture</MouseCaptured>
+      <MouseLost>A window has lost mouse capture</MouseLost>
     </Delay>
     <HotKey>
       <Name>Send Hot Key</Name>

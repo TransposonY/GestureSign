@@ -5,16 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              mc:Ignorable="d"
-             d:DesignHeight="70"
+             d:DesignHeight="200"
              d:DesignWidth="300">
-    <StackPanel Orientation="Horizontal">
+    <StackPanel>
+        <TextBlock Text="{localization:LocalisedText CorePlugins.Delay.Timeout}"
+                   VerticalAlignment="Center" />
         <ComboBox x:Name="DelayComboBox"
                   InputMethod.IsInputMethodEnabled="False"
                   KeyDown="DelayComboBox_KeyDown"
                   TextBoxBase.TextChanged="DelayComboBox_TextChanged"
-                  VerticalAlignment="Center"
                   Width="70"
-                  IsEditable="True">
+                  IsEditable="True"
+                  HorizontalAlignment="Left"
+                  Margin="0,10,0,0">
             <ComboBoxItem>10</ComboBoxItem>
             <ComboBoxItem>30</ComboBoxItem>
             <ComboBoxItem>50</ComboBoxItem>
@@ -23,8 +26,13 @@
             <ComboBoxItem>500</ComboBoxItem>
             <ComboBoxItem>1000</ComboBoxItem>
         </ComboBox>
-        <TextBlock Text="{localization:LocalisedText CorePlugins.Delay.Millisecond}"
+        <TextBlock Text="{localization:LocalisedText CorePlugins.Delay.WaitUntil}"
                    VerticalAlignment="Center"
-                   Margin="10,0,0,0" />
+                   Margin="0,20,0,0" />
+        <ComboBox x:Name="WaitTypeComboBox"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"
+                  VerticalAlignment="Center"
+                  Margin="0,10,0,0" />
     </StackPanel>
 </UserControl>

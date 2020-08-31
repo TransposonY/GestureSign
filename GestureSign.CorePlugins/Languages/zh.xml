@@ -13,7 +13,14 @@
     <Delay>
       <Name>延时</Name>
       <Description>延迟 {0} 毫秒</Description>
-      <Millisecond>毫秒</Millisecond>
+      <Timeout>延迟时间（毫秒）</Timeout>
+      <WaitUntil>发生以下事件时停止等待 </WaitUntil>
+      <NotSet>（未设置）</NotSet>
+      <ForegroundWinChanged>顶端窗口切换</ForegroundWinChanged>
+      <MenuDisplayed>菜单弹出</MenuDisplayed>
+      <MenuClosed>菜单关闭</MenuClosed>
+      <MouseCaptured>窗口捕获鼠标</MouseCaptured>
+      <MouseLost>窗口丢失鼠标</MouseLost>
     </Delay>
     <HotKey>
       <Name>发送快捷键</Name>
