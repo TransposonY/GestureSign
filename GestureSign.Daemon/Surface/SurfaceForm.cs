@@ -252,10 +252,11 @@ namespace GestureSign.Daemon.Surface
             foreach (Screen oScreen in Screen.AllScreens)
                 rOutput = Rectangle.Union(rOutput, oScreen.Bounds);
 
-            Left = Screen.AllScreens.Min(s => s.Bounds.Left);
-            Top = Screen.AllScreens.Min(s => s.Bounds.Top);
-            Width = rOutput.Width;
-            Height = rOutput.Height;
+            // 1 pixel margin for avoiding activating Focus assist
+            Left = Screen.AllScreens.Min(s => s.Bounds.Left) + 1;
+            Top = Screen.AllScreens.Min(s => s.Bounds.Top) + 1;
+            Width = rOutput.Width - 1;
+            Height = rOutput.Height - 1;
             // Store offset in class field
             _screenOffset = new Size(Location);
             _screenDpi = NativeMethods.GetScreenDpi() / 96f;
