@@ -47,7 +47,7 @@ namespace GestureSign.ControlPanel.Common
             string tempArchivePath = ExtractToTempDirectory(sourceArchiveFileName);
 
             applications = FileManager.LoadObject<List<IApplication>>(Path.Combine(tempArchivePath, Constants.ActionFileName), false, true, true);
-            gestures = FileManager.LoadObject<List<Gesture>>(Path.Combine(tempArchivePath, Constants.GesturesFileName), false, false, true);
+            gestures = GestureManager.LoadGesturesFromFile(Path.Combine(tempArchivePath, Constants.GesturesFileName), true);
 
             Directory.Delete(tempArchivePath, true);
         }

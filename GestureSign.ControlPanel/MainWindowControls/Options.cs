@@ -469,7 +469,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     LoadSettings();
 
                     var applications = FileManager.LoadObject<List<IApplication>>(Path.Combine(tempArchivePath, GestureSign.Common.Constants.ActionFileName), false, true, true);
-                    var gestures = FileManager.LoadObject<List<Gesture>>(Path.Combine(tempArchivePath, GestureSign.Common.Constants.GesturesFileName), false, false, true);
+                    var gestures = GestureManager.LoadGesturesFromFile(Path.Combine(tempArchivePath, GestureSign.Common.Constants.GesturesFileName), true);
 
                     if (gestures != null)
                     {

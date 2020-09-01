@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GestureSign.Common.Configuration;
 using GestureSign.PointPatterns;
 using GestureSign.Common.Input;
+using Newtonsoft.Json;
 
 namespace GestureSign.Common.Gestures
 {
@@ -119,9 +120,7 @@ namespace GestureSign.Common.Gestures
         private bool LoadDefaults()
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Defaults", Constants.GesturesFileName);
-
-            var gestures = FileManager.LoadObject<List<Gesture>>(path, false);
-            _Gestures = gestures?.Cast<IGesture>().ToList();
+            _Gestures = LoadGesturesFromFile(path);
 
             return _Gestures != null;
         }
@@ -134,10 +133,10 @@ namespace GestureSign.Common.Gestures
                 var files = directory.EnumerateFiles("*" + Constants.GesturesExtension).OrderByDescending(f => f.LastWriteTime);
                 foreach (var file in files)
                 {
-                    var gestures = FileManager.LoadObject<List<Gesture>>(file.FullName, false);
+                    var gestures = LoadGesturesFromFile(file.FullName);
                     if (gestures != null)
                     {
-                        _Gestures = gestures.Cast<IGesture>().ToList();
+                        _Gestures = gestures;
                         return true;
                     }
                 }
@@ -188,15 +187,14 @@ namespace GestureSign.Common.Gestures
             {
                 try
                 {
-                    // Load gestures from file, create empty list if load failed
-                    var gestures = FileManager.LoadObject<List<Gesture>>(
-                       Path.Combine(AppConfig.ApplicationDataPath, Constants.GesturesFileName), true);
+                    string path = Path.Combine(AppConfig.ApplicationDataPath, Constants.GesturesFileName);
+                    var gestures = LoadGesturesFromFile(path);
 
                     if (gestures != null)
                     {
-                        if (gestures.Count != 0 && gestures[0].PointPatterns == null)
+                        if (gestures.Count == 0 || gestures[0].PointPatterns == null)
                         {
-                            List<LegacyGesture> legacyGestures = FileManager.LoadObject<List<LegacyGesture>>(Path.Combine(AppConfig.ApplicationDataPath, Constants.GesturesFileName), true);
+                            List<LegacyGesture> legacyGestures = FileManager.LoadObject<List<LegacyGesture>>(path, true);
 
                             foreach (var gesture in legacyGestures)
                             {
@@ -207,7 +205,7 @@ namespace GestureSign.Common.Gestures
                         }
                         else
                         {
-                            _Gestures = gestures.Cast<IGesture>().ToList();
+                            _Gestures = gestures;
                         }
                     }
 
@@ -239,6 +237,84 @@ namespace GestureSign.Common.Gestures
             {
                 return false;
             }
+        }
+
+        public static List<IGesture> LoadGesturesFromFile(string filePath, bool throwException = false)
+        {
+            if (!File.Exists(filePath)) return null;
+
+            FileManager.WaitFile(filePath);
+
+            List<IGesture> gestureList = new List<IGesture>();
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                JsonTextReader reader = new JsonTextReader(new StringReader(json));
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonToken.StartObject)
+                    {
+                        Gesture gesture = new Gesture();
+                        List<PointPattern> pointPatternList = new List<PointPattern>();
+                        while (reader.Read())
+                        {
+                            if (reader.TokenType != JsonToken.PropertyName) continue;
+                            switch ((string)reader.Value)
+                            {
+                                case nameof(Gesture.Name):
+                                    {
+                                        gesture.Name = reader.ReadAsString();
+                                        break;
+                                    }
+                                case nameof(Gesture.PointPatterns):
+                                    {
+                                        while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+                                        {
+                                            if (reader.TokenType == JsonToken.StartArray)
+                                            {
+                                                var strokeList = new List<List<Point>>();
+                                                while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+                                                {
+                                                    if (reader.TokenType == JsonToken.StartArray)
+                                                    {
+                                                        var stroke = new List<Point>();
+                                                        while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+                                                        {
+                                                            if (reader.TokenType == JsonToken.String)
+                                                            {
+                                                                var num = ((string)reader.Value).Split(',');
+                                                                stroke.Add(new Point(Convert.ToInt32(num[0]), Convert.ToInt32(num[1])));
+                                                            }
+                                                        }
+                                                        strokeList.Add(stroke);
+                                                    }
+                                                }
+                                                PointPattern pointPattern = new PointPattern(strokeList);
+                                                pointPatternList.Add(pointPattern);
+                                            }
+                                        }
+                                        gesture.PointPatterns = pointPatternList.ToArray();
+                                        break;
+                                    }
+                            }
+                            if (gesture.Name != null && gesture.PointPatterns != null)
+                            {
+                                gestureList.Add(gesture);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Logging.LogException(e);
+                if (throwException)
+                    throw;
+                return null;
+            }
+
+            return gestureList;
         }
 
         public string GetGestureSetNameMatch(List<List<Point>> points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matchResult)//PointF[]

@@ -116,7 +116,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         }
                         break;
                     case GestureSign.Common.Constants.GesturesExtension:
-                        var currentGestures = FileManager.LoadObject<List<Gesture>>(settingFile, false);
+                        var currentGestures = GestureManager.LoadGesturesFromFile(settingFile);
                         if (currentGestures != null)
                         {
                             gestures.AddRange(currentGestures);
@@ -190,7 +190,7 @@ namespace GestureSign.ControlPanel.Dialogs
             List<IApplication> newApplications = new List<IApplication>();
             var seletedApplications = ApplicationSelector.SeletedApplications;
 
-            var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values.Select(gi=>gi.Gesture));
+            var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values.Select(gi => gi.Gesture));
             GestureManager.Instance.ImportGestures(gestures, seletedApplications);
 
             foreach (IApplication newApp in seletedApplications)

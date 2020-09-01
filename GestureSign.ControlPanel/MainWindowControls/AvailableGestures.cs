@@ -69,9 +69,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             };
             if (ofdGestures.ShowDialog().Value)
             {
-                var gestures = FileManager.LoadObject<List<Gesture>>(ofdGestures.FileName, false);
-                var newGestures = gestures?.Cast<IGesture>().ToList();
-
+                var newGestures = GestureManager.LoadGesturesFromFile(ofdGestures.FileName);
                 ImportGesture(newGestures);
             }
         }
@@ -169,8 +167,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     {
                         if (file.EndsWith(GestureSign.Common.Constants.GesturesExtension, StringComparison.OrdinalIgnoreCase))
                         {
-                            var gestures = FileManager.LoadObject<List<Gesture>>(file, false);
-                            var newGestures = gestures?.Cast<IGesture>().ToList();
+                            var newGestures = GestureManager.LoadGesturesFromFile(file);
                             ImportGesture(newGestures);
                         }
                     }
