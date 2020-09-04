@@ -237,10 +237,15 @@ namespace GestureSign.Common.Configuration
             {
                 ExeConfigFilename = ConfigPath,
                 RoamingUserConfigFilename = ConfigPath,
-                LocalUserConfigFilename = Path.Combine(LocalApplicationDataPath, Constants.ConfigFileName)
             };
-
-            _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
+            try
+            {
+                _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
+            }
+            catch (Exception e)
+            {
+                Logging.LogException(e);
+            }
             Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
         }
 
