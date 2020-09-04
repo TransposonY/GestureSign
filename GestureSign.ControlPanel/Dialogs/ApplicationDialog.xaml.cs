@@ -76,6 +76,8 @@ namespace GestureSign.ControlPanel.Dialogs
             switch (_currentApplication)
             {
                 case UserApp userApp:
+                    showLimitNumberOfFingers = true;
+                    LimitNumberOfFingersSlider.Minimum = 1;
                     if (!_newApplication)
                     {
                         GroupComboBox.Text = _currentApplication.Group;
@@ -84,10 +86,10 @@ namespace GestureSign.ControlPanel.Dialogs
                         LimitNumberOfFingersSlider.Value = userApp.LimitNumberOfFingers;
                     }
                     isUserApp = true;
-                    showLimitNumberOfFingers = true;
                     break;
                 case GlobalApp globalApp:
                     showLimitNumberOfFingers = true;
+                    LimitNumberOfFingersSlider.Minimum = 2;
                     LimitNumberOfFingersSlider.Value = globalApp.LimitNumberOfFingers;
                     List<FrameworkElement> elements = new List<FrameworkElement> { chCrosshair, ApplicationNameTextBox, ShowRunningButton, BrowseButton, matchUsingRadio, MatchStringTextBox, RegexCheckBox };
                     elements.ForEach(el => el.IsEnabled = false);
