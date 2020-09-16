@@ -92,7 +92,7 @@ namespace GestureSign.Common.Applications
             CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
             _recognizedApplication = GetApplicationFromWindow(CaptureWindow);
 
-            int maxThreshold = 0, maxLimitNumber = 2;
+            int maxThreshold = 0, maxLimitNumber = 1;
 
             foreach (IApplication app in _recognizedApplication)
             {
