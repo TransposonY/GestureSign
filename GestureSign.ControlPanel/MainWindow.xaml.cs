@@ -83,7 +83,7 @@ namespace GestureSign.ControlPanel
             var now = DateTime.Now;
             var entryCollection = logs.Entries;
             int logCount = entryCollection.Count;
-            for (int i = logCount - 1; i > logCount - 1000 && i >= 0; i--)
+            for (int i = logCount - 1; i > logCount - 500 && i < logCount && i >= 0; i--)
             {
                 var entry = entryCollection[i];
                 if (now.Subtract(entry.TimeWritten).TotalHours > 1)
@@ -100,6 +100,8 @@ namespace GestureSign.ControlPanel
 
                     return hasNewLog;
                 }
+                //The collection is dynamic and the number of entries may not be immutable
+                logCount = entryCollection.Count;
             }
             return false;
         }
