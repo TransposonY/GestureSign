@@ -37,7 +37,6 @@ namespace GestureSign.Daemon
                     try
                     {
                         Application.ThreadException += Application_ThreadException;
-                        Application.ApplicationExit += Application_ApplicationExit;
                         Logging.OpenLogFile();
 
                         if (!LocalizationProvider.Instance.LoadFromFile("Daemon"))
@@ -65,6 +64,8 @@ namespace GestureSign.Daemon
                         TrayManager.Instance.Load();
 
                         NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor(uiContext));
+
+                        Application.ApplicationExit += Application_ApplicationExit;
 
                         Application.Run();
                     }
