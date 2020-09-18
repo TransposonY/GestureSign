@@ -147,6 +147,7 @@ namespace GestureSign.Daemon.Surface
             }
 
             ClearSurfaces();
+            _drawingPen.Color = AppConfig.VisualFeedbackColor;
         }
 
         private void AppConfig_ConfigChanged(object sender, EventArgs e)

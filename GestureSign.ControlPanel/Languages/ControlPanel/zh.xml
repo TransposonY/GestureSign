@@ -40,9 +40,9 @@
     <Version>版本：  </Version>
     <ReleaseDate>发布时间：  </ReleaseDate>
     <Information>作者:   TransposonY
-如有发现bug或建议，欢迎反馈：
+发现问题或建议欢迎反馈：
 553078206@qq.com
-交流群：576981420
+QQ交流群：576981420
 
     </Information>
     <SendFeedback>发送反馈</SendFeedback>
@@ -234,6 +234,7 @@
     <VisualFeedbackWidth>轨迹宽度 {0:0} px</VisualFeedbackWidth>
     <Off>关闭</Off>
     <PickColor>选择颜色..</PickColor>
+    <SystemColor>使用系统主题色</SystemColor>
     <MinimumPointDistance>最小点距 {0:F0} px</MinimumPointDistance>
     <Backup>备份所有设置</Backup>
     <Restore>导入设置</Restore>

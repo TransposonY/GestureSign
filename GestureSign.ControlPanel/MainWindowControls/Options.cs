@@ -2,7 +2,6 @@
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
-using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
@@ -10,7 +9,6 @@ using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Hooks;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
@@ -29,7 +27,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
     public partial class Options : UserControl
     {
         Color _VisualFeedbackColor;
-        private const string TaskName = "GestureSignAutoRunTask";
 
         public Options()
         {
@@ -114,6 +111,13 @@ namespace GestureSign.ControlPanel.MainWindowControls
             //_VisualFeedbackColor.G = cdColorPicker.Color.G;
             _VisualFeedbackColor = cdColorPicker.Color;
             AppConfig.VisualFeedbackColor = _VisualFeedbackColor;
+            UpdateVisualFeedbackExample();
+        }
+
+        private void SystemColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.VisualFeedbackColor = Color.Empty;
+            _VisualFeedbackColor = AppConfig.VisualFeedbackColor;
             UpdateVisualFeedbackExample();
         }
 

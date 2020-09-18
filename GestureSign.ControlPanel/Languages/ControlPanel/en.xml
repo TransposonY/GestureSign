@@ -230,6 +230,7 @@ Email:ccfyzh@gmail.com
     <VisualFeedbackWidth>Visual Feedback Width {0:0} px</VisualFeedbackWidth>
     <Off>Off</Off>
     <PickColor>Pick Color...</PickColor>
+    <SystemColor>Follow System Color</SystemColor>
     <MinimumPointDistance>Minimum Point Distance {0:F0} px</MinimumPointDistance>
     <Backup>Backup All User Data</Backup>
     <Restore>Restore User Data</Restore>
