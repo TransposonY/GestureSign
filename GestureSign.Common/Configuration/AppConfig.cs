@@ -3,6 +3,7 @@ using GestureSign.Common.Log;
 using ManagedWinapi.Hooks;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
@@ -12,11 +13,35 @@ namespace GestureSign.Common.Configuration
 {
     public class AppConfig
     {
+        private static bool _loadFlag = true;
+        private static Dictionary<string, object> _settingCache = new Dictionary<string, object>(16);
         static System.Configuration.Configuration _config;
         static Timer Timer;
         public static event EventHandler ConfigChanged;
 
         private static ExeConfigurationFileMap ExeMap;
+
+        private static System.Configuration.Configuration Config
+        {
+            get
+            {
+                if (_config == null || _loadFlag)
+                {
+                    try
+                    {
+                        FileManager.WaitFile(ConfigPath);
+                        _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
+                        _settingCache.Clear();
+                        _loadFlag = false;
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.LogException(e);
+                    }
+                }
+                return _config;
+            }
+        }
 
         public static string ApplicationDataPath { private set; get; }
 
@@ -27,6 +52,8 @@ namespace GestureSign.Common.Configuration
         public static string ConfigPath { private set; get; }
 
         public static string CurrentFolderPath { private set; get; }
+
+        #region Setting Parameters
 
         public static System.Drawing.Color VisualFeedbackColor
         {
@@ -208,6 +235,8 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        #endregion
+
         static AppConfig()
         {
 #if uiAccess
@@ -231,36 +260,20 @@ namespace GestureSign.Common.Configuration
             if (!Directory.Exists(ApplicationDataPath))
                 Directory.CreateDirectory(ApplicationDataPath);
 
-            FileManager.WaitFile(ConfigPath);
-
             ExeMap = new ExeConfigurationFileMap
             {
                 ExeConfigFilename = ConfigPath,
                 RoamingUserConfigFilename = ConfigPath,
             };
-            try
-            {
-                _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
-            }
-            catch (Exception e)
-            {
-                Logging.LogException(e);
-            }
             Timer = new Timer(SaveFile, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         public static void Reload()
         {
-            try
-            {
-                FileManager.WaitFile(ConfigPath);
-
-                _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
-                // ConfigurationManager.RefreshSection("appSettings");
-                if (ConfigChanged != null)
-                    ConfigChanged(new object(), EventArgs.Empty);
-            }
-            catch (Exception e) { Logging.LogException(e); }
+            _loadFlag = true;
+            _settingCache.Clear();
+            if (ConfigChanged != null)
+                ConfigChanged(new object(), EventArgs.Empty);
         }
 
 
@@ -275,8 +288,9 @@ namespace GestureSign.Common.Configuration
             {
                 FileManager.WaitFile(ConfigPath);
                 // Save the configuration file.    
-                _config.AppSettings.SectionInformation.ForceSave = true;
-                _config.Save(ConfigurationSaveMode.Modified);
+                var config = Config;
+                config.AppSettings.SectionInformation.ForceSave = true;
+                config.Save(ConfigurationSaveMode.Modified);
             }
             catch (ConfigurationErrorsException)
             {
@@ -293,7 +307,9 @@ namespace GestureSign.Common.Configuration
 
         private static T GetValue<T>(string key, T defaultValue, Func<string, T> converter)
         {
-            var setting = _config.AppSettings.Settings[key];
+            if (Config == null)
+                return defaultValue;
+            var setting = Config.AppSettings.Settings[key];
             if (setting != null)
             {
                 try
@@ -302,26 +318,41 @@ namespace GestureSign.Common.Configuration
                 }
                 catch
                 {
-                    _config.AppSettings.Settings.Remove(key);
+                    Config.AppSettings.Settings.Remove(key);
                     return defaultValue;
                 }
             }
             return defaultValue;
         }
 
+        private static T GetCacheValue<T>(string key, T defaultValue, Func<string, T> converter)
+        {
+            object output;
+            if (_settingCache.TryGetValue(key, out output))
+            {
+                return (T)output;
+            }
+            else
+            {
+                var value = GetValue(key, defaultValue, converter);
+                _settingCache.Add(key, value);
+                return value;
+            }
+        }
+
         private static int GetValue(string key, int defaultValue)
         {
-            return GetValue(key, defaultValue, s => int.Parse(s));
+            return GetCacheValue(key, defaultValue, s => int.Parse(s));
         }
 
         private static double GetValue(string key, double defaultValue)
         {
-            return GetValue(key, defaultValue, s => double.Parse(s));
+            return GetCacheValue(key, defaultValue, s => double.Parse(s));
         }
 
         private static bool GetValue(string key, bool defaultValue)
         {
-            return GetValue(key, defaultValue, s => bool.Parse(s));
+            return GetCacheValue(key, defaultValue, s => bool.Parse(s));
         }
 
         private static string GetValue(string key, string defaultValue)
@@ -340,7 +371,7 @@ namespace GestureSign.Common.Configuration
                 }
                 catch
                 {
-                    _config.AppSettings.Settings.Remove(key);
+                    Config.AppSettings.Settings.Remove(key);
                     return defaultValue;
                 }
             }
@@ -354,11 +385,11 @@ namespace GestureSign.Common.Configuration
             {
                 try
                 {
-                    return System.Drawing.ColorTranslator.FromHtml(setting);
+                    return GetCacheValue(key, defaultValue, System.Drawing.ColorTranslator.FromHtml);
                 }
                 catch
                 {
-                    _config.AppSettings.Settings.Remove(key);
+                    Config.AppSettings.Settings.Remove(key);
                     return defaultValue;
                 }
             }
@@ -373,13 +404,17 @@ namespace GestureSign.Common.Configuration
 
         private static void SetValue<T>(string key, T value)
         {
-            if (_config.AppSettings.Settings[key] != null)
+            if (Config == null)
+                return;
+            _settingCache.Clear();
+
+            if (Config.AppSettings.Settings[key] != null)
             {
-                _config.AppSettings.Settings[key].Value = value.ToString();
+                Config.AppSettings.Settings[key].Value = value.ToString();
             }
             else
             {
-                _config.AppSettings.Settings.Add(key, value.ToString());
+                Config.AppSettings.Settings.Add(key, value.ToString());
             }
             Save();
         }
