@@ -75,10 +75,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -86,13 +82,9 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
-    <Reference Include="Windows">
-      <HintPath>C:\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -141,7 +133,6 @@
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
     <Compile Include="Localization\LocalisedTextExtension.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
-    <Compile Include="Log\Feedback.cs" />
     <Compile Include="Log\Logging.cs" />
     <Compile Include="Applications\Command.cs" />
     <Compile Include="Applications\Action.cs" />

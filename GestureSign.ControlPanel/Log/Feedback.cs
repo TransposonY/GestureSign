@@ -8,11 +8,12 @@ using System.Management;
 using System.Text;
 using System.Windows;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Log;
 using Microsoft.Win32;
 using SharpRaven;
 using SharpRaven.Data;
 
-namespace GestureSign.Common.Log
+namespace GestureSign.ControlPanel.Log
 {
     public class Feedback
     {

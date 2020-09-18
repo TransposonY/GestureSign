@@ -128,7 +128,7 @@ namespace GestureSign.ControlPanel
 
             string result = await Task.Factory.StartNew(() =>
             {
-                return Feedback.OutputLog();
+                return Log.Feedback.OutputLog();
             });
             await controller.CloseAsync();
 
@@ -138,7 +138,7 @@ namespace GestureSign.ControlPanel
             while (dialogResult != null && dialogResult.Value)
             {
                 result = logWin.Message + "\n" + result;
-                var sendReportTask = Task.Factory.StartNew(() => Feedback.Send(result));
+                var sendReportTask = Task.Factory.StartNew(() => Log.Feedback.Send(result));
 
                 controller = await this.ShowProgressAsync(LocalizationProvider.Instance.GetTextValue("About.Waiting"),
                         LocalizationProvider.Instance.GetTextValue("About.Sending"));

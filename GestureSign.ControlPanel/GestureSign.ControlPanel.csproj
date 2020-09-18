@@ -115,6 +115,12 @@
       <HintPath>..\packages\MahApps.Metro.1.4.3\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -165,6 +171,7 @@
     <Compile Include="Dialogs\ExportImportDialog.xaml.cs">
       <DependentUpon>ExportImportDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Log\Feedback.cs" />
     <Compile Include="UserControls\ApplicationSelector.xaml.cs">
       <DependentUpon>ApplicationSelector.xaml</DependentUpon>
     </Compile>
