@@ -1,5 +1,5 @@
 
-|  | [Store Version](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | Portable Version | Standalone Installer | 
+|  | [Store Edition](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw) | Portable Edition | Installer Edition | 
 | - | :-: | :-: | :-: | 
 | System | Windows10 (version 1607 or later) | Windows 8 or later | Windows 8 or later | 
 | Automatic updating | ✓ | | |
@@ -7,14 +7,33 @@
 | Control high priority programs | Need to be manually run as administrator | Need to be manually run as administrator | ✓ | 
 | Show gesture trail on high priority programs | Need to be manually run as administrator | Need to be manually run as administrator | ✓ | 
 
-> You can only launch the store version if you install both standalone installer version and store version.
+> You can only launch the store edition if you install both standalone installer edition and store edition.
 
 # Download
-## Store Version
+## Store Edition
 
 [Microsoft Store](https://www.microsoft.com/store/p/gesturesign/9n45wqvk2qqw)
 
-## Standalone Installer and Portable Version
+## Standalone Installer and Portable Edition
+
+### v7.5 (21-Sep-2020)
+
+- Added "Follow System Color" button.
+- Fixed issue where single finger gesture cannot be drawn in v7.4.
+
+**Download**
+
+[GestureSign-7.5.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.5/GestureSign-7.5.0.0-Portable.zip)
+
+### v7.4 (10-Sep-2020)
+
+- Added "Limit Number Of Fingers" support for global actions.
+- Added sorting actions by gestures.
+
+**Download**
+
+[GestureSign-7.4.0.0-Portable.zip](https://github.com/TransposonY/GestureSign/releases/download/v7.4/GestureSign-7.4.0.0-Portable.zip)
+
 ### v7.3 (8-May-2019)
 
 - "Paste To New Action" and "Paste To Selected Action" right click menu item.
