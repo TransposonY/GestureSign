@@ -29,6 +29,9 @@ namespace GestureSign.Common.Configuration
                 {
                     try
                     {
+                        if (!Directory.Exists(ApplicationDataPath))
+                            Directory.CreateDirectory(ApplicationDataPath);
+
                         FileManager.WaitFile(ConfigPath);
                         _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
                         _settingCache.Clear();
@@ -240,7 +243,7 @@ namespace GestureSign.Common.Configuration
         static AppConfig()
         {
 #if uiAccess
-            UiAccess = true;
+            UiAccess = Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2;
 #endif
             CurrentFolderPath = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
 #if Portable
@@ -257,9 +260,6 @@ namespace GestureSign.Common.Configuration
             BackupPath = LocalApplicationDataPath + "\\Backup";
 
 #endif
-            if (!Directory.Exists(ApplicationDataPath))
-                Directory.CreateDirectory(ApplicationDataPath);
-
             ExeMap = new ExeConfigurationFileMap
             {
                 ExeConfigFilename = ConfigPath,
