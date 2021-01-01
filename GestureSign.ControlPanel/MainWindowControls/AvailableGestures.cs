@@ -67,7 +67,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 Title = LocalizationProvider.Instance.GetTextValue("Gesture.ImportGesture"),
                 CheckFileExists = true
             };
-            if (ofdGestures.ShowDialog().Value)
+            if (ofdGestures.ShowDialog().GetValueOrDefault())
             {
                 var newGestures = GestureManager.LoadGesturesFromFile(ofdGestures.FileName);
                 ImportGesture(newGestures);
