@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common.Applications;
-using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
@@ -19,8 +15,6 @@ namespace GestureSign.Daemon
 {
     static class Program
     {
-        private const string TouchInputProvider = "GestureSign_TouchInputProvider";
-
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
