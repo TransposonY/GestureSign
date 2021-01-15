@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using ManagedWinapi;
-using ManagedWinapi.Hooks;
 
 namespace GestureSign.Common.Gestures
 {
-    [DataContract]
     [Serializable]
-    [KnownType(typeof(Gesture))]
     public class Gesture : IGesture
     {
         #region Constructors
@@ -23,10 +18,8 @@ namespace GestureSign.Common.Gestures
 
         #region IPointPattern Instance Properties
 
-        [DataMember]
         public string Name { get; set; }
 
-        [DataMember]
         public PointPattern[] PointPatterns { get; set; }
 
         #endregion
