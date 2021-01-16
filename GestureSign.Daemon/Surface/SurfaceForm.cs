@@ -6,9 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
-using GestureSign.Common.Input;
 using GestureSign.Common.Log;
-using GestureSign.Daemon.Input;
 using GestureSign.Daemon.Native;
 using ManagedWinapi.Windows;
 using Microsoft.Win32;
@@ -37,27 +35,12 @@ namespace GestureSign.Daemon.Surface
         private const byte AC_SRC_ALPHA = 0x01;
         #endregion
 
-        #region Public Instance Properties
-
-        public static SurfaceForm Instance { get; }
-
-        #endregion
-
         #region Constructors
-
-        static SurfaceForm()
-        {
-            Instance = new SurfaceForm();
-        }
 
         public SurfaceForm()
         {
+            CreateHandle();
             InitializeForm();
-
-            PointCapture.Instance.PointCaptured += PointCapture_PointCaptured;
-            PointCapture.Instance.CaptureEnded += PointCapture_CaptureEnded;
-            PointCapture.Instance.CaptureCanceled += PointCapture_CaptureCanceled;
-            PointCapture.Instance.CaptureStarted += Instance_CaptureStarted;
             AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             // Respond to system event changes by reinitializing the form
             SystemEvents.DisplaySettingsChanged += AppConfig_ConfigChanged;
@@ -76,11 +59,6 @@ namespace GestureSign.Daemon.Surface
             {
                 if (disposing)
                 {
-                    PointCapture.Instance.PointCaptured -= PointCapture_PointCaptured;
-                    PointCapture.Instance.CaptureEnded -= PointCapture_CaptureEnded;
-                    PointCapture.Instance.CaptureCanceled -= PointCapture_CaptureCanceled;
-                    PointCapture.Instance.CaptureStarted -= Instance_CaptureStarted;
-
                     AppConfig.ConfigChanged -= AppConfig_ConfigChanged;
                     SystemEvents.DisplaySettingsChanged -= AppConfig_ConfigChanged;
                     SystemEvents.UserPreferenceChanged -= AppConfig_ConfigChanged;
@@ -97,59 +75,6 @@ namespace GestureSign.Daemon.Surface
 
         #region Events
 
-        protected void PointCapture_PointCaptured(object sender, PointsCapturedEventArgs e)
-        {
-            var pointCapture = (IPointCapture)sender;
-            if (pointCapture.Mode != CaptureMode.UserDisabled &&
-                pointCapture.State == CaptureState.Capturing &&
-                AppConfig.VisualFeedbackWidth > 0 &&
-                !(e.Points.Count == 1 && e.Points.First().Count == 1))
-            {
-
-                if (_bitmap == null || _lastStroke == null)
-                {
-                    ClearSurfaces();
-                    try
-                    {
-                        _bitmap = new DiBitmap(this.Size);
-                    }
-                    catch (ApplicationException ex)
-                    {
-                        Logging.LogException(ex);
-                    }
-                }
-                DrawSegments(e.Points);
-            }
-        }
-
-        protected void PointCapture_CaptureEnded(object sender, EventArgs e)
-        {
-            if (AppConfig.VisualFeedbackWidth > 0 && _lastStroke != null)
-                EndDraw();
-        }
-
-        protected void PointCapture_CaptureCanceled(object sender, PointsCapturedEventArgs e)
-        {
-            if (AppConfig.VisualFeedbackWidth > 0)
-                EndDraw();
-        }
-
-        private void Instance_CaptureStarted(object sender, PointsCapturedEventArgs e)
-        {
-            var pointCapture = (IPointCapture)sender;
-
-            if (AppConfig.VisualFeedbackWidth <= 0 || pointCapture.Mode == CaptureMode.UserDisabled) return;
-
-            if (_settingsChanged)
-            {
-                _settingsChanged = false;
-                InitializeForm();
-            }
-
-            ClearSurfaces();
-            _drawingPen.Color = AppConfig.VisualFeedbackColor;
-        }
-
         private void AppConfig_ConfigChanged(object sender, EventArgs e)
         {
             ResetSurface();
@@ -164,7 +89,57 @@ namespace GestureSign.Daemon.Surface
 
         }
 
-        public void DrawSegments(List<List<Point>> points)
+        public void StartDrawing()
+        {
+            if (AppConfig.VisualFeedbackWidth <= 0) return;
+
+            if (_settingsChanged)
+            {
+                _settingsChanged = false;
+                InitializeForm();
+            }
+
+            ClearSurfaces();
+            _drawingPen.Color = AppConfig.VisualFeedbackColor;
+        }
+
+        public void EndDrawing()
+        {
+            if (AppConfig.VisualFeedbackWidth <= 0 || _lastStroke == null)
+                return;
+            Hide();
+            TopMost = false;
+
+            ClearSurfaces();
+        }
+
+        public void DrawPoints(List<List<Point>> points)
+        {
+            if (AppConfig.VisualFeedbackWidth > 0 &&
+                !(points.Count == 1 && points[0].Count == 1))
+            {
+
+                if (_bitmap == null || _lastStroke == null)
+                {
+                    ClearSurfaces();
+                    try
+                    {
+                        _bitmap = new DiBitmap(this.Size);
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        Logging.LogException(ex);
+                    }
+                }
+                DrawSegments(points);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void DrawSegments(List<List<Point>> points)
         {
             // Ensure that surface is visible
             if (!Visible)
@@ -218,10 +193,6 @@ namespace GestureSign.Daemon.Surface
             // ToList method creates value copy of stroke list and assigns it to last stroke
             _lastStroke = points.Select(p => p.Count).ToArray();
         }
-
-        #endregion
-
-        #region Private Methods
 
         private void ResetSurface()
         {
@@ -396,13 +367,6 @@ namespace GestureSign.Daemon.Surface
             SetDiBitmap(_bitmap, /*_pathDirtyRect*/pathDirty, (byte)(AppConfig.Opacity * 0xFF));
         }
 
-        private void EndDraw()
-        {
-            Hide();
-            TopMost = false;
-
-            ClearSurfaces();
-        }
         #endregion
 
         #region Base Method Overrides

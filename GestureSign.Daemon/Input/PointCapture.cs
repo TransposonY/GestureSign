@@ -5,6 +5,7 @@ using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Daemon.Filtration;
+using GestureSign.Daemon.Surface;
 using GestureSign.PointPatterns;
 using ManagedWinapi.Hooks;
 using ManagedWinapi.Windows;
@@ -36,6 +37,7 @@ namespace GestureSign.Daemon.Input
         private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
         private readonly System.Threading.Timer _blockTouchDelayTimer;
+        private SurfaceForm _surfaceForm;
 
         private System.Threading.Timer _initialTimeoutTimer;
         SynchronizationContext _currentContext;
@@ -197,7 +199,19 @@ namespace GestureSign.Daemon.Input
 
         protected PointCapture()
         {
-            _pointerInputTargetWindow = new PointerInputTargetWindow();
+            _surfaceForm = new SurfaceForm();
+
+            CaptureStarted += (o, e) => { if (Mode != CaptureMode.UserDisabled) _surfaceForm.StartDrawing(); };
+            CaptureEnded += (o, e) => { _surfaceForm.EndDrawing(); };
+            CaptureCanceled += (o, e) => { _surfaceForm.EndDrawing(); };
+            PointCaptured += (o, e) =>
+            {
+                if (Mode != CaptureMode.UserDisabled && State == CaptureState.Capturing)
+                {
+                    _surfaceForm.DrawPoints(e.Points);
+                }
+            };
+
             _inputProvider = new InputProvider();
             _pointEventTranslator = new PointEventTranslator(_inputProvider);
             _pointEventTranslator.PointDown += (PointEventTranslator_PointDown);
@@ -212,15 +226,16 @@ namespace GestureSign.Daemon.Input
 
             if (AppConfig.UiAccess)
             {
+                _pointerInputTargetWindow = new PointerInputTargetWindow();
+                ModeChanged += (o, e) =>
+                {
+                    if (e.Mode == CaptureMode.UserDisabled)
+                        _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
+                };
                 _blockTouchDelayTimer = new System.Threading.Timer(UpdateBlockTouchInputThresholdCallback, null, Timeout.Infinite, Timeout.Infinite);
                 ForegroundApplicationsChanged += PointCapture_ForegroundApplicationsChanged;
             }
 
-            ModeChanged += (o, e) =>
-            {
-                if (e.Mode == CaptureMode.UserDisabled)
-                    _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
-            };
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         }
 
@@ -238,7 +253,9 @@ namespace GestureSign.Daemon.Input
                     _blockTouchDelayTimer?.Dispose();
                     _pointerInputTargetWindow?.Dispose();
                     _inputProvider?.Dispose();
+                    _surfaceForm?.Dispose();
                 }
+                _surfaceForm = null;
 
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 if (_hWinEventHook != IntPtr.Zero)
@@ -452,7 +469,7 @@ namespace GestureSign.Daemon.Input
 
                 try
                 {
-                    if (SourceDevice == Devices.TouchScreen)
+                    if (SourceDevice == Devices.TouchScreen && _pointerInputTargetWindow != null)
                     {
                         if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
                             _pointerInputTargetWindow.TemporarilyDisable();

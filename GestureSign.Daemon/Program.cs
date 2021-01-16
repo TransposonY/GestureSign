@@ -8,7 +8,6 @@ using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.Common.Plugins;
 using GestureSign.Daemon.Input;
-using GestureSign.Daemon.Surface;
 using GestureSign.Daemon.Triggers;
 
 namespace GestureSign.Daemon
@@ -39,7 +38,6 @@ namespace GestureSign.Daemon
                         }
 
                         PointCapture.Instance.Load();
-                        SurfaceForm.Instance.Load();
                         SynchronizationContext uiContext = SynchronizationContext.Current;
                         TriggerManager.Instance.Load();
 
@@ -78,7 +76,6 @@ namespace GestureSign.Daemon
         {
             NamedPipe.Instance.Dispose();
             PointCapture.Instance.Dispose();
-            SurfaceForm.Instance.Dispose();
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
