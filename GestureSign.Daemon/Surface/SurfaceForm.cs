@@ -147,7 +147,7 @@ namespace GestureSign.Daemon.Surface
                 TopMost = true;
                 Show();
             }
-            if (_lastStroke == null) { _lastStroke = Enumerable.Repeat(0, points.Count).ToArray(); }
+            if (_lastStroke == null) { _lastStroke = new int[points.Count]; }
             if (_lastStroke.Length != points.Count) return;
             try
             {
