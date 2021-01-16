@@ -588,12 +588,10 @@ namespace GestureSign.Daemon.Input
 
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
             if (GestureManager.Instance.GestureName != null)
-                if (SourceDevice == Devices.TouchPad)
-                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName,
-                        new List<List<Point>>() { new List<Point>() { _touchPadStartPoint } },
-                        new List<Point>() { _touchPadStartPoint }, _pointsCaptured.Keys.ToList()));
-                else
-                    OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
+            {
+                List<Point> capturedPoints = SourceDevice == Devices.TouchPad ? new List<Point>() { _touchPadStartPoint } : pointsInformation.FirstCapturedPoints;
+                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, capturedPoints, _pointsCaptured.Keys.ToList()));
+            }
             //else
             //    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
 
