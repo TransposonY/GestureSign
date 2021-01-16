@@ -615,9 +615,8 @@ namespace GestureSign.Daemon.Input
             foreach (var p in point)
             {
                 // Don't accept point if it's within specified distance of last point unless it's the first point
-                if (_pointsCaptured.ContainsKey(p.ContactIdentifier))
+                if (_pointsCaptured.TryGetValue(p.ContactIdentifier, out List<Point> stroke))
                 {
-                    var stroke = _pointsCaptured[p.ContactIdentifier];
                     if (stroke.Count != 0)
                     {
                         if (PointPatternMath.GetDistance(stroke.Last(), p.Point) < threshold)
