@@ -215,6 +215,7 @@ namespace GestureSign.Daemon.Surface
             Name = "SurfaceForm";
             ShowIcon = false;
             StartPosition = FormStartPosition.Manual;
+            Show();
             Hide();
 
 
