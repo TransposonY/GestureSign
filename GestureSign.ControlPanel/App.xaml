@@ -4,8 +4,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              Startup="Application_Startup"
              ShutdownMode="OnMainWindowClose"
-             Exit="Application_Exit"
-             DispatcherUnhandledException="Application_DispatcherUnhandledException">
+             Exit="Application_Exit">
     <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
         <ResourceDictionary>

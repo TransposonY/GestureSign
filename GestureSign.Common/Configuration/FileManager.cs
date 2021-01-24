@@ -54,7 +54,7 @@ namespace GestureSign.Common.Configuration
             }
             catch (Exception ex)
             {
-                Logging.LogException(ex);
+                Logging.LogAndNotice(ex);
                 if (throwException)
                     throw;
                 return false;
@@ -80,7 +80,7 @@ namespace GestureSign.Common.Configuration
             }
             catch (Exception e)
             {
-                Logging.LogException(e);
+                Logging.LogAndNotice(e);
                 if (backup)
                     BackupFile(filePath);
                 if (throwException)

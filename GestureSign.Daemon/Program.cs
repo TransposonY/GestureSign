@@ -30,6 +30,7 @@ namespace GestureSign.Daemon
                     try
                     {
                         Application.ThreadException += Application_ThreadException;
+                        Logging.LoggedExceptionOccurred += (o, e) => ShowException(e);
                         Logging.OpenLogFile();
 
                         if (!LocalizationProvider.Instance.LoadFromFile("Daemon"))
@@ -104,6 +105,14 @@ namespace GestureSign.Daemon
             // Exits the program when the user clicks Abort.
             if (result == DialogResult.Abort)
                 Application.Exit();
+        }
+
+        private static void ShowException(Exception exception)
+        {
+            while (exception.InnerException != null)
+                exception = exception.InnerException;
+
+            MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
     }
 }

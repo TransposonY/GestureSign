@@ -26,6 +26,7 @@ namespace GestureSign.ControlPanel
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            Logging.LoggedExceptionOccurred += (o, ex) => ShowException(ex);
             Logging.OpenLogFile();
             LoadLanguageData();
 
@@ -145,17 +146,46 @@ namespace GestureSign.ControlPanel
             }
         }
 
-        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private void SetupExceptionHandling()
         {
-            Logging.LogException(e.Exception);
-            Exception exception = e.Exception;
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                Logging.LogMessage("AppDomain.CurrentDomain.UnhandledException");
+                Logging.LogException((Exception)e.ExceptionObject);
+                ShowException((Exception)e.ExceptionObject);
+            };
+
+            DispatcherUnhandledException += (s, e) =>
+            {
+                Logging.LogMessage("Application.Current.DispatcherUnhandledException");
+                Logging.LogException(e.Exception);
+                ShowException(e.Exception);
+                e.Handled = true;
+                Environment.Exit(0);
+            };
+
+            System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, e) =>
+            {
+                Logging.LogMessage("TaskScheduler.UnobservedTaskException");
+                Logging.LogException(e.Exception);
+                ShowException(e.Exception);
+                e.SetObserved();
+            };
+        }
+
+        private void ShowException(Exception exception)
+        {
             while (exception.InnerException != null)
                 exception = exception.InnerException;
-            MessageBox.Show(exception + Environment.NewLine + Environment.NewLine + GestureSign.Common.Localization.LocalizationProvider.Instance.GetTextValue("Messages.UnexpectedException"), "Error",
-                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
 
-            e.Handled = true;
-            Environment.Exit(0);
+            MessageBox.Show(exception.Message, "Error",
+                MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            SetupExceptionHandling();
+            base.OnStartup(e);
         }
     }
 }

@@ -19,23 +19,25 @@ namespace GestureSign.Common.Log
                 return "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
             }
 
-            private string GetVersion()
+            private string GetNameAndVersion()
             {
-                return "[" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + "] ";
+                var assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+                return $"[{assemblyName.Name} v{assemblyName.Version}] ";
             }
 
             public override void WriteLine(string value)
             {
-                base.WriteLine(GetTimestamp() + GetVersion() + value);
+                base.WriteLine(GetTimestamp() + GetNameAndVersion() + value);
             }
 
             public override void Write(string value)
             {
-                base.Write(GetTimestamp() + GetVersion() + value);
+                base.Write(GetTimestamp() + GetNameAndVersion() + value);
             }
         }
 
         public static string LogFilePath => _logFilePath;
+        public static event EventHandler<Exception> LoggedExceptionOccurred;
 
         public static bool OpenLogFile()
         {
@@ -49,9 +51,9 @@ namespace GestureSign.Common.Log
                 Console.SetError(sw);
                 result = true;
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                LogAndNotice(e);
                 result = false;
             }
             return result;
@@ -68,6 +70,12 @@ namespace GestureSign.Common.Log
             }
         }
 
+        public static void LogAndNotice(Exception e)
+        {
+            LogException(e);
+            LoggedExceptionOccurred?.Invoke(null, e);
+        }
+
         public static void LogMessage(string message)
         {
             Console.WriteLine(message);
@@ -78,7 +86,7 @@ namespace GestureSign.Common.Log
         {
             if (File.Exists(logPath))
             {
-                if (new FileInfo(logPath).Length > 10240)
+                if (new FileInfo(logPath).Length > 102400)
                     File.Delete(logPath);
             }
         }

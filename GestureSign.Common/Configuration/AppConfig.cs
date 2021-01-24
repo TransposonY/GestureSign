@@ -39,7 +39,7 @@ namespace GestureSign.Common.Configuration
                     }
                     catch (Exception e)
                     {
-                        Logging.LogException(e);
+                        Logging.LogAndNotice(e);
                     }
                 }
                 return _config;
@@ -292,13 +292,14 @@ namespace GestureSign.Common.Configuration
                 config.AppSettings.SectionInformation.ForceSave = true;
                 config.Save(ConfigurationSaveMode.Modified);
             }
-            catch (ConfigurationErrorsException)
+            catch (ConfigurationErrorsException e)
             {
                 Reload();
+                Logging.LogAndNotice(e);
             }
             catch (Exception e)
             {
-                Logging.LogException(e);
+                Logging.LogAndNotice(e);
             }
             // Force a reload of the changed section.    
             ConfigurationManager.RefreshSection("appSettings");
