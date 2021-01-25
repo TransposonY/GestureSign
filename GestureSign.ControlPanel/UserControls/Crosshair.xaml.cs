@@ -1,74 +1,42 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace GestureSign.ControlPanel.UserControls
 {
     /// <summary>
     /// Crosshair.xaml 的交互逻辑
     /// </summary>
-    public partial class Crosshair : UserControl, IDisposable
+    public partial class Crosshair : UserControl
     {
-        Cursor myCursor;
-        BitmapImage imgCrosshair = new BitmapImage(new Uri(@"../../Resources/crosshair.ico", UriKind.Relative));
-
         public event EventHandler<MouseButtonEventArgs> CrosshairDragged;
 
         public event EventHandler<MouseEventArgs> CrosshairDragging;
 
         bool isMove = false;//是否需要移动
+
         public Crosshair()
         {
             InitializeComponent();
-            // use file path to avoid System.IO.IOException caused by GetTempFileName in System.Windows.Input.Cursor.LoadFromStream
-            myCursor = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\crosshair.cur"));
         }
 
-        // Flag: Has Dispose already been called?
-        bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers.
-        public void Dispose()
+        private void Crosshair_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
+            var source = e.OriginalSource as Ellipse;
+            if (source != null)
             {
-                // Free any other managed objects here.
-                myCursor.Dispose();
-            }
-
-            // Free any unmanaged objects here.
-            //
-            disposed = true;
-        }
-
-        private void dragger_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.OriginalSource.GetType() == typeof(Image))
-            {
-                //Image image = e.OriginalSource as Image;
                 isMove = true;
-                dragger.Source = null;
-                dragger.Cursor = myCursor;
-                dragger.CaptureMouse();
+                Dragger.Visibility = System.Windows.Visibility.Hidden;
+                source.Cursor = Cursors.Cross;
+                source.CaptureMouse();
             }
 
         }
 
-        private void dragger_MouseMove(object sender, MouseEventArgs e)
+        private void Crosshair_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.OriginalSource != null && e.OriginalSource.GetType() == typeof(Image) && isMove)
+            if (e.OriginalSource != null && e.OriginalSource.GetType() == typeof(Ellipse) && isMove)
             {
                 if (CrosshairDragging != null)
                 {
@@ -77,18 +45,16 @@ namespace GestureSign.ControlPanel.UserControls
             }
         }
 
-        private void dragger_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Crosshair_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource.GetType() == typeof(Image))
+            var source = e.OriginalSource as Ellipse;
+            if (source != null)
             {
-                dragger.Source = imgCrosshair;
-                dragger.Cursor = Cursors.Cross;
+                source.ReleaseMouseCapture();
+                source.Cursor = null;
+                Dragger.Visibility = System.Windows.Visibility.Visible;
                 isMove = false;
-                dragger.ReleaseMouseCapture();
-                if (CrosshairDragged != null)
-                {
-                    CrosshairDragged(this, e);
-                }
+                CrosshairDragged?.Invoke(this, e);
             }
         }
     }
