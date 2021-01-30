@@ -1,4 +1,5 @@
-﻿using GestureSign.Common.Applications;
+﻿using GestureSign.Common;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
@@ -31,7 +32,7 @@ namespace GestureSign.ControlPanel
             LoadLanguageData();
 
             bool createdNew;
-            mutex = new Mutex(true, "GestureSignControlPanel", out createdNew);
+            mutex = new Mutex(true, Constants.ControlPanel, out createdNew);
             if (createdNew)
             {
                 if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
@@ -42,13 +43,13 @@ namespace GestureSign.ControlPanel
                 GestureSign.Common.Plugins.PluginManager.Instance.Load(null);
                 ApplicationManager.Instance.Load(null);
 
-                NamedPipe.Instance.RunNamedPipeServer("GestureSignControlPanel", new MessageProcessor());
+                NamedPipe.Instance.RunNamedPipeServer(Constants.ControlPanel, new MessageProcessor());
 
-                ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", "GestureSignDaemon");
-                GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", "GestureSignDaemon");
+                ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", Constants.Daemon);
+                GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", Constants.Daemon);
                 AppConfig.ConfigChanged += (o, ea) =>
                 {
-                    NamedPipe.SendMessageAsync("LoadConfiguration", "GestureSignDaemon");
+                    NamedPipe.SendMessageAsync("LoadConfiguration", Constants.Daemon);
                 };
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();

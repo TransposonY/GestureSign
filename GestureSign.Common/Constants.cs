@@ -10,6 +10,9 @@
         public const string ArchivesExtension = ".ges";
         public const string BackupFileExtension = ".gsb";
         public const string ConfigFileName = "GestureSign.config";
-
+        public const string ControlPanel = "GestureSignControlPanel";
+        public const string Daemon = "GestureSignDaemon";
+        public const string ControlPanelFileName = "GestureSign.exe";
+        public const string DaemonFileName = "GestureSignDaemon.exe";
     }
 }

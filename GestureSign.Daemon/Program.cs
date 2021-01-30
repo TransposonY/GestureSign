@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
+using GestureSign.Common;
 using GestureSign.Common.Applications;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
@@ -21,7 +22,7 @@ namespace GestureSign.Daemon
         static void Main()
         {
             bool createdNew;
-            using (new Mutex(true, "GestureSignDaemon", out createdNew))
+            using (new Mutex(true, Constants.Daemon, out createdNew))
             {
                 if (createdNew)
                 {
@@ -56,7 +57,7 @@ namespace GestureSign.Daemon
                         PluginManager.Instance.Load(hostControl, uiContext);
                         TrayManager.Instance.Load();
 
-                        NamedPipe.Instance.RunNamedPipeServer("GestureSignDaemon", new MessageProcessor(uiContext));
+                        NamedPipe.Instance.RunNamedPipeServer(Constants.Daemon, new MessageProcessor(uiContext));
 
                         Application.ApplicationExit += Application_ApplicationExit;
 

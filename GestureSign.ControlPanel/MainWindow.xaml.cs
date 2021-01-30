@@ -1,4 +1,5 @@
-﻿using GestureSign.Common.Configuration;
+﻿using GestureSign.Common;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Common;
@@ -174,8 +175,8 @@ namespace GestureSign.ControlPanel
             string daemonRecord;
             using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
             {
-                string controlPanelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
-                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                string controlPanelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.ControlPanelFileName);
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.DaemonFileName);
 
                 controlPanelRecord = layers?.GetValue(controlPanelPath) as string;
                 daemonRecord = layers?.GetValue(daemonPath) as string;
@@ -187,7 +188,7 @@ namespace GestureSign.ControlPanel
 
         private void StartDaemon()
         {
-            string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+            string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.DaemonFileName);
             if (!File.Exists(daemonPath))
             {
                 MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Messages.CannotFindDaemonMessage"),
@@ -197,7 +198,7 @@ namespace GestureSign.ControlPanel
             }
 
             bool createdNewDaemon;
-            using (new Mutex(false, "GestureSignDaemon", out createdNewDaemon))
+            using (new Mutex(false, Constants.Daemon, out createdNewDaemon))
             {
             }
             if (createdNewDaemon)

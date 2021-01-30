@@ -582,7 +582,7 @@ namespace GestureSign.Daemon.Input
                 _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
 
-                if (!NamedPipe.SendMessageAsync(_pointPatternCache.Select(p => p.Points).ToList(), "GestureSignControlPanel").Result)
+                if (!NamedPipe.SendMessageAsync(_pointPatternCache.Select(p => p.Points).ToList(), Constants.ControlPanel).Result)
                     Mode = CaptureMode.Normal;
             }
 

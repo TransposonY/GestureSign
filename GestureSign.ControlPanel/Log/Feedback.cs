@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Windows;
+using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Log;
 using Microsoft.Win32;
@@ -59,7 +60,7 @@ namespace GestureSign.ControlPanel.Log
 
             using (RegistryKey layers = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"))
             {
-                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                string daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.DaemonFileName);
                 var daemonRecord = layers?.GetValue(daemonPath) as string;
                 if (daemonRecord != null && daemonRecord.Contains("WIN8RTM")) version += " CompatibilityMode";
             }

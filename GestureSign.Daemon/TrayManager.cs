@@ -73,7 +73,7 @@ namespace GestureSign.Daemon
             _controlPanelMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.ControlPanel");
             _controlPanelMenuItem.Click += (o, e) =>
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSign.exe");
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.ControlPanelFileName);
                 if (File.Exists(path))
                     using (Process daemon = new Process())
                     {
@@ -100,7 +100,7 @@ namespace GestureSign.Daemon
             _exitGestureSignMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Exit");
             _exitGestureSignMenuItem.Click += async (o, e) =>
             {
-                await NamedPipe.SendMessageAsync("Exit", "GestureSignControlPanel", false);
+                await NamedPipe.SendMessageAsync("Exit", Constants.ControlPanel, false);
                 // try to fix exception 0xc0020001
                 Application.DoEvents();
                 Application.Exit();

@@ -211,7 +211,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 WshShell shell = new WshShell();
                 IWshShortcut shortCut = (IWshShortcut)shell.CreateShortcut(lnkPath);
-                shortCut.TargetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GestureSignDaemon.exe");
+                shortCut.TargetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
                 //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
                 shortCut.WindowStyle = 7;
                 shortCut.Arguments = "";

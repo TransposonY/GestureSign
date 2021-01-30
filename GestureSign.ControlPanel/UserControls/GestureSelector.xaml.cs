@@ -1,4 +1,5 @@
-﻿using GestureSign.Common.Gestures;
+﻿using GestureSign.Common;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using System.Linq;
 using System.Windows;
@@ -69,14 +70,14 @@ namespace GestureSign.ControlPanel.UserControls
                 DrawGestureTextBlock.Visibility = Visibility.Visible;
                 ExistingTextBlock.Visibility = RedrawButton.Visibility = Visibility.Collapsed;
                 MessageProcessor.GotNewPattern += MessageProcessor_GotNewPattern;
-                NamedPipe.SendMessageAsync("StartTeaching", "GestureSignDaemon");
+                NamedPipe.SendMessageAsync("StartTeaching", Constants.Daemon);
             }
             else
             {
                 DrawGestureTextBlock.Visibility = Visibility.Collapsed;
                 RedrawButton.Visibility = Visibility.Visible;
                 MessageProcessor.GotNewPattern -= MessageProcessor_GotNewPattern;
-                NamedPipe.SendMessageAsync("StopTraining", "GestureSignDaemon");
+                NamedPipe.SendMessageAsync("StopTraining", Constants.Daemon);
             }
         }
 
