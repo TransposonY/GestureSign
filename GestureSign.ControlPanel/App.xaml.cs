@@ -185,6 +185,7 @@ namespace GestureSign.ControlPanel
         protected override void OnStartup(StartupEventArgs e)
         {
             SetupExceptionHandling();
+            AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
             base.OnStartup(e);
         }
     }
