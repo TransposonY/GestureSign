@@ -105,6 +105,7 @@
     <Compile Include="Input\InputProvider.cs" />
     <Compile Include="Input\InputPointsEventArgs.cs" />
     <Compile Include="Input\MessageWindow.cs" />
+    <Compile Include="Input\SynTouchPad.cs" />
     <Compile Include="Input\TouchPadDevice.cs" />
     <Compile Include="Input\TouchScreenDevice.cs" />
     <Compile Include="Input\PenDevice.cs" />
@@ -205,6 +206,17 @@
     <None Include="Resources\normal_daemon.ico" />
     <None Include="Resources\add.ico" />
     <None Include="Resources\stop.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SYNCTRLLib">
+      <Guid>{82D70786-7968-46EA-836D-203AEBCA4481}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

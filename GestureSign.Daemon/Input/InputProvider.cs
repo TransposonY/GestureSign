@@ -10,6 +10,7 @@ namespace GestureSign.Daemon.Input
     {
         private bool disposedValue = false; // To detect redundant calls
         private MessageWindow _messageWindow;
+        private SynTouchPad _synTouchPad;
 
         public LowLevelMouseHook LowLevelMouseHook;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
@@ -26,6 +27,8 @@ namespace GestureSign.Daemon.Input
                 {
                     LowLevelMouseHook.StartHook();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            UpdateSynTouchPadState();
         }
 
         private void AppConfig_ConfigChanged(object sender, System.EventArgs e)
@@ -42,6 +45,30 @@ namespace GestureSign.Daemon.Input
             if (e.RawData.Count == 0)
                 return;
             PointsIntercepted?.Invoke(this, e);
+        }
+
+        private void UpdateSynTouchPadState()
+        {
+            if (_synTouchPad != null)
+            {
+                _synTouchPad.PointsIntercepted -= MessageWindow_PointsIntercepted;
+                _synTouchPad.Dispose();
+                _synTouchPad = null;
+            }
+            if (AppConfig.RegisterTouchPad)
+            {
+                _synTouchPad = new SynTouchPad();
+                if (_synTouchPad.IsAvailable)
+                {
+                    _synTouchPad.PointsIntercepted += MessageWindow_PointsIntercepted;
+                    _synTouchPad.Initialize();
+                }
+                else
+                {
+                    _synTouchPad.Dispose();
+                    _synTouchPad = null;
+                }
+            }
         }
 
         #region IDisposable Support
