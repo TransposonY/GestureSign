@@ -6,7 +6,7 @@ namespace GestureSign.Daemon.Native
     #region  Windows.h structure declarations
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct RAWINPUT
+    public struct RAWINPUT
     {
 
         /// RAWINPUTHEADER->tagRAWINPUTHEADER
@@ -15,7 +15,7 @@ namespace GestureSign.Daemon.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct RAWHID
+    public struct RAWHID
     {
         [MarshalAs(UnmanagedType.U4)]
         public int dwSizHid;
@@ -24,7 +24,7 @@ namespace GestureSign.Daemon.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct RAWINPUTDEVICE
+    public struct RAWINPUTDEVICE
     {
         [MarshalAs(UnmanagedType.U2)]
         public ushort usUsagePage;
@@ -36,7 +36,7 @@ namespace GestureSign.Daemon.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct RAWINPUTDEVICELIST
+    public struct RAWINPUTDEVICELIST
     {
         public IntPtr hDevice;
         [MarshalAs(UnmanagedType.U4)]
@@ -44,7 +44,7 @@ namespace GestureSign.Daemon.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct RAWINPUTHEADER
+    public struct RAWINPUTHEADER
     {
         [MarshalAs(UnmanagedType.U4)]
         public int dwType;

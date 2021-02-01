@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
-using GestureSign.Common.Localization;
 using GestureSign.Daemon.Native;
 using Microsoft.Win32;
 
@@ -15,9 +14,6 @@ namespace GestureSign.Daemon.Input
 {
     public class MessageWindow : NativeWindow
     {
-        private bool _xAxisDirection;
-        private bool _yAxisDirection;
-        private bool _isAxisCorresponds;
         private Screen _currentScr;
 
         private static readonly HandleRef HwndMessage = new HandleRef(null, new IntPtr(-3));
@@ -25,7 +21,6 @@ namespace GestureSign.Daemon.Input
         private List<RawData> _outputTouchs = new List<RawData>(1);
         private int _requiringContactCount;
         private Dictionary<IntPtr, ushort> _validDevices = new Dictionary<IntPtr, ushort>();
-        private Point _physicalMax;
 
         private Devices _sourceDevice;
         private List<ushort> _registeredDeviceList = new List<ushort>(1);
@@ -315,39 +310,10 @@ namespace GestureSign.Daemon.Input
                             return;
                     }
 
-                    uint pcbSize = 0;
-                    NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
-                    IntPtr pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-                    using (new SafeUnmanagedMemoryHandle(pPreparsedData))
+                    using (PenDevice penDevice = new PenDevice(buffer, ref raw))
                     {
-                        NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
-                        IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
+                        DeviceStates state = penDevice.GetPenState();
 
-                        ushort[] usageList = GetButtonList(pPreparsedData, pRawData, 0, raw.hid.dwSizHid);
-                        DeviceStates state = DeviceStates.None;
-                        foreach (var u in usageList)
-                        {
-                            switch (u)
-                            {
-                                case NativeMethods.TipId:
-                                    state |= DeviceStates.Tip;
-                                    break;
-                                case NativeMethods.InRangeId:
-                                    state |= DeviceStates.InRange;
-                                    break;
-                                case NativeMethods.BarrelButtonId:
-                                    state |= DeviceStates.RightClickButton;
-                                    break;
-                                case NativeMethods.InvertId:
-                                    state |= DeviceStates.Invert;
-                                    break;
-                                case NativeMethods.EraserId:
-                                    state |= DeviceStates.Eraser;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
                         if (_sourceDevice == Devices.None || _sourceDevice == Devices.TouchScreen)
                         {
                             if ((state & _penGestureButton) != 0)
@@ -356,7 +322,7 @@ namespace GestureSign.Daemon.Input
                                 if (_currentScr == null)
                                     return;
                                 _sourceDevice = Devices.Pen;
-                                GetCurrentScreenOrientation();
+                                PenDevice.GetCurrentScreenOrientation();
                             }
                             else
                                 return;
@@ -368,30 +334,9 @@ namespace GestureSign.Daemon.Input
                                 state = DeviceStates.None;
                             }
                         }
-                        if (_physicalMax.IsEmpty)
-                            _physicalMax = GetPhysicalMax(1, pPreparsedData);
-
-                        int physicalX = 0;
-                        int physicalY = 0;
-
-                        HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawData, raw.hid.dwSizHid);
-                        HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawData, raw.hid.dwSizHid);
-
-                        int x, y;
-                        if (_isAxisCorresponds)
-                        {
-                            x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
-                            y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
-                        }
-                        else
-                        {
-                            x = physicalY * _currentScr.Bounds.Width / _physicalMax.Y;
-                            y = physicalX * _currentScr.Bounds.Height / _physicalMax.X;
-                        }
-                        x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
-                        y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
-                        _outputTouchs = new List<RawData>(1);
-                        _outputTouchs.Add(new RawData(state, 0, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
+                        penDevice.GetPhysicalMax(1);
+                        Point point = penDevice.GetCoordinate(0, _currentScr);
+                        _outputTouchs = new List<RawData>(1) { new RawData(state, 0, point) };
                     }
                 }
                 else if (usage == NativeMethods.TouchScreenUsage)
@@ -404,33 +349,16 @@ namespace GestureSign.Daemon.Input
                         if (_currentScr == null)
                             return;
                         _sourceDevice = Devices.TouchScreen;
-                        GetCurrentScreenOrientation();
+                        TouchScreenDevice.GetCurrentScreenOrientation();
                     }
                     else if (_sourceDevice != Devices.TouchScreen)
                         return;
 
-                    uint pcbSize = 0;
-                    NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
-
-                    IntPtr pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-                    using (new SafeUnmanagedMemoryHandle(pPreparsedData))
+                    using (TouchScreenDevice touchScreen = new TouchScreenDevice(buffer, ref raw))
                     {
-                        NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
-
-                        int contactCount = 0;
-                        IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
-                        if (HidNativeApi.HIDP_STATUS_SUCCESS != HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
-                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid))
-                        {
-                            throw new ApplicationException(LocalizationProvider.Instance.GetTextValue("Messages.ContactCountError"));
-                        }
-                        int linkCount = 0;
-                        HidNativeApi.HidP_GetLinkCollectionNodes(null, ref linkCount, pPreparsedData);
-                        HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
-                        HidNativeApi.HidP_GetLinkCollectionNodes(lcn, ref linkCount, pPreparsedData);
-
-                        if (_physicalMax.IsEmpty)
-                            _physicalMax = GetPhysicalMax(linkCount, pPreparsedData);
+                        int contactCount = touchScreen.GetContactCount();
+                        HidNativeApi.HIDP_LINK_COLLECTION_NODE[] linkCollection = touchScreen.GetLinkCollectionNodes();
+                        touchScreen.GetPhysicalMax(linkCollection.Length);
 
                         if (contactCount != 0)
                         {
@@ -438,40 +366,8 @@ namespace GestureSign.Daemon.Input
                             _outputTouchs = new List<RawData>(contactCount);
                         }
                         if (_requiringContactCount == 0) return;
-                        int contactIdentifier = 0;
-                        int physicalX = 0;
-                        int physicalY = 0;
-                        for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
-                        {
-                            for (short nodeIndex = 1; nodeIndex <= lcn[0].NumberOfChildren; nodeIndex++)
-                            {
-                                IntPtr pRawDataPacket = new IntPtr(pRawData.ToInt64() + dwIndex * raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, NativeMethods.ContactIdentifierId, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
 
-                                ushort[] usageList = GetButtonList(pPreparsedData, pRawData, nodeIndex, raw.hid.dwSizHid);
-
-                                int x, y;
-                                if (_isAxisCorresponds)
-                                {
-                                    x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
-                                    y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
-                                }
-                                else
-                                {
-                                    x = physicalY * _currentScr.Bounds.Width / _physicalMax.Y;
-                                    y = physicalX * _currentScr.Bounds.Height / _physicalMax.X;
-                                }
-                                x = _xAxisDirection ? x : _currentScr.Bounds.Width - x;
-                                y = _yAxisDirection ? y : _currentScr.Bounds.Height - y;
-                                bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip ? DeviceStates.Tip : DeviceStates.None, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
-
-                                if (--_requiringContactCount == 0) break;
-                            }
-                            if (_requiringContactCount == 0) break;
-                        }
+                        touchScreen.GetRawDatas(linkCollection[0].NumberOfChildren, _currentScr, ref _requiringContactCount, ref _outputTouchs);
                     }
                 }
                 else if (usage == NativeMethods.TouchPadUsage)
@@ -486,28 +382,11 @@ namespace GestureSign.Daemon.Input
                     else if (_sourceDevice != Devices.TouchPad)
                         return;
 
-                    uint pcbSize = 0;
-                    NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
-                    IntPtr pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-                    using (new SafeUnmanagedMemoryHandle(pPreparsedData))
+                    using (TouchPadDevice touchPad = new TouchPadDevice(buffer, ref raw))
                     {
-                        NativeMethods.GetRawInputDeviceInfo(raw.header.hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
-
-                        int contactCount = 0;
-                        IntPtr pRawData = new IntPtr(buffer.ToInt64() + (raw.header.dwSize - raw.hid.dwSizHid * raw.hid.dwCount));
-                        if (HidNativeApi.HIDP_STATUS_SUCCESS != HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, 0, NativeMethods.ContactCountId,
-                            ref contactCount, pPreparsedData, pRawData, raw.hid.dwSizHid))
-                        {
-                            throw new ApplicationException(LocalizationProvider.Instance.GetTextValue("Messages.ContactCountError"));
-                        }
-
-                        int linkCount = 0;
-                        HidNativeApi.HidP_GetLinkCollectionNodes(null, ref linkCount, pPreparsedData);
-                        HidNativeApi.HIDP_LINK_COLLECTION_NODE[] lcn = new HidNativeApi.HIDP_LINK_COLLECTION_NODE[linkCount];
-                        HidNativeApi.HidP_GetLinkCollectionNodes(lcn, ref linkCount, pPreparsedData);
-
-                        if (_physicalMax.IsEmpty)
-                            _physicalMax = GetPhysicalMax(linkCount, pPreparsedData);
+                        int contactCount = touchPad.GetContactCount();
+                        HidNativeApi.HIDP_LINK_COLLECTION_NODE[] linkCollection = touchPad.GetLinkCollectionNodes();
+                        touchPad.GetPhysicalMax(linkCollection.Length);
 
                         if (contactCount != 0)
                         {
@@ -516,32 +395,7 @@ namespace GestureSign.Daemon.Input
                         }
                         if (_requiringContactCount == 0) return;
 
-                        int contactIdentifier = 0;
-                        int physicalX = 0;
-                        int physicalY = 0;
-
-                        for (int dwIndex = 0; dwIndex < raw.hid.dwCount; dwIndex++)
-                        {
-                            for (short nodeIndex = 1; nodeIndex <= lcn[0].NumberOfChildren; nodeIndex++)
-                            {
-                                IntPtr pRawDataPacket = new IntPtr(pRawData.ToInt64() + dwIndex * raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetUsageValue(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, NativeMethods.ContactIdentifierId, ref contactIdentifier, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.XCoordinateId, ref physicalX, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-                                HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, nodeIndex, NativeMethods.YCoordinateId, ref physicalY, pPreparsedData, pRawDataPacket, raw.hid.dwSizHid);
-
-                                ushort[] usageList = GetButtonList(pPreparsedData, pRawData, nodeIndex, raw.hid.dwSizHid);
-
-                                int x, y;
-                                x = physicalX * _currentScr.Bounds.Width / _physicalMax.X;
-                                y = physicalY * _currentScr.Bounds.Height / _physicalMax.Y;
-
-                                bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;
-                                _outputTouchs.Add(new RawData(tip ? DeviceStates.Tip : DeviceStates.None, contactIdentifier, new Point(x + _currentScr.Bounds.X, y + _currentScr.Bounds.Y)));
-
-                                if (--_requiringContactCount == 0) break;
-                            }
-                            if (_requiringContactCount == 0) break;
-                        }
+                        touchPad.GetRawDatas(linkCollection[0].NumberOfChildren, _currentScr, ref _requiringContactCount, ref _outputTouchs);
                     }
                 }
 
@@ -551,7 +405,6 @@ namespace GestureSign.Daemon.Input
                     if (_outputTouchs.TrueForAll(rd => rd.State == DeviceStates.None))
                     {
                         _sourceDevice = Devices.None;
-                        _physicalMax = Point.Empty;
                     }
                 }
             }
@@ -561,55 +414,6 @@ namespace GestureSign.Daemon.Input
             }
         }
 
-        private static ushort[] GetButtonList(IntPtr pPreparsedData, IntPtr pRawData, short nodeIndex, int rawDateSize)
-        {
-            int usageLength = 0;
-            HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, null, ref usageLength, pPreparsedData, pRawData, rawDateSize);
-            var usageList = new ushort[usageLength];
-            HidNativeApi.HidP_GetUsages(HidReportType.Input, NativeMethods.DigitizerUsagePage, nodeIndex, usageList, ref usageLength, pPreparsedData, pRawData, rawDateSize);
-            return usageList;
-        }
-
-        private void GetCurrentScreenOrientation()
-        {
-            switch (SystemInformation.ScreenOrientation)
-            {
-                case ScreenOrientation.Angle0:
-                    _xAxisDirection = _yAxisDirection = true;
-                    _isAxisCorresponds = true;
-                    break;
-                case ScreenOrientation.Angle90:
-                    _isAxisCorresponds = false;
-                    _xAxisDirection = false;
-                    _yAxisDirection = true;
-                    break;
-                case ScreenOrientation.Angle180:
-                    _xAxisDirection = _yAxisDirection = false;
-                    _isAxisCorresponds = true;
-                    break;
-                case ScreenOrientation.Angle270:
-                    _isAxisCorresponds = false;
-                    _xAxisDirection = true;
-                    _yAxisDirection = false;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private Point GetPhysicalMax(int collectionCount, IntPtr pPreparsedData)
-        {
-            short valueCapsLength = (short)(collectionCount > 0 ? collectionCount : 1);
-            Point p = new Point();
-            HidNativeApi.HidP_Value_Caps[] hvc = new HidNativeApi.HidP_Value_Caps[valueCapsLength];
-
-            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.XCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
-            p.X = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
-
-            HidNativeApi.HidP_GetSpecificValueCaps(HidReportType.Input, NativeMethods.GenericDesktopPage, 0, NativeMethods.YCoordinateId, hvc, ref valueCapsLength, pPreparsedData);
-            p.Y = hvc[0].PhysicalMax != 0 ? hvc[0].PhysicalMax : hvc[0].LogicalMax;
-            return p;
-        }
 
         #endregion ProcessInput
     }

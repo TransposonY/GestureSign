@@ -6,13 +6,13 @@ using System.Security.Permissions;
 namespace GestureSign.Daemon.Native
 {
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
-    sealed class SafeUnmanagedMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid
+    public sealed class SafeUnmanagedMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         // Set ownsHandle to true for the default constructor.
-        internal SafeUnmanagedMemoryHandle() : base(true) { }
+        public SafeUnmanagedMemoryHandle() : base(true) { }
 
         // Set the handle and set ownsHandle to true.
-        internal SafeUnmanagedMemoryHandle(IntPtr preexistingHandle, bool ownsHandle = true)
+        public SafeUnmanagedMemoryHandle(IntPtr preexistingHandle, bool ownsHandle = true)
             : base(ownsHandle)
         {
             SetHandle(preexistingHandle);

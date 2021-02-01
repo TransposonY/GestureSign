@@ -11,7 +11,9 @@
     <AssemblyName>GestureSignDaemon</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>发布\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>..\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -23,10 +25,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,7 +36,7 @@
     <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>2</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>true</UseVSHostingProcess>
@@ -99,12 +99,15 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input\HidDevice.cs" />
+    <Compile Include="Input\IDevice.cs" />
     <Compile Include="Input\InputPoint.cs" />
     <Compile Include="Input\InputProvider.cs" />
     <Compile Include="Input\InputPointsEventArgs.cs" />
-    <Compile Include="Input\MessageWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Input\MessageWindow.cs" />
+    <Compile Include="Input\TouchPadDevice.cs" />
+    <Compile Include="Input\TouchScreenDevice.cs" />
+    <Compile Include="Input\PenDevice.cs" />
     <Compile Include="Input\TouchInputProcessor.cs" />
     <Compile Include="Native\RawInputDeclarations.cs" />
     <Compile Include="Native\HidDeclarations.cs" />
@@ -203,7 +206,6 @@
     <None Include="Resources\add.ico" />
     <None Include="Resources\stop.ico" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

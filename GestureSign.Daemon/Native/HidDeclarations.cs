@@ -29,7 +29,7 @@ namespace GestureSign.Daemon.Native
     // from hidpi.h
     // Typedef enum defines a set of integer constants for HidP_Report_Typ
 
-    sealed partial class HidNativeApi
+    public sealed partial class HidNativeApi
     {
 
         // API Declarations for communicating with HID-class devices.
