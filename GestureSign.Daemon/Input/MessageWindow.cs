@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Daemon.Native;
-using Microsoft.Win32;
 
 namespace GestureSign.Daemon.Input
 {
@@ -34,12 +32,10 @@ namespace GestureSign.Daemon.Input
         {
             CreateWindow();
             UpdateRegistration();
-            SystemEvents.PowerModeChanged += OnPowerModeChanged;
         }
 
         ~MessageWindow()
         {
-            SystemEvents.PowerModeChanged -= OnPowerModeChanged;
             DestroyWindow();
         }
 
@@ -208,14 +204,6 @@ namespace GestureSign.Daemon.Input
                     usage = info.hid.usUsage;
                     return true;
                 }
-            }
-        }
-
-        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
-        {
-            if (e.Mode == PowerModes.Resume)
-            {
-                UpdateRegistration();
             }
         }
 

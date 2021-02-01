@@ -1,6 +1,7 @@
 ﻿using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using ManagedWinapi.Hooks;
+using Microsoft.Win32;
 using System;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace GestureSign.Daemon.Input
         private bool disposedValue = false; // To detect redundant calls
         private MessageWindow _messageWindow;
         private SynTouchPad _synTouchPad;
+        private int _stateUpdating;
 
         public LowLevelMouseHook LowLevelMouseHook;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
@@ -29,6 +31,9 @@ namespace GestureSign.Daemon.Input
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
             UpdateSynTouchPadState();
+
+            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(OnSessionSwitch);
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
         }
 
         private void AppConfig_ConfigChanged(object sender, System.EventArgs e)
@@ -37,7 +42,7 @@ namespace GestureSign.Daemon.Input
                 LowLevelMouseHook.StartHook();
             else LowLevelMouseHook.Unhook();
 
-            _messageWindow.UpdateRegistration();
+            UpdateDeviceState();
         }
 
         private void MessageWindow_PointsIntercepted(object sender, RawPointsDataMessageEventArgs e)
@@ -71,6 +76,42 @@ namespace GestureSign.Daemon.Input
             }
         }
 
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Resume)
+            {
+                UpdateDeviceState();
+            }
+        }
+
+        private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            // We need to handle sleeping(and other related events)
+            // This is so we never lose the lock on the touchpad hardware.
+            switch (e.Reason)
+            {
+                case SessionSwitchReason.SessionLogon:
+                case SessionSwitchReason.SessionUnlock:
+                    UpdateDeviceState();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateDeviceState()
+        {
+            if (0 == System.Threading.Interlocked.Exchange(ref _stateUpdating, 1))
+            {
+                Task.Delay(600).ContinueWith((t) =>
+                {
+                    System.Threading.Interlocked.Exchange(ref _stateUpdating, 0);
+                    _messageWindow.UpdateRegistration();
+                    UpdateSynTouchPadState();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
         #region IDisposable Support
 
         protected virtual void Dispose(bool disposing)
@@ -82,6 +123,8 @@ namespace GestureSign.Daemon.Input
                     AppConfig.ConfigChanged -= AppConfig_ConfigChanged;
                 }
 
+                SystemEvents.SessionSwitch -= OnSessionSwitch;
+                SystemEvents.PowerModeChanged -= OnPowerModeChanged;
                 LowLevelMouseHook?.Unhook();
                 disposedValue = true;
             }
