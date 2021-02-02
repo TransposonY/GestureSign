@@ -23,6 +23,7 @@ namespace GestureSign.Daemon.Input
         private SynchronizationContext _synchronizationContext;
 
         private bool _touching;
+        private readonly bool _isRelative = false;
         private Screen _startScr;
         private Point _delta;
         private int _fingerDistance;
@@ -103,9 +104,12 @@ namespace GestureSign.Daemon.Input
                     _startScr = Screen.FromPoint(cur);
                     if (_startScr == null)
                         return;
-                    Point p = GetPoint();
-                    _delta.X = p.X - cur.X;
-                    _delta.Y = p.Y - cur.Y;
+                    if (_isRelative)
+                    {
+                        Point p = GetPoint();
+                        _delta.X = p.X - cur.X;
+                        _delta.Y = p.Y - cur.Y;
+                    }
                     _touching = true;
                 }
                 Point point = GetPoint();
