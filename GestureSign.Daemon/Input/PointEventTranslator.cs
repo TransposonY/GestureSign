@@ -90,18 +90,21 @@ namespace GestureSign.Daemon.Input
             if ((e.SourceDevice & Devices.TouchDevice) != 0)
             {
                 int releaseCount = e.RawData.Count(rtd => rtd.State == 0);
-                if (releaseCount != 0)
+
+                if (e.RawData.Count == _lastPointsCount)
                 {
-                    if (e.RawData.Count <= _lastPointsCount)
+                    if (releaseCount != 0)
                     {
                         OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
-                        _lastPointsCount = _lastPointsCount - releaseCount;
+                        _lastPointsCount -= releaseCount;
+                        return;
                     }
-                    return;
+                    OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                 }
-
-                if (e.RawData.Count > _lastPointsCount)
+                else if (e.RawData.Count > _lastPointsCount)
                 {
+                    if (releaseCount != 0)
+                        return;
                     if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
                     {
                         OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
@@ -110,9 +113,10 @@ namespace GestureSign.Daemon.Input
                     _lastPointsCount = e.RawData.Count;
                     OnPointDown(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                 }
-                else if (e.RawData.Count == _lastPointsCount)
+                else
                 {
-                    OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    OnPointUp(new InputPointsEventArgs(e.RawData, e.SourceDevice));
+                    _lastPointsCount = _lastPointsCount - e.RawData.Count > releaseCount ? e.RawData.Count : _lastPointsCount - releaseCount;
                 }
             }
             else if (e.SourceDevice == Devices.Pen)
