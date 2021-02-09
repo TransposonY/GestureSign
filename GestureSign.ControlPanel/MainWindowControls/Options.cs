@@ -147,6 +147,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AppConfig.MinimumPointDistance = newValue;
         }
 
+        private int GetAlphaPercentage(double Alpha)
+        {
+            return (int)Math.Round(Alpha * 100d);
+        }
 
         private void UpdateVisualFeedbackExample()
         {
@@ -191,7 +195,20 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                                  "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
-                StartupSwitch.IsChecked = File.Exists(lnkPath);
+                if (File.Exists(lnkPath))
+                {
+                    StartupSwitch.IsChecked = true;
+                    var targetPath = GetLnkTargetPath(lnkPath);
+                    var daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
+                    if (daemonPath != targetPath)
+                    {
+                        CreateLnk(lnkPath, daemonPath);
+                    }
+                }
+                else
+                {
+                    StartupSwitch.IsChecked = false;
+                }
 #endif
             }
             catch (Exception ex)
@@ -200,26 +217,60 @@ namespace GestureSign.ControlPanel.MainWindowControls
             }
         }
 
-        private int GetAlphaPercentage(double Alpha)
+        /// <summary>
+        /// https://gist.github.com/Winand/997ed38269e899eb561991a0c663fa49
+        /// https://stackoverflow.com/questions/64126236/reading-the-target-of-a-lnk-file-in-c-sharp-net-core
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public static string GetLnkTargetPath(string filepath)
         {
-            return (int)Math.Round(Alpha * 100d);
+            using (var br = new BinaryReader(File.OpenRead(filepath)))
+            {
+                // skip the first 20 bytes (HeaderSize and LinkCLSID)
+                br.ReadBytes(0x14);
+                // read the LinkFlags structure (4 bytes)
+                uint lflags = br.ReadUInt32();
+                // if the HasLinkTargetIDList bit is set then skip the stored IDList 
+                // structure and header
+                if ((lflags & 0x01) == 1)
+                {
+                    br.ReadBytes(0x34);
+                    var skip = br.ReadUInt16(); // this counts of how far we need to skip ahead
+                    br.ReadBytes(skip);
+                }
+                // get the number of bytes the path contains
+                var length = br.ReadUInt32();
+                // skip 12 bytes (LinkInfoHeaderSize, LinkInfoFlgas, and VolumeIDOffset)
+                br.ReadBytes(0x0C);
+                // Find the location of the LocalBasePath position
+                var lbpos = br.ReadUInt32();
+                // Skip to the path position 
+                // (subtract the length of the read (4 bytes), the length of the skip (12 bytes), and
+                // the length of the lbpos read (4 bytes) from the lbpos)
+                br.ReadBytes((int)lbpos - 0x14);
+                var size = length - lbpos - 0x02;
+                var bytePath = br.ReadBytes((int)size);
+                int index = Array.IndexOf(bytePath, (byte)0x00);
+                var path = index < 0 ? System.Text.Encoding.Default.GetString(bytePath, 0, bytePath.Length) :
+                    System.Text.Encoding.Unicode.GetString(bytePath, index + 1, bytePath.Length - index - 1);
+                return path;
+            }
         }
 
-        private void CreateLnk(string lnkPath)
+        private void CreateLnk(string lnkPath, string targetPath)
         {
-            if (!File.Exists(lnkPath))
-            {
-                WshShell shell = new WshShell();
-                IWshShortcut shortCut = (IWshShortcut)shell.CreateShortcut(lnkPath);
-                shortCut.TargetPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
-                //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-                shortCut.WindowStyle = 7;
-                shortCut.Arguments = "";
-                shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();// Application.ProductName + Application.ProductVersion;
-                shortCut.IconLocation = Application.ResourceAssembly.Location;// Application.ExecutablePath;
-                shortCut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;// Application.ResourceAssembly.;
-                shortCut.Save();
-            }
+            WshShell shell = new WshShell();
+            IWshShortcut shortCut = (IWshShortcut)shell.CreateShortcut(lnkPath);
+            shortCut.TargetPath = targetPath;
+            //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+            shortCut.WindowStyle = 7;
+            shortCut.Arguments = "";
+            shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();
+            // Application.ProductName + Application.ProductVersion;
+            //shortCut.IconLocation = Application.ResourceAssembly.Location;// Application.ExecutablePath;
+            //shortCut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;// Application.ResourceAssembly.;
+            shortCut.Save();
         }
 
 #if ConvertedDesktopApp
@@ -263,9 +314,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
                                  "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
 
-                if (StartupSwitch.IsChecked != null && StartupSwitch.IsChecked.Value)
+                if (StartupSwitch.IsChecked.GetValueOrDefault())
                 {
-                    CreateLnk(lnkPath);
+                    var daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
+                    CreateLnk(lnkPath, daemonPath);
                 }
                 else
                 {
