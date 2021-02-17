@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GestureSign.Daemon</RootNamespace>
-    <AssemblyName>GestureSignDaemon</AssemblyName>
+    <AssemblyName>GestureSign</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -69,7 +69,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\normal_daemon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\normal.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Centennial|AnyCPU'">
     <OutputPath>..\bin\Centennial\</OutputPath>
@@ -203,6 +203,7 @@
     <Content Include="Languages\Daemon\zh.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\normal.ico" />
     <None Include="Resources\normal_daemon.ico" />
     <None Include="Resources\add.ico" />
     <None Include="Resources\stop.ico" />

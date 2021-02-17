@@ -194,7 +194,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             try
             {
                 string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+                                 "\\" + GestureSign.Common.Constants.ProductName + ".lnk";
                 if (File.Exists(lnkPath))
                 {
                     StartupSwitch.IsChecked = true;
@@ -312,7 +312,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             try
             {
                 string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                 "\\" + Application.ResourceAssembly.GetName().Name + ".lnk";
+                                 "\\" + GestureSign.Common.Constants.ProductName + ".lnk";
 
                 if (StartupSwitch.IsChecked.GetValueOrDefault())
                 {

@@ -5,7 +5,7 @@
   <IsRightToLeft>False</IsRightToLeft>
   <Title>GestureSign Control Panel</Title>
   <Messages>
-    <CannotFindDaemonMessage>Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.</CannotFindDaemonMessage>
+    <CannotFindDaemonMessage>Can not find GestureSign.exe.Try to redownload or reinstall GestureSign.</CannotFindDaemonMessage>
     <Error>Error</Error>
     <CompatWarning>Application detect that it is set the compatibility to run as administrator(right click/properties/compatibility/Run this program as an administrator).
 This may lead to function failure(e.g. Start application at Windows startup).
