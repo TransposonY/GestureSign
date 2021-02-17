@@ -73,26 +73,7 @@ namespace GestureSign.Daemon
             _controlPanelMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.ControlPanel");
             _controlPanelMenuItem.Click += (o, e) =>
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.ControlPanelFileName);
-                if (File.Exists(path))
-                    using (Process daemon = new Process())
-                    {
-                        try
-                        {
-                            daemon.StartInfo.FileName = path;
-
-                            //daemon.StartInfo.UseShellExecute = false;
-                            daemon.Start();
-                        }
-                        catch (Exception exception)
-                        {
-                            Logging.LogException(exception);
-                            MessageBox.Show(exception.ToString(),
-                                LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
-                        }
-
-                    }
+                StartControlPanel();
             };
 
             _exitGestureSignMenuItem.Name = "ExitGestureSign";
@@ -157,6 +138,35 @@ namespace GestureSign.Daemon
             {
                 _trayIcon.Visible = AppConfig.ShowTrayIcon;
             };
+        }
+
+        public static void StartControlPanel()
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.ControlPanelFileName);
+            if (File.Exists(path))
+            {
+                using (Process controlPanel = new Process())
+                {
+                    try
+                    {
+                        controlPanel.StartInfo.FileName = path;
+                        //daemon.StartInfo.UseShellExecute = false;
+                        controlPanel.Start();
+                    }
+                    catch (Exception exception)
+                    {
+                        Logging.LogException(exception);
+                        MessageBox.Show(exception.ToString(),
+                            LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(string.Format(LocalizationProvider.Instance.GetTextValue("Messages.ComponentNotFoundMessage"), path),
+                    LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion

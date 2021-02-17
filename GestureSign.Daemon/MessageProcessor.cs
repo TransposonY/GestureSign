@@ -55,6 +55,9 @@ namespace GestureSign.Daemon
                             case "LoadConfiguration":
                                 AppConfig.Reload();
                                 break;
+                            case "StartControlPanel":
+                                TrayManager.StartControlPanel();
+                                break;
                         }
                     }, null);
                 }

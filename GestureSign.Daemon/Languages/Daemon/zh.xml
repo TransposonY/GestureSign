@@ -3,6 +3,7 @@
   <Messages>
     <Error>错误</Error>	
     <ContactCountError>无法获取触控手指数量！可尝试重新安装设备驱动以修复该问题。</ContactCountError>
+    <ComponentNotFoundMessage>未找到组件{0}，请重新下载或安装本软件。</ComponentNotFoundMessage>
   </Messages>
   <TrayMenu>
     <Disable>关闭手势识别</Disable>
