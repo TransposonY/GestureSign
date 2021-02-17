@@ -16,6 +16,7 @@ namespace GestureSign.ControlPanel.ViewModel
         private IApplication _currentApp;
         private Task _addCommandTask;
         private ListBox _listBox;
+        private volatile int _commandTaskCount;
         public ObservableCollection<CommandInfo> CommandInfos { get; } = new ObservableCollection<CommandInfo>();
 
         public CommandInfoProvider()
@@ -37,27 +38,37 @@ namespace GestureSign.ControlPanel.ViewModel
             Action<object> refreshAction = (o) =>
             {
                 Application.Current.Dispatcher.Invoke(ClearCommandInfo, DispatcherPriority.Loaded);
-                foreach (var currentAction in source.Actions.ToList())
+                try
                 {
-                    if (currentAction.Commands == null) continue;
-
-                    currentAction.CollectionChanged -= CommandCollectionChanged;
-                    currentAction.CollectionChanged += CommandCollectionChanged;
-
-                    foreach (var info in currentAction.Commands.Select(c => CommandInfo.FromCommand(c, currentAction)))
+                    foreach (var currentAction in source.Actions.ToList())
                     {
-                        try
+                        if (currentAction.Commands == null) continue;
+
+                        currentAction.CollectionChanged -= CommandCollectionChanged;
+                        currentAction.CollectionChanged += CommandCollectionChanged;
+
+                        foreach (var info in currentAction.Commands.Select(c => CommandInfo.FromCommand(c, currentAction)))
                         {
-                            Application.Current.Dispatcher.Invoke(() =>
+                            if (_commandTaskCount > 1)
+                                return;
+                            try
                             {
-                                AddCommandInfo(info);
-                            }, DispatcherPriority.Input);
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    AddCommandInfo(info);
+                                }, DispatcherPriority.Input);
+                            }
+                            catch { }
                         }
-                        catch { }
                     }
+                }
+                finally
+                {
+                    _commandTaskCount--;
                 }
             };
             _addCommandTask = _addCommandTask?.ContinueWith(refreshAction) ?? Task.Factory.StartNew(refreshAction, null);
+            _commandTaskCount++;
         }
 
         private void ClearCommandInfo()
