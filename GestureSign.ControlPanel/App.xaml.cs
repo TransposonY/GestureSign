@@ -45,11 +45,11 @@ namespace GestureSign.ControlPanel
 
                 NamedPipe.Instance.RunNamedPipeServer(Constants.ControlPanel, new MessageProcessor());
 
-                ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadApplications", Constants.Daemon);
-                GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync("LoadGestures", Constants.Daemon);
+                ApplicationManager.ApplicationSaved += (o, ea) => NamedPipe.SendMessageAsync(CommandEnum.LoadApplications, Constants.Daemon);
+                GestureManager.GestureSaved += (o, ea) => NamedPipe.SendMessageAsync(CommandEnum.LoadGestures, Constants.Daemon);
                 AppConfig.ConfigChanged += (o, ea) =>
                 {
-                    NamedPipe.SendMessageAsync("LoadConfiguration", Constants.Daemon);
+                    NamedPipe.SendMessageAsync(CommandEnum.LoadConfiguration, Constants.Daemon);
                 };
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();

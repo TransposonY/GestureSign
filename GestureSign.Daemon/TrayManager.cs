@@ -81,7 +81,7 @@ namespace GestureSign.Daemon
             _exitGestureSignMenuItem.Text = LocalizationProvider.Instance.GetTextValue("TrayMenu.Exit");
             _exitGestureSignMenuItem.Click += async (o, e) =>
             {
-                await NamedPipe.SendMessageAsync("Exit", Constants.ControlPanel, false);
+                await NamedPipe.SendMessageAsync(CommandEnum.Exit, Constants.ControlPanel, wait: false);
                 // try to fix exception 0xc0020001
                 Application.DoEvents();
                 Application.Exit();

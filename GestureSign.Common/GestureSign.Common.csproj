@@ -129,6 +129,7 @@
     <Compile Include="Input\IPointCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
+    <Compile Include="InterProcessCommunication\CommandEnum.cs" />
     <Compile Include="InterProcessCommunication\IMessageProcessor.cs" />
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
     <Compile Include="Localization\LocalisedTextExtension.cs" />

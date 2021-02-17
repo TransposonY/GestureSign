@@ -1,9 +1,7 @@
-﻿using System.IO.Pipes;
-
-namespace GestureSign.Common.InterProcessCommunication
+﻿namespace GestureSign.Common.InterProcessCommunication
 {
     public interface IMessageProcessor
     {
-        bool ProcessMessages(NamedPipeServerStream server);
+        bool ProcessMessages(CommandEnum command, object data);
     }
 }

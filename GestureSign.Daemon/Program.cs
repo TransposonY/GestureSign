@@ -73,7 +73,7 @@ namespace GestureSign.Daemon
                 }
                 else
                 {
-                    NamedPipe.SendMessageAsync("StartControlPanel", Constants.Daemon, false).Wait();
+                    NamedPipe.SendMessageAsync(CommandEnum.StartControlPanel, Constants.Daemon, wait: false).Wait();
                 }
             }
         }

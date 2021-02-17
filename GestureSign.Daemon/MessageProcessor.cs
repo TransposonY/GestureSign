@@ -1,16 +1,10 @@
-﻿using System;
-using System.Drawing;
-using System.IO;
-using System.IO.Pipes;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-using System.Windows.Forms;
-using GestureSign.Common.Applications;
+﻿using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
-using GestureSign.Daemon.Input;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Daemon.Input;
+using System.Threading;
 
 namespace GestureSign.Daemon
 {
@@ -23,45 +17,34 @@ namespace GestureSign.Daemon
             _synchronizationContext = synchronizationContext;
         }
 
-        public bool ProcessMessages(NamedPipeServerStream server)
+        public bool ProcessMessages(CommandEnum command, object data)
         {
-            BinaryFormatter binForm = new BinaryFormatter();
-
-            using (MemoryStream memoryStream = new MemoryStream())
+            _synchronizationContext.Post(state =>
             {
-                server.CopyTo(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                object data = binForm.Deserialize(memoryStream);
-                string message = data as string;
-                if (message != null)
+                switch (command)
                 {
-                    _synchronizationContext.Post(state =>
-                    {
-                        switch (message)
-                        {
-                            case "StartTeaching":
-                                PointCapture.Instance.Mode = CaptureMode.Training;
-                                break;
-                            case "StopTraining":
-                                if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
-                                    PointCapture.Instance.Mode = CaptureMode.Normal;
-                                break;
-                            case "LoadApplications":
-                                ApplicationManager.Instance.LoadApplications().Wait();
-                                break;
-                            case "LoadGestures":
-                                GestureManager.Instance.LoadGestures().Wait();
-                                break;
-                            case "LoadConfiguration":
-                                AppConfig.Reload();
-                                break;
-                            case "StartControlPanel":
-                                TrayManager.StartControlPanel();
-                                break;
-                        }
-                    }, null);
+                    case CommandEnum.StartTeaching:
+                        PointCapture.Instance.Mode = CaptureMode.Training;
+                        break;
+                    case CommandEnum.StopTraining:
+                        if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
+                            PointCapture.Instance.Mode = CaptureMode.Normal;
+                        break;
+                    case CommandEnum.LoadApplications:
+                        ApplicationManager.Instance.LoadApplications().Wait();
+                        break;
+                    case CommandEnum.LoadGestures:
+                        GestureManager.Instance.LoadGestures().Wait();
+                        break;
+                    case CommandEnum.LoadConfiguration:
+                        AppConfig.Reload();
+                        break;
+                    case CommandEnum.StartControlPanel:
+                        TrayManager.StartControlPanel();
+                        break;
                 }
-            }
+            }, null);
+
             return true;
         }
 
