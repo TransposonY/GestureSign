@@ -54,13 +54,13 @@
       </ExtraKeys>
     </HotKey>
     <KeyDownKeyUp>
-      <Name>按下或松开按键</Name>
+      <Name>按住或松开按键</Name>
       <Category>键盘</Category>
       <Description>
-        <KeyDown>按下 ({0})</KeyDown>
+        <KeyDown>按住 ({0})</KeyDown>
         <KeyUp>松开 ({0})</KeyUp>
       </Description>
-      <KeyDown>按下按键</KeyDown>
+      <KeyDown>按住按键</KeyDown>
       <KeyUp>松开按键</KeyUp>
       <Tip>请用键盘录入按键</Tip>
       <Reset>重置</Reset>
@@ -72,7 +72,7 @@
       <MouseActions>
         <Click>单击</Click>
         <DoubleClick>双击</DoubleClick>
-        <Down>按下</Down>
+        <Down>按住</Down>
         <Up>释放</Up>
         <VerticalScroll>垂直滚动</VerticalScroll>
         <HorizontalScroll>水平滚动</HorizontalScroll>

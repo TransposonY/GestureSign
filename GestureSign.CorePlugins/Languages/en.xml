@@ -57,11 +57,11 @@
       <Name>Key Down/Up</Name>
       <Category>Keyboard</Category>
       <Description>
-        <KeyDown>Press ({0})</KeyDown>
+        <KeyDown>Hold Down ({0})</KeyDown>
         <KeyUp>Release ({0})</KeyUp>
       </Description>
-      <KeyDown>Key Down</KeyDown>
-      <KeyUp>Key Up</KeyUp>
+      <KeyDown>Hold Down Key</KeyDown>
+      <KeyUp>Release Key</KeyUp>
       <Tip>Use keyboard to enter</Tip>
       <Reset>Reset</Reset>
     </KeyDownKeyUp>
@@ -72,7 +72,7 @@
       <MouseActions>
         <Click>Click</Click>
         <DoubleClick>Double Click</DoubleClick>
-        <Down>Press</Down>
+        <Down>Hold Down</Down>
         <Up>Release</Up>
         <VerticalScroll>Vertical Scroll</VerticalScroll>
         <HorizontalScroll>Horizontal Scroll</HorizontalScroll>
