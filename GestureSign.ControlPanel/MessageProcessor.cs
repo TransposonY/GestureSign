@@ -15,7 +15,7 @@ namespace GestureSign.ControlPanel
         public static event EventHandler<bool> FoundSynTouchPad;
         public static event EventHandler DaemonConfigReload;
 
-        public bool ProcessMessages(CommandEnum command, object data)
+        public bool ProcessMessages(IpcCommands command, object data)
         {
             try
             {
@@ -23,12 +23,12 @@ namespace GestureSign.ControlPanel
                 {
                     switch (command)
                     {
-                        case CommandEnum.Exit:
+                        case IpcCommands.Exit:
                             {
                                 Application.Current.Shutdown();
                                 break;
                             }
-                        case CommandEnum.GotGesture:
+                        case IpcCommands.GotGesture:
                             {
                                 var newGesture = data as List<List<List<Point>>>;
                                 if (newGesture == null) return;
@@ -36,12 +36,12 @@ namespace GestureSign.ControlPanel
                                 GotNewPattern?.Invoke(this, newGesture.Select(list => new PointPattern(list)).ToArray());
                                 break;
                             }
-                        case CommandEnum.ConfigReload:
+                        case IpcCommands.ConfigReload:
                             {
                                 DaemonConfigReload?.Invoke(this, EventArgs.Empty);
                                 break;
                             }
-                        case CommandEnum.SynTouchPadState:
+                        case IpcCommands.SynTouchPadState:
                             {
                                 FoundSynTouchPad?.Invoke(this, (bool)data);
                                 break;

@@ -2,6 +2,6 @@
 {
     public interface IMessageProcessor
     {
-        bool ProcessMessages(CommandEnum command, object data);
+        bool ProcessMessages(IpcCommands command, object data);
     }
 }

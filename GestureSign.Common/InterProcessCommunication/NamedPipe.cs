@@ -34,7 +34,7 @@ namespace GestureSign.Common.InterProcessCommunication
             }
         }
 
-        private static void ReadMessages(NamedPipeServerStream server, out CommandEnum command, out object data)
+        private static void ReadMessages(NamedPipeServerStream server, out IpcCommands command, out object data)
         {
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -42,7 +42,7 @@ namespace GestureSign.Common.InterProcessCommunication
 
                 server.CopyTo(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                command = (CommandEnum)memoryStream.ReadByte();
+                command = (IpcCommands)memoryStream.ReadByte();
                 data = memoryStream.Length == memoryStream.Position ? null : binForm.Deserialize(memoryStream);
             }
         }
@@ -72,7 +72,7 @@ namespace GestureSign.Common.InterProcessCommunication
                 {
                     server.EndWaitForConnection(o);
 
-                    ReadMessages(server, out CommandEnum command, out object data);
+                    ReadMessages(server, out IpcCommands command, out object data);
                     messageProcessor.ProcessMessages(command, data);
                     server.Disconnect();
 
@@ -86,7 +86,7 @@ namespace GestureSign.Common.InterProcessCommunication
             _pipeServer.BeginWaitForConnection(ac, _pipeServer);
         }
 
-        public static Task<bool> SendMessageAsync(CommandEnum command, string pipeName, object message = null, bool wait = true)
+        public static Task<bool> SendMessageAsync(IpcCommands command, string pipeName, object message = null, bool wait = true)
         {
             string userPipeName = GetUserPipeName(pipeName);
             return Task.Run<bool>(new Func<bool>(() =>

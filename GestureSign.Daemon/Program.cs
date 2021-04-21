@@ -58,7 +58,7 @@ namespace GestureSign.Daemon
                         PluginManager.Instance.Load(hostControl, uiContext);
                         TrayManager.Instance.Load();
 
-                        AppConfig.ConfigChanged += (o, e) => NamedPipe.SendMessageAsync(CommandEnum.ConfigReload, Constants.ControlPanel);
+                        AppConfig.ConfigChanged += (o, e) => NamedPipe.SendMessageAsync(IpcCommands.ConfigReload, Constants.ControlPanel);
                         NamedPipe.Instance.RunNamedPipeServer(Constants.Daemon, new MessageProcessor(uiContext));
 
                         Application.ApplicationExit += Application_ApplicationExit;
@@ -75,7 +75,7 @@ namespace GestureSign.Daemon
                 }
                 else
                 {
-                    NamedPipe.SendMessageAsync(CommandEnum.StartControlPanel, Constants.Daemon, wait: false).Wait();
+                    NamedPipe.SendMessageAsync(IpcCommands.StartControlPanel, Constants.Daemon, wait: false).Wait();
                 }
             }
         }

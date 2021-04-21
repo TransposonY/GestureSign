@@ -1,6 +1,6 @@
 ﻿namespace GestureSign.Common.InterProcessCommunication
 {
-    public enum CommandEnum
+    public enum IpcCommands
     {
         StartControlPanel,
         StartTeaching,

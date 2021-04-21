@@ -17,33 +17,33 @@ namespace GestureSign.Daemon
             _synchronizationContext = synchronizationContext;
         }
 
-        public bool ProcessMessages(CommandEnum command, object data)
+        public bool ProcessMessages(IpcCommands command, object data)
         {
             _synchronizationContext.Post(state =>
             {
                 switch (command)
                 {
-                    case CommandEnum.StartTeaching:
+                    case IpcCommands.StartTeaching:
                         PointCapture.Instance.Mode = CaptureMode.Training;
                         break;
-                    case CommandEnum.StopTraining:
+                    case IpcCommands.StopTraining:
                         if (PointCapture.Instance.Mode != CaptureMode.UserDisabled)
                             PointCapture.Instance.Mode = CaptureMode.Normal;
                         break;
-                    case CommandEnum.LoadApplications:
+                    case IpcCommands.LoadApplications:
                         ApplicationManager.Instance.LoadApplications().Wait();
                         break;
-                    case CommandEnum.LoadGestures:
+                    case IpcCommands.LoadGestures:
                         GestureManager.Instance.LoadGestures().Wait();
                         break;
-                    case CommandEnum.LoadConfiguration:
+                    case IpcCommands.LoadConfiguration:
                         AppConfig.Reload();
                         break;
-                    case CommandEnum.StartControlPanel:
+                    case IpcCommands.StartControlPanel:
                         TrayManager.StartControlPanel();
                         break;
-                    case CommandEnum.SynTouchPadState:
-                        NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, Common.Constants.ControlPanel, AppConfig.IsSynTouchPadAvailable, false).Wait();
+                    case IpcCommands.SynTouchPadState:
+                        NamedPipe.SendMessageAsync(IpcCommands.SynTouchPadState, Common.Constants.ControlPanel, AppConfig.IsSynTouchPadAvailable, false).Wait();
                         break;
                 }
             }, null);

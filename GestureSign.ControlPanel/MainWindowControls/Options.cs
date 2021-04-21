@@ -82,7 +82,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                     PenGestureSwitch.IsChecked = false;
                 }
 
-                NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, GestureSign.Common.Constants.Daemon);
+                NamedPipe.SendMessageAsync(IpcCommands.SynTouchPadState, GestureSign.Common.Constants.Daemon);
             }
             catch (Exception)
             {
@@ -381,7 +381,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void MessageProcessor_DaemonConfigReload(object sender, EventArgs e)
         {
-            NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, GestureSign.Common.Constants.Daemon);
+            NamedPipe.SendMessageAsync(IpcCommands.SynTouchPadState, GestureSign.Common.Constants.Daemon);
         }
 
         private void MessageProcessor_FoundSynTouchPad(object sender, bool e)
