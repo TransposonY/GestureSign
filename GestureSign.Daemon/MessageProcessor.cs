@@ -42,6 +42,9 @@ namespace GestureSign.Daemon
                     case CommandEnum.StartControlPanel:
                         TrayManager.StartControlPanel();
                         break;
+                    case CommandEnum.SynTouchPadState:
+                        NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, Common.Constants.ControlPanel, AppConfig.IsSynTouchPadAvailable, false).Wait();
+                        break;
                 }
             }, null);
 

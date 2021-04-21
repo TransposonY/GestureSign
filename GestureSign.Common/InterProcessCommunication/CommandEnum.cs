@@ -9,6 +9,8 @@
         LoadGestures,
         LoadConfiguration,
         GotGesture,
+        ConfigReload,
+        SynTouchPadState,
         Exit
     }
 }

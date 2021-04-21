@@ -239,7 +239,8 @@ Email:ccfyzh@gmail.com
     <OffLabel>Off</OffLabel>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
-    <TouchPad>Precision Touchpad Gesture</TouchPad>
+    <TouchPad>Touchpad Gesture</TouchPad>
+    <FoundSynTouchPad>Synaptics Touchpad only report one finger's movement</FoundSynTouchPad>
     <PenGesture>Pen Gesture</PenGesture>
     <PenGestureButtonDescription>Start drawing gesture by:</PenGestureButtonDescription>
     <RightClickButton>Press and hold the right-click button</RightClickButton>

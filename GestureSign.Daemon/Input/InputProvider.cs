@@ -67,11 +67,13 @@ namespace GestureSign.Daemon.Input
                 {
                     _synTouchPad.PointsIntercepted += MessageWindow_PointsIntercepted;
                     _synTouchPad.Initialize();
+                    AppConfig.IsSynTouchPadAvailable = true;
                 }
                 else
                 {
                     _synTouchPad.Dispose();
                     _synTouchPad = null;
+                    AppConfig.IsSynTouchPadAvailable = false;
                 }
             }
         }

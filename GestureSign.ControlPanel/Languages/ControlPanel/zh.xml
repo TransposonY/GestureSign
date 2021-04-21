@@ -243,7 +243,8 @@ QQ交流群：576981420
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
-    <TouchPad>精确式触摸板手势</TouchPad>
+    <TouchPad>触摸板手势</TouchPad>
+    <FoundSynTouchPad>提示：Synaptics触摸板只提供单指的轨迹，多指手势的轨迹与单指相同</FoundSynTouchPad>
     <PenGesture>触控笔手势</PenGesture>
     <PenGestureButtonDescription>请选择画出手势的方式:</PenGestureButtonDescription>
     <RightClickButton>按住触控笔右键按钮</RightClickButton>

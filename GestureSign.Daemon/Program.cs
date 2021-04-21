@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using GestureSign.Common;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
@@ -57,6 +58,7 @@ namespace GestureSign.Daemon
                         PluginManager.Instance.Load(hostControl, uiContext);
                         TrayManager.Instance.Load();
 
+                        AppConfig.ConfigChanged += (o, e) => NamedPipe.SendMessageAsync(CommandEnum.ConfigReload, Constants.ControlPanel);
                         NamedPipe.Instance.RunNamedPipeServer(Constants.Daemon, new MessageProcessor(uiContext));
 
                         Application.ApplicationExit += Application_ApplicationExit;

@@ -2,6 +2,7 @@
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
+using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using IWshRuntimeLibrary;
@@ -31,6 +32,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public Options()
         {
             InitializeComponent();
+            MessageProcessor.DaemonConfigReload += MessageProcessor_DaemonConfigReload;
+            MessageProcessor.FoundSynTouchPad += MessageProcessor_FoundSynTouchPad;
         }
 
         private void LoadSettings()
@@ -78,6 +81,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     PenGestureSwitch.IsChecked = false;
                 }
+
+                NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, GestureSign.Common.Constants.Daemon);
             }
             catch (Exception)
             {
@@ -372,6 +377,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.RegisterTouchPad = TouchPadSwitch.IsChecked != null && TouchPadSwitch.IsChecked.Value;
+        }
+
+        private void MessageProcessor_DaemonConfigReload(object sender, EventArgs e)
+        {
+            NamedPipe.SendMessageAsync(CommandEnum.SynTouchPadState, GestureSign.Common.Constants.Daemon);
+        }
+
+        private void MessageProcessor_FoundSynTouchPad(object sender, bool e)
+        {
+            TouchPadStateText.Visibility = e && AppConfig.RegisterTouchPad ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void IgnoreFullScreenSwitch_Click(object sender, RoutedEventArgs e)
