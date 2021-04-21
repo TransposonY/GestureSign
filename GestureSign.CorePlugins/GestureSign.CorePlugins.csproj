@@ -263,9 +263,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="MouseActions\crosshair.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup />
