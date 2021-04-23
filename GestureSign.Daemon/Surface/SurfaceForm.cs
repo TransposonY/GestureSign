@@ -26,7 +26,6 @@ namespace GestureSign.Daemon.Surface
         private GraphicsPath _graphicsPath = new GraphicsPath();
         private GraphicsPath _dirtyGraphicsPath = new GraphicsPath();
 
-        private float _screenDpi;
         private bool _settingsChanged;
 
         private const Int32 ULW_ALPHA = 0x00000002;
@@ -89,7 +88,7 @@ namespace GestureSign.Daemon.Surface
 
         }
 
-        public void StartDrawing()
+        public void StartDrawing(List<Point> startPoints)
         {
             if (AppConfig.VisualFeedbackWidth <= 0) return;
 
@@ -101,6 +100,7 @@ namespace GestureSign.Daemon.Surface
 
             ClearSurfaces();
             _drawingPen.Color = AppConfig.VisualFeedbackColor;
+            _drawingPen.Width = AppConfig.VisualFeedbackWidth * DpiHelper.GetScreenDpi(startPoints.FirstOrDefault()) / 96f;
         }
 
         public void EndDrawing()
@@ -232,14 +232,13 @@ namespace GestureSign.Daemon.Surface
             Height = rOutput.Height - 1;
             // Store offset in class field
             _screenOffset = new Size(Location);
-            _screenDpi = NativeMethods.GetScreenDpi() / 96f;
 
             InitializePen();
         }
 
         private void InitializePen()
         {
-            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, AppConfig.VisualFeedbackWidth * _screenDpi);
+            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, AppConfig.VisualFeedbackWidth * DpiHelper.GetSystemDpi() / 96f);
             _drawingPen.StartCap = _drawingPen.EndCap = LineCap.Round;
             _drawingPen.LineJoin = LineJoin.Round;
 

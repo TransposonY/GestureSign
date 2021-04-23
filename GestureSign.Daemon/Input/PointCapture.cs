@@ -201,7 +201,7 @@ namespace GestureSign.Daemon.Input
         {
             _surfaceForm = new SurfaceForm();
 
-            CaptureStarted += (o, e) => { if (Mode != CaptureMode.UserDisabled) _surfaceForm.StartDrawing(); };
+            CaptureStarted += (o, e) => { if (Mode != CaptureMode.UserDisabled) _surfaceForm.StartDrawing(e.FirstCapturedPoints); };
             CaptureEnded += (o, e) => { _surfaceForm.EndDrawing(); };
             CaptureCanceled += (o, e) => { _surfaceForm.EndDrawing(); };
             PointCaptured += (o, e) =>
