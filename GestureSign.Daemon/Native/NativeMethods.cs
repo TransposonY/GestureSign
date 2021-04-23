@@ -147,9 +147,27 @@ namespace GestureSign.Daemon.Native
         [DllImport("User32.dll")]
         internal static extern uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
 
+        [DllImport("User32.dll")]
+        public static extern IntPtr MonitorFromPoint([In] System.Drawing.Point pt, [In] uint dwFlags);
+
+        [DllImport("Shcore.dll")]
+        public static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] MonitorDpiType dpiType, [Out] out uint dpiX, [Out] out uint dpiY);
+
+
         #endregion DllImports
 
         private const string User32Dll = "user32.dll";
+
+        /// <summary>
+        /// Represents the different types of scaling.
+        /// </summary>
+        /// <seealso cref="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280511.aspx"/>
+        public enum MonitorDpiType
+        {
+            Effective = 0,
+            Angular = 1,
+            Raw = 2,
+        }
 
         [Flags]
         public enum SWP
@@ -376,31 +394,5 @@ namespace GestureSign.Daemon.Native
 
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
-
-        public enum DeviceCap
-        {
-            /// <summary>
-            /// Logical pixels inch in X
-            /// </summary>
-            LOGPIXELSX = 88,
-
-            /// <summary>
-            /// Logical pixels inch in Y
-            /// </summary>
-            LOGPIXELSY = 90
-
-            // Other constants may be founded on pinvoke.net
-        }
-
-        public static int GetScreenDpi()
-        {
-            var scrDc = GetDC(IntPtr.Zero);
-
-            int dpi = GetDeviceCaps(scrDc, (int)DeviceCap.LOGPIXELSX);
-
-            ReleaseDC(IntPtr.Zero, scrDc);
-
-            return dpi;
-        }
     }
 }

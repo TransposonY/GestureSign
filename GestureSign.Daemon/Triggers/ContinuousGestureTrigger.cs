@@ -22,7 +22,7 @@ namespace GestureSign.Daemon.Triggers
 
         public ContinuousGestureTrigger()
         {
-            _motionThreshold = 20f * NativeMethods.GetScreenDpi() / 96f;
+            _motionThreshold = 20f * DpiHelper.GetSystemDpi() / 96f;
 
             PointCapture.Instance.PointCaptured += PointCapture_PointCaptured;
             PointCapture.Instance.CaptureEnded += PointCapture_CaptureEnded;

@@ -30,7 +30,7 @@ namespace GestureSign.Daemon.Filtration
         {
             CreateHandle();
             ResetIdPool();
-            _doubleTapRadius = 3 * SystemInformation.DoubleClickSize.Width * NativeMethods.GetScreenDpi() / 96f;
+            _doubleTapRadius = 3 * SystemInformation.DoubleClickSize.Width * DpiHelper.GetSystemDpi() / 96f;
             _doubleTapTime = SystemInformation.DoubleClickTime;
         }
 

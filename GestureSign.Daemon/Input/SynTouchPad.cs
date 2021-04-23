@@ -88,7 +88,7 @@ namespace GestureSign.Daemon.Input
             _xPhysicalWide = _x_Hi - _x_Lo;
             _yPhysicalWide = _y_Hi - _y_Lo;
 
-            _fingerDistance = 50 * NativeMethods.GetScreenDpi() / 96;
+            _fingerDistance = 50 * DpiHelper.GetSystemDpi() / 96;
             _synchronizationContext = SynchronizationContext.Current;
         }
 

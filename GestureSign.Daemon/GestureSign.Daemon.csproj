@@ -109,6 +109,7 @@
     <Compile Include="Input\TouchPadDevice.cs" />
     <Compile Include="Input\TouchScreenDevice.cs" />
     <Compile Include="Input\PenDevice.cs" />
+    <Compile Include="Native\DpiHelper.cs" />
     <Compile Include="Native\RawInputDeclarations.cs" />
     <Compile Include="Native\HidDeclarations.cs" />
     <Compile Include="Native\HidReports.cs" />
