@@ -437,7 +437,7 @@ namespace GestureSign.Common.Configuration
             windowGlassColor = System.Drawing.Color.Empty;
             try
             {
-                if (Environment.OSVersion.Version.Major >= 6)
+                if (VersionHelper.IsWindowsVistaOrGreater())
                 {
                     using (RegistryKey dwm = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM"))
                     {

@@ -58,7 +58,7 @@ namespace GestureSign.CorePlugins.LaunchApp
                 var packageManager = new PackageManager();
                 var packages = packageManager.FindPackagesForUserWithPackageTypes(sid, PackageTypes.Main).ToList();
 
-                if (Environment.OSVersion.Version.Major == 10)
+                if (GestureSign.Common.VersionHelper.IsWindows10OrGreater())
                 {
                     var appXInfos = GetAppXInfosFromReg();
                     if (appXInfos == null || appXInfos.Count == 0) return;

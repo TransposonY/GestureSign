@@ -35,7 +35,7 @@ namespace GestureSign.ControlPanel
             mutex = new Mutex(true, Constants.ControlPanel, out createdNew);
             if (createdNew)
             {
-                if (AppConfig.UiAccess && Environment.OSVersion.Version.Major == 10)
+                if (AppConfig.UiAccess && VersionHelper.IsWindows10OrGreater())
                     if (TryLaunchStoreVersion())
                         return;
 

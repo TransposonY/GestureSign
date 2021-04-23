@@ -76,7 +76,7 @@ namespace GestureSign.Common.Applications
             var pointCapture = (IPointCapture)sender;
             if (pointCapture.Mode == CaptureMode.Training) return;
 
-            if (Environment.OSVersion.Version.Major == 6)
+            if (VersionHelper.IsWindows8OrGreater() && !VersionHelper.IsWindows10OrGreater())
             {
                 IntPtr hwndCharmBar = FindWindow("NativeHWNDHost", "Charm Bar");
                 var window = SystemWindow.FromPointEx(SystemWindow.DesktopWindow.Rectangle.Right - 1, 1, true, true);
@@ -419,7 +419,7 @@ namespace GestureSign.Common.Applications
         {
             try
             {
-                if (Environment.OSVersion.Version.Major >= 10 && "ApplicationFrameWindow".Equals(window.ClassName))
+                if (VersionHelper.IsWindows10OrGreater() && "ApplicationFrameWindow".Equals(window.ClassName))
                 {
                     var realWindow = window.AllChildWindows.FirstOrDefault(w => "Windows.UI.Core.CoreWindow".Equals(w.ClassName));
                     if (realWindow != null)
@@ -438,7 +438,7 @@ namespace GestureSign.Common.Applications
             var realWindow = GetRealWindow(window);
             className = fileName = null;
 
-            if (Environment.OSVersion.Version >= new Version(10, 0, 17134))
+            if (VersionHelper.OsVersion >= new Version(10, 0, 17134))
             {
                 title = window.Title;
             }

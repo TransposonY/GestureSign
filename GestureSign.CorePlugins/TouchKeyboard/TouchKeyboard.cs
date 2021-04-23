@@ -290,7 +290,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
         private bool IsKeyboardOpen()
         {
             // Reference https://stackoverflow.com/a/48545074
-            if (Environment.OSVersion.Version >= new Version(10, 0, 16299))
+            if (GestureSign.Common.VersionHelper.OsVersion >= new Version(10, 0, 16299))
             {
                 const string WindowParentClass1709 = "ApplicationFrameWindow";
                 const string WindowClass1709 = "Windows.UI.Core.CoreWindow";

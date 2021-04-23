@@ -149,6 +149,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="VersionHelper.cs" />
     <Compile Include="UI\ITrayManager.cs" />
     <Compile Include="Gestures\IGestureManager.cs" />
     <Compile Include="Plugins\IHostControl.cs" />
