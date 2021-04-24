@@ -20,6 +20,7 @@ namespace GestureSign.Daemon.Surface
         Pen _drawingPen;
         private Pen _shadowPen;
         private Pen _dirtyMarkerPen;
+        private float _penWidth;
         int[] _lastStroke;
         Size _screenOffset = default(Size);
         DiBitmap _bitmap;
@@ -90,22 +91,24 @@ namespace GestureSign.Daemon.Surface
 
         public void StartDrawing(List<Point> startPoints)
         {
-            if (AppConfig.VisualFeedbackWidth <= 0) return;
-
             if (_settingsChanged)
             {
                 _settingsChanged = false;
                 InitializeForm();
             }
 
+            if (_penWidth <= 0) return;
+
             ClearSurfaces();
+
+            //follow dynamic system color
             _drawingPen.Color = AppConfig.VisualFeedbackColor;
-            _drawingPen.Width = AppConfig.VisualFeedbackWidth * DpiHelper.GetScreenDpi(startPoints.FirstOrDefault()) / 96f;
+            _drawingPen.Width = _penWidth * DpiHelper.GetScreenDpi(startPoints.FirstOrDefault()) / 96f;
         }
 
         public void EndDrawing()
         {
-            if (AppConfig.VisualFeedbackWidth <= 0 || _lastStroke == null)
+            if (_penWidth <= 0 || _lastStroke == null)
                 return;
             Hide();
             TopMost = false;
@@ -115,8 +118,7 @@ namespace GestureSign.Daemon.Surface
 
         public void DrawPoints(List<List<Point>> points)
         {
-            if (AppConfig.VisualFeedbackWidth > 0 &&
-                !(points.Count == 1 && points[0].Count == 1))
+            if (_penWidth > 0 && !(points.Count == 1 && points[0].Count == 1))
             {
 
                 if (_bitmap == null || _lastStroke == null)
@@ -238,7 +240,8 @@ namespace GestureSign.Daemon.Surface
 
         private void InitializePen()
         {
-            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, AppConfig.VisualFeedbackWidth * DpiHelper.GetSystemDpi() / 96f);
+            _penWidth = AppConfig.VisualFeedbackWidth;
+            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, _penWidth * DpiHelper.GetSystemDpi() / 96f);
             _drawingPen.StartCap = _drawingPen.EndCap = LineCap.Round;
             _drawingPen.LineJoin = LineJoin.Round;
 
