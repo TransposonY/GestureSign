@@ -208,7 +208,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return GetValue(nameof(IgnoreFullScreen), true);
+                return GetValue(nameof(IgnoreFullScreen), false);
             }
             set
             {
