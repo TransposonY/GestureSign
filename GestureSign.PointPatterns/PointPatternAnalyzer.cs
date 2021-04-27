@@ -54,7 +54,7 @@ namespace GestureSign.PointPatterns
         public PointPatternMatchResult[] GetPointPatternMatchResults(Point[] Points)
         {
             // Create a list of PointPatternMatchResults to hold final results and group results of point pattern set comparison
-            List<PointPatternMatchResult> comparisonResults = new List<PointPatternMatchResult>();
+            List<PointPatternMatchResult> comparisonResults = new List<PointPatternMatchResult>(PointPatternSet.Count());
             List<PointPatternMatchResult> groupComparisonResults = new List<PointPatternMatchResult>();
 
             // Enumerate each point patterns grouped by name
