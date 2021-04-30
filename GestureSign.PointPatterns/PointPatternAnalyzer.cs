@@ -34,16 +34,6 @@ namespace GestureSign.PointPatterns
 
         #region Public Properties
 
-        public struct PointsPatternSet
-        {
-            public PointsPatternSet(string name, Point[] points)
-            {
-                Name = name;
-                Points = points;
-            }
-            public string Name;
-            public Point[] Points;
-        }
         public int Precision { get; set; }
         public IEnumerable<PointsPatternSet> PointPatternSet { get; set; }//
 
@@ -55,32 +45,25 @@ namespace GestureSign.PointPatterns
         {
             // Create a list of PointPatternMatchResults to hold final results and group results of point pattern set comparison
             List<PointPatternMatchResult> comparisonResults = new List<PointPatternMatchResult>(PointPatternSet.Count());
-            List<PointPatternMatchResult> groupComparisonResults = new List<PointPatternMatchResult>();
+            var targetPattern = new PointsPatternSet(null, Points);
 
-            // Enumerate each point patterns grouped by name
-            foreach (IGrouping<string, PointsPatternSet> pointPatternSet in PointPatternSet.GroupBy(pp => pp.Name))
+            // Enumerate each point patterns
+            foreach (var pointPatternSet in PointPatternSet)
             {
-                // Clear out group comparison results from last group comparison
-                groupComparisonResults.Clear();
-
-                // Calculate probability of each point pattern in this group
-                foreach (PointsPatternSet pointPatternCompareTo in pointPatternSet)
-                    groupComparisonResults.Add(GetPointPatternMatchResult(pointPatternCompareTo, Points));
-
-                // Add results of group comparison to final comparison results
-                comparisonResults.Add(new PointPatternMatchResult(pointPatternSet.Key, groupComparisonResults.Average(ppmr => ppmr.Probability), groupComparisonResults.Sum(ppmr => ppmr.PointPatternSetCount)));
+                // Calculate probability of each point pattern 
+                comparisonResults.Add(GetPointPatternMatchResult(pointPatternSet, targetPattern));
             }
 
             // Return comparison results ordered by highest probability
             return comparisonResults.ToArray();//.OrderByDescending(ppmr => ppmr.Probability).
         }
 
-        public PointPatternMatchResult GetPointPatternMatchResult(PointsPatternSet CompareTo, Point[] Points)
+        public PointPatternMatchResult GetPointPatternMatchResult(PointsPatternSet compareTo, PointsPatternSet points)
         {
             PointPatternMatchResult comparisonResults = new PointPatternMatchResult();
-            if (CompareTo.Points.Length == 1 || Points.Length <= 1)
+            if (compareTo.Points.Length == 1 || points.Points.Length <= 1)
             {
-                if (Points.Length == CompareTo.Points.Length)
+                if (points.Points.Length == compareTo.Points.Length)
                 {
                     comparisonResults.Probability = 100d;
 
@@ -93,8 +76,8 @@ namespace GestureSign.PointPatterns
             else
             {
                 double[] aDeltas = new double[Precision];
-                double[] aCompareToAngles = PointPatternMath.GetPointArrayAngularMargins(PointPatternMath.GetInterpolatedPointArray(CompareTo.Points, Precision));
-                double[] aCompareAngles = PointPatternMath.GetPointArrayAngularMargins(PointPatternMath.GetInterpolatedPointArray(Points, Precision));
+                double[] aCompareToAngles = compareTo.GetAngularMargins(Precision);
+                double[] aCompareAngles = points.GetAngularMargins(Precision);
 
                 for (int i = 0; i <= aCompareToAngles.Length - 1; i++)
                     aDeltas[i] = PointPatternMath.GetAngularDelta(aCompareToAngles[i], aCompareAngles[i]);
@@ -102,8 +85,7 @@ namespace GestureSign.PointPatterns
                 // Create new PointPatternMatchResult object to hold results from comparison
                 comparisonResults.Probability = PointPatternMath.GetProbabilityFromAngularDelta(aDeltas.Average());
             }
-            comparisonResults.Name = CompareTo.Name;
-            comparisonResults.PointPatternSetCount = 1;
+            comparisonResults.Name = compareTo.Name;
             // Return results of the comparison
             return comparisonResults;
         }

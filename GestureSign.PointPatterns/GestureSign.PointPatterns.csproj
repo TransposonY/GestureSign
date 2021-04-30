@@ -78,6 +78,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PointsPatternSet.cs" />
     <Compile Include="IPointPattern.cs" />
     <Compile Include="PointPatternMath.cs" />
     <Compile Include="PointPatternAnalyzer.cs" />
