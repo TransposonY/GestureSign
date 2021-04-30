@@ -30,7 +30,7 @@ namespace GestureSign.ControlPanel
                             }
                         case IpcCommands.GotGesture:
                             {
-                                var newGesture = data as List<List<List<Point>>>;
+                                var newGesture = data as Point[][][];
                                 if (newGesture == null) return;
 
                                 GotNewPattern?.Invoke(this, newGesture.Select(list => new PointPattern(list)).ToArray());

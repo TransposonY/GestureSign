@@ -580,9 +580,9 @@ namespace GestureSign.Daemon.Input
             else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
                 _pointPatternCache.Clear();
-                _pointPatternCache.Add(new PointPattern(new List<List<Point>>(_pointsCaptured.Values)));
+                _pointPatternCache.Add(new PointPattern(_pointsCaptured.Values));
 
-                if (!NamedPipe.SendMessageAsync(IpcCommands.GotGesture, Constants.ControlPanel, _pointPatternCache.Select(p => p.Points).ToList(), false).Result)
+                if (!NamedPipe.SendMessageAsync(IpcCommands.GotGesture, Constants.ControlPanel, _pointPatternCache.Select(p => p.Points).ToArray(), false).Result)
                     Mode = CaptureMode.Normal;
             }
 

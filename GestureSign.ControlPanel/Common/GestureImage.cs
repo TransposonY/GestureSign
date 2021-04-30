@@ -14,7 +14,7 @@ namespace GestureSign.ControlPanel.Common
         // static Point Dpi = GetPixelsPerXLogicalInch();
         #endregion
 
-        private static Point[] ScaleGesture(List<System.Drawing.Point> input, double width, double height, out Size scaledSize)
+        private static Point[] ScaleGesture(System.Drawing.Point[] input, double width, double height, out Size scaledSize)
         {
             // Create generic list of points to hold scaled stroke
             List<Point> scaledStroke = new List<Point>();
@@ -71,9 +71,9 @@ namespace GestureSign.ControlPanel.Common
                 Pen drawingPen = new Pen(brush, size.Height / 20 + i * 1.5) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
 
                 if (pointPatterns[i].Points == null) return null;
-                for (int j = 0; j < pointPatterns[i].Points.Count; j++)
+                for (int j = 0; j < pointPatterns[i].Points.Length; j++)
                 {
-                    if (pointPatterns[i].Points[j].Count == 1)
+                    if (pointPatterns[i].Points[j].Length == 1)
                     {
                         Geometry ellipse = new EllipseGeometry(new Point(size.Width * j + size.Width / 2, size.Height / 2),
                             drawingPen.Thickness / 2, drawingPen.Thickness / 2);

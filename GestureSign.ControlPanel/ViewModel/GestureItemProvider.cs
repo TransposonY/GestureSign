@@ -91,7 +91,7 @@ namespace GestureSign.ControlPanel.ViewModel
                 {
                     GestureImage = GestureImage.CreateImage(gesture.PointPatterns, new Size(60, 60), color),
                     Features = GestureManager.Instance.GetNewGestureId(gesture.PointPatterns),
-                    PatternCount = gesture?.PointPatterns.Max(p => p.Points.Count) ?? 0,
+                    PatternCount = gesture?.PointPatterns.Max(p => p.Points.Length) ?? 0,
                     Applications = result,
                     Gesture = gesture
                 };

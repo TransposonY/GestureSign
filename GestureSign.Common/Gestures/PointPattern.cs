@@ -1,16 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using GestureSign.PointPatterns;
+using System.Collections.Generic;
 using System.Drawing;
-using GestureSign.PointPatterns;
+using System.Linq;
 
 namespace GestureSign.Common.Gestures
 {
     public class PointPattern : IPointPattern
     {
-        public PointPattern(List<List<Point>> points)
+        public PointPattern(Point[][] points)
         {
             Points = points;
         }
 
-        public List<List<Point>> Points { get; set; }
+        public PointPattern(IEnumerable<List<Point>> points)
+        {
+            Points = points.Select(l => l.ToArray()).ToArray();
+        }
+
+        public Point[][] Points { get; set; }
     }
 }
