@@ -16,6 +16,7 @@ namespace GestureSign.Common.Gestures
         #region Private Variables
 
         private const int ProbabilityThreshold = 80;
+        private const int GestureStackTimeout = 800;
 
         private int _gestureLevel = 0;
 
@@ -28,6 +29,8 @@ namespace GestureSign.Common.Gestures
         // Create PointPatternAnalyzer to process gestures when received
         PointPatternAnalyzer gestureAnalyzer = null;
 
+        private bool _isGestureStackTimeout;
+        private int? _lastGestureTime;
         private List<IGesture> _gestureMatchResult;
 
         #endregion
@@ -72,17 +75,26 @@ namespace GestureSign.Common.Gestures
 
         #region Events
 
+        protected void PointCapture_CaptureStarted(object sender, PointsCapturedEventArgs e)
+        {
+            if (_lastGestureTime != null && Environment.TickCount - _lastGestureTime.Value > GestureStackTimeout)
+                _isGestureStackTimeout = true;
+        }
+
         protected void PointCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
             var pointCapture = (IPointCapture)sender;
 
-            if (pointCapture.Mode == CaptureMode.Training)
+            if (_isGestureStackTimeout)
             {
+                _lastGestureTime = null;
+                _isGestureStackTimeout = false;
+
                 _gestureLevel = 0;
                 _gestureMatchResult = null;
             }
 
-            if (e.GestureTimeout)
+            if (pointCapture.Mode == CaptureMode.Training)
             {
                 _gestureLevel = 0;
                 _gestureMatchResult = null;
@@ -96,7 +108,7 @@ namespace GestureSign.Common.Gestures
                 if (_gestureMatchResult != null && _gestureMatchResult.Count != 0)
                 {
                     _gestureLevel++;
-                    e.Delay = true;
+                    _lastGestureTime = Environment.TickCount;
                 }
                 else
                 {
@@ -163,6 +175,7 @@ namespace GestureSign.Common.Gestures
             if (pointCapture != null)
             {
                 pointCapture.BeforePointsCaptured += PointCapture_BeforePointsCaptured;
+                pointCapture.CaptureStarted += PointCapture_CaptureStarted; ;
             }
         }
 
@@ -317,10 +330,10 @@ namespace GestureSign.Common.Gestures
             return gestureList;
         }
 
-        public string GetGestureSetNameMatch(Point[][] points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matchResult)//PointF[]
+        public string GetGestureSetNameMatch(Point[][] points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matching)//PointF[]
         {
             if (points.Length == 0 || sourceGestures == null || sourceGestures.Count == 0)
-            { matchResult = null; return null; }
+            { matching = null; return null; }
             // Update gesture analyzer with latest gestures and get gesture match from current points array
             // Comparison results are sorted descending from highest to lowest probability
             var gestures =
@@ -339,7 +352,7 @@ namespace GestureSign.Common.Gestures
             var numbers = Enumerable.Range(0, gestures.Count);
             numbers = comparisonResults.Aggregate(numbers, (current, matchResultsList) => current.Where(i => matchResultsList[i].Probability > ProbabilityThreshold).ToList());
 
-            List<IGesture> result = new List<IGesture>();
+            List<IGesture> matchingResult = new List<IGesture>();
             List<KeyValuePair<string, double>> recognizedResult = new List<KeyValuePair<string, double>>();
 
             foreach (var number in numbers)
@@ -347,7 +360,7 @@ namespace GestureSign.Common.Gestures
                 var gesture = gestures[number];
                 if (gesture.PointPatterns.Length > sourceGestureLevel + 1)
                 {
-                    result.Add(gesture);
+                    matchingResult.Add(gesture);
                 }
                 else
                 {
@@ -357,7 +370,7 @@ namespace GestureSign.Common.Gestures
                 }
             }
 
-            matchResult = result.Count == 0 ? null : result;
+            matching = matchingResult.Count == 0 ? null : matchingResult;
             return recognizedResult.Count == 0 ? null : recognizedResult.OrderByDescending(r => r.Value).First().Key;
         }
 

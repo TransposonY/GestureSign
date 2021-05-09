@@ -30,7 +30,7 @@ namespace GestureSign.Daemon.Input
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         private const uint WINEVENT_SKIPOWNPROCESS = 0x0002; // Don't call back for events on installer's process
         private const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
-        private const int GestureStackTimeout = 800;
+
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly PointEventTranslator _pointEventTranslator;
         private readonly InputProvider _inputProvider;
@@ -55,13 +55,10 @@ namespace GestureSign.Daemon.Input
         private readonly IntPtr _hWinEventHook;
         private GCHandle _winEventGch;
 
-        private bool _isGestureStackTimeout;
-
         private bool disposedValue = false; // To detect redundant calls
 
         private int? _blockTouchInputThreshold;
         private Point _touchPadStartPoint;
-        private int? _lastGestureTime;
 
         #endregion
 
@@ -343,9 +340,6 @@ namespace GestureSign.Daemon.Input
                     _initialTimeoutTimer.Change(timeout, Timeout.Infinite);
                 }
 
-                if (_lastGestureTime != null && Environment.TickCount - _lastGestureTime.Value > GestureStackTimeout)
-                    _isGestureStackTimeout = true;
-
                 // Try to begin capture process, if capture started then don't notify other applications of a Point event, otherwise do
                 if (!TryBeginCapture(e.InputPointList))
                 {
@@ -561,23 +555,13 @@ namespace GestureSign.Daemon.Input
             OnCaptureEnded();
             State = CaptureState.Ready;
 
-            if (_isGestureStackTimeout)
-            {
-                _lastGestureTime = null;
-                _isGestureStackTimeout = false;
-                pointsInformation.GestureTimeout = true;
-            }
             // Notify PointsCaptured event subscribers that points have been captured.
             //CaptureWindow GetGestureName
             OnBeforePointsCaptured(pointsInformation);
 
             if (pointsInformation.Cancel) return;
 
-            if (pointsInformation.Delay)
-            {
-                _lastGestureTime = Environment.TickCount;
-            }
-            else if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
+            if (Mode == CaptureMode.Training && !(_pointsCaptured.Count == 1 && _pointsCaptured.Values.First().Count == 1))
             {
                 _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(_pointsCaptured.Values));
