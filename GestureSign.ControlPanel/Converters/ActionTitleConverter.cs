@@ -39,6 +39,9 @@ namespace GestureSign.ControlPanel.Converters
                     ViewModel.MouseActionDescription.DescriptionDict[AppConfig.DrawingButton] + " + " + ViewModel.MouseActionDescription.DescriptionDict[action.MouseHotkey];
             }
 
+            if (!string.IsNullOrWhiteSpace(action.Condition))
+                actionName += " [Cond]";
+
             return actionName;
         }
 
