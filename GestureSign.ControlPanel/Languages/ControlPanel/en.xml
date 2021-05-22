@@ -239,6 +239,7 @@ Email:ccfyzh@gmail.com
     <OffLabel>Off</OffLabel>
     <MouseGesture>Mouse Gesture</MouseGesture>
     <DrawingButton>Draw gesture by holding: </DrawingButton>
+    <TouchScreen>TouchScreen Gesture</TouchScreen>
     <TouchPad>Touchpad Gesture</TouchPad>
     <FoundSynTouchPad>Synaptics Touchpad only report one finger's movement</FoundSynTouchPad>
     <PenGesture>Pen Gesture</PenGesture>

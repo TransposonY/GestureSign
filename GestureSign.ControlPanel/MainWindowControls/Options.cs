@@ -52,6 +52,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 ShowTrayIconSwitch.IsChecked = AppConfig.ShowTrayIcon;
                 SendLogToggleSwitch.IsChecked = AppConfig.SendErrorReport;
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
+                TouchScreenSwitch.IsChecked = AppConfig.RegisterTouchScreen;
                 IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
                 IgnoreTouchInputWhenUsingPenSwitch.IsChecked = AppConfig.IgnoreTouchInputWhenUsingPen;
                 if (AppConfig.DrawingButton != MouseActions.None)
@@ -372,6 +373,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void DrawingButtonComboBox_DropDownClosed(object sender, EventArgs e)
         {
             AppConfig.DrawingButton = (MouseActions)DrawingButtonComboBox.SelectedValue;
+        }
+
+        private void TouchScreenSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.RegisterTouchScreen = TouchScreenSwitch.IsChecked.GetValueOrDefault();
         }
 
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)

@@ -112,7 +112,7 @@ namespace GestureSign.Daemon.Input
 
             _validDevices.Clear();
 
-            UpdateRegisterState(true, NativeMethods.TouchScreenUsage);
+            UpdateRegisterState(AppConfig.RegisterTouchScreen, NativeMethods.TouchScreenUsage);
             UpdateRegisterState(_ignoreTouchInputWhenUsingPen || _penGestureButton != 0 && (penSetting & (DeviceStates.InRange | DeviceStates.Tip)) != 0, NativeMethods.PenUsage);
             UpdateRegisterState(AppConfig.RegisterTouchPad, NativeMethods.TouchPadUsage);
         }

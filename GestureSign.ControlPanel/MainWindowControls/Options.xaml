@@ -159,6 +159,11 @@
                       DropDownClosed="DrawingButtonComboBox_DropDownClosed"
                       Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
             </ComboBox>
+            <controls:ToggleSwitch x:Name="TouchScreenSwitch"
+                                   Header="{localization:LocalisedText Options.TouchScreen}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Click="TouchScreenSwitch_Click" />
             <controls:ToggleSwitch x:Name="TouchPadSwitch"
                                    Header="{localization:LocalisedText Options.TouchPad}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

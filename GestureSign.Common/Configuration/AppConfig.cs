@@ -204,6 +204,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool RegisterTouchScreen
+        {
+            get
+            {
+                return GetValue(nameof(RegisterTouchScreen), true);
+            }
+            set
+            {
+                SetValue(nameof(RegisterTouchScreen), value);
+            }
+        }
+
         public static bool IgnoreFullScreen
         {
             get

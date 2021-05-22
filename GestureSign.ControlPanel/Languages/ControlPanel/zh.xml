@@ -114,7 +114,7 @@ QQ交流群：576981420
     <DeviceLimit>设备限定</DeviceLimit>
     <Mouse>鼠标</Mouse>
     <TouchScreen>触摸屏</TouchScreen>
-    <TouchPad>精确式触摸板</TouchPad>
+    <TouchPad>触摸板</TouchPad>
     <Pen>触控笔</Pen>
     <Messages>
       <ConditionError>条件错误</ConditionError>
@@ -243,6 +243,7 @@ QQ交流群：576981420
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>
     <DrawingButton>鼠标手势键：</DrawingButton>
+    <TouchScreen>触屏手势</TouchScreen>
     <TouchPad>触摸板手势</TouchPad>
     <FoundSynTouchPad>提示：Synaptics触摸板只提供单指的轨迹，多指手势的轨迹与单指相同</FoundSynTouchPad>
     <PenGesture>触控笔手势</PenGesture>
