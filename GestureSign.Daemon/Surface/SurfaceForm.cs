@@ -17,8 +17,7 @@ namespace GestureSign.Daemon.Surface
     {
         #region Private Variables
 
-        Pen _drawingPen;
-        private Pen _shadowPen;
+        private Pen _drawingPen;
         private Pen _dirtyMarkerPen;
         private float _penWidth;
         int[] _lastStroke;
@@ -241,19 +240,19 @@ namespace GestureSign.Daemon.Surface
         private void InitializePen()
         {
             _penWidth = AppConfig.VisualFeedbackWidth;
-            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, _penWidth * DpiHelper.GetSystemDpi() / 96f);
-            _drawingPen.StartCap = _drawingPen.EndCap = LineCap.Round;
-            _drawingPen.LineJoin = LineJoin.Round;
+            _drawingPen = new Pen(AppConfig.VisualFeedbackColor, _penWidth * DpiHelper.GetSystemDpi() / 96f)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round,
+                LineJoin = LineJoin.Round
+            };
 
-            _shadowPen = new Pen(Color.FromArgb(30, 0, 0, 0), _drawingPen.Width + 4f)
+            _dirtyMarkerPen = new Pen(Color.FromArgb(30, 0, 0, 0), (_drawingPen.Width + 4f) * 1.5f)
             {
                 EndCap = LineCap.Round,
                 StartCap = LineCap.Round,
                 LineJoin = LineJoin.Round
             };
-
-            _dirtyMarkerPen = (Pen)_shadowPen.Clone();
-            _dirtyMarkerPen.Width *= 1.5f;
         }
 
 
