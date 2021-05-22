@@ -326,14 +326,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
             lstAvailableActions.SelectedItem = null;
             foreach (var actionGroup in _commandClipboard.GroupBy(ci => ci.Action))
             {
-                var sourceAction = actionGroup.Key;
-                var newAction = new GestureSign.Common.Applications.Action()
-                {
-                    Condition = sourceAction.Condition,
-                    ContinuousGesture = sourceAction.ContinuousGesture,
-                    GestureName = sourceAction.GestureName,
-                    Commands = new List<ICommand>(),
-                };
+                var sourceAction = (GestureSign.Common.Applications.Action)actionGroup.Key;
+                var newAction = sourceAction.DeepCopy();
+                newAction.Commands = new List<ICommand>();
+
                 targetApplication.AddAction(newAction);
 
                 foreach (var info in actionGroup)

@@ -61,11 +61,6 @@ namespace GestureSign.Common.Applications
             CollectionChanged?.Invoke(this, e);
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, object changedItem)
-        {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItem));
-        }
-
         private void CheckInitialization()
         {
             if (_commands == null)
@@ -81,11 +76,29 @@ namespace GestureSign.Common.Applications
             return MemberwiseClone();
         }
 
+        /// <summary>
+        /// make a deep copy of Action except events
+        /// </summary>
+        public Action DeepCopy()
+        {
+            Action action = (Action)MemberwiseClone();
+            action.CollectionChanged = null;
+
+            action.Name = Name == null ? null : string.Copy(Name);
+            action.GestureName = GestureName == null ? null : string.Copy(GestureName);
+            action.Condition = Condition == null ? null : string.Copy(Condition);
+            action._commands = new List<ICommand>(_commands);
+            action.Hotkey = Hotkey == null ? null : new Hotkey() { KeyCode = Hotkey.KeyCode, ModifierKeys = Hotkey.ModifierKeys };
+            action.ContinuousGesture = ContinuousGesture == null ? null : new ContinuousGesture(ContinuousGesture.ContactCount, ContinuousGesture.Gesture);
+
+            return action;
+        }
+
         public void AddCommand(ICommand command)
         {
             CheckInitialization();
             _commands.Add(command);
-            OnCollectionChanged(NotifyCollectionChangedAction.Add, command);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, command));
         }
 
         public void InsertCommand(int index, ICommand command)
@@ -99,7 +112,7 @@ namespace GestureSign.Common.Applications
         {
             CheckInitialization();
             _commands.Remove(command);
-            OnCollectionChanged(NotifyCollectionChangedAction.Remove, command);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, command));
         }
 
         public void MoveCommand(int oldIndex, int newIndex)
