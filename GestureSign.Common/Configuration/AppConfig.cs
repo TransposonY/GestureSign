@@ -39,7 +39,7 @@ namespace GestureSign.Common.Configuration
                     }
                     catch (Exception e)
                     {
-                        Logging.LogAndNotice(e);
+                        Logging.LogAndNotice(new Exceptions.FileWriteException(e));
                     }
                 }
                 return _config;
@@ -309,7 +309,7 @@ namespace GestureSign.Common.Configuration
             catch (ConfigurationErrorsException e)
             {
                 Reload();
-                Logging.LogAndNotice(e);
+                Logging.LogAndNotice(new Exceptions.FileWriteException(e));
             }
             catch (Exception e)
             {

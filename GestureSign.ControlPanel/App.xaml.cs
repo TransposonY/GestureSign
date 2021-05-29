@@ -176,10 +176,16 @@ namespace GestureSign.ControlPanel
 
         private void ShowException(Exception exception)
         {
+            string message = null;
+            if (exception is GestureSign.Common.Exceptions.FileWriteException)
+            {
+                message += Environment.NewLine + Environment.NewLine + LocalizationProvider.Instance.GetTextValue("Messages.FileWriteException");
+            }
+
             while (exception.InnerException != null)
                 exception = exception.InnerException;
 
-            MessageBox.Show(exception.Message, "Error",
+            MessageBox.Show(exception.Message + message, "Error",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
         }
 

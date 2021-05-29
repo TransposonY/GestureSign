@@ -109,6 +109,7 @@
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\FileManager.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Exceptions\FileWriteException.cs" />
     <Compile Include="Extensions\ApplicationExtensions.cs" />
     <Compile Include="Extensions\GestureExtensions.cs" />
     <Compile Include="Gestures\Gesture.cs" />

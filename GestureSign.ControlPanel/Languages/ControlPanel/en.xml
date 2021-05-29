@@ -14,6 +14,7 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <FindNewErrorLog>Find new error log.You can help me track and fix problems by sending these error logs.</FindNewErrorLog>
     <StartupError>Can not launch "{0}". Please check if you have some antivirus blocking the startup or try reinstalling GestureSign. </StartupError>
     <UnexpectedException>An unexpected exception has occurred. Shutting down the application. You can help fix the problems by "Send Feedback" </UnexpectedException>
+    <FileWriteException>Failed to save. Please try to change the GestureSign location if you are using portable edition.</FileWriteException>
   </Messages>
   <Common>
     <GlobalActions>(Global Actions)</GlobalActions>
@@ -33,7 +34,7 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <Header>About</Header>
     <Homepage>Homepage</Homepage>
     <HomepageUrl>https://gesturesign.win</HomepageUrl>
-    <Store>Windows Store Version</Store>
+    <Store>Microsoft Store</Store>
     <HelpPageUrl>https://gesturesign.win/#/guide</HelpPageUrl>
     <Version>Version  </Version>
     <ReleaseDate>ReleaseDate  </ReleaseDate>

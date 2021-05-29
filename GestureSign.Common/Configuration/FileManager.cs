@@ -54,7 +54,7 @@ namespace GestureSign.Common.Configuration
             }
             catch (Exception ex)
             {
-                Logging.LogAndNotice(ex);
+                Logging.LogAndNotice(new Exceptions.FileWriteException(ex));
                 if (throwException)
                     throw;
                 return false;
