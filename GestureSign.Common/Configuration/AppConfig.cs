@@ -196,7 +196,7 @@ namespace GestureSign.Common.Configuration
         {
             get
             {
-                return (bool)GetValue(nameof(RegisterTouchPad), false);
+                return (bool)GetValue(nameof(RegisterTouchPad), true);
             }
             set
             {
