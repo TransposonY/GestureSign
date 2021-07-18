@@ -21,7 +21,6 @@ namespace GestureSign.Common.Applications
         // Create variable to hold the only allowed instance of this class
         private static ApplicationManager _instance;
         private List<IApplication> _applications;
-        IApplication _currentApplication = null;
         IEnumerable<IApplication> _recognizedApplication;
         private Timer _timer;
         #endregion
@@ -30,14 +29,6 @@ namespace GestureSign.Common.Applications
 
         public SystemWindow CaptureWindow { get; private set; }
         public IEnumerable<IApplication> RecognizedApplication { get { return _recognizedApplication; } }
-        public IApplication CurrentApplication
-        {
-            get { return _currentApplication; }
-            set
-            {
-                _currentApplication = value;
-            }
-        }
 
         public List<IApplication> Applications
         {
@@ -127,6 +118,21 @@ namespace GestureSign.Common.Applications
 
         protected void PointCapture_BeforePointsCaptured(object sender, PointsCapturedEventArgs e)
         {
+            var appsToMatch = Applications.Where(a => a is UserApp && a.MatchActivated);
+            if (appsToMatch.Any())
+            {
+                CaptureWindow = SystemWindow.ForegroundWindow;
+                string className, title, fileName;
+                GetWindowInfo(CaptureWindow, out className, out title, out fileName);
+                var matchedForegroundApps = FindMatchApplications(appsToMatch, className, title, fileName);
+
+                if (matchedForegroundApps.Length != 0)
+                {
+                    _recognizedApplication = matchedForegroundApps;
+                    return;
+                }
+            }
+
             // Derive capture window from capture point
             CaptureWindow = GetWindowFromPoint(e.FirstCapturedPoints.FirstOrDefault());
             _recognizedApplication = GetApplicationFromWindow(CaptureWindow);

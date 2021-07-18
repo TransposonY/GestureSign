@@ -26,6 +26,8 @@ namespace GestureSign.Common.Applications
             //	set { /* Set only exists for deserialization purposes */ }
         }
 
+        public override bool MatchActivated { get => false; }
+
         #endregion
     }
 }

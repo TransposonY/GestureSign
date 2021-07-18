@@ -82,6 +82,7 @@ QQ交流群：576981420
     <BlockTouchInputInfo>屏蔽至少 {0} 根手指的触摸输入</BlockTouchInputInfo>
     <LimitNumberOfFingers>手指数限制</LimitNumberOfFingers>
     <LimitNumberOfFingersInfo>至少 {0} 根手指</LimitNumberOfFingersInfo>
+    <MatchActivatedWindow>匹配当前激活的窗口</MatchActivatedWindow>
     <Messages>
       <EmptyStringTitle>字段为空</EmptyStringTitle>
       <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>

@@ -11,6 +11,7 @@ namespace GestureSign.Common.Applications
 
         IEnumerable<IAction> Actions { get; set; }
         MatchUsing MatchUsing { get; set; }
+        bool MatchActivated { get; set; }
         string MatchString { get; set; }
         bool IsRegEx { get; set; }
         string Group { get; set; }

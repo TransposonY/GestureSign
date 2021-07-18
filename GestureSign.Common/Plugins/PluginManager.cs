@@ -67,6 +67,7 @@ namespace GestureSign.Common.Plugins
             if (mode == CaptureMode.Training)
                 return;
             var pointInfo = new PointInfo(firstCapturedPoints, points, _mainContext);
+            var target = ApplicationManager.Instance.CaptureWindow;
             var action = new Action<object>(o =>
             {
                 foreach (IAction executableAction in executableActions)
@@ -82,7 +83,7 @@ namespace GestureSign.Common.Plugins
                         if (mode == CaptureMode.UserDisabled && !"GestureSign.CorePlugins.ToggleDisableGestures".Equals(command.PluginClass))
                             continue;
 
-                        pointInfo.Window.WaitForIdle(200);
+                        target.WaitForIdle(200);
 
                         // Locate the plugin associated with this action
                         IPluginInfo pluginInfo = FindPluginByClassAndFilename(command.PluginClass, command.PluginFilename);
@@ -94,9 +95,9 @@ namespace GestureSign.Common.Plugins
                         if (commandList.IndexOf(command) == 0)
                         {
                             if (executableAction.ActivateWindow == null && pluginInfo.Plugin.ActivateWindowDefault ||
-                            executableAction.ActivateWindow.HasValue && executableAction.ActivateWindow.Value)
-                                if (pointInfo.Window?.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
-                                    SystemWindow.ForegroundWindow = pointInfo.Window;
+                            executableAction.ActivateWindow.GetValueOrDefault())
+                                if (target.HWnd.ToInt64() != SystemWindow.ForegroundWindow?.HWnd.ToInt64())
+                                    SystemWindow.ForegroundWindow = target;
                         }
 
                         // Load action settings into plugin

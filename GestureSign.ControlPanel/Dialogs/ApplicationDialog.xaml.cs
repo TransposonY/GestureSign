@@ -91,7 +91,8 @@ namespace GestureSign.ControlPanel.Dialogs
                     showLimitNumberOfFingers = true;
                     LimitNumberOfFingersSlider.Minimum = 2;
                     LimitNumberOfFingersSlider.Value = globalApp.LimitNumberOfFingers;
-                    List<FrameworkElement> elements = new List<FrameworkElement> { chCrosshair, ApplicationNameTextBox, ShowRunningButton, BrowseButton, matchUsingRadio, MatchStringTextBox, RegexCheckBox };
+                    List<FrameworkElement> elements =
+                        new List<FrameworkElement> { chCrosshair, ApplicationNameTextBox, ShowRunningButton, BrowseButton, matchUsingRadio, MatchStringTextBox, RegexCheckBox, MatchActivatedCheckBox };
                     elements.ForEach(el => el.IsEnabled = false);
                     break;
             }
@@ -99,6 +100,7 @@ namespace GestureSign.ControlPanel.Dialogs
             {
                 ApplicationNameTextBox.Text = _currentApplication.Name;
                 matchUsingRadio.MatchUsing = _currentApplication.MatchUsing;
+                MatchActivatedCheckBox.IsChecked = _currentApplication.MatchActivated;
                 RegexCheckBox.IsChecked = _currentApplication.IsRegEx;
                 MatchStringTextBox.Text = _currentApplication.MatchString;
             }
@@ -110,7 +112,8 @@ namespace GestureSign.ControlPanel.Dialogs
 
             LimitNumberOfFingersSlider.Visibility = LimitNumberOfFingersInfoTextBlock.Visibility =
                 LimitNumberOfFingersTextBlock.Visibility = showLimitNumberOfFingers ? Visibility.Visible : Visibility.Collapsed;
-            GroupNameTextBlock.Visibility = GroupComboBox.Visibility = isUserApp ? Visibility.Visible : Visibility.Collapsed;
+            GroupNameTextBlock.Visibility = GroupComboBox.Visibility = MatchActivatedCheckBox.Visibility =
+                isUserApp ? Visibility.Visible : Visibility.Collapsed;
 
             BlockTouchInputSlider.Visibility = BlockTouchInputInfoTextBlock.Visibility = BlockTouchInputTextBlock.Visibility =
                     AppConfig.UiAccess && isUserApp ? Visibility.Visible : Visibility.Collapsed;
@@ -348,6 +351,7 @@ namespace GestureSign.ControlPanel.Dialogs
                             Group = groupName,
                             MatchString = matchString,
                             MatchUsing = matchUsingRadio.MatchUsing,
+                            MatchActivated = MatchActivatedCheckBox.IsChecked.GetValueOrDefault(),
                             IsRegEx = RegexCheckBox.IsChecked.Value
                         };
 

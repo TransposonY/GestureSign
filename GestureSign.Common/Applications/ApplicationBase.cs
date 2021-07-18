@@ -20,6 +20,7 @@ namespace GestureSign.Common.Applications
         #region IApplication Instance Properties
         public virtual string Name { get; set; }
         public virtual MatchUsing MatchUsing { get; set; }
+        public virtual bool MatchActivated { get; set; }
         public virtual string MatchString { get; set; }
         public virtual bool IsRegEx { get; set; }
         [DefaultValue("")]

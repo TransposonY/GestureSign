@@ -160,6 +160,12 @@
                       VerticalAlignment="Top"
                       FontSize="14"
                       Margin="10,10,0,0" />
+            <CheckBox x:Name="MatchActivatedCheckBox"
+                      Content="{localization:LocalisedText ApplicationDialog.MatchActivatedWindow}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      FontSize="14"
+                      Margin="10,10,0,0" />
             <TextBlock x:Name="BlockTouchInputTextBlock"
                        Text="{localization:LocalisedText ApplicationDialog.BlockTouchInput}"
                        Margin="10,10,0,0"

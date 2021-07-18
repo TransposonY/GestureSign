@@ -78,6 +78,7 @@ Email:ccfyzh@gmail.com
     <BlockTouchInputInfo>At least {0} fingers</BlockTouchInputInfo>
     <LimitNumberOfFingers>Number Of Fingers</LimitNumberOfFingers>
     <LimitNumberOfFingersInfo>At least {0} fingers</LimitNumberOfFingersInfo>
+    <MatchActivatedWindow>Match Activated Window</MatchActivatedWindow>
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
       <EmptyString>Please provide Match String for the application</EmptyString>

@@ -10,7 +10,6 @@ namespace GestureSign.Common.Applications
         bool ApplicationExists(string ApplicationName);
         List<IApplication> Applications { get; }
         SystemWindow CaptureWindow { get; }
-        IApplication CurrentApplication { get; set; }
         void AddApplication(IApplication Application);
         IEnumerable<IAction> GetRecognizedDefinedAction(string GestureName);
         IEnumerable<IApplication> GetApplicationFromPoint(Point testPoint);
