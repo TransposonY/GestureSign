@@ -5,26 +5,26 @@ using System.Text;
 
 namespace GestureSign.Common.Applications
 {
-	public class ApplicationChangedEventArgs : EventArgs
-	{
-		#region Constructors
+    public class ApplicationChangedEventArgs : EventArgs
+    {
+        #region Constructors
 
-		public ApplicationChangedEventArgs()
-		{
+        public ApplicationChangedEventArgs()
+        {
 
-		}
+        }
 
-		public ApplicationChangedEventArgs(IApplication Application)
-		{
-			this.Application = Application;
-		}
+        public ApplicationChangedEventArgs(IEnumerable<IApplication> applications)
+        {
+            this.Applications = applications;
+        }
 
-		#endregion
+        #endregion
 
-		#region Public Properties
+        #region Public Properties
 
-		public IApplication Application { get; set; }
+        public IEnumerable<IApplication> Applications { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

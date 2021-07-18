@@ -114,7 +114,7 @@ namespace GestureSign.Daemon.Input
 
         #region Custom Events
 
-        public event EventHandler<IApplication[]> ForegroundApplicationsChanged;
+        public event ApplicationChangedEventHandler ForegroundApplicationsChanged;
         // Create an event to notify subscribers that CaptureState has been changed
         public event ModeChangedEventHandler ModeChanged;
 
@@ -288,7 +288,7 @@ namespace GestureSign.Daemon.Input
                 if (!systemWindow.Visible)
                     return;
                 var apps = ApplicationManager.Instance.GetApplicationFromWindow(systemWindow);
-                ForegroundApplicationsChanged?.Invoke(this, apps);
+                ForegroundApplicationsChanged?.Invoke(this, new ApplicationChangedEventArgs(apps));
             }
         }
 
@@ -314,11 +314,11 @@ namespace GestureSign.Daemon.Input
 
         #region Events
 
-        private void PointCapture_ForegroundApplicationsChanged(object sender, IApplication[] apps)
+        private void PointCapture_ForegroundApplicationsChanged(object sender, ApplicationChangedEventArgs appsChanged)
         {
-            if (apps != null)
+            if (appsChanged.Applications != null)
             {
-                var userAppList = apps.Where(application => application is UserApp).ToList();
+                var userAppList = appsChanged.Applications.Where(application => application is UserApp).ToList();
                 if (userAppList.Count == 0) return;
                 UpdateBlockTouchInputThreshold(userAppList.Cast<UserApp>().Max(app => app.BlockTouchInputThreshold));
             }

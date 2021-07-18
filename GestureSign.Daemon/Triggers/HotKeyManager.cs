@@ -24,9 +24,9 @@ namespace GestureSign.Daemon.Triggers
                 RegisterHotKeys(hotKeyActions);
         }
 
-        private void Instance_ForegroundApplicationsChanged(object sender, IApplication[] apps)
+        private void Instance_ForegroundApplicationsChanged(object sender, ApplicationChangedEventArgs appsChanged)
         {
-            var hotKeyActions = apps.Where(application => application is UserApp && application.Actions != null).SelectMany(app => app.Actions).Where(a => a != null && a.Hotkey != null).ToList();
+            var hotKeyActions = appsChanged.Applications.Where(application => application is UserApp && application.Actions != null).SelectMany(app => app.Actions).Where(a => a != null && a.Hotkey != null).ToList();
             hotKeyActions.AddRange(ApplicationManager.Instance.GetGlobalApplication().Actions.Where(a => a.Hotkey != null));
 
             if (hotKeyActions.Count == 0)
