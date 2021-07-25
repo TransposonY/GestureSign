@@ -66,8 +66,8 @@ namespace GestureSign.Common.Plugins
             // Exit if we're teaching
             if (mode == CaptureMode.Training)
                 return;
-            var pointInfo = new PointInfo(firstCapturedPoints, points, _mainContext);
             var target = ApplicationManager.Instance.CaptureWindow;
+            var pointInfo = new PointInfo(firstCapturedPoints, points, target, _mainContext);
             var action = new Action<object>(o =>
             {
                 foreach (IAction executableAction in executableActions)

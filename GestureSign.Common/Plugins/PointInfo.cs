@@ -11,17 +11,18 @@ namespace GestureSign.Common.Plugins
         #region Private Variables
 
         private List<Point> _pointLocation;
-        private SystemWindow _window;
+        private SystemWindow _targetWindow;
         private SynchronizationContext _syncContext;
 
         #endregion
 
         #region Constructors
 
-        public PointInfo(List<Point> pointLocation, List<List<Point>> points, SynchronizationContext syncContext)
+        public PointInfo(List<Point> pointLocation, List<List<Point>> points, SystemWindow target, SynchronizationContext syncContext)
         {
             _pointLocation = pointLocation;
             Points = points;
+            _targetWindow = target;
             _syncContext = syncContext;
         }
 
@@ -38,9 +39,20 @@ namespace GestureSign.Common.Plugins
             }
         }
 
-        public IntPtr WindowHandle => _window?.HWnd ?? IntPtr.Zero;
+        public IntPtr WindowHandle => _targetWindow?.HWnd ?? IntPtr.Zero;
 
-        public SystemWindow Window => _window ?? (_window = SystemWindow.FromPointEx(_pointLocation[0].X, _pointLocation[0].Y, true, false));
+        public SystemWindow Window
+        {
+            get
+            {
+                // change target window if foreground window changed
+                if (_targetWindow == null || _targetWindow.HWnd != SystemWindow.ForegroundWindow.HWnd)
+                {
+                    _targetWindow = SystemWindow.FromPointEx(_pointLocation[0].X, _pointLocation[0].Y, true, false);
+                }
+                return _targetWindow;
+            }
+        }
 
         public List<List<Point>> Points { get; set; }
 
