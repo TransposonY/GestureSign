@@ -11,7 +11,7 @@ using GestureSign.Common;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TransposonY")]
 [assembly: AssemblyProduct("PluginInterface")]
-[assembly: AssemblyCopyright("Copyright ©  TransposonY 2020")]
+[assembly: AssemblyCopyright("Copyright ©  TransposonY 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,5 @@ using GestureSign.Common;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("7.5.0.0")]
+[assembly: AssemblyVersion("8.0.0.0")]
 //[assembly: AssemblyFileVersion("1.0.0.0")]
