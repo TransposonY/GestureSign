@@ -1,5 +1,6 @@
 ﻿using GestureSign.Common.Input;
 using GestureSign.Daemon.Native;
+using Microsoft.Win32;
 using SYNCTRLLib;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,14 @@ namespace GestureSign.Daemon.Input
 
         public SynTouchPad()
         {
+            if (IsRegistered())
+            {
+                InitializeControls();
+            }
+        }
+
+        private void InitializeControls()
+        {
             try
             {
                 _synCtrl = new SynAPICtrl();
@@ -70,6 +79,12 @@ namespace GestureSign.Daemon.Input
                 _device = null;
                 _synCtrl = null;
             }
+        }
+
+        public bool IsRegistered()
+        {
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Classes\CLSID\{2060435E-AB52-49E1-A2EA-5D31645887CF}");
+            return key != null;
         }
 
         public void Initialize()
