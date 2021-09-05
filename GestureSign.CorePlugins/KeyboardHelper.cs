@@ -52,26 +52,18 @@ namespace GestureSign.CorePlugins
             }
             finally
             {
-                SystemWindow.ForegroundWindow = targetWindow;
+                if (targetWindow != null)
+                    SystemWindow.ForegroundWindow = targetWindow;
                 shieldWindow.DestroyHandle();
 
-                string keysName = null;
-                foreach (var k in keyList)
-                {
-                    if (keysName == null)
-                        keysName = k.KeyName;
-                    else keysName = keysName + " + " + k.KeyName;
-                }
-                string failurekeysName = null;
-                foreach (var k in failureList)
-                {
-                    if (failurekeysName == null)
-                        failurekeysName = k.KeyName;
-                    else failurekeysName = failurekeysName + " + " + k.KeyName;
-                }
+                string keysName = string.Join("+ ", keyList.Select(k => k.KeyName));
                 string message = string.Format(LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.FailureMessage"), keysName);
-                if (failurekeysName != null)
+
+                if (failureList.Count != 0)
+                {
+                    string failurekeysName = string.Join(", ", failureList.Select(k => k.KeyName));
                     message += "\r\n" + string.Format(LocalizationProvider.Instance.GetTextValue("CorePlugins.HotKey.ResetFailure"), failurekeysName);
+                }
 
                 MessageBox.Show(message, LocalizationProvider.Instance.GetTextValue("Messages.Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
