@@ -63,6 +63,7 @@ namespace GestureSign.Daemon.Surface
                     SystemEvents.UserPreferenceChanged -= AppConfig_ConfigChanged;
                 }
 
+                _penWidth = 0;
                 _bitmap?.Dispose();
                 _graphicsPath?.Dispose();
                 _dirtyGraphicsPath?.Dispose();
