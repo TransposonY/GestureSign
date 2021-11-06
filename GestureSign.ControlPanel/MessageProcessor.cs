@@ -1,7 +1,6 @@
 ﻿using GestureSign.Common.Gestures;
 using GestureSign.Common.InterProcessCommunication;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -12,8 +11,6 @@ namespace GestureSign.ControlPanel
     class MessageProcessor : IMessageProcessor
     {
         public static event EventHandler<PointPattern[]> GotNewPattern;
-        public static event EventHandler<bool> FoundSynTouchPad;
-        public static event EventHandler DaemonConfigReload;
 
         public bool ProcessMessages(IpcCommands command, object data)
         {
@@ -34,16 +31,6 @@ namespace GestureSign.ControlPanel
                                 if (newGesture == null) return;
 
                                 GotNewPattern?.Invoke(this, newGesture.Select(list => new PointPattern(list)).ToArray());
-                                break;
-                            }
-                        case IpcCommands.ConfigReload:
-                            {
-                                DaemonConfigReload?.Invoke(this, EventArgs.Empty);
-                                break;
-                            }
-                        case IpcCommands.SynTouchPadState:
-                            {
-                                FoundSynTouchPad?.Invoke(this, (bool)data);
                                 break;
                             }
                     }

@@ -169,12 +169,6 @@
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Click="TouchPadSwitch_Click" />
-            <TextBlock x:Name="TouchPadStateText"
-                       Visibility="Collapsed"
-                       Margin="0,0,0,10"
-                       Text="{localization:LocalisedText Options.FoundSynTouchPad}"
-                       HorizontalAlignment="Center"
-                       FontSize="14" />
             <controls:ToggleSwitch x:Name="PenGestureSwitch"
                                    Header="{localization:LocalisedText Options.PenGesture}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

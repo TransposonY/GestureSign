@@ -11,7 +11,6 @@ namespace GestureSign.Daemon.Input
     {
         private bool disposedValue = false; // To detect redundant calls
         private MessageWindow _messageWindow;
-        private SynTouchPad _synTouchPad;
         private int _stateUpdating;
 
         public LowLevelMouseHook LowLevelMouseHook;
@@ -30,7 +29,6 @@ namespace GestureSign.Daemon.Input
                     LowLevelMouseHook.StartHook();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
-            UpdateSynTouchPadState();
 
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(OnSessionSwitch);
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
@@ -50,32 +48,6 @@ namespace GestureSign.Daemon.Input
             if (e.RawData.Count == 0)
                 return;
             PointsIntercepted?.Invoke(this, e);
-        }
-
-        private void UpdateSynTouchPadState()
-        {
-            if (_synTouchPad != null)
-            {
-                _synTouchPad.PointsIntercepted -= MessageWindow_PointsIntercepted;
-                _synTouchPad.Dispose();
-                _synTouchPad = null;
-            }
-            if (AppConfig.RegisterTouchPad)
-            {
-                _synTouchPad = new SynTouchPad();
-                if (_synTouchPad.IsAvailable)
-                {
-                    _synTouchPad.PointsIntercepted += MessageWindow_PointsIntercepted;
-                    _synTouchPad.Initialize();
-                    AppConfig.IsSynTouchPadAvailable = true;
-                }
-                else
-                {
-                    _synTouchPad.Dispose();
-                    _synTouchPad = null;
-                    AppConfig.IsSynTouchPadAvailable = false;
-                }
-            }
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -109,7 +81,6 @@ namespace GestureSign.Daemon.Input
                 {
                     System.Threading.Interlocked.Exchange(ref _stateUpdating, 0);
                     _messageWindow.UpdateRegistration();
-                    UpdateSynTouchPadState();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }

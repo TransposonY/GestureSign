@@ -42,9 +42,6 @@ namespace GestureSign.Daemon
                     case IpcCommands.StartControlPanel:
                         TrayManager.StartControlPanel();
                         break;
-                    case IpcCommands.SynTouchPadState:
-                        NamedPipe.SendMessageAsync(IpcCommands.SynTouchPadState, Common.Constants.ControlPanel, AppConfig.IsSynTouchPadAvailable, false).Wait();
-                        break;
                 }
             }, null);
 

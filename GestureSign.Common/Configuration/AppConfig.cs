@@ -56,8 +56,6 @@ namespace GestureSign.Common.Configuration
 
         public static string CurrentFolderPath { private set; get; }
 
-        public static bool IsSynTouchPadAvailable { set; get; }
-
         #region Setting Parameters
 
         public static System.Drawing.Color VisualFeedbackColor
