@@ -20,6 +20,8 @@ namespace GestureSign.Common.Configuration
         public static event EventHandler ConfigChanged;
 
         private static ExeConfigurationFileMap ExeMap;
+        private static string _applicationDataPath;
+        private static string _localApplicationDataPath;
 
         private static System.Configuration.Configuration Config
         {
@@ -29,9 +31,6 @@ namespace GestureSign.Common.Configuration
                 {
                     try
                     {
-                        if (!Directory.Exists(ApplicationDataPath))
-                            Directory.CreateDirectory(ApplicationDataPath);
-
                         FileManager.WaitFile(ConfigPath);
                         _config = ConfigurationManager.OpenMappedExeConfiguration(ExeMap, ConfigurationUserLevel.None);
                         _settingCache.Clear();
@@ -46,9 +45,47 @@ namespace GestureSign.Common.Configuration
             }
         }
 
-        public static string ApplicationDataPath { private set; get; }
+        public static string ApplicationDataPath
+        {
+            get
+            {
+                if (!Directory.Exists(_applicationDataPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(_applicationDataPath);
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.LogAndNotice(new Exceptions.FileWriteException(e));
+                    }
+                }
 
-        public static string LocalApplicationDataPath { private set; get; }
+                return _applicationDataPath;
+            }
+            private set => _applicationDataPath = value;
+        }
+
+        public static string LocalApplicationDataPath
+        {
+            get
+            {
+                if (!Directory.Exists(_localApplicationDataPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(_localApplicationDataPath);
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.LogAndNotice(new Exceptions.FileWriteException(e));
+                    }
+                }
+
+                return _localApplicationDataPath;
+            }
+            private set => _localApplicationDataPath = value;
+        }
 
         public static string BackupPath { private set; get; }
 
