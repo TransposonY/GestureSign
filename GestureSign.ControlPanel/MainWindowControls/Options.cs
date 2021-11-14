@@ -565,5 +565,10 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 }
             }
         }
+
+        private void OpenConfigFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
+        }
     }
 }

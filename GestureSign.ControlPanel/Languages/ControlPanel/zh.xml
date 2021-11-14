@@ -241,6 +241,7 @@ QQ交流群：576981420
     <Backup>备份所有设置</Backup>
     <Restore>导入设置</Restore>
     <BackupFile>GestureSign备份文件</BackupFile>
+    <OpenConfigFolder>打开配置所在文件夹</OpenConfigFolder>
     <OnLabel>开</OnLabel>
     <OffLabel>关</OffLabel>
     <MouseGesture>鼠标手势</MouseGesture>

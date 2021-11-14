@@ -264,6 +264,12 @@
                         FontSize="12"
                         FontWeight="Bold"
                         Click="RestoreButton_Click" />
+                <Button x:Name="OpenConfigFolderButton"
+                        Margin="20,0,0,0"
+                        Content="{localization:LocalisedText Options.OpenConfigFolder}"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Click="OpenConfigFolderButton_Click" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

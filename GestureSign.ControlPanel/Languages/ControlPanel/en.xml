@@ -236,6 +236,7 @@ Email:ccfyzh@gmail.com
     <MinimumPointDistance>Minimum Point Distance {0:F0} px</MinimumPointDistance>
     <Backup>Backup All User Data</Backup>
     <Restore>Restore User Data</Restore>
+    <OpenConfigFolder>Open Configuration Folder</OpenConfigFolder>
     <BackupFile>GestureSign Backup File</BackupFile>
     <OnLabel>On</OnLabel>
     <OffLabel>Off</OffLabel>
