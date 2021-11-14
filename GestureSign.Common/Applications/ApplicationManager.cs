@@ -91,7 +91,7 @@ namespace GestureSign.Common.Applications
                 {
                     case GlobalApp a:
                         maxLimitNumber = a.LimitNumberOfFingers > maxLimitNumber ? a.LimitNumberOfFingers : maxLimitNumber;
-                        if (AppConfig.IgnoreFullScreen && IsFullScreenWindow(CaptureWindow))
+                        if (AppConfig.IgnoreFullScreen && IsFullScreenWindow(e.FirstCapturedPoints.FirstOrDefault()))
                         {
                             e.Cancel = true;
                             return;
@@ -619,19 +619,36 @@ namespace GestureSign.Common.Applications
         }
 #pragma warning restore CS0618  
 
-        private bool IsFullScreenWindow(SystemWindow window)
+        private bool IsFullScreenWindow(Point targetPoint)
         {
-            var deskWindow = SystemWindow.DesktopWindow;
+            SystemWindow deskWindow = SystemWindow.DesktopWindow;
 
-            if (window == null || window.HWnd == IntPtr.Zero || window == deskWindow || window == SystemWindow.ShellWindow)
+            SystemWindow sw = SystemWindow.FromPoint(targetPoint.X, targetPoint.Y);
+            if (sw == null) return false;
+
+            // get the window with the largest area
+            RECT rect = sw.Rectangle;
+            int area = rect.Height * rect.Width;
+            while (sw.ParentSymmetric != null)
+            {
+                sw = sw.ParentSymmetric;
+                RECT parentRect = sw.Rectangle;
+                int parentArea = parentRect.Height * parentRect.Width;
+                if (parentArea > area)
+                {
+                    area = parentArea;
+                    rect = parentRect;
+                }
+            }
+
+            if (sw.HWnd == IntPtr.Zero || sw == deskWindow || sw == SystemWindow.ShellWindow)
                 return false;
 
             var desktopRect = deskWindow.Rectangle;
-            var windowRect = window.Rectangle;
 
-            if (windowRect.Left == 0 && windowRect.Top == 0 && windowRect.Right == desktopRect.Right && windowRect.Bottom == desktopRect.Bottom)
+            if (rect.Left == desktopRect.Left && rect.Top == desktopRect.Top && rect.Right == desktopRect.Right && rect.Bottom == desktopRect.Bottom)
             {
-                switch (window.ClassName)
+                switch (sw.ClassName)
                 {
                     case "WorkerW":
                     case "Progman":
