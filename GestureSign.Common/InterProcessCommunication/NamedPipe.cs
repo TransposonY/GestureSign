@@ -21,7 +21,7 @@ namespace GestureSign.Common.InterProcessCommunication
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool WaitNamedPipe(string name, int timeout);
 
-        private static NamedPipeServerStream _pipeServer;
+        private static CustomNamedPipeServer _pipeServer;
         private static readonly NamedPipe instance = new NamedPipe();
 
         private bool disposed = false; // To detect redundant calls
@@ -34,16 +34,16 @@ namespace GestureSign.Common.InterProcessCommunication
             }
         }
 
-        private static void ReadMessages(NamedPipeServerStream server, out IpcCommands command, out object data)
+        public static object ReadMessages(PipeStream pipe, out IpcCommands command)
         {
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 BinaryFormatter binForm = new BinaryFormatter();
 
-                server.CopyTo(memoryStream);
+                pipe.CopyTo(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 command = (IpcCommands)memoryStream.ReadByte();
-                data = memoryStream.Length == memoryStream.Position ? null : binForm.Deserialize(memoryStream);
+                return memoryStream.Length == memoryStream.Position ? null : binForm.Deserialize(memoryStream);
             }
         }
 
@@ -60,30 +60,7 @@ namespace GestureSign.Common.InterProcessCommunication
 
         public void RunNamedPipeServer(string pipeName, IMessageProcessor messageProcessor)
         {
-            _pipeServer = new NamedPipeServerStream(GetUserPipeName(pipeName), PipeDirection.In, 1, PipeTransmissionMode.Message,
-                PipeOptions.Asynchronous);
-
-            AsyncCallback ac = null;
-            ac = o =>
-            {
-                if (disposed) return;
-                NamedPipeServerStream server = (NamedPipeServerStream)o.AsyncState;
-                try
-                {
-                    server.EndWaitForConnection(o);
-
-                    ReadMessages(server, out IpcCommands command, out object data);
-                    messageProcessor.ProcessMessages(command, data);
-                    server.Disconnect();
-
-                    server.BeginWaitForConnection(ac, server);
-                }
-                catch (Exception e)
-                {
-                    Logging.LogException(e);
-                }
-            };
-            _pipeServer.BeginWaitForConnection(ac, _pipeServer);
+            _pipeServer = new CustomNamedPipeServer(pipeName, messageProcessor);
         }
 
         public static Task<bool> SendMessageAsync(IpcCommands command, string pipeName, object message = null, bool wait = true)
@@ -138,6 +115,50 @@ namespace GestureSign.Common.InterProcessCommunication
                        return false;
                    }
                }));
+        }
+
+        public static Task<object> GetMessageAsync(string pipeName, bool wait = true)
+        {
+            string userPipeName = GetUserPipeName(pipeName);
+            return Task.Run(new Func<object>(() =>
+            {
+                try
+                {
+                    using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", userPipeName, PipeDirection.In, PipeOptions.None, TokenImpersonationLevel.None))
+                    {
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            if (wait)
+                            {
+                                if (!WaitNamedPipe(userPipeName))
+                                    return null;
+                            }
+                            else if (NamedPipeDoesNotExist(userPipeName))
+                            {
+                                return null;
+                            }
+
+                            pipeClient.Connect(10);
+
+                            object data = ReadMessages(pipeClient, out IpcCommands command);
+                            return data;
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    return null;
+                }
+                catch (TimeoutException)
+                {
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Logging.LogException(e);
+                    return null;
+                }
+            }));
         }
 
         public static bool NamedPipeDoesNotExist(string pipeName)

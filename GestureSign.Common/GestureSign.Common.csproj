@@ -130,6 +130,7 @@
     <Compile Include="Input\IPointCapture.cs" />
     <Compile Include="Input\PointsCapturedEventArgs.cs" />
     <Compile Include="Input\PointsCapturedEventHandler.cs" />
+    <Compile Include="InterProcessCommunication\CustomNamedPipeServer.cs" />
     <Compile Include="InterProcessCommunication\IpcCommands.cs" />
     <Compile Include="InterProcessCommunication\IMessageProcessor.cs" />
     <Compile Include="InterProcessCommunication\NamedPipe.cs" />
