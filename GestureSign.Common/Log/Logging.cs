@@ -44,7 +44,7 @@ namespace GestureSign.Common.Log
             bool result;
             try
             {
-                _logFilePath = Path.Combine(AppConfig.ApplicationDataPath, "GestureSign.log");
+                _logFilePath = Path.Combine(AppConfig.LocalApplicationDataPath, "GestureSign.log");
                 CheckLogSize(_logFilePath);
                 var sw = new StreamWriterWithTimestamp(new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) { AutoFlush = true };
                 Console.SetOut(sw);
