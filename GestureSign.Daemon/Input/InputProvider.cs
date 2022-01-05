@@ -1,5 +1,6 @@
 ﻿using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
+using GestureSign.Common.InterProcessCommunication;
 using ManagedWinapi.Hooks;
 using Microsoft.Win32;
 using System;
@@ -11,6 +12,7 @@ namespace GestureSign.Daemon.Input
     {
         private bool disposedValue = false; // To detect redundant calls
         private MessageWindow _messageWindow;
+        private CustomNamedPipeServer _deviceStateServer;
         private int _stateUpdating;
 
         public LowLevelMouseHook LowLevelMouseHook;
@@ -32,6 +34,9 @@ namespace GestureSign.Daemon.Input
 
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(OnSessionSwitch);
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
+
+            _deviceStateServer = new CustomNamedPipeServer(Common.Constants.Daemon + "DeviceState", IpcCommands.SynDeviceState,
+                () => HidDevice.EnumerateDevices());
         }
 
         private void AppConfig_ConfigChanged(object sender, System.EventArgs e)
@@ -99,6 +104,7 @@ namespace GestureSign.Daemon.Input
                 SystemEvents.SessionSwitch -= OnSessionSwitch;
                 SystemEvents.PowerModeChanged -= OnPowerModeChanged;
                 LowLevelMouseHook?.Unhook();
+                _deviceStateServer.Dispose();
                 disposedValue = true;
             }
         }

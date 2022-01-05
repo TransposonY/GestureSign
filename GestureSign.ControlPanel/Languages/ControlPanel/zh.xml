@@ -249,6 +249,7 @@ QQ交流群：576981420
     <TouchScreen>触屏手势</TouchScreen>
     <TouchPad>启用精确式触摸板手势</TouchPad>
     <PenGesture>触控笔手势</PenGesture>
+    <DeviceNotFound>（未找到可用设备）</DeviceNotFound>
     <PenGestureButtonDescription>请选择画出手势的方式:</PenGestureButtonDescription>
     <RightClickButton>按住触控笔右键按钮</RightClickButton>
     <Eraser>将笔颠倒/按住橡皮擦按钮</Eraser>

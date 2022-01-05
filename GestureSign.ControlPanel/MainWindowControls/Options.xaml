@@ -160,20 +160,47 @@
                       Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
             </ComboBox>
             <controls:ToggleSwitch x:Name="TouchScreenSwitch"
-                                   Header="{localization:LocalisedText Options.TouchScreen}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="TouchScreenSwitch_Click" />
+                                   Click="TouchScreenSwitch_Click">
+                <controls:ToggleSwitch.Header>
+                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
+                               FontWeight="Normal">
+                        <Run Text="{localization:LocalisedText Options.TouchScreen}" />
+                        <Run Name="TouchScreenNotFoundText"
+                             Foreground="{StaticResource AccentBaseColorBrush}"
+                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                    </TextBlock>
+                </controls:ToggleSwitch.Header>
+            </controls:ToggleSwitch>
             <controls:ToggleSwitch x:Name="TouchPadSwitch"
-                                   Header="{localization:LocalisedText Options.TouchPad}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="TouchPadSwitch_Click" />
+                                   Click="TouchPadSwitch_Click">
+                <controls:ToggleSwitch.Header>
+                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
+                               FontWeight="Normal">
+                        <Run Text="{localization:LocalisedText Options.TouchPad}" />
+                        <Run Name="TouchPadNotFoundText"
+                             Foreground="{StaticResource AccentBaseColorBrush}"
+                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                    </TextBlock>
+                </controls:ToggleSwitch.Header>
+            </controls:ToggleSwitch>
             <controls:ToggleSwitch x:Name="PenGestureSwitch"
-                                   Header="{localization:LocalisedText Options.PenGesture}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="PenGestureSwitch_Click" />
+                                   Click="PenGestureSwitch_Click">
+                <controls:ToggleSwitch.Header>
+                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
+                               FontWeight="Normal">
+                        <Run Text="{localization:LocalisedText Options.PenGesture}" />
+                        <Run Name="PenNotFoundText"
+                             Foreground="{StaticResource AccentBaseColorBrush}"
+                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                    </TextBlock>
+                </controls:ToggleSwitch.Header>
+            </controls:ToggleSwitch>
             <StackPanel Visibility="{Binding ElementName=PenGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
                         HorizontalAlignment="Center">
                 <TextBlock HorizontalAlignment="Center"

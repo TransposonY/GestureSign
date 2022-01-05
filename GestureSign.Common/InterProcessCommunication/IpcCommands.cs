@@ -10,7 +10,7 @@
         LoadConfiguration,
         GotGesture,
         ConfigReload,
-        SynTouchPadState,
+        SynDeviceState,
         Exit
     }
 }

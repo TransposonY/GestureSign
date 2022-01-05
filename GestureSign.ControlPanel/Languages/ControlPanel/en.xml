@@ -245,6 +245,7 @@ Email:ccfyzh@gmail.com
     <TouchScreen>TouchScreen Gesture</TouchScreen>
     <TouchPad>Precision Touchpad Gesture</TouchPad>
     <PenGesture>Pen Gesture</PenGesture>
+    <DeviceNotFound>(Device Not Found)</DeviceNotFound>
     <PenGestureButtonDescription>Start drawing gesture by:</PenGestureButtonDescription>
     <RightClickButton>Press and hold the right-click button</RightClickButton>
     <Eraser>Flip Pen Over / Press and hold the eraser button</Eraser>

@@ -80,6 +80,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     PenGestureSwitch.IsChecked = false;
                 }
+                CheckDeviceStates();
             }
             catch (Exception)
             {
@@ -169,6 +170,25 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 VisualFeedbackWidthText.Text = LocalizationProvider.Instance.GetTextValue("Options.Off");
             }
 
+        }
+
+        private void CheckDeviceStates()
+        {
+            NamedPipe.GetMessageAsync(GestureSign.Common.Constants.Daemon + "DeviceState").ContinueWith(
+                t =>
+                {
+                    if (t.Result == null)
+                        return;
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        Devices deviceState = (Devices)t.Result;
+                        Brush brush = (Brush)TryFindResource("AccentBaseColorBrush");
+                        TouchScreenNotFoundText.Foreground = (deviceState & Devices.TouchScreen) != 0 ? Brushes.Transparent : brush;
+                        TouchPadNotFoundText.Foreground = (deviceState & Devices.TouchPad) != 0 ? Brushes.Transparent : brush;
+                        PenNotFoundText.Foreground = (deviceState & Devices.Pen) != 0 ? Brushes.Transparent : brush;
+                    }, System.Windows.Threading.DispatcherPriority.Loaded);
+                });
         }
 
 #if ConvertedDesktopApp

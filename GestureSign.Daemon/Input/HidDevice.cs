@@ -138,6 +138,61 @@ namespace GestureSign.Daemon.Input
             }
         }
 
+        public static Devices EnumerateDevices()
+        {
+            Devices foundDevices = Devices.None;
+            uint deviceCount = 0;
+            int dwSize = Marshal.SizeOf(typeof(RAWINPUTDEVICELIST));
+
+            if (NativeMethods.GetRawInputDeviceList(IntPtr.Zero, ref deviceCount, (uint)dwSize) == 0)
+            {
+                IntPtr pRawInputDeviceList = Marshal.AllocHGlobal((int)(dwSize * deviceCount));
+                using (new SafeUnmanagedMemoryHandle(pRawInputDeviceList))
+                {
+                    NativeMethods.GetRawInputDeviceList(pRawInputDeviceList, ref deviceCount, (uint)dwSize);
+
+                    for (int i = 0; i < deviceCount; i++)
+                    {
+                        uint pSize = 0;
+
+                        RAWINPUTDEVICELIST rid = (RAWINPUTDEVICELIST)Marshal.PtrToStructure(
+                            IntPtr.Add(pRawInputDeviceList, dwSize * i),
+                            typeof(RAWINPUTDEVICELIST));
+
+                        NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICEINFO, IntPtr.Zero, ref pSize);
+                        if (pSize <= 0)
+                            continue;
+
+                        IntPtr pInfo = Marshal.AllocHGlobal((int)pSize);
+                        using (new SafeUnmanagedMemoryHandle(pInfo))
+                        {
+                            NativeMethods.GetRawInputDeviceInfo(rid.hDevice, NativeMethods.RIDI_DEVICEINFO, pInfo, ref pSize);
+                            var info = (RID_DEVICE_INFO)Marshal.PtrToStructure(pInfo, typeof(RID_DEVICE_INFO));
+                            switch (info.hid.usUsage)
+                            {
+                                case NativeMethods.TouchPadUsage:
+                                    foundDevices |= Devices.TouchPad;
+                                    break;
+                                case NativeMethods.TouchScreenUsage:
+                                    foundDevices |= Devices.TouchScreen;
+                                    break;
+                                case NativeMethods.PenUsage:
+                                    foundDevices |= Devices.Pen;
+                                    break;
+                                default:
+                                    continue;
+                            }
+                        }
+                    }
+                }
+                return foundDevices;
+            }
+            else
+            {
+                throw new ApplicationException("Error!");
+            }
+        }
+
         public void GetPhysicalMax(int collectionCount)
         {
             short valueCapsLength = (short)(collectionCount > 0 ? collectionCount : 1);
