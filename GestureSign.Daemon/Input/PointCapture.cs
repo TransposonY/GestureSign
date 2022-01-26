@@ -257,7 +257,10 @@ namespace GestureSign.Daemon.Input
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 if (_hWinEventHook != IntPtr.Zero)
                     UnhookWinEvent(_hWinEventHook);
-                _winEventGch.Free();
+                if (_winEventGch.IsAllocated)
+                {
+                    _winEventGch.Free();
+                }
 
                 disposedValue = true;
             }
