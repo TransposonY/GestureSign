@@ -57,7 +57,15 @@ namespace GestureSign.CorePlugins.TouchKeyboard
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) +
                     @"\Microsoft Shared\ink\TabTip.exe"
             };
-            Process.Start(startInfo);
+
+            try
+            {
+                Process.Start(startInfo);
+            }
+            catch (Exception exception)
+            {
+                GestureSign.Common.Log.Logging.LogException(exception);
+            }
         }
 
         private void AutoInvokeCheckBox_Loaded(object sender, RoutedEventArgs e)
