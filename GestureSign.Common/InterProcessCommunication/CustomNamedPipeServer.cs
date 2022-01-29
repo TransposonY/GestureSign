@@ -106,7 +106,10 @@ namespace GestureSign.Common.InterProcessCommunication
                 }
 
                 disposedValue = true;
-                _namedPipeServer.Dispose();
+                if (_namedPipeServer != null)
+                {
+                    _namedPipeServer.Dispose();
+                }
             }
         }
 
