@@ -40,7 +40,7 @@ namespace GestureSign.ControlPanel
 
             if (ExistsNewerErrorLog() && AppConfig.SendErrorReport)
             {
-                this.Dispatcher.InvokeAsync(SendLog, DispatcherPriority.Input);
+                this.Dispatcher.InvokeAsync(SendLog, DispatcherPriority.Background);
             }
 
             Activate();
