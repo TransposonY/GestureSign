@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace GestureSign.Common.InterProcessCommunication
 {
@@ -23,8 +25,11 @@ namespace GestureSign.Common.InterProcessCommunication
 
         private void RunReceivingServer(string pipeName, IMessageProcessor messageProcessor)
         {
+            PipeSecurity pipeSecurity = new PipeSecurity();
+            pipeSecurity.SetAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), PipeAccessRights.ReadWrite, AccessControlType.Allow));
+
             _namedPipeServer = new NamedPipeServerStream(NamedPipe.GetUserPipeName(pipeName), PipeDirection.In, 1, PipeTransmissionMode.Message,
-                PipeOptions.Asynchronous);
+                PipeOptions.Asynchronous, 0, 0, pipeSecurity);
 
             AsyncCallback ac = null;
             ac = o =>
