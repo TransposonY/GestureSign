@@ -287,12 +287,24 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool RunAsAdmin
+        {
+            get
+            {
+                return GetValue(nameof(RunAsAdmin), false);
+            }
+            set
+            {
+                SetValue(nameof(RunAsAdmin), value);
+            }
+        }
+
         #endregion
 
         static AppConfig()
         {
 #if uiAccess
-            UiAccess = Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2;
+            UiAccess = VersionHelper.IsWindows8OrGreater();
 #endif
             CurrentFolderPath = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
 #if Portable

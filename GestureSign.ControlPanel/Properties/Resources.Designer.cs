@@ -19,7 +19,7 @@ namespace GestureSign.ControlPanel.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -68,9 +68,9 @@ namespace GestureSign.ControlPanel.Properties {
         ///  &lt;IsRightToLeft&gt;False&lt;/IsRightToLeft&gt;
         ///  &lt;Title&gt;GestureSign Control Panel&lt;/Title&gt;
         ///  &lt;Messages&gt;
-        ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSignDaemon.exe.Try to redownload or reinstall GestureSign.&lt;/CannotFindDaemonMessage&gt;
+        ///    &lt;CannotFindDaemonMessage&gt;Can not find GestureSign.exe.Try to redownload or reinstall GestureSign.&lt;/CannotFindDaemonMessage&gt;
         ///    &lt;Error&gt;Error&lt;/Error&gt;
-        ///    &lt;Compat [rest of string was truncated]&quot;;.
+        ///    &lt;CompatWarnin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string en {
             get {
@@ -85,6 +85,29 @@ namespace GestureSign.ControlPanel.Properties {
             get {
                 object obj = ResourceManager.GetObject("normal", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;
+        ///&lt;Task version=&quot;1.4&quot; xmlns=&quot;http://schemas.microsoft.com/windows/2004/02/mit/task&quot;&gt;
+        ///  &lt;RegistrationInfo&gt;
+        ///    &lt;Author&gt;GestureSign&lt;/Author&gt;
+        ///    &lt;Description&gt;Run GestureSign on startup with elevated privilege.&lt;/Description&gt;
+        ///  &lt;/RegistrationInfo&gt;
+        ///  &lt;Triggers /&gt;
+        ///  &lt;Principals&gt;
+        ///    &lt;Principal id=&quot;Author&quot;&gt;
+        ///      &lt;LogonType&gt;InteractiveToken&lt;/LogonType&gt;
+        ///      &lt;RunLevel&gt;HighestAvailable&lt;/RunLevel&gt;
+        ///    &lt;/Principal&gt;
+        ///  &lt;/Principals&gt;
+        ///  &lt;Settings&gt;
+        ///    &lt;MultipleInstances [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string StartGestureSignTask {
+            get {
+                return ResourceManager.GetString("StartGestureSignTask", resourceCulture);
             }
         }
     }

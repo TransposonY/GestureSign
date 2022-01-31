@@ -255,6 +255,13 @@
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Click="StartupSwitch_OnClick" />
+            <CheckBox x:Name="RunAsAdminCheckBox"
+                      Visibility="{Binding ElementName=StartupSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Click="RunAsAdminCheckBox_Click"
+                      Margin="0,10,0,0"
+                      FontSize="14"
+                      Content="{localization:LocalisedText Options.RunAsAdmin}"
+                      HorizontalAlignment="Center" />
             <controls:ToggleSwitch x:Name="IgnoreFullScreenSwitch"
                                    Header="{localization:LocalisedText Options.IgnoreFullScreen.Header}"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"

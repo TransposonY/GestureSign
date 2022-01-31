@@ -5,7 +5,6 @@ using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
-using IWshRuntimeLibrary;
 using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Hooks;
 using System;
@@ -14,9 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
-using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
-using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -32,6 +29,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
         public Options()
         {
             InitializeComponent();
+            if (AppConfig.UiAccess)
+            {
+                RunAsAdminCheckBox.ClearValue(UIElement.VisibilityProperty);
+                RunAsAdminCheckBox.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void LoadSettings()
@@ -191,167 +193,127 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 });
         }
 
-#if ConvertedDesktopApp
-
-        private async void CheckStartupStatus()
-        {
-            try
-            {
-                var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                switch (startupTask.State)
-                {
-                    case Windows.ApplicationModel.StartupTaskState.Disabled:
-                        StartupSwitch.IsChecked = false;
-                        break;
-                    case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
-                        StartupSwitch.IsChecked = false;
-                        break;
-                    case Windows.ApplicationModel.StartupTaskState.Enabled:
-                        StartupSwitch.IsChecked = true;
-                        break;
-                }
-#else
         private void CheckStartupStatus()
         {
-            try
+            if (StartupHelper.IsRunAsAdmin)
             {
-                string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                 "\\" + GestureSign.Common.Constants.ProductName + ".lnk";
-                if (File.Exists(lnkPath))
-                {
-                    StartupSwitch.IsChecked = true;
-                    var targetPath = GetLnkTargetPath(lnkPath);
-                    var daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
-                    if (daemonPath != targetPath)
-                    {
-                        CreateLnk(lnkPath, daemonPath);
-                    }
-                }
-                else
-                {
-                    StartupSwitch.IsChecked = false;
-                }
-#endif
+                StartupSwitch.IsChecked = RunAsAdminCheckBox.IsChecked = true;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// https://gist.github.com/Winand/997ed38269e899eb561991a0c663fa49
-        /// https://stackoverflow.com/questions/64126236/reading-the-target-of-a-lnk-file-in-c-sharp-net-core
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public static string GetLnkTargetPath(string filepath)
-        {
-            using (var br = new BinaryReader(File.OpenRead(filepath)))
-            {
-                // skip the first 20 bytes (HeaderSize and LinkCLSID)
-                br.ReadBytes(0x14);
-                // read the LinkFlags structure (4 bytes)
-                uint lflags = br.ReadUInt32();
-                // if the HasLinkTargetIDList bit is set then skip the stored IDList 
-                // structure and header
-                if ((lflags & 0x01) == 1)
-                {
-                    br.ReadBytes(0x34);
-                    var skip = br.ReadUInt16(); // this counts of how far we need to skip ahead
-                    br.ReadBytes(skip);
-                }
-                // get the number of bytes the path contains
-                var length = br.ReadUInt32();
-                // skip 12 bytes (LinkInfoHeaderSize, LinkInfoFlgas, and VolumeIDOffset)
-                br.ReadBytes(0x0C);
-                // Find the location of the LocalBasePath position
-                var lbpos = br.ReadUInt32();
-                // Skip to the path position 
-                // (subtract the length of the read (4 bytes), the length of the skip (12 bytes), and
-                // the length of the lbpos read (4 bytes) from the lbpos)
-                br.ReadBytes((int)lbpos - 0x14);
-                var size = length - lbpos - 0x02;
-                var bytePath = br.ReadBytes((int)size);
-                int index = Array.IndexOf(bytePath, (byte)0x00);
-                var path = index < 0 ? System.Text.Encoding.Default.GetString(bytePath, 0, bytePath.Length) :
-                    System.Text.Encoding.Unicode.GetString(bytePath, index + 1, bytePath.Length - index - 1);
-                return path;
-            }
-        }
-
-        private void CreateLnk(string lnkPath, string targetPath)
-        {
-            WshShell shell = new WshShell();
-            IWshShortcut shortCut = (IWshShortcut)shell.CreateShortcut(lnkPath);
-            shortCut.TargetPath = targetPath;
-            //Application.ResourceAssembly.Location;// System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-            shortCut.WindowStyle = 7;
-            shortCut.Arguments = "";
-            shortCut.Description = Application.ResourceAssembly.GetName().Version.ToString();
-            // Application.ProductName + Application.ProductVersion;
-            //shortCut.IconLocation = Application.ResourceAssembly.Location;// Application.ExecutablePath;
-            //shortCut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;// Application.ResourceAssembly.;
-            shortCut.Save();
-        }
+                RunAsAdminCheckBox.IsChecked = false;
 
 #if ConvertedDesktopApp
+                StartupHelper.CheckStoreAppStartupStatus().ContinueWith(t =>
+                {
+                    bool result = t.Result;
+                    Dispatcher.Invoke(() =>
+                    {
+                        StartupSwitch.IsChecked = result;
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                });
+#else
+                StartupSwitch.IsChecked = StartupHelper.GetStartupStatus();
+#endif
 
-        private async void StartupSwitch_OnClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (StartupSwitch.IsChecked != null && StartupSwitch.IsChecked.Value)
-                {
-                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                    if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
-                    {
-                        var state = await startupTask.RequestEnableAsync();
-                        if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
-                        {
-                            MessageBox.Show(LocalizationProvider.Instance.GetTextValue("Options.Messages.TaskUserDisabled"), LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                            StartupSwitch.IsChecked = false;
-                        }
-                    }
-                }
-                else
-                {
-                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("GestureSignTask");
-                    if (startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled)
-                    {
-                        startupTask.Disable();
-                    }
-                }
             }
-            catch (Exception ex)
-            { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        private void EnableStartup()
+        {
+#if ConvertedDesktopApp
+            StartupHelper.EnableStoreAppStartup().ContinueWith(t =>
+            {
+                if (!t.Result)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        StartupSwitch.IsChecked = false;
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                }
+            });
 #else
+            if (!StartupHelper.EnableNormalStartup())
+            {
+                StartupSwitch.IsChecked = false;
+            }
+#endif
+        }
+
+        private void DisableStartup()
+        {
+#if ConvertedDesktopApp
+            StartupHelper.DisableStoreAppStartup().ContinueWith(t =>
+            {
+                if (!t.Result)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        StartupSwitch.IsChecked = true;
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                }
+            });
+#else
+
+            if (!StartupHelper.DisableNormalStartup())
+            {
+                StartupSwitch.IsChecked = true;
+            }
+#endif
+        }
 
         private void StartupSwitch_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                string lnkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) +
-                                 "\\" + GestureSign.Common.Constants.ProductName + ".lnk";
-
                 if (StartupSwitch.IsChecked.GetValueOrDefault())
                 {
-                    var daemonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GestureSign.Common.Constants.DaemonFileName);
-                    CreateLnk(lnkPath, daemonPath);
+                    EnableStartup();
                 }
                 else
                 {
-                    if (File.Exists(lnkPath))
-                        File.Delete(lnkPath);
+                    DisableStartup();
+                    if (StartupHelper.IsRunAsAdmin)
+                    {
+                        if (StartupHelper.DisableHighPrivilegeStartup())
+                        {
+                            AppConfig.RunAsAdmin = false;
+                            RunAsAdminCheckBox.IsChecked = false;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             { MessageBox.Show(ex.Message, LocalizationProvider.Instance.GetTextValue("Messages.Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
-#endif
+        private void RunAsAdminCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (RunAsAdminCheckBox.IsChecked.GetValueOrDefault())
+            {
+                if (StartupHelper.EnableHighPrivilegeStartup())
+                {
+                    DisableStartup();
+                    AppConfig.RunAsAdmin = true;
+                }
+                else
+                {
+                    RunAsAdminCheckBox.IsChecked = false;
+                }
+            }
+            else
+            {
+                if (StartupHelper.DisableHighPrivilegeStartup())
+                {
+                    EnableStartup();
+                    AppConfig.RunAsAdmin = false;
+                }
+                else
+                {
+                    RunAsAdminCheckBox.IsChecked = true;
+                }
+            }
+        }
 
         private void ShowTrayIconSwitch_Checked(object sender, RoutedEventArgs e)
         {
