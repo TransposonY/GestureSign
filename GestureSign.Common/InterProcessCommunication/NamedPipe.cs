@@ -47,13 +47,14 @@ namespace GestureSign.Common.InterProcessCommunication
             }
         }
 
-        private static bool WaitNamedPipe(string pipeName)
+        private static bool WaitForNamedPipeConnection(string pipeName, int interval = 1000)
         {
-            for (int i = 0; i != 20; i++)
+            const int unit = 50;
+            for (int i = 0; i < interval / unit; i++)
             {
                 if (!NamedPipeDoesNotExist(pipeName))
                     return true;
-                Thread.Sleep(50);
+                Thread.Sleep(unit);
             }
             return false;
         }
@@ -76,7 +77,7 @@ namespace GestureSign.Common.InterProcessCommunication
                            {
                                if (wait)
                                {
-                                   if (!WaitNamedPipe(userPipeName))
+                                   if (!WaitForNamedPipeConnection(userPipeName))
                                        return false;
                                }
                                else if (NamedPipeDoesNotExist(userPipeName))
@@ -117,7 +118,7 @@ namespace GestureSign.Common.InterProcessCommunication
                }));
         }
 
-        public static Task<object> GetMessageAsync(string pipeName, bool wait = true)
+        public static Task<object> GetMessageAsync(string pipeName, int wait = 1000)
         {
             string userPipeName = GetUserPipeName(pipeName);
             return Task.Run(new Func<object>(() =>
@@ -128,9 +129,9 @@ namespace GestureSign.Common.InterProcessCommunication
                     {
                         using (MemoryStream ms = new MemoryStream())
                         {
-                            if (wait)
+                            if (wait > 0)
                             {
-                                if (!WaitNamedPipe(userPipeName))
+                                if (!WaitForNamedPipeConnection(userPipeName, wait))
                                     return null;
                             }
                             else if (NamedPipeDoesNotExist(userPipeName))

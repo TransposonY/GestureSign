@@ -176,7 +176,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void CheckDeviceStates()
         {
-            NamedPipe.GetMessageAsync(GestureSign.Common.Constants.Daemon + "DeviceState").ContinueWith(
+            NamedPipe.GetMessageAsync(GestureSign.Common.Constants.Daemon + "DeviceState", 2000).ContinueWith(
                 t =>
                 {
                     if (t.Result == null)
