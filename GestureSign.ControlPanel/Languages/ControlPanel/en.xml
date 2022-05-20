@@ -255,6 +255,7 @@ Email:ccfyzh@gmail.com
     <InitialTimeoutTitle>Drawing Start Timeout</InitialTimeoutTitle>
     <InitialTimeout>Timeout after {0:F1} Second</InitialTimeout>
     <ErrorLogPrompt>Error Log Prompt</ErrorLogPrompt>
+	<GestureExeTips>Gesture Execution Tips</GestureExeTips>
     <RunAsAdmin>Run GestureSign As Administrator At Startup</RunAsAdmin>
     <WindowsStartup>
       <Header>Start GestureSign on Windows Startup</Header>

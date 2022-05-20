@@ -259,6 +259,7 @@ QQ交流群：576981420
     <InitialTimeoutTitle>手势起始超时</InitialTimeoutTitle>
     <InitialTimeout>{0:F1} 秒后超时</InitialTimeout>
     <ErrorLogPrompt>错误日志提示</ErrorLogPrompt>
+	<GestureExeTips>手势执行提示</GestureExeTips>
     <RunAsAdmin>以管理员身份启动</RunAsAdmin>
     <WindowsStartup>
       <Header>开机启动</Header>

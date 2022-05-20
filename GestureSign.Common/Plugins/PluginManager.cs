@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Common.Log;
 using ManagedWinapi.Windows;
+using ExtendControls;
 
 namespace GestureSign.Common.Plugins
 {
@@ -41,7 +43,7 @@ namespace GestureSign.Common.Plugins
 
         protected PluginManager()
         {
-
+        
         }
 
         #endregion
@@ -104,6 +106,12 @@ namespace GestureSign.Common.Plugins
                         pluginInfo.Plugin.Deserialize(command.CommandSettings);
                         // Execute plugin process
                         pluginInfo.Plugin.Gestured(pointInfo);
+                    }
+
+                    // Display action executed notification
+                    if (AppConfig.GestureExeTips && commandList.Count > 0)
+                    {
+                        MessageTip.Show(executableAction.Name);
                     }
                 }
             });

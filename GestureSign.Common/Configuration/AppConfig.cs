@@ -191,6 +191,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool GestureExeTips
+        {
+            get
+            {
+                return (bool)GetValue("GestureExeTips", true);
+            }
+            set
+            {
+                SetValue("GestureExeTips", value);
+            }
+        }
+
         public static DateTime LastErrorTime
         {
             get
