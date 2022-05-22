@@ -43,7 +43,6 @@ namespace GestureSign.Common.Plugins
 
         protected PluginManager()
         {
-        
         }
 
         #endregion
