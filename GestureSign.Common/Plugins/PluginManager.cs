@@ -111,7 +111,7 @@ namespace GestureSign.Common.Plugins
                     // Display action executed notification
                     if (AppConfig.GestureExeTips && commandList.Count > 0)
                     {
-                        // For mouse gesture and touchpad, use the cursor position, others use last point of gesture trail
+                        // For mouse and touchpad, use the cursor position, otherwise use last point of gesture trail
                         if (devices == Devices.Mouse || devices == Devices.TouchPad)
                         {
                             MessageTip.Show(executableAction.Name, style: new TipStyle());
