@@ -284,6 +284,12 @@
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"
                                    Checked="SendLogToggleSwitch_Checked"
                                    Unchecked="SendLogToggleSwitch_Unchecked" />
+            <controls:ToggleSwitch x:Name="GestureExeTipsToggleSwitch"
+                                   Header="{localization:LocalisedText Options.GestureExeTips}"
+                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
+                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
+                                   Checked="GestureExeTipsToggleSwitch_Checked"
+                                   Unchecked="GestureExeTipsToggleSwitch_Unchecked" />
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Margin="0,20,0,10">

@@ -55,6 +55,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 TouchScreenSwitch.IsChecked = AppConfig.RegisterTouchScreen;
                 IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
                 IgnoreTouchInputWhenUsingPenSwitch.IsChecked = AppConfig.IgnoreTouchInputWhenUsingPen;
+                GestureExeTipsToggleSwitch.IsChecked = AppConfig.GestureExeTips;
                 if (AppConfig.DrawingButton != MouseActions.None)
                 {
                     MouseSwitch.IsChecked = true;
@@ -333,6 +334,16 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void SendLogToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             AppConfig.SendErrorReport = false;
+        }
+
+        private void GestureExeTipsToggleSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            AppConfig.GestureExeTips = true;
+        }
+
+        private void GestureExeTipsToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AppConfig.GestureExeTips = false;
         }
 
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)

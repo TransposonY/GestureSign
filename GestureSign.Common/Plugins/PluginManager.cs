@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Applications;
+using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using GestureSign.Common.Log;
 using ManagedWinapi.Windows;
+using ExtendControls;
 
 namespace GestureSign.Common.Plugins
 {
@@ -104,6 +106,20 @@ namespace GestureSign.Common.Plugins
                         pluginInfo.Plugin.Deserialize(command.CommandSettings);
                         // Execute plugin process
                         pluginInfo.Plugin.Gestured(pointInfo);
+                    }
+
+                    // Display action executed notification
+                    if (AppConfig.GestureExeTips && commandList.Count > 0)
+                    {
+                        // For mouse and touchpad, use the cursor position, otherwise use last point of gesture trail
+                        if (devices == Devices.Mouse || devices == Devices.TouchPad)
+                        {
+                            MessageTip.Show(executableAction.Name, style: new TipStyle());
+                        }
+                        else
+                        {
+                            MessageTip.Show(executableAction.Name, point: points[0][points[0].Count - 1], style: new TipStyle());
+                        }
                     }
                 }
             });
