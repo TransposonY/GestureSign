@@ -230,6 +230,7 @@ QQ交流群：576981420
     </Messages>
   </Ignored>
   <Options>
+    <LongClickLftBtn>长按左键</LongClickLftBtn>
     <Header>选项</Header>
     <Language>语言（重启生效）</Language>
     <Opacity>不透明度 </Opacity>
