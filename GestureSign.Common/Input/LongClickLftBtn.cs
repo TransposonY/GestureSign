@@ -6,12 +6,13 @@ namespace GestureSign.Common.Input
 {
     public class LongClickLftBtn
     {
-        volatile public static Boolean useFeature = AppConfig.LongClickLftBtn;
+        volatile public static bool useFeature = AppConfig.LongClickLftBtn;
         public static int? fingerId = null;
-        public static int downX = 0;
-        public static int downY = 0;
-        public static Boolean waitTimer = false;
+        volatile public static int downX = 0;
+        volatile public static int downY = 0;
+        volatile public static bool waitTimer = false;
         volatile public static Timer timer = null;
+        volatile public static bool needRelease = false;
         //ms
         volatile public static int INTERVAL = 315+AppConfig.InitialTimeout;
         //px
@@ -25,6 +26,7 @@ namespace GestureSign.Common.Input
             waitTimer = false;
             timer?.Dispose();
             timer = null;
+            needRelease = false;
         }
     }
 }

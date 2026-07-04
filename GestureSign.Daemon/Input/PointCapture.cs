@@ -204,6 +204,12 @@ namespace GestureSign.Daemon.Input
             CaptureStarted += (o, e) => { if (Mode != CaptureMode.UserDisabled) _surfaceForm.StartDrawing(e.FirstCapturedPoints); };
             CaptureEnded += (o, e) => { _surfaceForm.EndDrawing(); };
             CaptureCanceled += (o, e) => { _surfaceForm.EndDrawing(); };
+
+            AppConfig.ConfigChanged += (o, e) =>
+            {
+                LongClickLftBtn.useFeature = AppConfig.LongClickLftBtn;
+            };
+
             PointCaptured += (o, e) =>
             {
                 if (Mode != CaptureMode.UserDisabled && State == CaptureState.Capturing)
@@ -362,6 +368,7 @@ namespace GestureSign.Daemon.Input
                             {
                                 //System.Diagnostics.Debug.WriteLine("Timer触发左键按下");
                                 _simulator.Mouse.LeftButtonDown();
+                                LongClickLftBtn.needRelease = true;
                             }, null);
                         }, curFingerId,
                         LongClickLftBtn.INTERVAL,
@@ -394,7 +401,7 @@ namespace GestureSign.Daemon.Input
         {
             //如果启用长按左键
             if (LongClickLftBtn.useFeature
-                &&LongClickLftBtn.waitTimer//如果在等计时器，才进来
+                && LongClickLftBtn.waitTimer//如果在等计时器，才进来
                 && LongClickLftBtn.fingerId != null
                 && e.InputPointList != null)
             {
@@ -439,8 +446,11 @@ namespace GestureSign.Daemon.Input
                     if (e.InputPointList[i].ContactIdentifier == LongClickLftBtn.fingerId)
                     {
                         //System.Diagnostics.Debug.WriteLine("手指抬起，Timer取消，按键抬起");
+                        if (LongClickLftBtn.needRelease)
+                        {
+                            _simulator.Mouse.LeftButtonUp();
+                        }
                         LongClickLftBtn.Reset();
-                        _simulator.Mouse.LeftButtonUp();
                         break;
                     }
                 }
