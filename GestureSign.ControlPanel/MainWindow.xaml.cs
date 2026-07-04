@@ -231,5 +231,10 @@ namespace GestureSign.ControlPanel
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
+
+        private void AvailableActions_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

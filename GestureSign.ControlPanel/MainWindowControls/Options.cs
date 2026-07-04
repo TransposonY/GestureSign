@@ -54,6 +54,11 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 TouchPadSwitch.IsChecked = AppConfig.RegisterTouchPad;
                 TouchScreenSwitch.IsChecked = AppConfig.RegisterTouchScreen;
                 IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
+                //还原长按左键的保存状态
+                LongClickLftBtnSwitch.IsChecked = AppConfig.LongClickLftBtn;
+                LongClickLftBtn.useFeature = AppConfig.LongClickLftBtn;
+                LongClickLftBtn.INTERVAL += AppConfig.InitialTimeout;//initalTimeout里面是ms，INETERVAL也是ms
+                
                 IgnoreTouchInputWhenUsingPenSwitch.IsChecked = AppConfig.IgnoreTouchInputWhenUsingPen;
                 if (AppConfig.DrawingButton != MouseActions.None)
                 {
@@ -358,10 +363,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
             AppConfig.RegisterTouchScreen = TouchScreenSwitch.IsChecked.GetValueOrDefault();
         }
 
+        /*
+         * 监听长按左键的切换事件
+         */
+        private void LongClickLftBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AppConfig.LongClickLftBtn=LongClickLftBtnSwitch.IsChecked.GetValueOrDefault();
+            LongClickLftBtn.useFeature= LongClickLftBtnSwitch.IsChecked.GetValueOrDefault();
+        }
+
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.RegisterTouchPad = TouchPadSwitch.IsChecked != null && TouchPadSwitch.IsChecked.Value;
         }
+
+
 
         private void IgnoreFullScreenSwitch_Click(object sender, RoutedEventArgs e)
         {
@@ -552,5 +568,6 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             System.Diagnostics.Process.Start("explorer.exe", AppConfig.ApplicationDataPath);
         }
+
     }
 }

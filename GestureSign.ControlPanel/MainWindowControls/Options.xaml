@@ -173,6 +173,20 @@
                     </TextBlock>
                 </controls:ToggleSwitch.Header>
             </controls:ToggleSwitch>
+            <!-- 设置是否允许长按进行鼠标点击事件-->
+            <controls:ToggleSwitch x:Name="LongClickLftBtnSwitch"
+                       OnLabel="{localization:LocalisedText Options.OnLabel}"
+                       OffLabel="{localization:LocalisedText Options.OffLabel}"
+                       Click="LongClickLftBtn_Click">
+                <controls:ToggleSwitch.Header>
+                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
+                   FontWeight="Normal">
+            <Run Text="{localization:LocalisedText Options.LongClickLftBtn}" />
+                    </TextBlock>
+                </controls:ToggleSwitch.Header>
+            </controls:ToggleSwitch>
+            <!-- end 设置是否允许长按进行鼠标点击事件-->
+
             <controls:ToggleSwitch x:Name="TouchPadSwitch"
                                    OnLabel="{localization:LocalisedText Options.OnLabel}"
                                    OffLabel="{localization:LocalisedText Options.OffLabel}"

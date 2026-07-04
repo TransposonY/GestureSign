@@ -226,6 +226,7 @@ Email:ccfyzh@gmail.com
     </Messages>
   </Ignored>
   <Options>
+    <LongClickLftBtn>LongClickLftBtn</LongClickLftBtn>
     <Header>Options</Header>
     <Language>Language（Restart GestureSign to take effect）</Language>
     <Opacity>Opacity </Opacity>

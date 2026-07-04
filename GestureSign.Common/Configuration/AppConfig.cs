@@ -239,6 +239,18 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        public static bool LongClickLftBtn
+        {
+            get
+            {
+                return GetValue(nameof(LongClickLftBtn), true);
+            }
+            set
+            {
+                SetValue(nameof(LongClickLftBtn), value);
+            }
+        }
+
         public static bool RegisterTouchScreen
         {
             get
