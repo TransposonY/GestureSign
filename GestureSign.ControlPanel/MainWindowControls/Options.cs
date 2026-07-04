@@ -56,6 +56,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 IgnoreFullScreenSwitch.IsChecked = AppConfig.IgnoreFullScreen;
                 //还原长按左键的保存状态
                 LongClickLftBtnSwitch.IsChecked = AppConfig.LongClickLftBtn;
+                LongClickLftBtn.useFeature = AppConfig.LongClickLftBtn;
+                LongClickLftBtn.INTERVAL += AppConfig.InitialTimeout;//initalTimeout里面是ms，INETERVAL也是ms
                 
                 IgnoreTouchInputWhenUsingPenSwitch.IsChecked = AppConfig.IgnoreTouchInputWhenUsingPen;
                 if (AppConfig.DrawingButton != MouseActions.None)
@@ -367,6 +369,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         private void LongClickLftBtn_Click(object sender, RoutedEventArgs e)
         {
             AppConfig.LongClickLftBtn=LongClickLftBtnSwitch.IsChecked.GetValueOrDefault();
+            LongClickLftBtn.useFeature= LongClickLftBtnSwitch.IsChecked.GetValueOrDefault();
         }
 
         private void TouchPadSwitch_Click(object sender, RoutedEventArgs e)

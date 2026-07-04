@@ -4,6 +4,7 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using GestureSign.Common.InterProcessCommunication;
+using GestureSign.Common.Log;
 using GestureSign.Daemon.Filtration;
 using GestureSign.Daemon.Surface;
 using GestureSign.PointPatterns;
@@ -59,6 +60,8 @@ namespace GestureSign.Daemon.Input
 
         private int? _blockTouchInputThreshold;
         private Point _touchPadStartPoint;
+
+        private InputSimulator _simulator = new InputSimulator();
 
         #endregion
 
@@ -327,10 +330,45 @@ namespace GestureSign.Daemon.Input
             }
         }
 
+
         protected void PointEventTranslator_PointDown(object sender, InputPointsEventArgs e)
         {
             if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
+                //如果启用长按左键，
+                if (LongClickLftBtn.useFeature
+                    && LongClickLftBtn.fingerId == null//且没有在追踪手指
+                    && e.InputPointList != null && e.InputPointList.Count > 0)//且有数据
+                {
+                    //标记手指id
+                    int curFingerId = e.InputPointList[0].ContactIdentifier;
+                    LongClickLftBtn.fingerId = e.InputPointList[0].ContactIdentifier;
+                    LongClickLftBtn.downX = e.InputPointList[0].Point.X;
+                    LongClickLftBtn.downY = e.InputPointList[0].Point.Y;
+                    LongClickLftBtn.timer?.Dispose();
+                    LongClickLftBtn.timer = new Timer(
+                        (id) =>
+                        {
+                            int idVal = (int)id;
+                            int? curId = LongClickLftBtn.fingerId;
+                            LongClickLftBtn.waitTimer = false;
+                            if (curId == null || curId != idVal)
+                            {
+                                //System.Diagnostics.Debug.WriteLine("Timer 取消");
+                                return;
+                            }
+                            //发送左键按下
+                            _currentContext?.Post((_) =>
+                            {
+                                //System.Diagnostics.Debug.WriteLine("Timer触发左键按下");
+                                _simulator.Mouse.LeftButtonDown();
+                            }, null);
+                        }, curFingerId,
+                        LongClickLftBtn.INTERVAL,
+                        Timeout.Infinite
+                        );
+                    LongClickLftBtn.waitTimer = true;
+                }
                 Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
                 var timeout = AppConfig.InitialTimeout;
@@ -354,6 +392,33 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointMove(object sender, InputPointsEventArgs e)
         {
+            //如果启用长按左键
+            if (LongClickLftBtn.useFeature
+                &&LongClickLftBtn.waitTimer//如果在等计时器，才进来
+                && LongClickLftBtn.fingerId != null
+                && e.InputPointList != null)
+            {
+                Boolean foundFinger = false;
+                for (int i = 0; i < e.InputPointList.Count; i++)
+                {
+                    if (e.InputPointList[i].ContactIdentifier == LongClickLftBtn.fingerId)
+                    {
+                        foundFinger = true;
+                        int dx = e.InputPointList[i].Point.X - LongClickLftBtn.downX;
+                        int dy = e.InputPointList[i].Point.Y - LongClickLftBtn.downY;
+                        if (dx * dx + dy * dy > LongClickLftBtn.MOVE_THRESOLD)
+                        {
+                            //System.Diagnostics.Debug.WriteLine("因为手指移动，Timer取消");
+                            LongClickLftBtn.Reset();
+                        }
+                        break;
+                    }
+                }
+                if (!foundFinger)
+                {
+                    LongClickLftBtn.Reset();
+                }
+            }
             // Only add point if we're capturing
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
@@ -364,6 +429,22 @@ namespace GestureSign.Daemon.Input
 
         protected void PointEventTranslator_PointUp(object sender, InputPointsEventArgs e)
         {
+            //如果启用长按左键
+            if (LongClickLftBtn.useFeature
+                && LongClickLftBtn.fingerId != null
+                && e.InputPointList != null)
+            {
+                for (int i = 0; i < e.InputPointList.Count; i++)
+                {
+                    if (e.InputPointList[i].ContactIdentifier == LongClickLftBtn.fingerId)
+                    {
+                        //System.Diagnostics.Debug.WriteLine("手指抬起，Timer取消，按键抬起");
+                        LongClickLftBtn.Reset();
+                        _simulator.Mouse.LeftButtonUp();
+                        break;
+                    }
+                }
+            }
             if (State == CaptureState.Capturing || State == CaptureState.CapturingInvalid && (SourceDevice & Devices.TouchDevice) != 0)
             {
                 e.Handled = Mode != CaptureMode.UserDisabled;
