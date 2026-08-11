@@ -1,4 +1,5 @@
 ﻿using GestureSign.Common.Configuration;
+using GestureSign.Common.Input;
 using GestureSign.Daemon.Native;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,21 @@ namespace GestureSign.Daemon.Filtration
         private bool _tempDisable;
         private int _lastFrameID;
 
+        /// <summary>
+        /// Raised with the touch frames received through the pointer input target.
+        /// Injected touch (e.g. remote-desktop or streaming hosts that use
+        /// InjectSyntheticPointerInput) produces no HID raw input, so MessageWindow
+        /// never sees it; when AppConfig.InterceptInjectedTouch is enabled these
+        /// frames are forwarded to the recognition pipeline instead.
+        /// </summary>
+        public event RawPointsDataMessageEventHandler PointsIntercepted;
+
         public PointerInputTargetWindow()
         {
             CreateHandle();
             ResetIdPool();
+            if (AppConfig.InterceptInjectedTouch)
+                IsRegistered = true;
         }
 
         public int BlockTouchInputThreshold
@@ -35,7 +47,7 @@ namespace GestureSign.Daemon.Filtration
 
                 _blockTouchInputThreshold = value;
 
-                bool flag = _blockTouchInputThreshold >= 2;
+                bool flag = _blockTouchInputThreshold >= 2 || AppConfig.InterceptInjectedTouch;
 
                 if (InvokeRequired)
                     Invoke(new Action(() => IsRegistered = flag));
@@ -134,11 +146,27 @@ namespace GestureSign.Daemon.Filtration
             if (pointerInfos.Length == 0 || pointerInfos[0].FrameID == _lastFrameID) return;
             _lastFrameID = pointerInfos[0].FrameID;
 
+            // Feed intercepted frames to the recognition pipeline. Only needed for
+            // injected touch, which generates no usable HID raw input; physical
+            // digitizers are handled by MessageWindow, so this stays off unless the
+            // user opted in (MessageWindow drops the injected devices to avoid
+            // double capture, see ValidateDevice).
+            if (AppConfig.InterceptInjectedTouch && PointsIntercepted != null)
+            {
+                var rawData = new List<RawData>(pointerInfos.Length);
+                foreach (var pi in pointerInfos)
+                {
+                    var state = pi.PointerFlags.HasFlag(POINTER_FLAGS.UP) ? DeviceStates.None : DeviceStates.Tip;
+                    rawData.Add(new RawData(state, pi.PointerID, new System.Drawing.Point(pi.PtPixelLocation.X, pi.PtPixelLocation.Y)));
+                }
+                PointsIntercepted(this, new RawPointsDataMessageEventArgs(rawData, Devices.TouchScreen));
+            }
+
             List<POINTER_TOUCH_INFO> ptis = GenerateInput(pointerInfos);
 
             if (pointerInfos.Length != ptis.Count) return;
 
-            if (pointerInfos.Length < _blockTouchInputThreshold ||
+            if (pointerInfos.Length < _blockTouchInputThreshold || _blockTouchInputThreshold < 2 ||
                 Input.PointCapture.Instance.State == Common.Input.CaptureState.CapturingInvalid ||
                 _tempDisable)
             {
