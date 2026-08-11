@@ -263,6 +263,24 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        /// <summary>
+        /// Recognize gestures drawn with injected touch input (remote-desktop and
+        /// game-streaming hosts such as Sunshine or spacedesk inject touch via
+        /// InjectSyntheticPointerInput, which produces no HID raw input and is
+        /// otherwise invisible to gesture capture). Requires UIAccess.
+        /// </summary>
+        public static bool InterceptInjectedTouch
+        {
+            get
+            {
+                return GetValue(nameof(InterceptInjectedTouch), false);
+            }
+            set
+            {
+                SetValue(nameof(InterceptInjectedTouch), value);
+            }
+        }
+
         public static bool IgnoreTouchInputWhenUsingPen
         {
             get

@@ -55,6 +55,15 @@ namespace GestureSign.Daemon.Input
             PointsIntercepted?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// Entry point for touch frames captured outside the raw input path
+        /// (injected/synthetic pointers from PointerInputTargetWindow).
+        /// </summary>
+        public void ForwardRawPoints(RawPointsDataMessageEventArgs e)
+        {
+            MessageWindow_PointsIntercepted(this, e);
+        }
+
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if (e.Mode == PowerModes.Resume)

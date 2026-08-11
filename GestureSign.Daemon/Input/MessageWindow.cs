@@ -199,7 +199,12 @@ namespace GestureSign.Daemon.Input
                     NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_DEVICENAME, pData, ref pcbSize);
                     string deviceName = Marshal.PtrToStringAnsi(pData);
 
-                    if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0)
+                    // "Microsoft HID RID" is the synthetic device Windows creates for injected
+                    // pointer input (InjectSyntheticPointerInput). Its reports don't parse as
+                    // regular digitizer HID and would double-feed the recognizer alongside the
+                    // pointer input target, so drop it when injected-touch interception is on.
+                    if (string.IsNullOrEmpty(deviceName) || deviceName.IndexOf("VIRTUAL_DIGITIZER", StringComparison.OrdinalIgnoreCase) >= 0 || deviceName.IndexOf("ROOT", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        AppConfig.InterceptInjectedTouch && deviceName.IndexOf("Microsoft HID RID", StringComparison.OrdinalIgnoreCase) >= 0)
                         return true;
                     usage = info.hid.usUsage;
                     return true;

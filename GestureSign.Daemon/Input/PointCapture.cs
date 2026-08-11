@@ -224,6 +224,7 @@ namespace GestureSign.Daemon.Input
             if (AppConfig.UiAccess)
             {
                 _pointerInputTargetWindow = new PointerInputTargetWindow();
+                _pointerInputTargetWindow.PointsIntercepted += (o, e) => _inputProvider.ForwardRawPoints(e);
                 ModeChanged += (o, e) =>
                 {
                     if (e.Mode == CaptureMode.UserDisabled)
