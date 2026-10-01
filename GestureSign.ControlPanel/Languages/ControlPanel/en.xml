@@ -37,7 +37,6 @@ This may lead to function failure(e.g. Start application at Windows startup).
     <Store>Microsoft Store</Store>
     <HelpPageUrl>https://gesturesign.win/#/guide</HelpPageUrl>
     <Version>Version  </Version>
-    <ReleaseDate>ReleaseDate  </ReleaseDate>
     <Information>Author:TransposonY
 Translator:TransposonY
 Email:ccfyzh@gmail.com
@@ -79,6 +78,11 @@ Email:ccfyzh@gmail.com
     <LimitNumberOfFingers>Number Of Fingers</LimitNumberOfFingers>
     <LimitNumberOfFingersInfo>At least {0} fingers</LimitNumberOfFingersInfo>
     <MatchActivatedWindow>Match Activated Window</MatchActivatedWindow>
+    <Icon>Icon</Icon>
+    <ChooseIcon>Choose Image...</ChooseIcon>
+    <ClearIcon>Clear Icon</ClearIcon>
+    <IconFileFilter>Image and Icon Files</IconFileFilter>
+
     <Messages>
       <EmptyStringTitle>No Match String</EmptyStringTitle>
       <EmptyString>Please provide Match String for the application</EmptyString>
@@ -159,6 +163,26 @@ Email:ccfyzh@gmail.com
     <Down>Swipe Down</Down>
     <Fingers>{0} Fingers </Fingers>
     <Sort>Sort by</Sort>
+    <Search>Search gesture or command...</Search>
+    <FingerCount>Fingers</FingerCount>
+    <AllFingers>All</AllFingers>
+    <SixOrMoreFingers>6+</SixOrMoreFingers>
+    <Applications>Applications</Applications>
+    <NewApplication>New Application</NewApplication>
+    <MoveUp>Move Up</MoveUp>
+    <MoveDown>Move Down</MoveDown>
+    <RibbonApplication>Application</RibbonApplication>
+    <RibbonAction>Action</RibbonAction>
+    <RibbonFilter>Filter by fingers</RibbonFilter>
+    <RibbonBackup>Backup</RibbonBackup>
+    <Enabled>Enabled</Enabled>
+    <ColumnName>Name</ColumnName>
+    <ColumnGesture>Gesture</ColumnGesture>
+    <ColumnCommand>Command</ColumnCommand>
+    <ColumnOn>On</ColumnOn>
+    <ClickToSelectGesture>Click to select a gesture</ClickToSelectGesture>
+    <ActionsSummary>{0} actions</ActionsSummary>
+    <FingersStatus>Fingers: {0}</FingersStatus>
     <Messages>
       <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
       <DeleteCommandConfirm>Are you sure you want to delete these {0} Commands?</DeleteCommandConfirm>
@@ -191,6 +215,45 @@ Email:ccfyzh@gmail.com
     <ImportGesture>Import Gestures...</ImportGesture>
     <GestureGroupHeader>{0} Finger(s) Gesture  ( {1} )</GestureGroupHeader>
     <Applications>Applications</Applications>
+    <DescriptionColumn>Description</DescriptionColumn>
+    <Filter>
+      <Input>Input</Input>
+      <All>All</All>
+      <MouseOrOneFinger>Mouse / 1 finger</MouseOrOneFinger>
+      <Fingers>{0} fingers</Fingers>
+      <FiveOrMoreFingers>5+ fingers</FiveOrMoreFingers>
+      <Shape>Shape</Shape>
+      <AnyShape>Any</AnyShape>
+      <Line>Straight lines</Line>
+      <Curve>Curves &amp; corners</Curve>
+      <Loop>Loops</Loop>
+      <WithDot>With dot</WithDot>
+      <WithDotInfo>Only gestures where one finger stays in place (the dot)</WithDotInfo>
+      <AnyApplication>Any application</AnyApplication>
+      <UsedBy>Used by</UsedBy>
+      <SearchDescription>Search description...</SearchDescription>
+      <Showing>Showing {0} of {1}</Showing>
+      <Clear>Clear filters</Clear>
+      <NoMatches>No gestures match these filters.</NoMatches>
+    </Filter>
+    <Description>
+      <Mouse>mouse / 1 finger</Mouse>
+      <Fingers>{0} fingers</Fingers>
+      <WithDot>with dot</WithDot>
+      <Line>straight line</Line>
+      <Curve>curve</Curve>
+      <Loop>loop</Loop>
+      <Right>right</Right>
+      <UpRight>up-right</UpRight>
+      <Up>up</Up>
+      <UpLeft>up-left</UpLeft>
+      <Left>left</Left>
+      <DownLeft>down-left</DownLeft>
+      <Down>down</Down>
+      <DownRight>down-right</DownRight>
+      <UsedBy>Used by {0}</UsedBy>
+      <Unused>Not used by any action</Unused>
+    </Description>
     <MouseActions>
       <None>None</None>
       <WheelForward>Wheel Forward</WheelForward>
@@ -208,6 +271,37 @@ Email:ccfyzh@gmail.com
       <ImportComplete>{0} similar gestures have been ignored, {1} new gesture have been added</ImportComplete>
     </Messages>
   </Gesture>
+  <ContinuousGesture>
+    <Header>Continuous Gestures</Header>
+    <New>New</New>
+    <Name>Name</Name>
+    <Fingers>Fingers</Fingers>
+    <Direction>Direction</Direction>
+    <UsedBy>Used by</UsedBy>
+    <Empty>No continuous gestures yet. Click "New" to create a multi-finger swipe and bind it to actions.</Empty>
+    <Dialog>
+      <NewTitle>New Continuous Gesture</NewTitle>
+      <EditTitle>Edit Continuous Gesture</EditTitle>
+      <NameWatermark>Please enter a name</NameWatermark>
+      <Motion>Motion</Motion>
+      <BoundActions>Bound Actions</BoundActions>
+      <NoBoundActions>No action is bound to this gesture</NoBoundActions>
+      <RemoveBinding>Remove</RemoveBinding>
+      <Application>Application</Application>
+      <Action>Action</Action>
+      <AddBinding>Add</AddBinding>
+      <CurrentlyBound>{0}  (currently: {1})</CurrentlyBound>
+      <ReplaceHint>An action has at most one continuous gesture; binding it here replaces its current one.</ReplaceHint>
+    </Dialog>
+    <Messages>
+      <DeleteConfirmTitle>Delete Confirm</DeleteConfirmTitle>
+      <DeleteConfirm>Delete "{0}"? Actions using it will no longer respond to a continuous gesture.</DeleteConfirm>
+      <InvalidTitle>Cannot Save</InvalidTitle>
+      <EmptyName>Please enter a name.</EmptyName>
+      <DuplicateName>A continuous gesture named "{0}" already exists.</DuplicateName>
+      <DuplicateMotion>"{0}" already uses this finger count and direction.</DuplicateMotion>
+    </Messages>
+  </ContinuousGesture>
   <RuningApplicationsFlyout>
     <Title>Runing Applications</Title>
   </RuningApplicationsFlyout>
@@ -228,6 +322,16 @@ Email:ccfyzh@gmail.com
   <Options>
     <Header>Options</Header>
     <Language>Language（Restart GestureSign to take effect）</Language>
+    <LanguageTitle>Language</LanguageTitle>
+    <LanguageHint>Restart GestureSign to take effect</LanguageHint>
+    <VisualFeedbackWidthLabel>Visual feedback width</VisualFeedbackWidthLabel>
+    <MinimumPointDistanceLabel>Minimum point distance</MinimumPointDistanceLabel>
+    <Sections>
+      <InputDevices>INPUT DEVICES</InputDevices>
+      <GestureTrail>GESTURE TRAIL</GestureTrail>
+      <Recognition>RECOGNITION</Recognition>
+      <General>GENERAL</General>
+    </Sections>
     <Opacity>Opacity </Opacity>
     <VisualFeedbackWidth>Visual Feedback Width {0:0} px</VisualFeedbackWidth>
     <Off>Off</Off>
@@ -244,6 +348,8 @@ Email:ccfyzh@gmail.com
     <DrawingButton>Draw gesture by holding: </DrawingButton>
     <TouchScreen>TouchScreen Gesture</TouchScreen>
     <TouchPad>Precision Touchpad Gesture</TouchPad>
+    <TouchPadTapToClick>Tap with a single finger to click</TouchPadTapToClick>
+    <TouchPadTapToClickTip>Turn off "Tap with a single finger to single-click" in Windows touchpad settings. GestureSign then clicks only for single-finger taps, so multi-finger taps (e.g. one finger resting while another taps) trigger just their gesture.</TouchPadTapToClickTip>
     <PenGesture>Pen Gesture</PenGesture>
     <DeviceNotFound>(Device Not Found)</DeviceNotFound>
     <PenGestureButtonDescription>Start drawing gesture by:</PenGestureButtonDescription>
@@ -271,6 +377,7 @@ Email:ccfyzh@gmail.com
       <OffLabel>Hide</OffLabel>
     </ShowTrayIconSwitch>
     <GestureTrail>Show Gesture Trail</GestureTrail>
+    <HideTwoFingerTrail>Hide 2-Finger Gesture Trail</HideTwoFingerTrail>
     <Messages>
       <LoadSettingErrorTitle>Error</LoadSettingErrorTitle>
       <LoadSettingError>Can not load setting</LoadSettingError>

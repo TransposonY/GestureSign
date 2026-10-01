@@ -98,6 +98,11 @@ namespace GestureSign.Daemon.Surface
             }
 
             if (_penWidth <= 0) return;
+            if (ShouldHideTwoFingerTrail(startPoints.Count))
+            {
+                EndDrawing();
+                return;
+            }
 
             ClearSurfaces();
 
@@ -118,6 +123,11 @@ namespace GestureSign.Daemon.Surface
 
         public void DrawPoints(List<List<Point>> points)
         {
+            if (ShouldHideTwoFingerTrail(points.Count))
+            {
+                EndDrawing();
+                return;
+            }
             if (_penWidth > 0 && !(points.Count == 1 && points[0].Count == 1))
             {
 
@@ -140,6 +150,11 @@ namespace GestureSign.Daemon.Surface
         #endregion
 
         #region Private Methods
+        private static bool ShouldHideTwoFingerTrail(int contactCount)
+        {
+            return contactCount == 2 && AppConfig.HideTwoFingerTrail;
+        }
+
 
         private void DrawSegments(List<List<Point>> points)
         {

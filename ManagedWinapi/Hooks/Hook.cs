@@ -96,6 +96,7 @@ namespace ManagedWinapi.Hooks
         /// <summary>
         /// The type of the hook.
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public HookType Type
         {
             get { return type; }
@@ -129,18 +130,12 @@ namespace ManagedWinapi.Hooks
             }
             else
             {
-                hHook = SetWindowsHookEx(type, delegt, IntPtr.Zero, getThreadID());
+                hHook = SetWindowsHookEx(type, delegt, IntPtr.Zero, GetCurrentThreadId());
             }
             if (hHook == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error());
             hooked = true;
         }
 
-        private uint getThreadID()
-        {
-#pragma warning disable 0618
-            return (uint)AppDomain.GetCurrentThreadId();
-#pragma warning restore 0618
-        }
 
         /// <summary>
         /// Unhooks the hook.
@@ -206,6 +201,9 @@ namespace ManagedWinapi.Hooks
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool FreeLibrary(IntPtr hModule);

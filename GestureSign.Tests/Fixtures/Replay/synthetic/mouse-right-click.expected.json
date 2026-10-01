@@ -1,0 +1,11 @@
+[
+  {"t":0,"stage":"capture","event":"started","firstPoints":[[800,300]]},
+  {"t":0,"stage":"translated","event":"down","device":"Mouse","points":[[1,800,300]],"handled":true,"state":"CapturingInvalid"},
+  {"t":0,"stage":"hook","message":"down","button":"Right","handled":true},
+  {"t":0,"stage":"host","effect":"priority:high"},
+  {"t":8,"stage":"translated","event":"move","device":"Mouse","points":[[1,805,302]],"handled":false,"state":"CapturingInvalid"},
+  {"t":16,"stage":"translated","event":"up","device":"Mouse","points":[[1,805,302]],"handled":true,"state":"Ready"},
+  {"t":16,"stage":"hook","message":"up","button":"Right","handled":true},
+  {"t":16,"stage":"host","effect":"click:Right"},
+  {"t":16,"stage":"host","effect":"priority:normal"}
+]

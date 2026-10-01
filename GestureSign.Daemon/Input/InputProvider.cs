@@ -5,6 +5,7 @@ using ManagedWinapi.Hooks;
 using Microsoft.Win32;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GestureSign.Daemon.Input
 {
@@ -14,6 +15,7 @@ namespace GestureSign.Daemon.Input
         private MessageWindow _messageWindow;
         private CustomNamedPipeServer _deviceStateServer;
         private int _stateUpdating;
+        private readonly TouchPadTapClicker _tapClicker;
 
         public LowLevelMouseHook LowLevelMouseHook;
         public event RawPointsDataMessageEventHandler PointsIntercepted;
@@ -22,6 +24,10 @@ namespace GestureSign.Daemon.Input
         {
             _messageWindow = new MessageWindow();
             _messageWindow.PointsIntercepted += MessageWindow_PointsIntercepted;
+
+            var host = new SystemCaptureHost();
+            _tapClicker = new TouchPadTapClicker(SystemRawInputEnvironment.Instance,
+                () => host.RunInBackground(() => host.SimulateMouseClick(SystemInformation.MouseButtonsSwapped ? MouseActions.Right : MouseActions.Left)));
 
             AppConfig.ConfigChanged += AppConfig_ConfigChanged;
             LowLevelMouseHook = new LowLevelMouseHook();
@@ -52,6 +58,8 @@ namespace GestureSign.Daemon.Input
         {
             if (e.RawData.Count == 0)
                 return;
+            if (AppConfig.TouchPadTapToClick)
+                _tapClicker.Process(e);
             PointsIntercepted?.Invoke(this, e);
         }
 

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.IO.Pipes;
+using System.Drawing;
 using System.IO;
-
-using System.Threading;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using GestureSign.Common.Input;
 using GestureSign.Common.Log;
+using Newtonsoft.Json;
 
 namespace GestureSign.Common.InterProcessCommunication
 {
@@ -36,14 +34,66 @@ namespace GestureSign.Common.InterProcessCommunication
 
         public static object ReadMessages(PipeStream pipe, out IpcCommands command)
         {
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                BinaryFormatter binForm = new BinaryFormatter();
+            int commandByte = pipe.ReadByte();
+            if (commandByte < 0)
+                throw new EndOfStreamException("The pipe message has no command.");
 
-                pipe.CopyTo(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                command = (IpcCommands)memoryStream.ReadByte();
-                return memoryStream.Length == memoryStream.Position ? null : binForm.Deserialize(memoryStream);
+            command = (IpcCommands)commandByte;
+            Type payloadType = GetPayloadType(command);
+            if (payloadType == null)
+            {
+                if (pipe.ReadByte() != -1)
+                    throw new InvalidDataException("The pipe command does not accept a payload.");
+                return null;
+            }
+
+            using (var streamReader = new StreamReader(pipe, Encoding.UTF8, false, 1024, true))
+            using (var reader = new JsonTextReader(streamReader) { CloseInput = false })
+            {
+                object payload = JsonSerializer.Create().Deserialize(reader, payloadType);
+                if (payload == null || reader.Read())
+                    throw new InvalidDataException("Invalid pipe message payload.");
+                return payload;
+            }
+        }
+
+        private static Type GetPayloadType(IpcCommands command)
+        {
+            switch (command)
+            {
+                case IpcCommands.GotGesture:
+                    return typeof(Point[][][]);
+                case IpcCommands.SynDeviceState:
+                    return typeof(Devices);
+                case IpcCommands.StartControlPanel:
+                case IpcCommands.StartTeaching:
+                case IpcCommands.StopTraining:
+                case IpcCommands.LoadApplications:
+                case IpcCommands.LoadGestures:
+                case IpcCommands.LoadConfiguration:
+                case IpcCommands.ConfigReload:
+                case IpcCommands.Exit:
+                case IpcCommands.LoadContinuousGestures:
+                    return null;
+                default:
+                    throw new InvalidDataException("Unknown pipe command.");
+            }
+        }
+
+        internal static void WriteMessage(Stream stream, IpcCommands command, object message)
+        {
+            Type payloadType = GetPayloadType(command);
+            if (message == null ? payloadType != null : payloadType == null || !payloadType.IsInstanceOfType(message))
+                throw new ArgumentException("Unexpected payload for pipe command.", nameof(message));
+
+            stream.WriteByte((byte)command);
+            if (message == null)
+                return;
+
+            using (var streamWriter = new StreamWriter(stream, new UTF8Encoding(false), 1024, true))
+            using (var writer = new JsonTextWriter(streamWriter) { CloseOutput = false })
+            {
+                JsonSerializer.Create().Serialize(writer, message);
             }
         }
 
@@ -73,32 +123,20 @@ namespace GestureSign.Common.InterProcessCommunication
                    {
                        using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", userPipeName, PipeDirection.Out, PipeOptions.None, TokenImpersonationLevel.None))
                        {
-                           using (MemoryStream ms = new MemoryStream())
+                           if (wait)
                            {
-                               if (wait)
-                               {
-                                   if (!WaitForNamedPipeConnection(userPipeName))
-                                       return false;
-                               }
-                               else if (NamedPipeDoesNotExist(userPipeName))
-                               {
+                               if (!WaitForNamedPipeConnection(userPipeName))
                                    return false;
-                               }
-
-                               pipeClient.Connect(10);
-
-                               ms.WriteByte((byte)command);
-                               if (message != null)
-                               {
-                                   BinaryFormatter bf = new BinaryFormatter();
-                                   bf.Serialize(ms, message);
-                               }
-                               ms.Seek(0, SeekOrigin.Begin);
-
-                               ms.CopyTo(pipeClient);
-                               pipeClient.Flush();
-                               pipeClient.WaitForPipeDrain();
                            }
+                           else if (NamedPipeDoesNotExist(userPipeName))
+                           {
+                               return false;
+                           }
+
+                           pipeClient.Connect(10);
+                           WriteMessage(pipeClient, command, message);
+                           pipeClient.Flush();
+                           pipeClient.WaitForPipeDrain();
                        }
                        return true;
                    }
@@ -127,23 +165,18 @@ namespace GestureSign.Common.InterProcessCommunication
                 {
                     using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", userPipeName, PipeDirection.In, PipeOptions.None, TokenImpersonationLevel.None))
                     {
-                        using (MemoryStream ms = new MemoryStream())
+                        if (wait > 0)
                         {
-                            if (wait > 0)
-                            {
-                                if (!WaitForNamedPipeConnection(userPipeName, wait))
-                                    return null;
-                            }
-                            else if (NamedPipeDoesNotExist(userPipeName))
-                            {
+                            if (!WaitForNamedPipeConnection(userPipeName, wait))
                                 return null;
-                            }
-
-                            pipeClient.Connect(10);
-
-                            object data = ReadMessages(pipeClient, out IpcCommands command);
-                            return data;
                         }
+                        else if (NamedPipeDoesNotExist(userPipeName))
+                        {
+                            return null;
+                        }
+
+                        pipeClient.Connect(10);
+                        return ReadMessages(pipeClient, out IpcCommands command);
                     }
                 }
                 catch (IOException)

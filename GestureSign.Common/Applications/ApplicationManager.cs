@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Input;
 using ManagedWinapi.Windows;
 
@@ -211,10 +212,13 @@ namespace GestureSign.Common.Applications
 
         private void SaveFile(object state)
         {
+            // Keep embedded legacy values until their catalog references are durable.
+            if (!TryAdoptLegacyContinuousGestures(out bool changed))
+                return;
             // Save application list
             bool flag = FileManager.SaveObject(
                  Applications, Path.Combine(AppConfig.ApplicationDataPath, Constants.ActionFileName), true);
-            if (flag) { ApplicationSaved.Invoke(this, EventArgs.Empty); }
+            if (flag) { ApplicationSaved?.Invoke(this, EventArgs.Empty); }
 
         }
 
@@ -228,6 +232,9 @@ namespace GestureSign.Common.Applications
                             if (!LoadLegacy())
                                 if (!LoadDefaults())
                                     _applications = new List<IApplication>();
+                    if (TryAdoptLegacyContinuousGestures(out bool changed) && changed &&
+                        FileManager.SaveObject(_applications, Path.Combine(AppConfig.ApplicationDataPath, Constants.ActionFileName), true))
+                        ApplicationSaved?.Invoke(this, EventArgs.Empty);
                     OnLoadApplicationsCompleted?.Invoke(this, EventArgs.Empty);
                 };
 
@@ -239,6 +246,14 @@ namespace GestureSign.Common.Applications
                         Path.Combine(AppConfig.ApplicationDataPath, Constants.ActionFileName), true, true);
                 return _applications != null;
             }).ContinueWith(antecendent => loadCompleted(antecendent.Result));
+        }
+
+        /// <summary>Persists the catalog before replacing embedded legacy values; failure leaves applications unchanged.</summary>
+        private bool TryAdoptLegacyContinuousGestures(out bool changed)
+        {
+            var catalog = ContinuousGestureManager.Instance;
+            catalog.LoadingTask.Wait();
+            return catalog.TryAdoptLegacy(_applications, out changed);
         }
 
         private bool LoadDefaults()
@@ -405,6 +420,8 @@ namespace GestureSign.Common.Applications
             app.Name = string.IsNullOrWhiteSpace(versionInfo.ProductName) ? Path.GetFileNameWithoutExtension(executablefilePath) : versionInfo.ProductName;
             app.MatchUsing = MatchUsing.ExecutableFilename;
             app.MatchString = Path.GetFileName(executablefilePath);
+            app.Icon = ApplicationIcon.FromAssociatedIcon(executablefilePath);
+
 
             var matchApplications = FindMatchApplications<TApp>(app.MatchUsing, app.MatchString);
             if (matchApplications.Length != 0)

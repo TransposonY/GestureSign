@@ -1,0 +1,20 @@
+[
+  {"t":0,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,216]]},
+  {"t":0,"stage":"capture","event":"started","firstPoints":[[1345,216]]},
+  {"t":0,"stage":"translated","event":"down","device":"TouchScreen","points":[[10,1345,216]],"handled":true,"state":"CapturingInvalid"},
+  {"t":0,"stage":"host","effect":"priority:high"},
+  {"t":8,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,345]]},
+  {"t":8,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1345,345]],"handled":false,"state":"Capturing"},
+  {"t":16,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,475]]},
+  {"t":16,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1345,475]],"handled":false,"state":"Capturing"},
+  {"t":24,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,604]]},
+  {"t":24,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1345,604]],"handled":false,"state":"Capturing"},
+  {"t":32,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,734]]},
+  {"t":32,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1345,734]],"handled":false,"state":"Capturing"},
+  {"t":40,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1345,864]]},
+  {"t":40,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1345,864]],"handled":false,"state":"Capturing"},
+  {"t":48,"stage":"raw","device":"TouchScreen","contacts":[[10,0,1345,864]]},
+  {"t":48,"stage":"capture","event":"completed","strokes":[[[1345,216],[1345,345],[1345,475],[1345,604],[1345,734],[1345,864]]],"firstPoints":[[1345,216]],"gesture":null},
+  {"t":48,"stage":"translated","event":"up","device":"TouchScreen","points":[[10,1345,864]],"handled":true,"state":"Ready"},
+  {"t":48,"stage":"host","effect":"priority:normal"}
+]

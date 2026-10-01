@@ -3,7 +3,8 @@ using GestureSign.Common.Configuration;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Flyouts;
-using IWshRuntimeLibrary;
+using GestureSign.ControlPanel.ViewModel;
+
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using ManagedWinapi.Windows;
@@ -29,6 +30,8 @@ namespace GestureSign.ControlPanel.Dialogs
         private bool _newApplication;
         private IApplication _currentApplication;
         private Dictionary<uint, string> _processInfoMap;
+        private byte[] _icon;
+
 
         public ApplicationListViewItem ApplicationListViewItem
         {
@@ -46,7 +49,13 @@ namespace GestureSign.ControlPanel.Dialogs
         public ApplicationDialog()
         {
             InitializeComponent();
-            RuningApplicationsFlyout.RuningAppSelectionChanged += (o, e) => { if (e != null) ApplicationListViewItem = e; };
+            RuningApplicationsFlyout.RuningAppSelectionChanged += (o, e) =>
+            {
+                if (e == null)
+                    return;
+                ApplicationListViewItem = e;
+                SetIcon(ApplicationIconHelper.FromBitmapSource(e.ApplicationIcon));
+            };
         }
 
         public ApplicationDialog(IApplication targetApplication, bool newApplication = false) : this()
@@ -117,6 +126,9 @@ namespace GestureSign.ControlPanel.Dialogs
 
             BlockTouchInputSlider.Visibility = BlockTouchInputInfoTextBlock.Visibility = BlockTouchInputTextBlock.Visibility =
                     AppConfig.UiAccess && isUserApp ? Visibility.Visible : Visibility.Collapsed;
+
+            SetIcon(_currentApplication?.Icon);
+
         }
 
         private void MatchStringTextBox_OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -136,6 +148,8 @@ namespace GestureSign.ControlPanel.Dialogs
                 matchUsingRadio.MatchUsing = MatchUsing.ExecutableFilename;
                 ApplicationNameTextBox.Text = System.IO.Path.GetFileNameWithoutExtension(ofdExecutable.FileName);
                 MatchStringTextBox.Text = ofdExecutable.SafeFileName;
+                SetIcon(ApplicationIcon.FromAssociatedIcon(ofdExecutable.FileName));
+
             }
         }
 
@@ -210,6 +224,26 @@ namespace GestureSign.ControlPanel.Dialogs
                 (int)e.NewValue);
         }
 
+        private void ChooseIconButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofdIcon = new OpenFileDialog
+            {
+                Filter = LocalizationProvider.Instance.GetTextValue("ApplicationDialog.IconFileFilter") +
+                         "|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.ico;*.exe|" +
+                         LocalizationProvider.Instance.GetTextValue("ApplicationDialog.ExecutableFile") + "|*.exe"
+            };
+            if (ofdIcon.ShowDialog().Value)
+            {
+                SetIcon(ApplicationIconHelper.FromPath(ofdIcon.FileName));
+            }
+        }
+
+        private void ClearIconButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetIcon(null);
+        }
+
+
         protected override void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);
@@ -224,9 +258,7 @@ namespace GestureSign.ControlPanel.Dialogs
                         string targetFile = files[0];
                         if (targetFile.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
                         {
-                            WshShell shell = new WshShell();
-                            IWshShortcut link = (IWshShortcut)shell.CreateShortcut(targetFile);
-                            targetFile = link.TargetPath;
+                            targetFile = ShortcutHelper.GetTargetPath(targetFile);
                         }
                         if (Path.GetExtension(targetFile).ToLower() == ".exe")
                         {
@@ -236,8 +268,14 @@ namespace GestureSign.ControlPanel.Dialogs
                             ApplicationNameTextBox.Text = string.IsNullOrWhiteSpace(versionInfo.ProductName) ? Path.GetFileNameWithoutExtension(targetFile) : versionInfo.ProductName;
 
                             MatchStringTextBox.Text = Path.GetFileName(targetFile);
+                            SetIcon(ApplicationIcon.FromAssociatedIcon(targetFile));
+                        }
+                        else
+                        {
+                            SetIcon(ApplicationIconHelper.FromPath(targetFile));
                         }
                     }
+
                 }
                 catch (Exception exception)
                 {
@@ -306,18 +344,40 @@ namespace GestureSign.ControlPanel.Dialogs
             return false;
         }
 
+        private void SetIcon(byte[] icon)
+        {
+            _icon = icon;
+            ApplicationIconPreview.Source = ApplicationIconHelper.ToBitmapSource(_icon);
+            ClearIconButton.IsEnabled = _icon != null;
+        }
+
+        private static bool SameIcon(byte[] left, byte[] right)
+        {
+            if (ReferenceEquals(left, right))
+                return true;
+            if (left == null || right == null)
+                return false;
+            return left.SequenceEqual(right);
+        }
+
+
         private bool SaveApplication()
         {
             if (_currentApplication is GlobalApp)
             {
                 GlobalApp globalApp = (GlobalApp)_currentApplication;
-                int newValue = (int)LimitNumberOfFingersSlider.Value; ;
-                if (newValue != globalApp.LimitNumberOfFingers)
+                int newValue = (int)LimitNumberOfFingersSlider.Value;
+                bool iconChanged = !SameIcon(globalApp.Icon, _icon);
+                if (newValue != globalApp.LimitNumberOfFingers || iconChanged)
                 {
                     globalApp.LimitNumberOfFingers = newValue;
+                    globalApp.Icon = _icon;
                     ApplicationManager.Instance.SaveApplications();
+                    if (iconChanged)
+                        ApplicationItemProvider.RefreshItem(globalApp);
                 }
                 return true;
+
             }
 
             string matchString = MatchStringTextBox.Text.Trim();
@@ -352,7 +412,9 @@ namespace GestureSign.ControlPanel.Dialogs
                             MatchString = matchString,
                             MatchUsing = matchUsingRadio.MatchUsing,
                             MatchActivated = MatchActivatedCheckBox.IsChecked.GetValueOrDefault(),
-                            IsRegEx = RegexCheckBox.IsChecked.Value
+                            IsRegEx = RegexCheckBox.IsChecked.Value,
+                            Icon = _icon
+
                         };
 
                         if (_newApplication)
@@ -419,7 +481,8 @@ namespace GestureSign.ControlPanel.Dialogs
                                 LocalizationProvider.Instance.GetTextValue("ApplicationDialog.Messages.IgnoredAppExists"));
                         }
 
-                        ApplicationManager.Instance.AddApplication(new IgnoredApp(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true));
+                        ApplicationManager.Instance.AddApplication(new IgnoredApp(name, matchUsingRadio.MatchUsing, matchString, RegexCheckBox.IsChecked.Value, true) { Icon = _icon });
+
                         break;
                     }
             }

@@ -74,7 +74,7 @@
                                                  Storyboard="{StaticResource Storyboard2}" />
                             </Trigger.EnterActions>
                             <Setter Property="Foreground"
-                                    Value="{StaticResource IdealForegroundColorBrush}"></Setter>
+                                    Value="{StaticResource MahApps.Brushes.IdealForeground}"></Setter>
                             <Setter TargetName="bd"
                                     Property="Background"
                                     Value="#FF606060" />

@@ -1,5 +1,7 @@
 ﻿using GestureSign.Common.Applications;
 using GestureSign.ControlPanel.Common;
+using GestureSign.ControlPanel.Converters;
+using System.Globalization;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -137,7 +139,20 @@ namespace GestureSign.ControlPanel.ViewModel
             }
         }
 
+        /// <summary>Recomputes gesture-derived fields and search keys after gestures, actions or continuous gestures were saved.</summary>
+        public void RefreshGestureInfo()
+        {
+            foreach (var commandInfo in CommandInfos)
+                UpdateGestureInfo(commandInfo);
+        }
+
         private void AddCommandInfo(CommandInfo commandInfo)
+        {
+            UpdateGestureInfo(commandInfo);
+            CommandInfos.Add(commandInfo);
+        }
+
+        private static void UpdateGestureInfo(CommandInfo commandInfo)
         {
             string features;
             int patternCount;
@@ -154,7 +169,34 @@ namespace GestureSign.ControlPanel.ViewModel
             }
             commandInfo.GestureFeatures = features;
             commandInfo.PatternCount = patternCount;
-            CommandInfos.Add(commandInfo);
+            commandInfo.SearchKey = BuildSearchKey(commandInfo);
+        }
+
+        private static string BuildSearchKey(CommandInfo commandInfo)
+        {
+            var action = commandInfo.Action;
+            string title = null;
+            if (action != null)
+            {
+                try
+                {
+                    title = new ActionTitleConverter().Convert(action, typeof(string), null, CultureInfo.CurrentCulture) as string;
+                }
+                catch
+                {
+                    title = null;
+                }
+            }
+
+            return ActionListFilter.BuildSearchKey(
+                action?.Name,
+                action?.GestureName,
+                action?.Condition,
+                title,
+                commandInfo.CommandName,
+                commandInfo.Description,
+                commandInfo.Command?.CommandSettings,
+                commandInfo.Command?.PluginClass);
         }
     }
 }

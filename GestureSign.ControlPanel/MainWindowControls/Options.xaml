@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GestureSign.ControlPanel.MainWindowControls.Options"
+<UserControl x:Class="GestureSign.ControlPanel.MainWindowControls.Options"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,303 +8,661 @@
              xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              mc:Ignorable="d"
-             Height="381"
-             Width="380"
+             d:DesignHeight="560"
+             d:DesignWidth="1100"
              Initialized="UserControl_Initialized">
-    <ScrollViewer PanningMode="VerticalFirst">
-        <StackPanel Margin="0,0,0.4,0">
-            <StackPanel.Resources>
-                <ResourceDictionary>
-                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-                    <Style TargetType="controls:ToggleSwitch"
-                           BasedOn="{StaticResource {x:Type controls:ToggleSwitch}}">
-                        <Setter Property="FontFamily"
-                                Value="{StaticResource DefaultFont}" />
-                        <Setter Property="Margin"
-                                Value="0,10,0,0" />
-                        <Setter Property="Width"
-                                Value="300" />
-                        <Setter Property="FontWeight"
-                                Value="Bold" />
-                        <Setter Property="FontSize"
-                                Value="14" />
-                    </Style>
-                    <Style TargetType="Slider"
-                           BasedOn="{StaticResource {x:Type Slider}}">
-                        <Setter Property="Width"
-                                Value="300" />
-                        <Setter Property="Height"
-                                Value="24" />
-                        <Setter Property="Margin"
-                                Value="0,5" />
-                        <Setter Property="HorizontalAlignment"
-                                Value="Center" />
-                        <Setter Property="IsMoveToPointEnabled"
-                                Value="True" />
-                        <Setter Property="common:SliderTools.MoveToPointOnDrag"
-                                Value="True" />
-                    </Style>
-                    <ObjectDataProvider x:Key="MouseActionDescription"
-                                        ObjectType="{x:Type viewModel:MouseActionDescription}" />
-                    <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
-                    </ResourceDictionary.MergedDictionaries>
-                </ResourceDictionary>
-            </StackPanel.Resources>
-            <controls:ToggleSwitch x:Name="GestureTrailSwitch"
-                                   Header="{localization:LocalisedText Options.GestureTrail}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="GestureTrailSwitch_Click" />
-            <StackPanel Visibility="{Binding ElementName=GestureTrailSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Margin="0,10,0,0">
-                <DockPanel HorizontalAlignment="Center"
-                           Width="300">
-                    <Button x:Name="btnPickColor"
-                            Content="{localization:LocalisedText Options.PickColor}"
-                            Click="btnPickColor_Click"
-                            Margin="0,5"
-                            FontSize="12"
-                            FontWeight="Bold"
-                            DockPanel.Dock="Left" />
-                    <Button x:Name="SystemColorButton"
-                            Content="{localization:LocalisedText Options.SystemColor}"
-                            Margin="0,5"
-                            FontSize="12"
-                            Click="SystemColorButton_Click"
-                            FontWeight="Bold"
-                            DockPanel.Dock="Right"
-                            HorizontalAlignment="Right" />
-                </DockPanel>
-                <Line x:Name="VisualFeedbackExample"
-                      Height="30"
-                      X1="0"
-                      Y1="0"
-                      X2="280"
-                      Y2="0"
-                      StrokeEndLineCap="Round"
-                      StrokeStartLineCap="Round"
-                      StrokeThickness="{Binding Value, ElementName=VisualFeedbackWidthSlider}"
-                      Opacity="{Binding Value, ElementName=OpacitySlider}"
-                      Margin="0,10,0,0"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center" />
-                <TextBlock x:Name="OpacityText"
-                           HorizontalAlignment="Center"
-                           TextWrapping="Wrap"
-                           VerticalAlignment="Top"
-                           Margin="15,5,0,3"
-                           FontSize="14"
-                           Text="{localization:LocalisedText Options.Opacity}" />
-                <Slider x:Name="OpacitySlider"
-                        ValueChanged="OpacitySlider_ValueChanged"
-                        Maximum="1" />
-                <TextBlock x:Name="VisualFeedbackWidthText"
-                           HorizontalAlignment="Center"
-                           TextWrapping="Wrap"
-                           VerticalAlignment="Top"
-                           Margin="15,15,5,3"
-                           FontSize="14" />
-                <Slider x:Name="VisualFeedbackWidthSlider"
-                        Maximum="30"
-                        ValueChanged="VisualFeedbackWidthSlider_ValueChanged"
-                        SmallChange="1" />
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.FlatSlider.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <ObjectDataProvider x:Key="MouseActionDescription"
+                                ObjectType="{x:Type viewModel:MouseActionDescription}" />
+
+            <!-- A group of related settings: white panel, small caption, rows separated by hairlines -->
+            <Style x:Key="SettingsSection"
+                   TargetType="Border">
+                <Setter Property="Background"
+                        Value="White" />
+                <Setter Property="BorderBrush"
+                        Value="{StaticResource UiRuleBrush}" />
+                <Setter Property="BorderThickness"
+                        Value="1" />
+                <Setter Property="CornerRadius"
+                        Value="6" />
+                <Setter Property="Margin"
+                        Value="0,0,0,12" />
+            </Style>
+            <Style x:Key="SectionTitle"
+                   TargetType="TextBlock">
+                <Setter Property="Height"
+                        Value="34" />
+                <Setter Property="Padding"
+                        Value="16,10,0,0" />
+                <Setter Property="FontSize"
+                        Value="11" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiMutedBrush}" />
+            </Style>
+            <Style x:Key="SettingRow"
+                   TargetType="Border">
+                <Setter Property="MinHeight"
+                        Value="44" />
+                <Setter Property="Padding"
+                        Value="16,0" />
+                <Setter Property="BorderBrush"
+                        Value="{StaticResource UiHairlineBrush}" />
+                <Setter Property="BorderThickness"
+                        Value="0,1,0,0" />
+            </Style>
+            <Style x:Key="SettingSubRow"
+                   TargetType="Border"
+                   BasedOn="{StaticResource SettingRow}">
+                <Setter Property="MinHeight"
+                        Value="38" />
+                <Setter Property="Padding"
+                        Value="32,0,16,0" />
+            </Style>
+            <Style x:Key="SettingLabel"
+                   TargetType="TextBlock">
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiInkBrush}" />
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                <Setter Property="TextWrapping"
+                        Value="Wrap" />
+            </Style>
+            <Style x:Key="SettingHint"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource SettingLabel}">
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiMutedBrush}" />
+            </Style>
+            <Style x:Key="SettingValue"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource SettingLabel}">
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+            </Style>
+
+            <!-- Switch sits in a fixed slot so every On/Off aligns down the page -->
+            <Style TargetType="controls:ToggleSwitch"
+                   BasedOn="{StaticResource MahApps.Styles.ToggleSwitch}">
+                <Setter Property="FontFamily"
+                        Value="{StaticResource DefaultFont}" />
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+                <Setter Property="Width"
+                        Value="100" />
+                <Setter Property="HorizontalAlignment"
+                        Value="Right" />
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                <Setter Property="Margin"
+                        Value="12,0,0,0" />
+            </Style>
+            <Style TargetType="Slider"
+                   BasedOn="{StaticResource {x:Type Slider}}">
+                <Setter Property="Height"
+                        Value="22" />
+                <Setter Property="Margin"
+                        Value="0,6,0,0" />
+                <Setter Property="HorizontalAlignment"
+                        Value="Stretch" />
+                <Setter Property="IsMoveToPointEnabled"
+                        Value="True" />
+                <Setter Property="common:SliderTools.MoveToPointOnDrag"
+                        Value="True" />
+            </Style>
+            <Style TargetType="CheckBox"
+                   BasedOn="{StaticResource {x:Type CheckBox}}">
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+            </Style>
+            <Style TargetType="ComboBox"
+                   BasedOn="{StaticResource {x:Type ComboBox}}">
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="Width"
+                        Value="190" />
+                <Setter Property="Height"
+                        Value="30" />
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+            </Style>
+            <Style TargetType="Button"
+                   x:Key="SettingButton"
+                   BasedOn="{StaticResource MahApps.Styles.Button}">
+                <Setter Property="controls:ControlsHelper.ContentCharacterCasing"
+                        Value="Normal" />
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="FontWeight"
+                        Value="Normal" />
+                <Setter Property="Height"
+                        Value="30" />
+                <Setter Property="MinWidth"
+                        Value="0" />
+                <Setter Property="Padding"
+                        Value="14,0" />
+                <Setter Property="Margin"
+                        Value="0,0,8,0" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Ribbon: user data -->
+        <Border Height="96"
+                Background="{StaticResource UiRibbonBrush}"
+                BorderBrush="{StaticResource UiRuleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="6,0">
+            <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="BackupButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="84"
+                                    Click="BackupButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ExportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               MaxWidth="110"
+                                               Text="{localization:LocalisedText Options.Backup}" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="RestoreButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="84"
+                                    Click="RestoreButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ImportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               MaxWidth="110"
+                                               Text="{localization:LocalisedText Options.Restore}" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="OpenConfigFolderButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="84"
+                                    Click="OpenConfigFolderButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.FolderLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               MaxWidth="110"
+                                               Text="{localization:LocalisedText Options.OpenConfigFolder}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonBackup}" />
+                    </Grid>
+                </Border>
             </StackPanel>
-            <TextBlock x:Name="MinimumPointDistanceText"
-                       HorizontalAlignment="Center"
-                       TextWrapping="Wrap"
-                       Text="{Binding ElementName=MinimumPointDistanceSlider, Path=Value, StringFormat={localization:LocalisedText Options.MinimumPointDistance}}"
-                       VerticalAlignment="Top"
-                       Margin="15,15,5,3"
-                       FontSize="14" />
-            <Slider x:Name="MinimumPointDistanceSlider"
-                    Maximum="100"
-                    Minimum="3"
-                    ValueChanged="MinimumPointDistanceSlider_ValueChanged" />
-            <TextBlock Text="{localization:LocalisedText Options.Language}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Top"
-                       FontSize="14"
-                       Margin="0,20,0,5" />
-            <ComboBox x:Name="LanguageComboBox"
-                      HorizontalAlignment="Center"
-                      Width="300"
-                      FontSize="14"
-                      Margin="0,5"
-                      DisplayMemberPath="Value"
-                      SelectedValuePath="Key"
-                      DropDownClosed="LanguageComboBox_DropDownClosed" />
-            <controls:ToggleSwitch x:Name="MouseSwitch"
-                                   Header="{localization:LocalisedText Options.MouseGesture}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="MouseSwitch_Click">
-            </controls:ToggleSwitch>
-            <TextBlock x:Name="DrawingButtonTextBlock"
-                       Text="{localization:LocalisedText Options.DrawingButton}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Top"
-                       FontSize="14"
-                       Margin="0,0,0,5"
-                       Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
-            </TextBlock>
-            <ComboBox x:Name="DrawingButtonComboBox"
-                      ItemsSource="{Binding Source={StaticResource MouseActionDescription},Path=DrawingDescription}"
-                      HorizontalAlignment="Center"
-                      Width="300"
-                      FontSize="14"
-                      Margin="0,5,0,15"
-                      DisplayMemberPath="Value"
-                      SelectedValuePath="Key"
-                      DropDownClosed="DrawingButtonComboBox_DropDownClosed"
-                      Visibility="{Binding ElementName=MouseSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
-            </ComboBox>
-            <controls:ToggleSwitch x:Name="TouchScreenSwitch"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="TouchScreenSwitch_Click">
-                <controls:ToggleSwitch.Header>
-                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
-                               FontWeight="Normal">
-                        <Run Text="{localization:LocalisedText Options.TouchScreen}" />
-                        <Run Name="TouchScreenNotFoundText"
-                             Foreground="{StaticResource AccentBaseColorBrush}"
-                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
-                    </TextBlock>
-                </controls:ToggleSwitch.Header>
-            </controls:ToggleSwitch>
-            <controls:ToggleSwitch x:Name="TouchPadSwitch"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="TouchPadSwitch_Click">
-                <controls:ToggleSwitch.Header>
-                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
-                               FontWeight="Normal">
-                        <Run Text="{localization:LocalisedText Options.TouchPad}" />
-                        <Run Name="TouchPadNotFoundText"
-                             Foreground="{StaticResource AccentBaseColorBrush}"
-                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
-                    </TextBlock>
-                </controls:ToggleSwitch.Header>
-            </controls:ToggleSwitch>
-            <controls:ToggleSwitch x:Name="PenGestureSwitch"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="PenGestureSwitch_Click">
-                <controls:ToggleSwitch.Header>
-                    <TextBlock FontSize="{StaticResource ToggleSwitchHeaderFontSize}"
-                               FontWeight="Normal">
-                        <Run Text="{localization:LocalisedText Options.PenGesture}" />
-                        <Run Name="PenNotFoundText"
-                             Foreground="{StaticResource AccentBaseColorBrush}"
-                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
-                    </TextBlock>
-                </controls:ToggleSwitch.Header>
-            </controls:ToggleSwitch>
-            <StackPanel Visibility="{Binding ElementName=PenGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                        HorizontalAlignment="Center">
-                <TextBlock HorizontalAlignment="Center"
-                           Text="{localization:LocalisedText Options.PenGestureButtonDescription}"
-                           FontSize="14"
-                           Margin="0,5,0,0" />
-                <CheckBox x:Name="RightClickButtonCheckBox"
-                          Click="RightClickButtonCheckBox_Click"
-                          IsChecked="True"
-                          Margin="0,10,0,0"
-                          FontSize="14"
-                          Content="{localization:LocalisedText Options.RightClickButton}" />
-                <CheckBox x:Name="EraserCheckBox"
-                          Click="EraserCheckBox_Click"
-                          Margin="0,10,0,0"
-                          FontSize="14"
-                          Content="{localization:LocalisedText Options.Eraser}" />
-                <TextBlock HorizontalAlignment="Center"
-                           Text="{localization:LocalisedText Options.And}"
-                           FontSize="14"
-                           Margin="0,10,0,0" />
-                <CheckBox x:Name="TipCheckBox"
-                          Click="TipCheckBox_Click"
-                          IsChecked="True"
-                          Margin="0,10,0,0"
-                          FontSize="14"
-                          Content="{localization:LocalisedText Options.Tip}" />
-                <CheckBox x:Name="HoverCheckBox"
-                          Click="HoverCheckBox_Click"
-                          Margin="0,10,0,0"
-                          FontSize="14"
-                          Content="{localization:LocalisedText Options.Hover}" />
-            </StackPanel>
-            <controls:ToggleSwitch x:Name="InitialTimeoutSwitch"
-                                   Header="{localization:LocalisedText Options.InitialTimeoutTitle}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="InitialTimeoutSwitch_Click" />
-            <TextBlock HorizontalAlignment="Center"
-                       Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                       Text="{Binding ElementName=InitialTimeoutSlider, Path=Value, StringFormat={localization:LocalisedText Options.InitialTimeout}}"
-                       FontSize="14"
-                       Margin="0,5,0,0" />
-            <Slider x:Name="InitialTimeoutSlider"
-                    Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Maximum="2"
-                    TickFrequency="0.1"
-                    IsSnapToTickEnabled="True"
-                    ValueChanged="InitialTimeoutSlider_ValueChanged" />
-            <controls:ToggleSwitch x:Name="StartupSwitch"
-                                   Header="{localization:LocalisedText Options.WindowsStartup.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="StartupSwitch_OnClick" />
-            <CheckBox x:Name="RunAsAdminCheckBox"
-                      Visibility="{Binding ElementName=StartupSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                      Click="RunAsAdminCheckBox_Click"
-                      Margin="0,10,0,0"
-                      FontSize="14"
-                      Content="{localization:LocalisedText Options.RunAsAdmin}"
-                      HorizontalAlignment="Center" />
-            <controls:ToggleSwitch x:Name="IgnoreFullScreenSwitch"
-                                   Header="{localization:LocalisedText Options.IgnoreFullScreen.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="IgnoreFullScreenSwitch_Click" />
-            <controls:ToggleSwitch x:Name="IgnoreTouchInputWhenUsingPenSwitch"
-                                   Header="{localization:LocalisedText Options.IgnoreTouchInputWhenUsingPen.Header}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Click="IgnoreTouchInputWhenUsingPenSwitch_Click" />
-            <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"
-                                   Header="{localization:LocalisedText Options.ShowTrayIconSwitch.Header}"
-                                   OnLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.ShowTrayIconSwitch.OffLabel}"
-                                   Checked="ShowTrayIconSwitch_Checked"
-                                   Unchecked="ShowTrayIconSwitch_Unchecked" />
-            <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
-                                   Header="{localization:LocalisedText Options.ErrorLogPrompt}"
-                                   OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                   OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                   Checked="SendLogToggleSwitch_Checked"
-                                   Unchecked="SendLogToggleSwitch_Unchecked" />
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,20,0,10">
-                <Button x:Name="BackupButton"
-                        Content="{localization:LocalisedText Options.Backup}"
-                        FontSize="12"
-                        FontWeight="Bold"
-                        Click="BackupButton_Click" />
-                <Button x:Name="RestoreButton"
-                        Margin="20,0,0,0"
-                        Content="{localization:LocalisedText Options.Restore}"
-                        FontSize="12"
-                        FontWeight="Bold"
-                        Click="RestoreButton_Click" />
-                <Button x:Name="OpenConfigFolderButton"
-                        Margin="20,0,0,0"
-                        Content="{localization:LocalisedText Options.OpenConfigFolder}"
-                        FontSize="12"
-                        FontWeight="Bold"
-                        Click="OpenConfigFolderButton_Click" />
-            </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
+        </Border>
+
+        <ScrollViewer Grid.Row="1"
+                      Background="{StaticResource UiRibbonBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      PanningMode="VerticalFirst">
+            <Grid Margin="20,14,20,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ===== Left: devices and general ===== -->
+                <StackPanel Grid.Column="0">
+                    <Border Style="{StaticResource SettingsSection}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}"
+                                       Text="{localization:LocalisedText Options.Sections.InputDevices}" />
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.MouseGesture}" />
+                                    <controls:ToggleSwitch x:Name="MouseSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="MouseSwitch_Click" />
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingSubRow}"
+                                    Visibility="{Binding ElementName=MouseSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="DrawingButtonTextBlock"
+                                               Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.DrawingButton}" />
+                                    <ComboBox x:Name="DrawingButtonComboBox"
+                                              Grid.Column="1"
+                                              Margin="0,4"
+                                              ItemsSource="{Binding Source={StaticResource MouseActionDescription},Path=DrawingDescription}"
+                                              DisplayMemberPath="Value"
+                                              SelectedValuePath="Key"
+                                              DropDownClosed="DrawingButtonComboBox_DropDownClosed" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}">
+                                        <Run Text="{localization:LocalisedText Options.TouchScreen}" />
+                                        <Run Name="TouchScreenNotFoundText"
+                                             Foreground="{StaticResource UiMutedBrush}"
+                                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                                    </TextBlock>
+                                    <controls:ToggleSwitch x:Name="TouchScreenSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="TouchScreenSwitch_Click" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}">
+                                        <Run Text="{localization:LocalisedText Options.TouchPad}" />
+                                        <Run Name="TouchPadNotFoundText"
+                                             Foreground="{StaticResource UiMutedBrush}"
+                                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                                    </TextBlock>
+                                    <controls:ToggleSwitch x:Name="TouchPadSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="TouchPadSwitch_Click" />
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingSubRow}"
+                                    Visibility="{Binding ElementName=TouchPadSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <CheckBox x:Name="TouchPadTapToClickCheckBox"
+                                          Click="TouchPadTapToClickCheckBox_Click"
+                                          Content="{localization:LocalisedText Options.TouchPadTapToClick}"
+                                          ToolTip="{localization:LocalisedText Options.TouchPadTapToClickTip}" />
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}">
+                                        <Run Text="{localization:LocalisedText Options.PenGesture}" />
+                                        <Run Name="PenNotFoundText"
+                                             Foreground="{StaticResource UiMutedBrush}"
+                                             Text="{localization:LocalisedText Options.DeviceNotFound}" />
+                                    </TextBlock>
+                                    <controls:ToggleSwitch x:Name="PenGestureSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="PenGestureSwitch_Click" />
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingSubRow}"
+                                    Padding="32,10,16,10"
+                                    Visibility="{Binding ElementName=PenGestureSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SettingHint}"
+                                               Text="{localization:LocalisedText Options.PenGestureButtonDescription}" />
+                                    <CheckBox x:Name="RightClickButtonCheckBox"
+                                              Click="RightClickButtonCheckBox_Click"
+                                              IsChecked="True"
+                                              Margin="0,8,0,0"
+                                              Content="{localization:LocalisedText Options.RightClickButton}" />
+                                    <CheckBox x:Name="EraserCheckBox"
+                                              Click="EraserCheckBox_Click"
+                                              Margin="0,8,0,0"
+                                              Content="{localization:LocalisedText Options.Eraser}" />
+                                    <TextBlock Style="{StaticResource SettingHint}"
+                                               Margin="0,8,0,0"
+                                               Text="{localization:LocalisedText Options.And}" />
+                                    <CheckBox x:Name="TipCheckBox"
+                                              Click="TipCheckBox_Click"
+                                              IsChecked="True"
+                                              Margin="0,8,0,0"
+                                              Content="{localization:LocalisedText Options.Tip}" />
+                                    <CheckBox x:Name="HoverCheckBox"
+                                              Click="HoverCheckBox_Click"
+                                              Margin="0,8,0,0"
+                                              Content="{localization:LocalisedText Options.Hover}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.IgnoreTouchInputWhenUsingPen.Header}" />
+                                    <controls:ToggleSwitch x:Name="IgnoreTouchInputWhenUsingPenSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="IgnoreTouchInputWhenUsingPenSwitch_Click" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SettingsSection}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}"
+                                       Text="{localization:LocalisedText Options.Sections.General}" />
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.WindowsStartup.Header}" />
+                                    <controls:ToggleSwitch x:Name="StartupSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="StartupSwitch_OnClick" />
+                                </Grid>
+                            </Border>
+                            <!-- Follows the check box, which the code hides when UIAccess is in use -->
+                            <Border Style="{StaticResource SettingSubRow}"
+                                    Visibility="{Binding ElementName=RunAsAdminCheckBox,Path=Visibility}">
+                                <CheckBox x:Name="RunAsAdminCheckBox"
+                                          Visibility="{Binding ElementName=StartupSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          Click="RunAsAdminCheckBox_Click"
+                                          Content="{localization:LocalisedText Options.RunAsAdmin}" />
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.ShowTrayIconSwitch.Header}" />
+                                    <controls:ToggleSwitch x:Name="ShowTrayIconSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.ShowTrayIconSwitch.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.ShowTrayIconSwitch.OffLabel}"
+                                                           Toggled="ShowTrayIconSwitch_Toggled" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.ErrorLogPrompt}" />
+                                    <controls:ToggleSwitch x:Name="SendLogToggleSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="SendLogToggleSwitch_Toggled" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}"
+                                    Padding="16,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource SettingLabel}"
+                                                   Text="{localization:LocalisedText Options.LanguageTitle}" />
+                                        <TextBlock Style="{StaticResource SettingHint}"
+                                                   Text="{localization:LocalisedText Options.LanguageHint}" />
+                                    </StackPanel>
+                                    <ComboBox x:Name="LanguageComboBox"
+                                              Grid.Column="1"
+                                              DisplayMemberPath="Value"
+                                              SelectedValuePath="Key"
+                                              DropDownClosed="LanguageComboBox_DropDownClosed" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Right: trail and recognition ===== -->
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource SettingsSection}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}"
+                                       Text="{localization:LocalisedText Options.Sections.GestureTrail}" />
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.GestureTrail}" />
+                                    <controls:ToggleSwitch x:Name="GestureTrailSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="GestureTrailSwitch_Click" />
+                                </Grid>
+                            </Border>
+
+                            <StackPanel Visibility="{Binding ElementName=GestureTrailSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Border Style="{StaticResource SettingRow}"
+                                        Padding="16,12">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="btnPickColor"
+                                                    Style="{StaticResource SettingButton}"
+                                                    Content="{localization:LocalisedText Options.PickColor}"
+                                                    Click="btnPickColor_Click" />
+                                            <Button x:Name="SystemColorButton"
+                                                    Style="{StaticResource SettingButton}"
+                                                    Content="{localization:LocalisedText Options.SystemColor}"
+                                                    Click="SystemColorButton_Click" />
+                                        </StackPanel>
+                                        <Border Height="52"
+                                                Margin="0,10,0,0"
+                                                CornerRadius="4"
+                                                Background="{StaticResource UiRibbonBrush}"
+                                                ClipToBounds="True">
+                                            <Line x:Name="VisualFeedbackExample"
+                                                  X1="0"
+                                                  Y1="0"
+                                                  X2="400"
+                                                  Y2="0"
+                                                  StrokeEndLineCap="Round"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeThickness="{Binding Value, ElementName=VisualFeedbackWidthSlider}"
+                                                  Opacity="{Binding Value, ElementName=OpacitySlider}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource SettingRow}"
+                                        Padding="16,10,16,12">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Style="{StaticResource SettingLabel}"
+                                                       Text="{localization:LocalisedText Options.Opacity}" />
+                                            <TextBlock x:Name="OpacityText"
+                                                       Style="{StaticResource SettingValue}"
+                                                       HorizontalAlignment="Right" />
+                                        </Grid>
+                                        <Slider x:Name="OpacitySlider"
+                                                ValueChanged="OpacitySlider_ValueChanged"
+                                                Maximum="1" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource SettingRow}"
+                                        Padding="16,10,16,12">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Style="{StaticResource SettingLabel}"
+                                                       Text="{localization:LocalisedText Options.VisualFeedbackWidthLabel}" />
+                                            <TextBlock x:Name="VisualFeedbackWidthText"
+                                                       Style="{StaticResource SettingValue}"
+                                                       HorizontalAlignment="Right" />
+                                        </Grid>
+                                        <Slider x:Name="VisualFeedbackWidthSlider"
+                                                Maximum="30"
+                                                ValueChanged="VisualFeedbackWidthSlider_ValueChanged"
+                                                SmallChange="1" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource SettingRow}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource SettingLabel}"
+                                                   Text="{localization:LocalisedText Options.HideTwoFingerTrail}" />
+                                        <controls:ToggleSwitch x:Name="HideTwoFingerTrailSwitch"
+                                                               Grid.Column="1"
+                                                               OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                               OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                               Toggled="HideTwoFingerTrailSwitch_Click" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SettingsSection}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}"
+                                       Text="{localization:LocalisedText Options.Sections.Recognition}" />
+
+                            <Border Style="{StaticResource SettingRow}"
+                                    Padding="16,10,16,12">
+                                <StackPanel>
+                                    <Grid>
+                                        <TextBlock Style="{StaticResource SettingLabel}"
+                                                   Text="{localization:LocalisedText Options.MinimumPointDistanceLabel}" />
+                                        <TextBlock x:Name="MinimumPointDistanceText"
+                                                   Style="{StaticResource SettingValue}"
+                                                   HorizontalAlignment="Right"
+                                                   Text="{Binding ElementName=MinimumPointDistanceSlider, Path=Value, StringFormat={}{0:0} px}" />
+                                    </Grid>
+                                    <Slider x:Name="MinimumPointDistanceSlider"
+                                            Maximum="100"
+                                            Minimum="3"
+                                            ValueChanged="MinimumPointDistanceSlider_ValueChanged" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.InitialTimeoutTitle}" />
+                                    <controls:ToggleSwitch x:Name="InitialTimeoutSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="InitialTimeoutSwitch_Click" />
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingRow}"
+                                    Padding="16,10,16,12"
+                                    Visibility="{Binding ElementName=InitialTimeoutSwitch,Path=IsOn,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SettingHint}"
+                                               Text="{Binding ElementName=InitialTimeoutSlider, Path=Value, StringFormat={localization:LocalisedText Options.InitialTimeout}}" />
+                                    <Slider x:Name="InitialTimeoutSlider"
+                                            Maximum="2"
+                                            TickFrequency="0.1"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="InitialTimeoutSlider_ValueChanged" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource SettingLabel}"
+                                               Text="{localization:LocalisedText Options.IgnoreFullScreen.Header}" />
+                                    <controls:ToggleSwitch x:Name="IgnoreFullScreenSwitch"
+                                                           Grid.Column="1"
+                                                           OnContent="{localization:LocalisedText Options.OnLabel}"
+                                                           OffContent="{localization:LocalisedText Options.OffLabel}"
+                                                           Toggled="IgnoreFullScreenSwitch_Click" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

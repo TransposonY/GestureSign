@@ -7,6 +7,8 @@
         public const string GesturesExtension = ".gest";
         public const string ActionFileName = "Actions.gsa";
         public const string ActionExtension = ".gsa";
+        public const string ContinuousGesturesFileName = "ContinuousGestures.gsc";
+        public const string ContinuousGesturesExtension = ".gsc";
         public const string ArchivesName = ProductName + ArchivesExtension;
         public const string ArchivesExtension = ".ges";
         public const string BackupFileExtension = ".gsb";

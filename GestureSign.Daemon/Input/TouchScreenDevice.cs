@@ -3,7 +3,6 @@ using GestureSign.Daemon.Native;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace GestureSign.Daemon.Input
 {
@@ -11,11 +10,11 @@ namespace GestureSign.Daemon.Input
     {
         public override Devices DeviceType => Devices.TouchScreen;
 
-        public TouchScreenDevice(IntPtr rawInputBuffer, ref RAWINPUT raw) : base(rawInputBuffer, ref raw)
+        public TouchScreenDevice(IntPtr rawInputBuffer, ref RAWINPUT raw, SafeUnmanagedMemoryHandle preparsedData) : base(rawInputBuffer, ref raw, preparsedData)
         {
         }
 
-        public void GetRawDatas(short numberOfChildren, Screen currentScr, ref int requiringContactCount, ref List<RawData> _outputTouchs)
+        public void GetRawDatas(short numberOfChildren, Rectangle screenBounds, ref int requiringContactCount, ref List<RawData> _outputTouchs)
         {
             for (int dwIndex = 0; dwIndex < _dwCount; dwIndex++)
             {
@@ -23,7 +22,7 @@ namespace GestureSign.Daemon.Input
                 for (short nodeIndex = 1; nodeIndex <= numberOfChildren; nodeIndex++)
                 {
                     int contactIdentifier = GetContactId(nodeIndex, pRawDataPacket);
-                    Point point = GetCoordinate(nodeIndex, currentScr, pRawDataPacket);
+                    Point point = GetCoordinate(nodeIndex, screenBounds, pRawDataPacket);
 
                     ushort[] usageList = GetButtonList(_hPreparsedData.DangerousGetHandle(), _pRawData, nodeIndex, _dwSizHid);
                     bool tip = usageList.Length != 0 && usageList[0] == NativeMethods.TipId;

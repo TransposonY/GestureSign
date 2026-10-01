@@ -1,0 +1,16 @@
+[
+  {"t":298,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1152,216]]},
+  {"t":298,"stage":"capture","event":"started","firstPoints":[[1152,216]]},
+  {"t":298,"stage":"translated","event":"down","device":"TouchScreen","points":[[10,1152,216]],"handled":true,"state":"CapturingInvalid"},
+  {"t":298,"stage":"host","effect":"priority:high"},
+  {"t":306,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1152,360]]},
+  {"t":306,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1152,360]],"handled":false,"state":"Capturing"},
+  {"t":314,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1152,504]]},
+  {"t":314,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1152,504]],"handled":false,"state":"Capturing"},
+  {"t":322,"stage":"raw","device":"TouchScreen","contacts":[[10,1,1152,648]]},
+  {"t":322,"stage":"translated","event":"move","device":"TouchScreen","points":[[10,1152,648]],"handled":false,"state":"Capturing"},
+  {"t":330,"stage":"raw","device":"TouchScreen","contacts":[[10,0,1152,648]]},
+  {"t":330,"stage":"capture","event":"completed","strokes":[[[1152,216],[1152,360],[1152,504],[1152,648]]],"firstPoints":[[1152,216]],"gesture":null},
+  {"t":330,"stage":"translated","event":"up","device":"TouchScreen","points":[[10,1152,648]],"handled":true,"state":"Ready"},
+  {"t":330,"stage":"host","effect":"priority:normal"}
+]

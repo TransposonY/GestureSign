@@ -38,7 +38,7 @@ namespace GestureSign.Daemon.Triggers
         {
             if (PointCapture.Instance.State != CaptureState.Capturing || e.Points.Count < 2)
                 return;
-            var actionsWithContinuousGesture = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a != null && a.ContinuousGesture != null);
+            var actionsWithContinuousGesture = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a != null && !string.IsNullOrEmpty(a.ContinuousGestureName));
             if (actionsWithContinuousGesture == null || actionsWithContinuousGesture.Count == 0)
                 return;
             if (_lastPoints == null || _lastPoints.Count != e.FirstCapturedPoints.Count)
@@ -67,7 +67,7 @@ namespace GestureSign.Daemon.Triggers
                 {
                     for (int i = 1; i < rate; i++)
                     {
-                        OnGesturerRecognized(_lastPoints.Count, deltaX > 0 ? Gestures.Right : Gestures.Left);
+                        OnGesturerRecognized(_lastPoints.Count, deltaX > 0 ? ContinuousDirection.Right : ContinuousDirection.Left);
                     }
                     _stopwatch.Restart();
                     _lastPoints = e.FirstCapturedPoints;
@@ -80,7 +80,7 @@ namespace GestureSign.Daemon.Triggers
                 {
                     for (int i = 1; i < rate; i++)
                     {
-                        OnGesturerRecognized(_lastPoints.Count, deltaY > 0 ? Gestures.Down : Gestures.Up);
+                        OnGesturerRecognized(_lastPoints.Count, deltaY > 0 ? ContinuousDirection.Down : ContinuousDirection.Up);
                     }
                     _stopwatch.Restart();
                     _lastPoints = e.FirstCapturedPoints;
@@ -88,10 +88,12 @@ namespace GestureSign.Daemon.Triggers
             }
         }
 
-        private void OnGesturerRecognized(int contactCount, Gestures gesture)
+        private void OnGesturerRecognized(int contactCount, ContinuousDirection direction)
         {
-            var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a.ContinuousGesture != null &&
-            a.ContinuousGesture.ContactCount == contactCount && a.ContinuousGesture.Gesture == gesture);
+            var names = ContinuousGestureManager.Instance.FindNames(contactCount, direction);
+            if (names.Count == 0)
+                return;
+            var actions = ApplicationManager.Instance.GetRecognizedDefinedAction(a => a != null && names.Contains(a.ContinuousGestureName));
             if (actions.Count > 0)
                 OnTriggerFired(new TriggerFiredEventArgs(actions, _startPoint));
         }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GestureSign.ControlPanel.MainWindowControls.AvailableActions"
+<UserControl x:Class="GestureSign.ControlPanel.MainWindowControls.AvailableActions"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,75 +10,135 @@
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d"
-             d:DesignHeight="400"
-             d:DesignWidth="540"
+             d:DesignHeight="600"
+             d:DesignWidth="1100"
              Initialized="UserControl_Initialized"
-             AllowDrop="True">
+             AllowDrop="True"
+             Background="White">
     <UserControl.Resources>
         <ResourceDictionary>
-            <converters:ActionTitleConverter x:Key="ActionTitleConverter" />
-            <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter"></converters:ApplicationListHeaderConverter>
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:ApplicationGroupNameConverter x:Key="ApplicationGroupNameConverter" />
+            <converters:ApplicationIconConverter x:Key="ApplicationIconConverter" />
+            <converters:ApplicationFallbackIconConverter x:Key="ApplicationFallbackIconConverter" />
+            <converters:ActionSummaryConverter x:Key="ActionSummaryConverter" />
             <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter" />
-            <Canvas x:Key="Chevron-Up"
-                    Width="24"
-                    Height="24">
-                <Path Data="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"
-                      Fill="Black" />
-            </Canvas>
-            <Canvas x:Key="Chevron-Down"
-                    Width="24"
-                    Height="24">
-                <Path Data="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
-                      Fill="Black" />
-            </Canvas>
 
-            <Style TargetType="ListBoxItem"
-                   BasedOn="{StaticResource {x:Type ListBoxItem}}">
+            <Style x:Key="CompactActionToggleSwitch"
+                   TargetType="{x:Type controls:ToggleSwitch}"
+                   BasedOn="{StaticResource MahApps.Styles.ToggleSwitch}">
+                <Setter Property="MinWidth"
+                        Value="0" />
+                <Setter Property="Width"
+                        Value="64" />
+                <Setter Property="Padding"
+                        Value="0" />
+                <Setter Property="ContentPadding"
+                        Value="0" />
+            </Style>
+
+            <!-- Navigation pane: pale surface, selected row gets a blue spine -->
+            <Style x:Key="NavListItem"
+                   TargetType="ListBoxItem">
+                <Setter Property="OverridesDefaultStyle"
+                        Value="True" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiInkBrush}" />
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="HorizontalContentAlignment"
+                        Value="Stretch" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Stretch" />
                 <EventSetter Event="MouseDoubleClick"
                              Handler="ListBoxItem_OnMouseDoubleClick" />
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                            <Border x:Name="Border"
-                                    Background="{TemplateBinding Background}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Bd"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="3,0,0,0"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                             </Border>
                             <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter TargetName="Bd"
+                                            Property="Background"
+                                            Value="#FFEEF3FA" />
+                                </Trigger>
                                 <Trigger Property="IsSelected"
                                          Value="True">
-                                    <Setter TargetName="Border"
+                                    <Setter TargetName="Bd"
                                             Property="Background"
-                                            Value="{DynamicResource AccentColorBrush2}" />
-                                    <Setter Property="Foreground"
-                                            Value="{DynamicResource AccentSelectedColorBrush}" />
+                                            Value="{StaticResource UiSelectedBrush}" />
+                                    <Setter TargetName="Bd"
+                                            Property="BorderBrush"
+                                            Value="{StaticResource UiChromeBrush}" />
+                                    <Setter Property="FontWeight"
+                                            Value="SemiBold" />
                                 </Trigger>
-                                <Trigger Property="IsEnabled"
-                                         Value="False">
-                                    <Setter Property="Foreground"
-                                            Value="{DynamicResource GrayBrush7}" />
-                                </Trigger>
-                                <MultiTrigger>
-                                    <MultiTrigger.Conditions>
-                                        <Condition Property="IsEnabled"
-                                                   Value="False" />
-                                        <Condition Property="IsSelected"
-                                                   Value="True" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter TargetName="Border"
-                                            Property="Background"
-                                            Value="{DynamicResource GrayBrush7}" />
-                                    <Setter Property="Foreground"
-                                            Value="{DynamicResource AccentSelectedColorBrush}" />
-                                </MultiTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- Action table rows: hairline separators, soft blue selection -->
+            <Style x:Key="ActionListItem"
+                   TargetType="ListBoxItem">
+                <Setter Property="OverridesDefaultStyle"
+                        Value="True" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiInkBrush}" />
+                <Setter Property="HorizontalContentAlignment"
+                        Value="Stretch" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Stretch" />
+                <EventSetter Event="MouseDoubleClick"
+                             Handler="ListBoxItem_OnMouseDoubleClick" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Bd"
+                                    Background="Transparent"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter TargetName="Bd"
+                                            Property="Background"
+                                            Value="{StaticResource UiHoverBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected"
+                                         Value="True">
+                                    <Setter TargetName="Bd"
+                                            Property="Background"
+                                            Value="{StaticResource UiSelectedBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ColumnHeaderText"
+                   TargetType="TextBlock">
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiMutedBrush}" />
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+            </Style>
+
             <ObjectDataProvider ObjectType="{x:Type viewModel:GestureItemProvider}"
                                 x:Key="GestureItemProvider">
             </ObjectDataProvider>
@@ -89,6 +149,7 @@
                                 x:Key="CommandInfoProvider">
             </ObjectDataProvider>
             <CollectionViewSource x:Key="ActionsViewSource"
+                                  Filter="ActionsViewSource_Filter"
                                   Source="{Binding Source={StaticResource CommandInfoProvider},Path=CommandInfos}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Action" />
@@ -113,551 +174,693 @@
     </UserControl.Resources>
     <Grid SnapsToDevicePixels="True"
           UseLayoutRounding="True">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="3*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="65" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Button x:Name="NewApplicationButton"
-                Grid.Row="0"
-                Grid.Column="0"
-                Click="NewApplicationButton_OnClick"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
-                VerticalAlignment="Top"
-                Height="54"
-                Panel.ZIndex="1">
-            <Button.Style>
-                <Style  TargetType="Button">
-                    <Setter Property="Foreground"
-                            Value="White" />
-                    <Setter Property="Background"
-                            Value="{StaticResource AccentColorBrush}" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border SnapsToDevicePixels="True"
-                                        BorderThickness="0"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch" />
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver"
-                                             Value="True">
-                                        <Setter Property="BorderBrush"
-                                                Value="{StaticResource AccentColorBrush2}" />
-                                        <Setter Property="Background"
-                                                Value="{StaticResource AccentColorBrush2}" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed"
-                                             Value="True">
-                                        <Setter Property="Background"
-                                                Value="{StaticResource AccentColorBrush3}" />
-                                        <Setter Property="Foreground"
-                                                Value="{StaticResource IdealForegroundColorBrush}" />
-                                        <Setter Property="BorderBrush"
-                                                Value="{StaticResource AccentColorBrush3}" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Button.Style>
-            <Button.Content>
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle Width="20"
-                               Height="20"
-                               VerticalAlignment="Center"
-                               Margin="5,0,0,0"
-                               Fill="White">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Uniform"
-                                         Visual="{StaticResource PlusIcon}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                    <TextBlock Text="{localization:LocalisedText ApplicationDialog.AddApplication}"
-                               VerticalAlignment="Center"
-                               FontSize="15"
-                               Margin="10,0,0,0" />
-                </StackPanel>
-            </Button.Content>
-        </Button>
-        <ListBox x:Name="lstAvailableApplication"
-                 ItemsSource="{Binding Source={StaticResource ApplicationViewSource}}"
-                 VirtualizingPanel.IsVirtualizing="True"
-                 VirtualizingPanel.VirtualizationMode="Recycling"
-                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 SelectionChanged="lstAvailableApplication_SelectionChanged"
-                 ContextMenuOpening="lstAvailableApplication_ContextMenuOpening"
-                 Grid.Row="0"
-                 Grid.Column="0"
-                 Margin="0,54,0,0">
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem  x:Name="PasteActionMenuItem2"
-                               Header="{localization:LocalisedText Action.PasteAction}"
-                               FontSize="16"
-                               Click="PasteToNewActionMenuItem_Click" />
-                    <Separator />
-                    <MenuItem  x:Name="DeleteMenuItem"
-                               Header="{localization:LocalisedText Action.Delete}"
-                               FontSize="16"
-                               Click="DeleteMenuItem_Click" />
-                    <MenuItem  x:Name="EditMenuItem"
-                               Header="{localization:LocalisedText Action.Edit}"
-                               FontSize="16"
-                               Click="EditApplication_Click" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True"
-                                                  Padding="0"
-                                                  BorderThickness="0">
-                                            <Expander.Header>
-                                                <DockPanel>
-                                                    <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
-                                                               Margin="5,0,0,0"
-                                                               HorizontalAlignment="Center"
-                                                               DockPanel.Dock="Top">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding Converter="{StaticResource ApplicationListHeaderConverter}">
-                                                                <Binding  Path="Name"
-                                                                          Mode="OneWay" />
-                                                                <Binding  Path="ItemCount"
-                                                                          Mode="OneWay" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                </DockPanel>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListBox.GroupStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Height="50">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="23" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Name}"
-                                   VerticalAlignment="Center"
-                                   Margin="5,0,0,0" />
-                        <Button Click="EditApplication_Click"
-                                Grid.Column="1"
-                                VerticalAlignment="Stretch"
-                                HorizontalAlignment="Right"
-                                Margin="0,0,5,0"
-                                Width="18">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <Rectangle Visibility="{Binding Path=IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Converter={StaticResource BooleanToVisibilityConverter}}"
-                                               Fill="{StaticResource AccentColorBrush}">
-                                        <Rectangle.OpacityMask>
-                                            <VisualBrush Stretch="Uniform"
-                                                         Visual="{StaticResource EditIcon}" />
-                                        </Rectangle.OpacityMask>
-                                    </Rectangle>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+
+        <!-- ===== Ribbon ===== -->
+        <Border Grid.Row="0"
+                Height="96"
+                Background="{StaticResource UiRibbonBrush}"
+                BorderBrush="{StaticResource UiRuleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="6,0">
+            <StackPanel Orientation="Horizontal">
+
+                <!-- Application -->
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="NewApplicationButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    Click="NewApplicationButton_OnClick">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.NewApplication}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText Action.NewApplication}" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Margin="2,2,0,0">
+                                <Button x:Name="EditApplicationButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Click="EditApplication_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Edit}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Edit}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="DeleteApplicationButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Margin="0,2,0,0"
+                                        Click="DeleteMenuItem_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Delete}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Delete}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonApplication}" />
                     </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}"
-                       BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <Grid Grid.Row="0"
-              Grid.Column="1"
-              Background="{StaticResource AccentColorBrush}"
-              Height="27"
-              VerticalAlignment="Top">
-            <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                <Run Text="{Binding ElementName=lstAvailableApplication,Path=SelectedItem.(applications:IApplication.Name),Mode=OneWay}" />
-                <Run Text="{Binding ElementName=lstAvailableActions,Path=Items.Groups.Count,Mode=OneWay,StringFormat={localization:LocalisedText Action.ActionCount}}" />
-            </TextBlock>
-            <controls:ToggleSwitch x:Name="ToggleAllActionsToggleSwitch"
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                   IsEnabled="False"
-                                   Click="ToggleAllActionsToggleSwitch_Click"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
-                                   Margin="0,0,15,0"
-                                   OffLabel=""
-                                   OnLabel="" />
-        </Grid>
-        <!--VirtualizingPanel.IsVirtualizingWhenGrouping="True"-->
-        <ListBox x:Name="lstAvailableActions"
-                 ItemsSource="{Binding Source={StaticResource ActionsViewSource}}"
-                 SelectedValuePath="CommandName"
-                 ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 SelectionChanged="lstAvailableActions_SelectionChanged"
-                 ScrollViewer.ScrollChanged="LstAvailableActions_OnScrollChanged"
-                 ScrollViewer.CanContentScroll="False"
-                 Grid.Row="0"
-                 Grid.Column="1"
-                 BorderBrush="{StaticResource AccentColorBrush}"
-                 Margin="0,27,0,0"
-                 SelectionMode="Extended">
-            <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander IsExpanded="True"
-                                                  Padding="0"
-                                                  BorderThickness="0">
-                                            <Expander.Header>
-                                                <TextBlock Foreground="{StaticResource AccentSelectedColorBrush}"
-                                                           HorizontalAlignment="Center"
-                                                           Text="{Binding Name,Converter={StaticResource ActionTitleConverter}}"
-                                                           TextAlignment="Center" />
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <DockPanel>
-                                                    <Button x:Name="ActionButton"
-                                                            Click="ActionButton_Click"
-                                                            VerticalContentAlignment="Top"
-                                                            HorizontalContentAlignment="Center"
-                                                            OverridesDefaultStyle="True"
-                                                            Width="200"
-                                                            Padding="0"
-                                                            BorderThickness="0"
-                                                            Background="{StaticResource GrayBrush10}">
-                                                        <Grid x:Name="GestureImageGrid"
-                                                              VerticalAlignment="Top"
-                                                              Height="76">
-                                                            <TextBlock Text="{localization:LocalisedText Action.SelectGesture}"
-                                                                       HorizontalAlignment="Center"
-                                                                       FontWeight="Bold"
-                                                                       IsHitTestVisible="False"
-                                                                       VerticalAlignment="Center"
-                                                                       Panel.ZIndex="10">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Setter Property="Visibility"
-                                                                                Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=GestureImage,Path=Source}"
-                                                                                         Value="{x:Null}">
-                                                                                <Setter Property="Visibility"
-                                                                                        Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBlock.Style>
-                                                            </TextBlock>
-                                                            <Image x:Name="GestureImage"
-                                                                   Height="56"
-                                                                   Stretch="Uniform"
-                                                                   StretchDirection="DownOnly"
-                                                                   HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center">
-                                                                <Image.Source>
-                                                                    <MultiBinding Converter="{StaticResource GestureButtonImageConverter}">
-                                                                        <Binding Source="{StaticResource GestureItemProvider}"
-                                                                                 Path="InstanceGestureMap"
-                                                                                 Mode="OneWay" />
-                                                                        <Binding  Path="Name.GestureName"
-                                                                                  Mode="OneWay" />
-                                                                    </MultiBinding>
-                                                                </Image.Source>
-                                                            </Image>
+                </Border>
+
+                <!-- Action -->
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="btnAddAction"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    Click="btnAddAction_Click">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem  x:Name="NewCommandMenuItem"
+                                                   Header="{localization:LocalisedText Action.NewCommand}"
+                                                   FontSize="16"
+                                                   Click="NewCommandMenuItem_Click" />
+                                        <MenuItem  x:Name="FromSelectedMenuItem"
+                                                   Header="{localization:LocalisedText Action.FromSelected}"
+                                                   FontSize="16"
+                                                   Click="FromSelectedMenuItem_Click" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.NewAction}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText Action.NewAction}" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Margin="2,2,0,0">
+                                <Button x:Name="cmdEdit"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Click="cmdEditCommand_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Edit}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Edit}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="cmdDelete"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Margin="0,2,0,0"
+                                        Click="cmdDeleteCommand_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Delete}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Delete}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Margin="2,2,0,0">
+                                <Button x:Name="MoveUpButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Click="MoveUpButton_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.MoveUp}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.MoveUp}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="MoveDownButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Margin="0,2,0,0"
+                                        Click="MoveDownButton_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.MoveDown}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.MoveDown}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonAction}" />
+                    </Grid>
+                </Border>
+
+                <!-- Filter by fingers -->
+                <Border Style="{StaticResource RibbonGroup}"
+                        Padding="10,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    ToolTip="{localization:LocalisedText Action.FingerCount}">
+                            <RadioButton x:Name="AllFingersRadio"
+                                         Style="{StaticResource RibbonChip}"
+                                         Width="40"
+                                         Content="{localization:LocalisedText Action.AllFingers}"
+                                         GroupName="ActionFingerFilter"
+                                         IsChecked="True"
+                                         Tag="0"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Content="1"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="1"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Content="2"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="2"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Content="3"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="3"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Content="4"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="4"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Content="5"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="5"
+                                         Checked="FingerFilter_Checked" />
+                            <RadioButton Style="{StaticResource RibbonChip}"
+                                         Width="36"
+                                         Content="{localization:LocalisedText Action.SixOrMoreFingers}"
+                                         GroupName="ActionFingerFilter"
+                                         Tag="6"
+                                         Checked="FingerFilter_Checked" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonFilter}" />
+                    </Grid>
+                </Border>
+
+                <!-- Backup -->
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="ExportButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Click="ExportActionMenuItem_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ExportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ExportButton}" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="DownloadButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Margin="2,0,0,0"
+                                    Click="DownloadButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ImportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ImportButton}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonBackup}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Body ===== -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="264" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Applications -->
+            <Border Background="{StaticResource UiNavBrush}"
+                    BorderBrush="{StaticResource UiRuleBrush}"
+                    BorderThickness="0,0,1,0">
+                <ListBox x:Name="lstAvailableApplication"
+                         ItemsSource="{Binding Source={StaticResource ApplicationViewSource}}"
+                         ItemContainerStyle="{StaticResource NavListItem}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Padding="0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="lstAvailableApplication_SelectionChanged"
+                         ContextMenuOpening="lstAvailableApplication_ContextMenuOpening">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem  x:Name="PasteActionMenuItem2"
+                                       Header="{localization:LocalisedText Action.PasteAction}"
+                                       FontSize="16"
+                                       Click="PasteToNewActionMenuItem_Click" />
+                            <Separator />
+                            <MenuItem  x:Name="DeleteMenuItem"
+                                       Header="{localization:LocalisedText Action.Delete}"
+                                       FontSize="16"
+                                       Click="DeleteMenuItem_Click" />
+                            <MenuItem  x:Name="EditMenuItem"
+                                       Header="{localization:LocalisedText Action.Edit}"
+                                       FontSize="16"
+                                       Click="EditApplication_Click" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                    <ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <Expander Style="{StaticResource NavExpander}">
+                                                    <Expander.Header>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock FontSize="12"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="{StaticResource UiInkBrush}"
+                                                                       Text="{Binding Name, Converter={StaticResource ApplicationGroupNameConverter}}" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       FontSize="12"
+                                                                       Foreground="{StaticResource UiMutedBrush}"
+                                                                       Text="{Binding ItemCount}" />
                                                         </Grid>
-                                                    </Button>
-                                                    <ItemsPresenter DockPanel.Dock="Right" />
-                                                </DockPanel>
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListBox.GroupStyle>
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem  x:Name="SortMenuItem"
-                               Header="{localization:LocalisedText Action.Sort}"
-                               FontSize="16">
-                        <MenuItem  x:Name="SortByNameMenuItem"
-                                   Header="{localization:LocalisedText ActionDialog.ActionName}"
-                                   IsCheckable="True"
-                                   IsChecked="True"
-                                   Click="SortMenuItem_Click"
-                                   Checked="SortMenuItem_Checked"
-                                   FontSize="16" />
-                        <MenuItem  x:Name="SortByGestureMenuItem"
-                                   Header="{localization:LocalisedText Gesture.Header}"
-                                   IsCheckable="True"
-                                   Click="SortMenuItem_Click"
-                                   Checked="SortMenuItem_Checked"
-                                   FontSize="16" />
-                    </MenuItem>
-                    <Separator></Separator>
-                    <MenuItem  x:Name="CutActionMenuItem"
-                               Header="{localization:LocalisedText Action.CutAction}"
-                               FontSize="16"
-                               Click="CutActionMenuItem_Click" />
-                    <MenuItem  x:Name="CopyActionMenuItem"
-                               Header="{localization:LocalisedText Action.CopyAction}"
-                               FontSize="16"
-                               Click="CopyActionMenuItem_Click" />
-                    <MenuItem  x:Name="PasteToNewActionMenuItem"
-                               Header="{localization:LocalisedText Action.PasteToNewAction}"
-                               FontSize="16"
-                               Click="PasteToNewActionMenuItem_Click" />
-                    <MenuItem  x:Name="PasteToSelectedActionMenuItem"
-                               Header="{localization:LocalisedText Action.PasteToSelectedAction}"
-                               FontSize="16"
-                               Click="PasteToSelectedActionMenuItem_Click" />
-                    <Separator></Separator>
-                    <MenuItem  x:Name="DelActionMenuItem"
-                               Header="{localization:LocalisedText Action.Delete}"
-                               FontSize="16"
-                               Click="cmdDeleteCommand_Click" />
-                    <Separator></Separator>
-                    <MenuItem x:Name="ExportActionMenuItem"
-                              Header="{localization:LocalisedText Common.Export}"
-                              Click="ExportActionMenuItem_Click"
-                              FontSize="16" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Height="76"
-                          Margin="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="60" />
-                        </Grid.ColumnDefinitions>
-                        <controls:ToggleSwitch  Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                                Click="CommandCheckBox_Click"
-                                                Grid.Column="1"
-                                                IsChecked="{Binding Path=IsEnabled}"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Margin="0,0,0,0"
-                                                OffLabel=""
-                                                OnLabel="">
-                        </controls:ToggleSwitch>
-                        <TextBlock Grid.Column="0"
-                                   TextWrapping="NoWrap"
-                                   Text="{Binding CommandName}"
-                                   Margin="10,20,0,0"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   Width="Auto" />
-                        <TextBlock Grid.Column="0"
-                                   TextWrapping="Wrap"
-                                   Text="{Binding Description}"
-                                   DockPanel.Dock="Top"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   Width="Auto"
-                                   Foreground="{StaticResource HighlightBrush}"
-                                   Margin="10,41,0,0" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}"
-                       BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel IsItemsHost="True">
+                                                    </Expander.Header>
+                                                    <ItemsPresenter Margin="0,4,0,0" />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="34"
+                                  Margin="9,0,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Width="20"
+                                      Height="20"
+                                      HorizontalAlignment="Left">
+                                    <Image Width="16"
+                                           Height="16"
+                                           Source="{Binding Converter={StaticResource ApplicationFallbackIconConverter}}">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Icon}"
+                                                                 Value="{x:Null}">
+                                                        <Setter Property="Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <Image Width="16"
+                                           Height="16"
+                                           Source="{Binding Icon, Converter={StaticResource ApplicationIconConverter}}"
+                                           RenderOptions.BitmapScalingMode="HighQuality" />
+                                </Grid>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- Actions of the selected application -->
+            <Grid Grid.Column="1"
+                  Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="52" />
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="20,0">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <TextBlock FontSize="20"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Bottom"
+                                   Text="{Binding ElementName=lstAvailableApplication, Path=SelectedItem.(applications:IApplication.Name), Mode=OneWay}" />
+                        <TextBlock FontSize="13"
+                                   Margin="12,0,0,2"
+                                   VerticalAlignment="Bottom"
+                                   Foreground="{StaticResource UiMutedBrush}"
+                                   Text="{Binding StatusActionCountText}" />
                     </StackPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
-        <Button x:Name="btnAddAction"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,120,10"
-                Click="btnAddAction_Click"
-                Grid.Row="2"
-                Grid.Column="1">
-            <Button.ContextMenu>
-                <ContextMenu>
-                    <MenuItem  x:Name="NewCommandMenuItem"
-                               Header="{localization:LocalisedText Action.NewCommand}"
-                               FontSize="16"
-                               Click="NewCommandMenuItem_Click" />
-                    <MenuItem  x:Name="FromSelectedMenuItem"
-                               Header="{localization:LocalisedText Action.FromSelected}"
-                               FontSize="16"
-                               Click="FromSelectedMenuItem_Click" />
-                </ContextMenu>
-            </Button.ContextMenu>
-            <Rectangle Width="20"
-                       Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource PlusIcon}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
-        <Button x:Name="cmdEdit"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Click="cmdEditCommand_Click"
-                Margin="0,0,65,10"
-                Grid.Row="2"
-                Grid.Column="1"
-                IsEnabled="False">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Fill"
-                                 Visual="{StaticResource EditIcon}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="cmdDelete"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,10,10"
-                Click="cmdDeleteCommand_Click"
-                Grid.Row="2"
-                Grid.Column="1"
-                IsEnabled="False">
-            <Rectangle Width="18"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource DeleteIcon}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="MoveUpButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,247,10"
-                Grid.Row="2"
-                Grid.Column="1"
-                Click="MoveUpButton_Click"
-                IsEnabled="False">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource Chevron-Up}"
-                                 Stretch="Uniform" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="MoveDownButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,192,10"
-                Grid.Row="2"
-                Grid.Column="1"
-                Click="MoveDownButton_Click"
-                IsEnabled="False">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource Chevron-Down}"
-                                 Stretch="Uniform" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="ExportButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="10,0,0,10"
-                Grid.Row="1"
-                Grid.Column="0"
-                Click="ExportActionMenuItem_Click">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Uniform"
-                                 Visual="{StaticResource Export}">
-                    </VisualBrush>
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="DownloadButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="65,0,0,10"
-                Grid.Row="1"
-                Grid.Column="0"
-                Click="DownloadButton_Click">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Uniform"
-                                 Visual="{StaticResource Import}">
-                    </VisualBrush>
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <TextBlock FontSize="12"
+                                   Foreground="{StaticResource UiMutedBrush}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0"
+                                   Text="{localization:LocalisedText Action.Enabled}" />
+                        <controls:ToggleSwitch x:Name="ToggleAllActionsToggleSwitch"
+                                               Style="{StaticResource CompactActionToggleSwitch}"
+                                               IsEnabled="False"
+                                               Toggled="ToggleAllActionsToggleSwitch_Click"
+                                               VerticalAlignment="Center"
+                                               OffContent=""
+                                               OnContent="" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Column headers share their lanes with the rows below -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource UiRibbonBrush}"
+                        BorderBrush="{StaticResource UiRuleBrush}"
+                        BorderThickness="0,1">
+                    <Grid Margin="20,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="64" />
+                            <!-- Mirrors the list's scrollbar so "On" stays over the toggles -->
+                            <ColumnDefinition x:Name="HeaderScrollSpacer"
+                                              Width="0" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource ColumnHeaderText}"
+                                   Text="{localization:LocalisedText Action.ColumnName}" />
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource ColumnHeaderText}"
+                                   Text="{localization:LocalisedText Action.ColumnGesture}" />
+                        <TextBlock Grid.Column="2"
+                                   Style="{StaticResource ColumnHeaderText}"
+                                   Text="{localization:LocalisedText Action.ColumnCommand}" />
+                        <TextBlock Grid.Column="3"
+                                   Style="{StaticResource ColumnHeaderText}"
+                                   HorizontalAlignment="Right"
+                                   Text="{localization:LocalisedText Action.ColumnOn}" />
+                    </Grid>
+                </Border>
+
+                <ListBox x:Name="lstAvailableActions"
+                         Grid.Row="2"
+                         ItemsSource="{Binding Source={StaticResource ActionsViewSource}}"
+                         ItemContainerStyle="{StaticResource ActionListItem}"
+                         SelectedValuePath="CommandName"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Padding="0"
+                         ContextMenuOpening="LstAvailableActions_OnContextMenuOpening"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="lstAvailableActions_SelectionChanged"
+                         ScrollViewer.ScrollChanged="LstAvailableActions_OnScrollChanged"
+                         ScrollViewer.CanContentScroll="False"
+                         SelectionMode="Extended">
+                    <ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <Border BorderBrush="{StaticResource UiHairlineBrush}"
+                                                        BorderThickness="0,0,0,1">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="460" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <!-- Name + gesture: clicking edits the whole action -->
+                                                        <Button x:Name="ActionButton"
+                                                                Click="ActionButton_Click"
+                                                                VerticalAlignment="Stretch"
+                                                                HorizontalContentAlignment="Stretch"
+                                                                VerticalContentAlignment="Top"
+                                                                OverridesDefaultStyle="True"
+                                                                Cursor="Hand">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="Bd"
+                                                                            Background="Transparent">
+                                                                        <ContentPresenter HorizontalAlignment="Stretch"
+                                                                                          VerticalAlignment="Top" />
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver"
+                                                                                 Value="True">
+                                                                            <Setter TargetName="Bd"
+                                                                                    Property="Background"
+                                                                                    Value="{StaticResource UiHoverBrush}" />
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                            <Grid x:Name="GestureImageGrid"
+                                                                  VerticalAlignment="Top"
+                                                                  Height="60"
+                                                                  Margin="0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="20" />
+                                                                    <ColumnDefinition Width="220" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="1"
+                                                                           FontSize="13"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="{StaticResource UiInkBrush}"
+                                                                           VerticalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Margin="0,0,12,0">
+                                                                    <TextBlock.Text>
+                                                                        <MultiBinding Converter="{StaticResource ActionSummaryConverter}"
+                                                                                      ConverterParameter="Name">
+                                                                            <Binding Path="Name" />
+                                                                            <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                     Path="InstanceGestureMap"
+                                                                                     Mode="OneWay" />
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Text>
+                                                                </TextBlock>
+                                                                <Grid Grid.Column="2"
+                                                                      VerticalAlignment="Center"
+                                                                      Margin="0,0,12,0">
+                                                                    <Image x:Name="GestureImage"
+                                                                           Height="40"
+                                                                           Stretch="Uniform"
+                                                                           StretchDirection="DownOnly"
+                                                                           HorizontalAlignment="Left"
+                                                                           VerticalAlignment="Center">
+                                                                        <Image.Source>
+                                                                            <MultiBinding Converter="{StaticResource GestureButtonImageConverter}">
+                                                                                <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                         Path="InstanceGestureMap"
+                                                                                         Mode="OneWay" />
+                                                                                <Binding  Path="Name.GestureName"
+                                                                                          Mode="OneWay" />
+                                                                            </MultiBinding>
+                                                                        </Image.Source>
+                                                                    </Image>
+                                                                    <StackPanel VerticalAlignment="Center">
+                                                                        <TextBlock FontSize="13"
+                                                                                   Foreground="{StaticResource UiChromeBrush}"
+                                                                                   TextTrimming="CharacterEllipsis">
+                                                                            <TextBlock.Text>
+                                                                                <MultiBinding Converter="{StaticResource ActionSummaryConverter}"
+                                                                                              ConverterParameter="Placeholder">
+                                                                                    <Binding Path="Name" />
+                                                                                    <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                             Path="InstanceGestureMap"
+                                                                                             Mode="OneWay" />
+                                                                                </MultiBinding>
+                                                                            </TextBlock.Text>
+                                                                        </TextBlock>
+                                                                        <TextBlock FontSize="13"
+                                                                                   Foreground="{StaticResource UiInkBrush}"
+                                                                                   TextTrimming="CharacterEllipsis">
+                                                                            <TextBlock.Text>
+                                                                                <MultiBinding Converter="{StaticResource ActionSummaryConverter}"
+                                                                                              ConverterParameter="Primary">
+                                                                                    <Binding Path="Name" />
+                                                                                    <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                             Path="InstanceGestureMap"
+                                                                                             Mode="OneWay" />
+                                                                                </MultiBinding>
+                                                                            </TextBlock.Text>
+                                                                        </TextBlock>
+                                                                        <TextBlock FontSize="12"
+                                                                                   Foreground="{StaticResource UiMutedBrush}"
+                                                                                   TextTrimming="CharacterEllipsis">
+                                                                            <TextBlock.Text>
+                                                                                <MultiBinding Converter="{StaticResource ActionSummaryConverter}"
+                                                                                              ConverterParameter="Secondary">
+                                                                                    <Binding Path="Name" />
+                                                                                    <Binding Source="{StaticResource GestureItemProvider}"
+                                                                                             Path="InstanceGestureMap"
+                                                                                             Mode="OneWay" />
+                                                                                </MultiBinding>
+                                                                            </TextBlock.Text>
+                                                                        </TextBlock>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Button>
+                                                        <ItemsPresenter Grid.Column="1" />
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem  x:Name="SortMenuItem"
+                                       Header="{localization:LocalisedText Action.Sort}"
+                                       FontSize="16">
+                                <MenuItem  x:Name="SortByNameMenuItem"
+                                           Header="{localization:LocalisedText ActionDialog.ActionName}"
+                                           IsCheckable="True"
+                                           IsChecked="True"
+                                           Click="SortMenuItem_Click"
+                                           Checked="SortMenuItem_Checked"
+                                           FontSize="16" />
+                                <MenuItem  x:Name="SortByGestureMenuItem"
+                                           Header="{localization:LocalisedText Gesture.Header}"
+                                           IsCheckable="True"
+                                           Click="SortMenuItem_Click"
+                                           Checked="SortMenuItem_Checked"
+                                           FontSize="16" />
+                            </MenuItem>
+                            <Separator></Separator>
+                            <MenuItem  x:Name="CutActionMenuItem"
+                                       Header="{localization:LocalisedText Action.CutAction}"
+                                       FontSize="16"
+                                       Click="CutActionMenuItem_Click" />
+                            <MenuItem  x:Name="CopyActionMenuItem"
+                                       Header="{localization:LocalisedText Action.CopyAction}"
+                                       FontSize="16"
+                                       Click="CopyActionMenuItem_Click" />
+                            <MenuItem  x:Name="PasteToNewActionMenuItem"
+                                       Header="{localization:LocalisedText Action.PasteToNewAction}"
+                                       FontSize="16"
+                                       Click="PasteToNewActionMenuItem_Click" />
+                            <MenuItem  x:Name="PasteToSelectedActionMenuItem"
+                                       Header="{localization:LocalisedText Action.PasteToSelectedAction}"
+                                       FontSize="16"
+                                       Click="PasteToSelectedActionMenuItem_Click" />
+                            <Separator></Separator>
+                            <MenuItem  x:Name="DelActionMenuItem"
+                                       Header="{localization:LocalisedText Action.Delete}"
+                                       FontSize="16"
+                                       Click="cmdDeleteCommand_Click" />
+                            <Separator></Separator>
+                            <MenuItem x:Name="ExportActionMenuItem"
+                                      Header="{localization:LocalisedText Common.Export}"
+                                      Click="ExportActionMenuItem_Click"
+                                      FontSize="16" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="60"
+                                  Margin="0,0,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="64" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center"
+                                            Margin="0,0,12,0">
+                                    <TextBlock FontSize="13"
+                                               Text="{Binding CommandName}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock FontSize="12"
+                                               Margin="0,2,0,0"
+                                               Foreground="{StaticResource UiMutedBrush}"
+                                               Text="{Binding Description}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <controls:ToggleSwitch Grid.Column="1"
+                                                       Style="{StaticResource CompactActionToggleSwitch}"
+                                                       Toggled="CommandCheckBox_Click"
+                                                       IsOn="{Binding Path=IsEnabled, Mode=TwoWay}"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       OffContent=""
+                                                       OnContent="" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel IsItemsHost="True">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

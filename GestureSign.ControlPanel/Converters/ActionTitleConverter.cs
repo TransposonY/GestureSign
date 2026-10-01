@@ -19,10 +19,10 @@ namespace GestureSign.ControlPanel.Converters
 
             var actionName = string.IsNullOrWhiteSpace(action.Name) ? LocalizationProvider.Instance.GetTextValue("Action.NewAction") : action.Name;
 
-            if (action.ContinuousGesture != null)
+            if (!string.IsNullOrEmpty(action.ContinuousGestureName))
             {
                 actionName += "\n" + LocalizationProvider.Instance.GetTextValue("ActionDialog.Continuous") + ": " +
-                    string.Format(LocalizationProvider.Instance.GetTextValue("Action.Fingers"), action.ContinuousGesture.ContactCount) + " " + LocalizationProvider.Instance.GetTextValue("Action." + action.ContinuousGesture.Gesture);
+                    ActionSummaryConverter.GetContinuousGestureText(action.ContinuousGestureName);
             }
             if (action.Hotkey != null)
             {

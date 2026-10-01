@@ -175,6 +175,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
                 using (Process Process = new Process())
                 {
                     Process.StartInfo.FileName = path;
+                    Process.StartInfo.UseShellExecute = true;
                     Process.Start();
                 }
                 return true;

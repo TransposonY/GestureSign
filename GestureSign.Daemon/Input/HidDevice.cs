@@ -16,28 +16,18 @@ namespace GestureSign.Daemon.Input
         protected int _dwSizHid;
         protected Point _physicalMax;
 
-        protected static bool _isAxisCorresponds;
-        protected static bool _xAxisDirection;
-        protected static bool _yAxisDirection;
-
-
         public abstract Devices DeviceType { get; }
 
-        protected HidDevice(IntPtr rawInputBuffer, ref RAWINPUT raw)
+        /// <summary>Orientation mapping applied by <see cref="GetCoordinate(short, Rectangle, IntPtr)"/>.</summary>
+        public ScreenAxisMapping AxisMapping { get; set; }
+
+        /// <param name="preparsedData">RIDI_PREPARSEDDATA of the device; owned (disposed) by this instance.</param>
+        protected HidDevice(IntPtr rawInputBuffer, ref RAWINPUT raw, SafeUnmanagedMemoryHandle preparsedData)
         {
-            _hPreparsedData = GetPreparsedData(raw.header.hDevice);
+            _hPreparsedData = preparsedData;
             _pRawData = GetRawDataPtr(rawInputBuffer, ref raw);
             _dwCount = raw.hid.dwCount;
             _dwSizHid = raw.hid.dwSizHid;
-        }
-
-        protected static SafeUnmanagedMemoryHandle GetPreparsedData(IntPtr hDevice)
-        {
-            uint pcbSize = 0;
-            NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_PREPARSEDDATA, IntPtr.Zero, ref pcbSize);
-            IntPtr pPreparsedData = Marshal.AllocHGlobal((int)pcbSize);
-            NativeMethods.GetRawInputDeviceInfo(hDevice, NativeMethods.RIDI_PREPARSEDDATA, pPreparsedData, ref pcbSize);
-            return new SafeUnmanagedMemoryHandle(pPreparsedData);
         }
 
         protected static IntPtr GetRawDataPtr(IntPtr rawInputBuffer, ref RAWINPUT raw)
@@ -54,7 +44,7 @@ namespace GestureSign.Daemon.Input
             return usageList;
         }
 
-        protected virtual Point GetCoordinate(short linkCollection, Screen currentScr, IntPtr pRawDataPacket)
+        protected virtual Point GetCoordinate(short linkCollection, Rectangle screenBounds, IntPtr pRawDataPacket)
         {
             int physicalX = 0;
             int physicalY = 0;
@@ -63,25 +53,25 @@ namespace GestureSign.Daemon.Input
             HidNativeApi.HidP_GetScaledUsageValue(HidReportType.Input, NativeMethods.GenericDesktopPage, linkCollection, NativeMethods.YCoordinateId, ref physicalY, _hPreparsedData.DangerousGetHandle(), pRawDataPacket, _dwSizHid);
 
             int x, y;
-            if (_isAxisCorresponds)
+            if (AxisMapping.AxisCorresponds)
             {
-                x = physicalX * currentScr.Bounds.Width / _physicalMax.X;
-                y = physicalY * currentScr.Bounds.Height / _physicalMax.Y;
+                x = physicalX * screenBounds.Width / _physicalMax.X;
+                y = physicalY * screenBounds.Height / _physicalMax.Y;
             }
             else
             {
-                x = physicalY * currentScr.Bounds.Width / _physicalMax.Y;
-                y = physicalX * currentScr.Bounds.Height / _physicalMax.X;
+                x = physicalY * screenBounds.Width / _physicalMax.Y;
+                y = physicalX * screenBounds.Height / _physicalMax.X;
             }
-            x = _xAxisDirection ? x : currentScr.Bounds.Width - x;
-            y = _yAxisDirection ? y : currentScr.Bounds.Height - y;
+            x = AxisMapping.XAxisDirection ? x : screenBounds.Width - x;
+            y = AxisMapping.YAxisDirection ? y : screenBounds.Height - y;
 
-            return new Point(x + currentScr.Bounds.X, y + currentScr.Bounds.Y);
+            return new Point(x + screenBounds.X, y + screenBounds.Y);
         }
 
-        public virtual Point GetCoordinate(short linkCollection, Screen currentScr)
+        public virtual Point GetCoordinate(short linkCollection, Rectangle screenBounds)
         {
-            return GetCoordinate(linkCollection, currentScr, _pRawData);
+            return GetCoordinate(linkCollection, screenBounds, _pRawData);
         }
 
         public virtual int GetContactCount()
@@ -111,28 +101,18 @@ namespace GestureSign.Daemon.Input
             return contactIdentifier;
         }
 
-        public static void GetCurrentScreenOrientation()
+        public static ScreenAxisMapping GetScreenAxisMapping(ScreenOrientation orientation)
         {
-            switch (SystemInformation.ScreenOrientation)
+            switch (orientation)
             {
                 case ScreenOrientation.Angle0:
-                    _xAxisDirection = _yAxisDirection = true;
-                    _isAxisCorresponds = true;
-                    break;
+                    return new ScreenAxisMapping(axisCorresponds: true, xAxisDirection: true, yAxisDirection: true);
                 case ScreenOrientation.Angle90:
-                    _isAxisCorresponds = false;
-                    _xAxisDirection = false;
-                    _yAxisDirection = true;
-                    break;
+                    return new ScreenAxisMapping(axisCorresponds: false, xAxisDirection: false, yAxisDirection: true);
                 case ScreenOrientation.Angle180:
-                    _xAxisDirection = _yAxisDirection = false;
-                    _isAxisCorresponds = true;
-                    break;
+                    return new ScreenAxisMapping(axisCorresponds: true, xAxisDirection: false, yAxisDirection: false);
                 case ScreenOrientation.Angle270:
-                    _isAxisCorresponds = false;
-                    _xAxisDirection = true;
-                    _yAxisDirection = false;
-                    break;
+                    return new ScreenAxisMapping(axisCorresponds: false, xAxisDirection: true, yAxisDirection: false);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -228,5 +208,20 @@ namespace GestureSign.Daemon.Input
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+    /// <summary>How digitizer axes map onto the screen for a display orientation.</summary>
+    public struct ScreenAxisMapping
+    {
+        public ScreenAxisMapping(bool axisCorresponds, bool xAxisDirection, bool yAxisDirection)
+        {
+            AxisCorresponds = axisCorresponds;
+            XAxisDirection = xAxisDirection;
+            YAxisDirection = yAxisDirection;
+        }
+
+        public bool AxisCorresponds { get; }
+        public bool XAxisDirection { get; }
+        public bool YAxisDirection { get; }
     }
 }

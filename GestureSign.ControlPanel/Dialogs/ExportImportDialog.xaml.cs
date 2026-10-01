@@ -3,6 +3,7 @@ using GestureSign.Common.Extensions;
 using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
+using GestureSign.ControlPanel.ViewModel;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,13 @@ namespace GestureSign.ControlPanel.Dialogs
     public partial class ExportImportDialog : TouchWindow
     {
         private bool _isExportMode;
+        private readonly IEnumerable<ContinuousGesture> _continuousGestures;
 
-        public ExportImportDialog(bool isExportMode, bool showIgnore, IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures)
+        /// <param name="continuousGestures">Catalog the actions of <paramref name="apps"/> refer to: the live catalog when exporting, the imported one when importing.</param>
+        public ExportImportDialog(bool isExportMode, bool showIgnore, IEnumerable<IApplication> apps, IEnumerable<IGesture> gestures, IEnumerable<ContinuousGesture> continuousGestures)
         {
             _isExportMode = isExportMode;
+            _continuousGestures = continuousGestures ?? Enumerable.Empty<ContinuousGesture>();
 
             InitializeComponent();
 
@@ -47,10 +51,11 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     var seletedApplications = ApplicationSelector.SeletedApplications;
                     var gestures = seletedApplications.GetRelatedGestures(GestureManager.Instance.Gestures);
+                    var continuousGestures = seletedApplications.GetRelatedContinuousGestures(_continuousGestures);
 
                     try
                     {
-                        Archive.CreateArchive(seletedApplications, gestures, sfdApplications.FileName);
+                        Archive.CreateArchive(seletedApplications, gestures, continuousGestures, sfdApplications.FileName);
 
                         int actionCount = seletedApplications.Sum(app => app.Actions == null ? 0 : app.Actions.Count());
                         var message = actionCount == 0 ? String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ExportCompleteWithoutAction"), seletedApplications.Count) :
@@ -68,11 +73,13 @@ namespace GestureSign.ControlPanel.Dialogs
             else
             {
                 int newActionCount = 0;
+                bool iconUpdated = false;
                 List<IApplication> newApplications = new List<IApplication>();
                 var seletedApplications = ApplicationSelector.SeletedApplications;
 
                 var gestures = seletedApplications.GetRelatedGestures(ApplicationSelector.GestureMap.Values.Select(gi => gi.Gesture));
                 GestureManager.Instance.ImportGestures(gestures, seletedApplications);
+                ContinuousGestureManager.Instance.Import(seletedApplications.GetRelatedContinuousGestures(_continuousGestures), seletedApplications);
 
                 foreach (IApplication newApp in seletedApplications)
                 {
@@ -82,6 +89,11 @@ namespace GestureSign.ControlPanel.Dialogs
                         if (matchApp.Length == 0)
                         {
                             newApplications.Add(newApp);
+                        }
+                        else if (ApplicationIcon.TryApplyImported(matchApp[0], newApp))
+                        {
+                            iconUpdated = true;
+                            ApplicationItemProvider.RefreshItem(matchApp[0]);
                         }
                     }
                     else
@@ -93,6 +105,11 @@ namespace GestureSign.ControlPanel.Dialogs
                             {
                                 existingApp.AddAction(newAction);
                                 newActionCount++;
+                            }
+                            if (ApplicationIcon.TryApplyImported(existingApp, newApp))
+                            {
+                                iconUpdated = true;
+                                ApplicationItemProvider.RefreshItem(existingApp);
                             }
                         }
                         else
@@ -107,8 +124,9 @@ namespace GestureSign.ControlPanel.Dialogs
                 {
                     ApplicationManager.Instance.AddApplicationRange(newApplications);
                 }
-                if (newApplications.Count + newActionCount != 0)
+                if (newApplications.Count + newActionCount != 0 || iconUpdated)
                     ApplicationManager.Instance.SaveApplications();
+
 
                 this.ShowModalMessageExternal(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportCompleteTitle"),
                     String.Format(LocalizationProvider.Instance.GetTextValue("ExportImportDialog.ImportComplete"), newActionCount, newApplications.Count));

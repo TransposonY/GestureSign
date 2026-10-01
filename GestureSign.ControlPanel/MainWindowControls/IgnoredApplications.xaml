@@ -30,10 +30,111 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="65" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <!-- Ribbon -->
+        <Border Height="96"
+                Background="{StaticResource UiRibbonBrush}"
+                BorderBrush="{StaticResource UiRuleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="6,0">
+            <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="btnAddIgnoredApp"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    Click="btnAddIgnoredApp_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.NewApplication}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText Action.NewApplication}" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Margin="2,2,0,0">
+                                <Button x:Name="btnEditIgnoredApp"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Click="btnEditIgnoredApp_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Edit}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Edit}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="btnDeleteIgnoredApp"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Margin="0,2,0,0"
+                                        Click="btnDeleteIgnoredApp_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Delete}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Delete}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonApplication}" />
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="ExportButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Click="ExportIgnoredButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ExportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ExportButton}" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="DownloadButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Margin="2,0,0,0"
+                                    Click="DownloadButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ImportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ImportButton}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText Action.RibbonBackup}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
         <ListView x:Name="lstIgnoredApplications"
+                  Grid.Row="1"
                   ItemsSource="{Binding Source={StaticResource IgnoredApplicationViewSource}}"
                   ScrollViewer.PanningMode="VerticalOnly"
                   BorderThickness="0"
@@ -80,98 +181,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="btnEditIgnoredApp"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Click="btnEditIgnoredApp_Click"
-                Margin="0,0,65,10"
-                IsEnabled="False"
-                Grid.Row="1">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Fill"
-                                 Visual="{StaticResource EditIcon}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="btnDeleteIgnoredApp"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="0,0,10,10"
-                Click="btnDeleteIgnoredApp_Click"
-                IsEnabled="False"
-                Grid.Row="1">
-            <Rectangle Width="18"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource DeleteIcon}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="btnAddIgnoredApp"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Click="btnAddIgnoredApp_Click"
-                Margin="0,0,120,10"
-                Grid.Row="1">
-            <Rectangle Width="20"
-                       Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource PlusIcon}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
-        <Button x:Name="ExportButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="10,0,0,10"
-                Grid.Row="1"
-                Grid.Column="0"
-                Click="ExportIgnoredButton_Click">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Uniform"
-                                 Visual="{StaticResource Export}">
-                    </VisualBrush>
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
-        <Button x:Name="DownloadButton"
-                Style="{DynamicResource MetroCircleButtonStyle}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Height="50"
-                Width="50"
-                Margin="65,0,0,10"
-                Grid.Row="1"
-                Grid.Column="0"
-                Click="DownloadButton_Click">
-            <Rectangle Width="20"
-                       Height="20"
-                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Uniform"
-                                 Visual="{StaticResource Import}">
-                    </VisualBrush>
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
     </Grid>
 </UserControl>

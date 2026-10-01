@@ -1,0 +1,20 @@
+[
+  {"t":0,"stage":"raw","device":"TouchPad","contacts":[[0,1,-1024,510]]},
+  {"t":0,"stage":"capture","event":"started","firstPoints":[[-600,500]]},
+  {"t":0,"stage":"translated","event":"down","device":"TouchPad","points":[[0,-1024,510]],"handled":true,"state":"CapturingInvalid"},
+  {"t":0,"stage":"host","effect":"priority:high"},
+  {"t":8,"stage":"raw","device":"TouchPad","contacts":[[0,1,-874,510]]},
+  {"t":8,"stage":"translated","event":"move","device":"TouchPad","points":[[0,-874,510]],"handled":false,"state":"Capturing"},
+  {"t":16,"stage":"raw","device":"TouchPad","contacts":[[0,1,-717,510]]},
+  {"t":16,"stage":"translated","event":"move","device":"TouchPad","points":[[0,-717,510]],"handled":false,"state":"Capturing"},
+  {"t":24,"stage":"raw","device":"TouchPad","contacts":[[0,1,-567,510]]},
+  {"t":24,"stage":"translated","event":"move","device":"TouchPad","points":[[0,-567,510]],"handled":false,"state":"Capturing"},
+  {"t":32,"stage":"raw","device":"TouchPad","contacts":[[0,1,-410,510]]},
+  {"t":32,"stage":"translated","event":"move","device":"TouchPad","points":[[0,-410,510]],"handled":false,"state":"Capturing"},
+  {"t":40,"stage":"raw","device":"TouchPad","contacts":[[0,1,-256,510]]},
+  {"t":40,"stage":"translated","event":"move","device":"TouchPad","points":[[0,-256,510]],"handled":false,"state":"Capturing"},
+  {"t":48,"stage":"raw","device":"TouchPad","contacts":[[0,0,-256,510]]},
+  {"t":48,"stage":"capture","event":"completed","strokes":[[[-1024,510],[-874,510],[-717,510],[-567,510],[-410,510],[-256,510]]],"firstPoints":[[-600,500]],"gesture":null},
+  {"t":48,"stage":"translated","event":"up","device":"TouchPad","points":[[0,-256,510]],"handled":true,"state":"Ready"},
+  {"t":48,"stage":"host","effect":"priority:normal"}
+]

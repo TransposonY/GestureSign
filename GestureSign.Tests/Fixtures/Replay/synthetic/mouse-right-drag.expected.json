@@ -1,0 +1,17 @@
+[
+  {"t":0,"stage":"capture","event":"started","firstPoints":[[800,300]]},
+  {"t":0,"stage":"translated","event":"down","device":"Mouse","points":[[1,800,300]],"handled":true,"state":"CapturingInvalid"},
+  {"t":0,"stage":"hook","message":"down","button":"Right","handled":true},
+  {"t":0,"stage":"host","effect":"priority:high"},
+  {"t":8,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,357]],"handled":false,"state":"Capturing"},
+  {"t":16,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,414]],"handled":false,"state":"Capturing"},
+  {"t":24,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,471]],"handled":false,"state":"Capturing"},
+  {"t":32,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,528]],"handled":false,"state":"Capturing"},
+  {"t":40,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,585]],"handled":false,"state":"Capturing"},
+  {"t":48,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,642]],"handled":false,"state":"Capturing"},
+  {"t":56,"stage":"translated","event":"move","device":"Mouse","points":[[1,800,700]],"handled":false,"state":"Capturing"},
+  {"t":64,"stage":"capture","event":"completed","strokes":[[[800,300],[800,357],[800,414],[800,471],[800,528],[800,585],[800,642],[800,700]]],"firstPoints":[[800,300]],"gesture":null},
+  {"t":64,"stage":"translated","event":"up","device":"Mouse","points":[[1,800,700]],"handled":true,"state":"Ready"},
+  {"t":64,"stage":"hook","message":"up","button":"Right","handled":true},
+  {"t":64,"stage":"host","effect":"priority:normal"}
+]

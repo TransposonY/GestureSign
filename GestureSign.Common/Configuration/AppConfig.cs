@@ -118,6 +118,18 @@ namespace GestureSign.Common.Configuration
                 SetValue("VisualFeedbackWidth", value);
             }
         }
+        public static bool HideTwoFingerTrail
+        {
+            get
+            {
+                return GetValue(nameof(HideTwoFingerTrail), true);
+            }
+            set
+            {
+                SetValue(nameof(HideTwoFingerTrail), value);
+            }
+        }
+
         public static int MinimumPointDistance
         {
             get
@@ -239,6 +251,22 @@ namespace GestureSign.Common.Configuration
             }
         }
 
+        /// <summary>
+        /// Daemon turns a single-finger touchpad tap into a click (for use with Windows' own tap-to-click turned off,
+        /// so that multi-finger taps stay pure gestures).
+        /// </summary>
+        public static bool TouchPadTapToClick
+        {
+            get
+            {
+                return GetValue(nameof(TouchPadTapToClick), false);
+            }
+            set
+            {
+                SetValue(nameof(TouchPadTapToClick), value);
+            }
+        }
+
         public static bool RegisterTouchScreen
         {
             get
@@ -306,7 +334,7 @@ namespace GestureSign.Common.Configuration
 #if uiAccess
             UiAccess = VersionHelper.IsWindows8OrGreater();
 #endif
-            CurrentFolderPath = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            CurrentFolderPath = Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory);
 #if Portable
             ApplicationDataPath = Path.Combine(CurrentFolderPath, "AppData");
             LocalApplicationDataPath = ApplicationDataPath;

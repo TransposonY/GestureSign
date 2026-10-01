@@ -36,6 +36,9 @@ namespace GestureSign.Daemon
                     case IpcCommands.LoadGestures:
                         GestureManager.Instance.LoadGestures().Wait();
                         break;
+                    case IpcCommands.LoadContinuousGestures:
+                        ContinuousGestureManager.Instance.Load().Wait();
+                        break;
                     case IpcCommands.LoadConfiguration:
                         AppConfig.Reload();
                         break;

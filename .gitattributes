@@ -2,6 +2,7 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
+GestureSign.Tests/Fixtures/hidapi/*_real.rpt_desc -whitespace
 
 ###############################################################################
 # Set default behavior for command prompt diff.

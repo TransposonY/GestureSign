@@ -47,7 +47,21 @@ namespace GestureSign.Common.Applications
         public Hotkey Hotkey { get; set; }
 
         public MouseActions MouseHotkey { get; set; }
-        public ContinuousGesture ContinuousGesture { get; set; }
+
+        /// <summary>Name of the bound <see cref="Gestures.ContinuousGesture"/> in the continuous gesture catalog.</summary>
+        public string ContinuousGestureName { get; set; }
+
+        /// <summary>Pre-catalog embedded value; retained for exports until <see cref="Gestures.ContinuousGestureCatalog.MigrateLegacy"/> succeeds.</summary>
+        internal LegacyContinuousGesture LegacyContinuousGesture { get; set; }
+
+        // Old files carry "$type" of the removed GestureSign.Common.Applications.ContinuousGesture class; ignore it.
+        [JsonProperty("ContinuousGesture", TypeNameHandling = TypeNameHandling.None, NullValueHandling = NullValueHandling.Ignore)]
+        private LegacyContinuousGesture LegacyContinuousGestureJson
+        {
+            get { return LegacyContinuousGesture; }
+            set { LegacyContinuousGesture = value; }
+        }
+
         public Devices IgnoredDevices { get; set; }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -84,12 +98,8 @@ namespace GestureSign.Common.Applications
             Action action = (Action)MemberwiseClone();
             action.CollectionChanged = null;
 
-            action.Name = Name == null ? null : string.Copy(Name);
-            action.GestureName = GestureName == null ? null : string.Copy(GestureName);
-            action.Condition = Condition == null ? null : string.Copy(Condition);
             action._commands = new List<ICommand>(_commands);
             action.Hotkey = Hotkey == null ? null : new Hotkey() { KeyCode = Hotkey.KeyCode, ModifierKeys = Hotkey.ModifierKeys };
-            action.ContinuousGesture = ContinuousGesture == null ? null : new ContinuousGesture(ContinuousGesture.ContactCount, ContinuousGesture.Gesture);
 
             return action;
         }
@@ -138,5 +148,12 @@ namespace GestureSign.Common.Applications
         {
             return new Action();
         }
+    }
+
+    /// <summary>Shape of <c>Action.ContinuousGesture</c> in files written before the continuous gesture catalog.</summary>
+    internal class LegacyContinuousGesture
+    {
+        public int ContactCount { get; set; }
+        public Gestures.ContinuousDirection Gesture { get; set; }
     }
 }

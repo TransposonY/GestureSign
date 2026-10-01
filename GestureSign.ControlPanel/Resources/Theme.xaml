@@ -1,0 +1,966 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ===== Palette: document blue chrome, pale ribbon, hairline rules ===== -->
+    <Color x:Key="AccentColor">#FF2B579A</Color>
+    <Color x:Key="AccentColor2">#FF2B79D0</Color>
+    <Color x:Key="AccentColor3">#FF6FA2E0</Color>
+    <Color x:Key="AccentColor4">#FFCFE0F5</Color>
+    <Color x:Key="HighlightColor">#FF2B579A</Color>
+
+    <SolidColorBrush x:Key="AccentColorBrush"
+                     Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentColorBrush2"
+                     Color="{StaticResource AccentColor2}" />
+    <SolidColorBrush x:Key="AccentColorBrush3"
+                     Color="{StaticResource AccentColor3}" />
+    <SolidColorBrush x:Key="AccentColorBrush4"
+                     Color="{StaticResource AccentColor4}" />
+    <SolidColorBrush x:Key="HighlightBrush"
+                     Color="{StaticResource HighlightColor}" />
+    <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="White" />
+    <SolidColorBrush x:Key="WindowTitleColorBrush"
+                     Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="ProgressBrush"
+                     Color="{StaticResource AccentColor2}" />
+
+    <SolidColorBrush x:Key="UiChromeBrush"
+                     Color="#FF2B579A" />
+    <SolidColorBrush x:Key="UiChromeInactiveBrush"
+                     Color="#FF6E8DBF" />
+    <SolidColorBrush x:Key="UiAccentBrush"
+                     Color="#FF2B79D0" />
+    <SolidColorBrush x:Key="UiRibbonBrush"
+                     Color="#FFF3F3F3" />
+    <SolidColorBrush x:Key="UiNavBrush"
+                     Color="#FFFAF9F8" />
+    <SolidColorBrush x:Key="UiRuleBrush"
+                     Color="#FFD2D0CE" />
+    <SolidColorBrush x:Key="UiHairlineBrush"
+                     Color="#FFEDEBE9" />
+    <SolidColorBrush x:Key="UiInkBrush"
+                     Color="#FF252423" />
+    <SolidColorBrush x:Key="UiMutedBrush"
+                     Color="#FF605E5C" />
+    <SolidColorBrush x:Key="UiSelectedBrush"
+                     Color="#FFDCE8F7" />
+    <SolidColorBrush x:Key="UiHoverBrush"
+                     Color="#FFF3F8FE" />
+    <SolidColorBrush x:Key="UiChipBrush"
+                     Color="#FFCFE0F5" />
+    <SolidColorBrush x:Key="UiRibbonHoverBrush"
+                     Color="#FFDDE8F6" />
+    <SolidColorBrush x:Key="UiRibbonHoverBorderBrush"
+                     Color="#FFB9D0EE" />
+    <SolidColorBrush x:Key="UiDangerBrush"
+                     Color="#FFA4262C" />
+
+    <FontFamily x:Key="UiFont">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+
+    <!-- Toggle switches: filled accent when on, quiet outline when off (MahApps' Win10 style keys) -->
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10"
+                     Color="#FF2B79D0" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10"
+                     Color="#FF4A90DC" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.PressedBrush.Win10"
+                     Color="#FF2262A8" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10"
+                     Color="White" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OffBorderBrush.Win10"
+                     Color="#FF605E5C" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OffMouseOverBorderBrush.Win10"
+                     Color="#FF252423" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorBrush.Win10"
+                     Color="#FF605E5C" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorMouseOverBrush.Win10"
+                     Color="#FF252423" />
+
+    <!-- ===== Icons (drawn on a fixed canvas so they never rescale) ===== -->
+    <DrawingImage x:Key="Icon.AppGlyph">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H18 V18 H0 Z" />
+                <GeometryDrawing Brush="White"
+                                 Geometry="M4,1 H14 A3,3 0 0 1 17,4 V14 A3,3 0 0 1 14,17 H4 A3,3 0 0 1 1,14 V4 A3,3 0 0 1 4,1 Z" />
+                <GeometryDrawing Geometry="M5 12 C5 6 13 6 13 12">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.6"
+                             StartLineCap="Round"
+                             EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FF2B579A"
+                                 Geometry="M10.4,12 A1.4,1.4 0 1 1 7.6,12 A1.4,1.4 0 1 1 10.4,12 Z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.NewApplication">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H32 V32 H0 Z" />
+                <GeometryDrawing Brush="White"
+                                 Geometry="M5,6 H23 A2,2 0 0 1 25,8 V22 A2,2 0 0 1 23,24 H5 A2,2 0 0 1 3,22 V8 A2,2 0 0 1 5,6 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M3 11H25">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FF2B79D0"
+                                 Geometry="M31,23 A7,7 0 1 1 17,23 A7,7 0 1 1 31,23 Z" />
+                <GeometryDrawing Geometry="M24 19.5V26.5M20.5 23H27.5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.8"
+                             StartLineCap="Round"
+                             EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.NewAction">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H32 V32 H0 Z" />
+                <GeometryDrawing Brush="White"
+                                 Geometry="M9 4H19L25 10V28H9Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.5"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M19 4V10H25">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.5"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FF2B79D0"
+                                 Geometry="M31,23 A7,7 0 1 1 17,23 A7,7 0 1 1 31,23 Z" />
+                <GeometryDrawing Geometry="M24 19.5V26.5M20.5 23H27.5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.8"
+                             StartLineCap="Round"
+                             EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.ExportLarge">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H32 V32 H0 Z" />
+                <GeometryDrawing Geometry="M16 21V5M9.5 11.5L16 5L22.5 11.5M5 19V27H27V19">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="2"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.ImportLarge">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H32 V32 H0 Z" />
+                <GeometryDrawing Geometry="M16 5V21M9.5 14.5L16 21L22.5 14.5M5 19V27H27V19">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="2"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.FolderLarge">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H32 V32 H0 Z" />
+                <GeometryDrawing Geometry="M4 8H12L15 11H28V25H4Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="2"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Edit">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M2 14L2.8 10.8L11 2.6A1.4 1.4 0 0 1 13 2.6L13.4 3A1.4 1.4 0 0 1 13.4 5L5.2 13.2Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.3"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Delete">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M3 4.5H13M6.2 4.5V3H9.8V4.5M4.5 4.5L5.1 13H10.9L11.5 4.5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FFA4262C"
+                             Thickness="1.3"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.MoveUp">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M3.5 10L8 5.5L12.5 10">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.6"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.MoveDown">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M3.5 6L8 10.5L12.5 6">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.6"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- White glyphs that sit on the blue title bar -->
+    <DrawingImage x:Key="Icon.ExportSmallWhite">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M8 11V2M4.5 5.5L8 2L11.5 5.5M2.5 10V13.5H13.5V10">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.4"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.ImportSmallWhite">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M8 2V11M4.5 7.5L8 11L11.5 7.5M2.5 10V13.5H13.5V10">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.4"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.HelpWhite">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H14 V14 H0 Z" />
+                <GeometryDrawing Geometry="M12.5,7 A5.5,5.5 0 1 1 1.5,7 A5.5,5.5 0 1 1 12.5,7 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M5.4 5.4C5.4 4.4 6.2 3.8 7.1 3.8S8.7 4.4 8.7 5.2C8.7 6.4 7 6.5 7 7.7M7 9.9V10.2">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="White"
+                             Thickness="1.2"
+                             StartLineCap="Round"
+                             EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Search">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H14 V14 H0 Z" />
+                <GeometryDrawing Geometry="M9.8,5.8 A4,4 0 1 1 1.8,5.8 A4,4 0 1 1 9.8,5.8 Z M8.8 8.8L12.5 12.5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF605E5C"
+                             Thickness="1.3"
+                             StartLineCap="Round"
+                             EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Globe">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M14,8 A6,6 0 1 1 2,8 A6,6 0 1 1 14,8 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M2 8H14M8 2C10 3.7 11 5.7 11 8S10 12.3 8 14C6 12.3 5 10.3 5 8S6 3.7 8 2Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF2B579A"
+                             Thickness="1.2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Window">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H16 V16 H0 Z" />
+                <GeometryDrawing Geometry="M3.5,3 H12.5 A1.5,1.5 0 0 1 14,4.5 V11.5 A1.5,1.5 0 0 1 12.5,13 H3.5 A1.5,1.5 0 0 1 2,11.5 V4.5 A1.5,1.5 0 0 1 3.5,3 Z M2 6H14">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF605E5C"
+                             Thickness="1.2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Icon.Chevron">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent"
+                                 Geometry="M0,0 H10 V10 H0 Z" />
+                <GeometryDrawing Geometry="M1.5 3.5L5 7L8.5 3.5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF605E5C"
+                             Thickness="1.4"
+                             StartLineCap="Round"
+                             EndLineCap="Round"
+                             LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- ===== Ribbon buttons ===== -->
+    <Style x:Key="RibbonButtonBase"
+           TargetType="ButtonBase">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="FontSize"
+                Value="12" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="BorderBrush"
+                Value="Transparent" />
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+    </Style>
+
+    <ControlTemplate x:Key="RibbonButtonTemplate"
+                     TargetType="ButtonBase">
+        <Border x:Name="Bd"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              RecognizesAccessKey="True" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+                <Setter TargetName="Bd"
+                        Property="Background"
+                        Value="{StaticResource UiRibbonHoverBrush}" />
+                <Setter TargetName="Bd"
+                        Property="BorderBrush"
+                        Value="{StaticResource UiRibbonHoverBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed"
+                     Value="True">
+                <Setter TargetName="Bd"
+                        Property="Background"
+                        Value="{StaticResource UiChipBrush}" />
+                <Setter TargetName="Bd"
+                        Property="BorderBrush"
+                        Value="{StaticResource UiAccentBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled"
+                     Value="False">
+                <Setter Property="Opacity"
+                        Value="0.4" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Large: 32px icon over a centred caption -->
+    <Style x:Key="RibbonLargeButton"
+           TargetType="Button"
+           BasedOn="{StaticResource RibbonButtonBase}">
+        <Setter Property="Padding"
+                Value="6,3,6,0" />
+        <Setter Property="MinWidth"
+                Value="52" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Top" />
+        <Setter Property="Template"
+                Value="{StaticResource RibbonButtonTemplate}" />
+    </Style>
+
+    <!-- Small: 16px icon beside a caption, stacked two or three to a column -->
+    <Style x:Key="RibbonSmallButton"
+           TargetType="Button"
+           BasedOn="{StaticResource RibbonButtonBase}">
+        <Setter Property="Padding"
+                Value="6,0,8,0" />
+        <Setter Property="Height"
+                Value="22" />
+        <Setter Property="MinWidth"
+                Value="72" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Left" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="Template"
+                Value="{StaticResource RibbonButtonTemplate}" />
+    </Style>
+
+    <!-- Ribbon group: content on top, caption underneath, hairline on the right -->
+    <Style x:Key="RibbonGroup"
+           TargetType="Border">
+        <Setter Property="BorderBrush"
+                Value="{StaticResource UiRuleBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0,0,1,0" />
+        <Setter Property="Padding"
+                Value="6,0" />
+    </Style>
+    <Style x:Key="RibbonGroupCaption"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="11" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiMutedBrush}" />
+        <Setter Property="HorizontalAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+    </Style>
+    <Style x:Key="RibbonLargeCaption"
+           TargetType="TextBlock">
+        <Setter Property="TextAlignment"
+                Value="Center" />
+        <Setter Property="TextWrapping"
+                Value="Wrap" />
+        <Setter Property="MaxWidth"
+                Value="72" />
+        <Setter Property="LineHeight"
+                Value="14" />
+        <Setter Property="LineStackingStrategy"
+                Value="BlockLineHeight" />
+        <Setter Property="Margin"
+                Value="0,3,0,0" />
+    </Style>
+    <Style x:Key="RibbonSmallCaption"
+           TargetType="TextBlock">
+        <Setter Property="Margin"
+                Value="6,0,0,0" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+    </Style>
+
+    <!-- Finger-count chip: a tall, quiet target that fills in when selected -->
+    <Style x:Key="RibbonChip"
+           TargetType="RadioButton">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="FontSize"
+                Value="13" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Width"
+                Value="32" />
+        <Setter Property="Height"
+                Value="56" />
+        <Setter Property="Margin"
+                Value="1,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Chip"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter x:Name="Label"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="Chip"
+                                    Property="Background"
+                                    Value="{StaticResource UiRibbonHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="Chip"
+                                    Property="Background"
+                                    Value="{StaticResource UiChipBrush}" />
+                            <Setter TargetName="Chip"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource UiAccentBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource UiChromeBrush}" />
+                            <Setter Property="FontWeight"
+                                    Value="SemiBold" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter Property="Opacity"
+                                    Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Filter bar (Gesture tab) ===== -->
+    <!-- Segment: one of a joined set, solid chrome blue when selected -->
+    <Style x:Key="FilterSegment"
+           TargetType="RadioButton">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
+        <Setter Property="FontSize"
+                Value="13" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Height"
+                Value="28" />
+        <Setter Property="Margin"
+                Value="1,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Seg"
+                            Background="Transparent"
+                            CornerRadius="3"
+                            Padding="12,0"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="Seg"
+                                    Property="Background"
+                                    Value="{StaticResource UiRibbonHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="Seg"
+                                    Property="Background"
+                                    Value="{StaticResource UiChromeBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="White" />
+                            <Setter Property="FontWeight"
+                                    Value="SemiBold" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter Property="Opacity"
+                                    Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Chip: a pill with a hairline; soft blue fill and blue rim when on -->
+    <ControlTemplate x:Key="FilterChipTemplate"
+                     TargetType="ToggleButton">
+        <Border x:Name="Chip"
+                Background="White"
+                BorderBrush="{StaticResource UiRuleBrush}"
+                BorderThickness="1"
+                CornerRadius="14"
+                Padding="12,0"
+                SnapsToDevicePixels="True">
+            <ContentPresenter HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              RecognizesAccessKey="True" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+                <Setter TargetName="Chip"
+                        Property="Background"
+                        Value="{StaticResource UiHoverBrush}" />
+                <Setter TargetName="Chip"
+                        Property="BorderBrush"
+                        Value="{StaticResource UiRibbonHoverBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsChecked"
+                     Value="True">
+                <Setter TargetName="Chip"
+                        Property="Background"
+                        Value="{StaticResource UiSelectedBrush}" />
+                <Setter TargetName="Chip"
+                        Property="BorderBrush"
+                        Value="{StaticResource UiChromeBrush}" />
+                <Setter Property="Foreground"
+                        Value="{StaticResource UiChromeBrush}" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="FilterChip"
+           TargetType="RadioButton">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
+        <Setter Property="FontSize"
+                Value="13" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Height"
+                Value="28" />
+        <Setter Property="Margin"
+                Value="0,0,6,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Chip"
+                            Background="White"
+                            BorderBrush="{StaticResource UiRuleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="12,0"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="Chip"
+                                    Property="Background"
+                                    Value="{StaticResource UiHoverBrush}" />
+                            <Setter TargetName="Chip"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource UiRibbonHoverBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="Chip"
+                                    Property="Background"
+                                    Value="{StaticResource UiSelectedBrush}" />
+                            <Setter TargetName="Chip"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource UiChromeBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource UiChromeBrush}" />
+                            <Setter Property="FontWeight"
+                                    Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FilterToggleChip"
+           TargetType="ToggleButton">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
+        <Setter Property="FontSize"
+                Value="13" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Height"
+                Value="28" />
+        <Setter Property="Template"
+                Value="{StaticResource FilterChipTemplate}" />
+    </Style>
+
+    <Style x:Key="FilterLabel"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="12" />
+        <Setter Property="Foreground"
+                Value="{StaticResource UiMutedBrush}" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+    </Style>
+
+    <!-- ===== Tab strip ===== -->
+    <Style x:Key="OfficeTabItem"
+           TargetType="TabItem">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <!-- The page inside a tab inherits these, so keep them neutral; header colours live on the template. -->
+        <Setter Property="Foreground"
+                Value="{StaticResource UiInkBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Bd"
+                            Height="30"
+                            VerticalAlignment="Bottom"
+                            Padding="16,0"
+                            Background="Transparent"
+                            CornerRadius="2,2,0,0"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter x:Name="HeaderSite"
+                                          ContentSource="Header"
+                                          TextElement.Foreground="White"
+                                          TextElement.FontSize="13"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="Bd"
+                                    Property="Background"
+                                    Value="#26FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter TargetName="Bd"
+                                    Property="Background"
+                                    Value="{StaticResource UiRibbonBrush}" />
+                            <Setter TargetName="HeaderSite"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource UiChromeBrush}" />
+                            <Setter TargetName="HeaderSite"
+                                    Property="TextElement.FontWeight"
+                                    Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="OfficeTabControl"
+           TargetType="TabControl">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="Background"
+                Value="White" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="ItemContainerStyle"
+                Value="{StaticResource OfficeTabItem}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid ClipToBounds="True"
+                          SnapsToDevicePixels="True"
+                          KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border Background="{StaticResource UiChromeBrush}"
+                                Height="32"
+                                Padding="8,0,0,0">
+                            <TabPanel IsItemsHost="True"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Bottom"
+                                      KeyboardNavigation.TabIndex="1"
+                                      Background="Transparent" />
+                        </Border>
+                        <Border Grid.Row="1"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter ContentSource="SelectedContent"
+                                              KeyboardNavigation.TabNavigation="Local"
+                                              KeyboardNavigation.DirectionalNavigation="Contained" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Collapsible section header: chevron, small caps title, count on the right -->
+    <Style x:Key="NavExpander"
+           TargetType="Expander">
+        <Setter Property="IsExpanded"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Expander">
+                    <DockPanel>
+                        <ToggleButton x:Name="HeaderButton"
+                                      DockPanel.Dock="Top"
+                                      OverridesDefaultStyle="True"
+                                      Focusable="False"
+                                      Height="36"
+                                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="Transparent"
+                                            BorderBrush="{StaticResource UiHairlineBrush}"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="12,0">
+                                        <DockPanel>
+                                            <Image x:Name="Chevron"
+                                                   DockPanel.Dock="Left"
+                                                   Source="{StaticResource Icon.Chevron}"
+                                                   Width="10"
+                                                   Height="10"
+                                                   Margin="0,0,8,0"
+                                                   RenderTransformOrigin="0.5,0.5">
+                                                <Image.RenderTransform>
+                                                    <RotateTransform Angle="0" />
+                                                </Image.RenderTransform>
+                                            </Image>
+                                            <ContentPresenter VerticalAlignment="Center" />
+                                        </DockPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked"
+                                                 Value="False">
+                                            <Setter TargetName="Chevron"
+                                                    Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="-90" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                            <ContentPresenter ContentSource="Header" />
+                        </ToggleButton>
+                        <ContentPresenter x:Name="ExpandSite"
+                                          Visibility="Collapsed" />
+                    </DockPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded"
+                                 Value="True">
+                            <Setter TargetName="ExpandSite"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Ribbon-less pages keep a slim rail so the selected tab still meets a surface -->
+    <Style x:Key="RibbonRail"
+           TargetType="Border">
+        <Setter Property="Height"
+                Value="8" />
+        <Setter Property="Background"
+                Value="{StaticResource UiRibbonBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{StaticResource UiRuleBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0,0,0,1" />
+    </Style>
+
+</ResourceDictionary>

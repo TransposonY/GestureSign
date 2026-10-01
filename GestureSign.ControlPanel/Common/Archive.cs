@@ -26,11 +26,12 @@ namespace GestureSign.ControlPanel.Common
             return tempArchivePath;
         }
 
-        public static void CreateArchive(IEnumerable<IApplication> applications, IEnumerable<IGesture> gestures, string destinationArchiveFileName, string configPath = null)
+        public static void CreateArchive(IEnumerable<IApplication> applications, IEnumerable<IGesture> gestures, IEnumerable<ContinuousGesture> continuousGestures, string destinationArchiveFileName, string configPath = null)
         {
             string tempArchivePath = GetTempDirectory();
             FileManager.SaveObject(applications, Path.Combine(tempArchivePath, Constants.ActionFileName), true, true);
             FileManager.SaveObject(gestures, Path.Combine(tempArchivePath, Constants.GesturesFileName), false, true);
+            FileManager.SaveObject(continuousGestures, Path.Combine(tempArchivePath, Constants.ContinuousGesturesFileName), false, true);
 
             if (File.Exists(configPath))
                 File.Copy(configPath, Path.Combine(tempArchivePath, Path.GetFileName(configPath)));
@@ -42,14 +43,30 @@ namespace GestureSign.ControlPanel.Common
             Directory.Delete(tempArchivePath, true);
         }
 
-        public static void LoadFromArchive(string sourceArchiveFileName, out IEnumerable<IApplication> applications, out IEnumerable<IGesture> gestures)
+        /// <param name="continuousGestures">Catalog entries of the archive; legacy archives are migrated, so the applications reference them by name.</param>
+        public static void LoadFromArchive(string sourceArchiveFileName, out IEnumerable<IApplication> applications, out IEnumerable<IGesture> gestures, out List<ContinuousGesture> continuousGestures)
         {
             string tempArchivePath = ExtractToTempDirectory(sourceArchiveFileName);
 
-            applications = FileManager.LoadObject<List<IApplication>>(Path.Combine(tempArchivePath, Constants.ActionFileName), false, true, true);
+            var applicationList = FileManager.LoadObject<List<IApplication>>(Path.Combine(tempArchivePath, Constants.ActionFileName), false, true, true);
             gestures = GestureManager.LoadGesturesFromFile(Path.Combine(tempArchivePath, Constants.GesturesFileName), true);
+            continuousGestures = LoadContinuousGestures(tempArchivePath, applicationList);
+            applications = applicationList;
 
             Directory.Delete(tempArchivePath, true);
+        }
+
+        /// <summary>
+        /// Reads <see cref="Constants.ContinuousGesturesFileName"/> from an extracted archive (empty when absent) and moves
+        /// continuous gestures still embedded in <paramref name="applications"/> (pre-catalog archives) into it.
+        /// </summary>
+        public static List<ContinuousGesture> LoadContinuousGestures(string extractedArchivePath, IEnumerable<IApplication> applications)
+        {
+            string path = Path.Combine(extractedArchivePath, Constants.ContinuousGesturesFileName);
+            var continuousGestures = File.Exists(path) ? ContinuousGestureManager.LoadFromFile(path, true) ?? new List<ContinuousGesture>() : new List<ContinuousGesture>();
+            if (applications != null)
+                ContinuousGestureCatalog.MigrateLegacy(applications, continuousGestures);
+            return continuousGestures;
         }
     }
 }

@@ -39,5 +39,23 @@ namespace GestureSign.Common.Extensions
                 }
             }
         }
+
+        public static List<ContinuousGesture> GetRelatedContinuousGestures(this IEnumerable<IApplication> applications, IEnumerable<ContinuousGesture> catalog)
+        {
+            var names = new HashSet<string>(applications.Where(app => app.Actions != null).SelectMany(app => app.Actions)
+                .Where(a => a != null && !string.IsNullOrEmpty(a.ContinuousGestureName)).Select(a => a.ContinuousGestureName));
+            return catalog.Where(g => names.Contains(g.Name)).ToList();
+        }
+
+        /// <summary>Applies all renames in one pass, so chained names (a→b, b→c) are not renamed twice.</summary>
+        public static void RenameContinuousGestures(this IEnumerable<IApplication> applications, IDictionary<string, string> renames)
+        {
+            foreach (var action in applications.Where(app => app.Actions != null).SelectMany(app => app.Actions))
+            {
+                string newName;
+                if (action?.ContinuousGestureName != null && renames.TryGetValue(action.ContinuousGestureName, out newName))
+                    action.ContinuousGestureName = newName;
+            }
+        }
     }
 }

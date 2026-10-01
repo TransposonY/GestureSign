@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>GestureSign.InputRecorder</RootNamespace>
+    <AssemblyName>GestureSign.InputRecorder</AssemblyName>
+    <Title>GestureSign.InputRecorder</Title>
+    <Description>Records raw digitizer/mouse input into GestureSign regression fixtures</Description>
+    <Product>GestureSign</Product>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Include="..\GestureSign.Common\GestureSign.Common.csproj" />
+    <ProjectReference Include="..\GestureSign.Daemon\GestureSign.Daemon.csproj" />
+    <ProjectReference Include="..\ManagedWinapi\ManagedWinapi.csproj" />
+  </ItemGroup>
+</Project>

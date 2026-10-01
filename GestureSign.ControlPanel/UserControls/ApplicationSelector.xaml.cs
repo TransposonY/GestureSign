@@ -64,6 +64,8 @@ namespace GestureSign.ControlPanel.UserControls
                                 MatchString = seletedApp.MatchString,
                                 MatchUsing = seletedApp.MatchUsing,
                                 Name = seletedApp.Name,
+                                Icon = seletedApp.Icon,
+
                                 Actions = app.ActionItemList.Where(ail => ail.IsSelected).Select(ail => ail.Action).ToList()
                             };
                             seletedApps.Add(userApp);
@@ -72,8 +74,10 @@ namespace GestureSign.ControlPanel.UserControls
                         {
                             GlobalApp globalApp = new GlobalApp()
                             {
+                                Icon = app.Application.Icon,
                                 Actions = app.ActionItemList.Where(ail => ail.IsSelected).Select(ail => ail.Action).ToList()
                             };
+
                             seletedApps.Add(globalApp);
                         }
                     }

@@ -1,0 +1,23 @@
+[
+  {"t":0,"stage":"raw","device":"Pen","contacts":[[0,6,768,432]]},
+  {"t":8,"stage":"raw","device":"Pen","contacts":[[0,7,768,432]]},
+  {"t":8,"stage":"capture","event":"started","firstPoints":[[768,432]]},
+  {"t":8,"stage":"translated","event":"down","device":"Pen","points":[[0,768,432]],"handled":true,"state":"CapturingInvalid"},
+  {"t":8,"stage":"host","effect":"priority:high"},
+  {"t":16,"stage":"raw","device":"Pen","contacts":[[0,7,768,518]]},
+  {"t":16,"stage":"translated","event":"move","device":"Pen","points":[[0,768,518]],"handled":false,"state":"Capturing"},
+  {"t":24,"stage":"raw","device":"Pen","contacts":[[0,7,768,604]]},
+  {"t":24,"stage":"translated","event":"move","device":"Pen","points":[[0,768,604]],"handled":false,"state":"Capturing"},
+  {"t":32,"stage":"raw","device":"Pen","contacts":[[0,7,768,691]]},
+  {"t":32,"stage":"translated","event":"move","device":"Pen","points":[[0,768,691]],"handled":false,"state":"Capturing"},
+  {"t":40,"stage":"raw","device":"Pen","contacts":[[0,7,768,777]]},
+  {"t":40,"stage":"translated","event":"move","device":"Pen","points":[[0,768,777]],"handled":false,"state":"Capturing"},
+  {"t":48,"stage":"raw","device":"Pen","contacts":[[0,7,768,864]]},
+  {"t":48,"stage":"translated","event":"move","device":"Pen","points":[[0,768,864]],"handled":false,"state":"Capturing"},
+  {"t":56,"stage":"raw","device":"Pen","contacts":[[0,6,768,864]]},
+  {"t":56,"stage":"capture","event":"completed","strokes":[[[768,432],[768,518],[768,604],[768,691],[768,777],[768,864]]],"firstPoints":[[768,432]],"gesture":null},
+  {"t":56,"stage":"translated","event":"up","device":"Pen","points":[[0,768,864]],"handled":true,"state":"Ready"},
+  {"t":56,"stage":"host","effect":"priority:normal"},
+  {"t":64,"stage":"raw","device":"Pen","contacts":[[0,0,768,864]]},
+  {"t":64,"stage":"translated","event":"up","device":"Pen","points":[[0,768,864]],"handled":false,"state":"Ready"}
+]

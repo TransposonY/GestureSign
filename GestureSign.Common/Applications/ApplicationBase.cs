@@ -14,6 +14,8 @@ namespace GestureSign.Common.Applications
         #region Private Instance Fields
 
         List<IAction> _Actions = new List<IAction>();
+        byte[] _icon;
+
 
         #endregion
 
@@ -25,6 +27,12 @@ namespace GestureSign.Common.Applications
         public virtual bool IsRegEx { get; set; }
         [DefaultValue("")]
         public virtual string Group { get; set; }
+        public virtual byte[] Icon
+        {
+            get { return _icon; }
+            set { _icon = (value != null && value.Length > 0) ? value : null; }
+        }
+
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.None)]
         public virtual IEnumerable<IAction> Actions

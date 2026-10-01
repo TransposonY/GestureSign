@@ -93,5 +93,29 @@ namespace GestureSign.ControlPanel.ViewModel
                 ApplicationItems.Remove(application);
             }
         }
+
+        public static void RefreshItem(IApplication application)
+        {
+            if (application == null)
+                return;
+            if (application is IgnoredApp ignoredApp)
+            {
+                int ignoredIndex = IgnoredApplicationItems.IndexOf(ignoredApp);
+                if (ignoredIndex < 0)
+                    return;
+
+                IgnoredApplicationItems.RemoveAt(ignoredIndex);
+                IgnoredApplicationItems.Insert(ignoredIndex, ignoredApp);
+                return;
+            }
+
+
+            int index = ApplicationItems.IndexOf(application);
+            if (index < 0)
+                return;
+
+            ApplicationItems.RemoveAt(index);
+            ApplicationItems.Insert(index, application);
+        }
     }
 }

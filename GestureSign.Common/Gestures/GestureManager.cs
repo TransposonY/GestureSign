@@ -26,9 +26,6 @@ namespace GestureSign.Common.Gestures
         // Create read/write list of IGestures to hold system gestures
         private List<IGesture> _Gestures;
 
-        // Create PointPatternAnalyzer to process gestures when received
-        PointPatternAnalyzer gestureAnalyzer = null;
-
         private bool _isGestureStackTimeout;
         private int? _lastGestureTime;
         private List<IGesture> _gestureMatchResult;
@@ -58,8 +55,6 @@ namespace GestureSign.Common.Gestures
         protected GestureManager()
         {
             LoadingTask = LoadGestures();
-            // Instantiate gesture analyzer using gestures loaded from file
-            gestureAnalyzer = new PointPatternAnalyzer();//Gestures
         }
 
         #endregion
@@ -330,7 +325,7 @@ namespace GestureSign.Common.Gestures
             return gestureList;
         }
 
-        public string GetGestureSetNameMatch(Point[][] points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matching)//PointF[]
+        public static string GetGestureSetNameMatch(Point[][] points, List<IGesture> sourceGestures, int sourceGestureLevel, out List<IGesture> matching)//PointF[]
         {
             if (points.Length == 0 || sourceGestures == null || sourceGestures.Count == 0)
             { matching = null; return null; }
@@ -342,6 +337,7 @@ namespace GestureSign.Common.Gestures
                         g.PointPatterns[sourceGestureLevel].Points != null &&
                         g.PointPatterns[sourceGestureLevel].Points.Length == points.Length).ToList();
             List<PointPatternMatchResult>[] comparisonResults = new List<PointPatternMatchResult>[points.Length];
+            var gestureAnalyzer = new PointPatternAnalyzer();
             for (int i = 0; i < points.Length; i++)
             {
                 gestureAnalyzer.PointPatternSet = gestures.Select(gesture => new PointsPatternSet(gesture.Name, gesture.PointPatterns[sourceGestureLevel].Points[i]));

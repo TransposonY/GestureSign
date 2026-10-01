@@ -27,10 +27,10 @@ namespace GestureSign.Daemon
         #region Controls Initialization
 
         private NotifyIcon _trayIcon;
-        private ContextMenu _trayMenu;
-        private MenuItem _disableGesturesMenuItem;
-        private MenuItem _controlPanelMenuItem;
-        private MenuItem _exitGestureSignMenuItem;
+        private ContextMenuStrip _trayMenu;
+        private ToolStripMenuItem _disableGesturesMenuItem;
+        private ToolStripMenuItem _controlPanelMenuItem;
+        private ToolStripMenuItem _exitGestureSignMenuItem;
 
         #endregion
 
@@ -39,24 +39,21 @@ namespace GestureSign.Daemon
         private void SetupTrayIconAndTrayMenu()
         {
             _trayIcon = new NotifyIcon();
-            _trayMenu = new ContextMenu();
-            _disableGesturesMenuItem = new MenuItem();
-            _controlPanelMenuItem = new MenuItem();
-            _exitGestureSignMenuItem = new MenuItem();
+            _trayMenu = new ContextMenuStrip();
+            _disableGesturesMenuItem = new ToolStripMenuItem();
+            _controlPanelMenuItem = new ToolStripMenuItem();
+            _exitGestureSignMenuItem = new ToolStripMenuItem();
 
             // Tray Icon
-            _trayIcon.ContextMenu = _trayMenu;
+            _trayIcon.ContextMenuStrip = _trayMenu;
             _trayIcon.Text = "GestureSign";
             _trayIcon.DoubleClick += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             _trayIcon.Click += (o, e) => { TrayIcon_Click(o, (MouseEventArgs)e); };
             _trayIcon.Icon = Resources.normal_daemon;
 
             // Tray Menu
-            _trayMenu.MenuItems.AddRange(new MenuItem[] { _disableGesturesMenuItem, new MenuItem("-"), _controlPanelMenuItem, new MenuItem("-"), _exitGestureSignMenuItem });
+            _trayMenu.Items.AddRange(new ToolStripItem[] { _disableGesturesMenuItem, new ToolStripSeparator(), _controlPanelMenuItem, new ToolStripSeparator(), _exitGestureSignMenuItem });
             _trayMenu.Name = "TrayMenu";
-            //TrayMenu.Size = new Size(194, 82);
-            //TrayMenu.Opened += (o, e) => { Input.TouchCapture.Instance.DisableTouchCapture(); };
-            //TrayMenu.Closed += (o, e) => { Input.TouchCapture.Instance.EnableTouchCapture(); };
 
             // Disable Gestures Menu Item
             _disableGesturesMenuItem.Checked = false;

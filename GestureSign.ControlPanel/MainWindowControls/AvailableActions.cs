@@ -5,11 +5,11 @@ using GestureSign.Common.Localization;
 using GestureSign.ControlPanel.Common;
 using GestureSign.ControlPanel.Dialogs;
 using GestureSign.ControlPanel.ViewModel;
-using IWshRuntimeLibrary;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -24,17 +24,69 @@ namespace GestureSign.ControlPanel.MainWindowControls
     /// <summary>
     /// AvailableActions.xaml 的交互逻辑
     /// </summary>
-    public partial class AvailableActions : UserControl
+    public partial class AvailableActions : UserControl, INotifyPropertyChanged
     {
+        public static readonly DependencyProperty SearchTextProperty = DependencyProperty.Register(
+            nameof(SearchText), typeof(string), typeof(AvailableActions),
+            new PropertyMetadata(string.Empty, (d, e) => ((AvailableActions)d).OnSearchTextChanged((string)e.NewValue)));
+
         // public static event EventHandler StartCapture;
         public AvailableActions()
         {
+            _searchTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            _searchTimer.Tick += SearchTimer_Tick;
             InitializeComponent();
             DataContext = this;
+            _initializing = false;
+            UpdateSelectedApplication();
         }
 
         private IApplication _cutActionSource;
         private readonly List<CommandInfo> _commandClipboard = new List<CommandInfo>();
+        private readonly DispatcherTimer _searchTimer;
+        private string[] _searchTokens = ActionListFilter.EmptyTokens;
+        private int _fingerFilter;
+        private bool _initializing = true;
+        private bool _statusUpdatePending;
+        private bool _synchronizingToggleAllActions;
+        private bool _updatingAllActions;
+        private string _statusActionCountText;
+        private string _statusFingersText;
+        private string _statusApplicationText;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>Text typed in the window's search box; filters the action list.</summary>
+        public string SearchText
+        {
+            get { return (string)GetValue(SearchTextProperty); }
+            set { SetValue(SearchTextProperty, value); }
+        }
+
+        public string StatusActionCountText
+        {
+            get { return _statusActionCountText; }
+            private set { SetStatus(ref _statusActionCountText, value, nameof(StatusActionCountText)); }
+        }
+
+        public string StatusFingersText
+        {
+            get { return _statusFingersText; }
+            private set { SetStatus(ref _statusFingersText, value, nameof(StatusFingersText)); }
+        }
+
+        public string StatusApplicationText
+        {
+            get { return _statusApplicationText; }
+            private set { SetStatus(ref _statusApplicationText, value, nameof(StatusApplicationText)); }
+        }
+
+        private void SetStatus(ref string field, string value, string propertyName)
+        {
+            if (field == value) return;
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private void UserControl_Initialized(object sender, EventArgs eArgs)
         {
@@ -43,6 +95,63 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 if (e.NewItems != null && e.NewItems.Count > 0 && !(e.NewItems[0] is IgnoredApp))
                     lstAvailableApplication.SelectedItem = (IApplication)e.NewItems[0];
             };
+
+            // The count in the header and status bar follows whatever the filter currently lets through.
+            ((INotifyCollectionChanged)lstAvailableActions.Items).CollectionChanged += (o, e) => ScheduleStatusUpdate();
+
+            // Open on the first application (Global Actions) so the table is never empty by default.
+            // Applications load asynchronously, so also watch for them arriving.
+            ApplicationItemProvider.ApplicationItems.CollectionChanged += (o, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                    Dispatcher.InvokeAsync(SelectFirstApplication, DispatcherPriority.Background);
+            };
+
+            // Saved gestures, applications and continuous gestures change titles and finger counts; re-key and re-filter.
+            GestureItemProvider.GestureMapChanged += (o, e) =>
+            {
+                var commandInfoProvider = ((ObjectDataProvider)Resources["CommandInfoProvider"]).ObjectInstance as CommandInfoProvider;
+                if (commandInfoProvider == null) return;
+                commandInfoProvider.RefreshGestureInfo();
+                if (_fingerFilter > ActionListFilter.AllFingers || _searchTokens.Length != 0)
+                    RefreshActionFilter();
+            };
+            Loaded += (o, e) => SelectFirstApplication();
+        }
+
+        private void SelectFirstApplication()
+        {
+            if (lstAvailableApplication.SelectedItem == null && lstAvailableApplication.Items.Count > 0)
+                lstAvailableApplication.SelectedIndex = 0;
+        }
+
+        private void ScheduleStatusUpdate()
+        {
+            if (_statusUpdatePending) return;
+            _statusUpdatePending = true;
+            Dispatcher.InvokeAsync(() =>
+            {
+                _statusUpdatePending = false;
+                UpdateStatus();
+            }, DispatcherPriority.Background);
+        }
+
+        private void UpdateStatus()
+        {
+            var localization = LocalizationProvider.Instance;
+
+            int actionCount = lstAvailableActions?.Items.Groups?.Count ?? 0;
+            StatusActionCountText = string.Format(localization.GetTextValue("Action.ActionsSummary"), actionCount);
+
+            string fingers = _fingerFilter <= ActionListFilter.AllFingers
+                ? localization.GetTextValue("Action.AllFingers")
+                : _fingerFilter >= ActionListFilter.MinimumFingerCount
+                    ? localization.GetTextValue("Action.SixOrMoreFingers")
+                    : _fingerFilter.ToString();
+            StatusFingersText = string.Format(localization.GetTextValue("Action.FingersStatus"), fingers);
+
+            StatusApplicationText = (lstAvailableApplication?.SelectedItem as IApplication)?.Name;
+            SynchronizeToggleAllActions();
         }
 
         private void cmdEditCommand_Click(object sender, RoutedEventArgs e)
@@ -111,8 +220,21 @@ namespace GestureSign.ControlPanel.MainWindowControls
             EnableRelevantButtons();
         }
 
+        private void UpdateHeaderScrollSpacer(ScrollViewer scrollViewer)
+        {
+            double width = 0;
+            if (scrollViewer != null && scrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+            {
+                var bar = scrollViewer.Template?.FindName("PART_VerticalScrollBar", scrollViewer) as FrameworkElement;
+                width = bar != null && bar.ActualWidth > 0 ? bar.ActualWidth : SystemParameters.VerticalScrollBarWidth;
+            }
+            HeaderScrollSpacer.Width = new GridLength(width);
+        }
+
         private void LstAvailableActions_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            UpdateHeaderScrollSpacer(e.OriginalSource as ScrollViewer);
+
             HitTestResult hitTest = VisualTreeHelper.HitTest(lstAvailableActions, new Point(5, 5));
             var element = hitTest.VisualHit as UIElement;
             if (element != null)
@@ -133,10 +255,14 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void CommandCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CommandInfo info = UIHelper.GetParentDependencyObject<ListBoxItem>(sender as ToggleSwitch).Content as CommandInfo;
-            if (info == null) return;
-            info.Command.IsEnabled = (sender as ToggleSwitch).IsChecked.Value;
+            if (_initializing) return;
+            var toggleSwitch = (ToggleSwitch)sender;
+            var info = toggleSwitch.DataContext as CommandInfo;
+            if (info?.Command == null || info.Command.IsEnabled == toggleSwitch.IsOn) return;
+            info.Command.IsEnabled = toggleSwitch.IsOn;
+            info.IsEnabled = toggleSwitch.IsOn;
             ApplicationManager.Instance.SaveApplications();
+            SynchronizeToggleAllActions();
         }
 
         private void btnAddAction_Click(object sender, RoutedEventArgs e)
@@ -151,6 +277,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             var ci = lstAvailableActions.SelectedItem as CommandInfo;
             if (ci == null)
             {
+                ShowAllActions();
                 var newCommand = new Command
                 {
                     Name = LocalizationProvider.Instance.GetTextValue("Action.NewCommand")
@@ -168,7 +295,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var element = (FrameworkElement)sender;
                 element.ContextMenu.PlacementTarget = element;
-                element.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Top;
+                element.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                 element.ContextMenu.IsOpen = true;
             }
         }
@@ -182,6 +309,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 selectedApplication = lstAvailableApplication.SelectedItem as IApplication;
                 if (selectedApplication == null) return;
             }
+            ShowAllActions();
 
             var newCommand = new Command
             {
@@ -201,6 +329,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
         {
             var ci = lstAvailableActions.SelectedItem as CommandInfo;
             if (ci == null) return;
+            ShowAllActions();
 
             var newCommand = new Command
             {
@@ -287,7 +416,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ExportActionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ExportImportDialog exportImportDialog = new ExportImportDialog(true, false, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures);
+            ExportImportDialog exportImportDialog = new ExportImportDialog(true, false, ApplicationManager.Instance.Applications, GestureSign.Common.Gestures.GestureManager.Instance.Gestures, ContinuousGestureManager.Instance.ContinuousGestures);
             exportImportDialog.ShowDialog();
         }
 
@@ -322,6 +451,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
             var targetApplication = lstAvailableApplication.SelectedItem as IApplication;
             if (targetApplication == null) return;
+            ShowAllActions();
 
             lstAvailableActions.SelectedItem = null;
             foreach (var actionGroup in _commandClipboard.GroupBy(ci => ci.Action))
@@ -362,6 +492,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             if (targetApplication == null) return;
             var selectedCommand = lstAvailableActions.SelectedItem as CommandInfo;
             if (selectedCommand == null || selectedCommand.Action == null) return;
+            ShowAllActions();
             lstAvailableActions.SelectedItem = null;
 
             IAction currentAction = selectedCommand.Action;
@@ -409,8 +540,9 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void SortMenuItem_Checked(object sender, RoutedEventArgs e)
         {
-            var lcv = lstAvailableActions.ItemsSource as ListCollectionView;
-            string propertyName = sender == SortByNameMenuItem ? nameof(CommandInfo.ActionName) : nameof(CommandInfo.GestureFeatures);
+            var lcv = lstAvailableActions?.ItemsSource as ListCollectionView;
+            if (lcv == null) return;
+            string propertyName = sender == SortByGestureMenuItem ? nameof(CommandInfo.GestureFeatures) : nameof(CommandInfo.ActionName);
             if (lcv.SortDescriptions.Any(sd => sd.PropertyName == propertyName))
                 return;
 
@@ -426,22 +558,110 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void lstAvailableApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count == 0) return;
+            if (_initializing || e.Source != lstAvailableApplication) return;
+            UpdateSelectedApplication();
+        }
+
+        private void UpdateSelectedApplication()
+        {
             IApplication selectedApp = lstAvailableApplication.SelectedItem as IApplication;
-            if (selectedApp == null)
-            {
-                ToggleAllActionsToggleSwitch.IsEnabled = false;
-                return;
-            }
+            EditApplicationButton.IsEnabled = selectedApp != null;
+            DeleteApplicationButton.IsEnabled = selectedApp is UserApp;
+            UpdateStatus();
+            if (selectedApp == null) return;
 
             var commandInfoProvider = ((ObjectDataProvider)Resources["CommandInfoProvider"]).ObjectInstance as CommandInfoProvider;
             if (commandInfoProvider == null) return;
             commandInfoProvider.RefreshCommandInfos(selectedApp, lstAvailableActions);
 
-            ToggleAllActionsToggleSwitch.IsEnabled = true;
-            ToggleAllActionsToggleSwitch.IsChecked = selectedApp.Actions.SelectMany(a => a.Commands).All(c => c.IsEnabled);
-
             Dispatcher.InvokeAsync(() => lstAvailableApplication.ScrollIntoView(selectedApp), DispatcherPriority.Background);
+        }
+
+        private void SynchronizeToggleAllActions()
+        {
+            if (_updatingAllActions || ToggleAllActionsToggleSwitch == null) return;
+            var selectedApp = lstAvailableApplication?.SelectedItem as IApplication;
+            bool wasSynchronizing = _synchronizingToggleAllActions;
+            _synchronizingToggleAllActions = true;
+            try
+            {
+                ToggleAllActionsToggleSwitch.IsEnabled = selectedApp != null;
+                ToggleAllActionsToggleSwitch.IsOn = selectedApp != null
+                    && selectedApp.Actions.SelectMany(a => a.Commands).All(c => c.IsEnabled);
+            }
+            finally
+            {
+                _synchronizingToggleAllActions = wasSynchronizing;
+            }
+        }
+
+        private void OnSearchTextChanged(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                _searchTimer.Stop();
+                SetSearchTokens(text);
+                return;
+            }
+
+            _searchTimer.Stop();
+            _searchTimer.Start();
+        }
+
+        private void SearchTimer_Tick(object sender, EventArgs e)
+        {
+            _searchTimer.Stop();
+            SetSearchTokens(SearchText);
+        }
+
+        private void SetSearchTokens(string text)
+        {
+            var tokens = ActionListFilter.Tokenize(text);
+            if (ActionListFilter.SameTokens(_searchTokens, tokens))
+                return;
+            _searchTokens = tokens;
+            RefreshActionFilter();
+        }
+
+        private void FingerFilter_Checked(object sender, RoutedEventArgs e)
+        {
+            var radio = (RadioButton)sender;
+            int value;
+            _fingerFilter = int.TryParse(radio.Tag as string, out value) ? value : ActionListFilter.AllFingers;
+            RefreshActionFilter();
+            UpdateStatus();
+        }
+
+        private void ActionsViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            var info = e.Item as CommandInfo;
+            if (info == null)
+            {
+                e.Accepted = false;
+                return;
+            }
+
+            e.Accepted = ActionListFilter.MatchesFingerCount(
+                    info.PatternCount,
+                    ContinuousGestureManager.Instance.Find(info.Action?.ContinuousGestureName)?.ContactCount ?? 0,
+                    _fingerFilter)
+                && ActionListFilter.MatchesKey(info.SearchKey, _searchTokens);
+        }
+
+        private void RefreshActionFilter()
+        {
+            if (lstAvailableActions == null)
+                return;
+            var view = CollectionViewSource.GetDefaultView(lstAvailableActions.ItemsSource);
+            view?.Refresh();
+        }
+
+        private void ShowAllActions()
+        {
+            if (AllFingersRadio != null && AllFingersRadio.IsChecked != true)
+                AllFingersRadio.IsChecked = true;
+            if (!string.IsNullOrEmpty(SearchText))
+                SearchText = string.Empty;
         }
 
         private void NewApplicationButton_OnClick(object sender, RoutedEventArgs e)
@@ -510,24 +730,34 @@ namespace GestureSign.ControlPanel.MainWindowControls
 
         private void ToggleAllActionsToggleSwitch_Click(object sender, RoutedEventArgs e)
         {
+            if (_initializing || _synchronizingToggleAllActions || _updatingAllActions) return;
+            IApplication app = lstAvailableApplication?.SelectedItem as IApplication;
+            if (app == null) return;
+            bool isOn = ((ToggleSwitch)sender).IsOn;
+            _updatingAllActions = true;
             try
             {
-                var toggleSwitch = ((ToggleSwitch)sender);
-
-                IApplication app = lstAvailableApplication.SelectedItem as IApplication;
-                if (app == null) return;
                 foreach (var command in app.Actions.SelectMany(a => a.Commands))
                 {
-                    command.IsEnabled = toggleSwitch.IsChecked.Value;
+                    command.IsEnabled = isOn;
                 }
                 ApplicationManager.Instance.SaveApplications();
 
-                foreach (CommandInfo ai in lstAvailableActions.Items)
+                var commandInfoProvider = ((ObjectDataProvider)Resources["CommandInfoProvider"]).ObjectInstance as CommandInfoProvider;
+                if (commandInfoProvider != null)
                 {
-                    ai.IsEnabled = toggleSwitch.IsChecked.Value;
+                    foreach (CommandInfo info in commandInfoProvider.CommandInfos)
+                    {
+                        info.IsEnabled = info.Command.IsEnabled;
+                    }
                 }
             }
             catch { }
+            finally
+            {
+                _updatingAllActions = false;
+                SynchronizeToggleAllActions();
+            }
         }
 
         private void ListBoxItem_OnMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -554,6 +784,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
             {
                 var newApps = new List<IApplication>();
                 var newGestures = GestureManager.Instance.Gestures.ToList();
+                var newContinuousGestures = new List<ContinuousGesture>();
                 try
                 {
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -565,6 +796,8 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 var apps = FileManager.LoadObject<List<IApplication>>(file, false, true);
                                 if (apps != null)
                                 {
+                                    // Pre-catalog files embed continuous gestures in actions.
+                                    ContinuousGestureCatalog.MigrateLegacy(apps, newContinuousGestures);
                                     newApps.AddRange(apps);
                                 }
                                 break;
@@ -572,18 +805,19 @@ namespace GestureSign.ControlPanel.MainWindowControls
                                 lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), file);
                                 break;
                             case ".lnk":
-                                WshShell shell = new WshShell();
-                                IWshShortcut link = (IWshShortcut)shell.CreateShortcut(file);
-                                if (Path.GetExtension(link.TargetPath).ToLower() == ".exe")
+                                string targetPath = ShortcutHelper.GetTargetPath(file);
+                                if (Path.GetExtension(targetPath).Equals(".exe", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), link.TargetPath);
+                                    lstAvailableApplication.SelectedItem = ApplicationManager.Instance.AddApplication(new UserApp(), targetPath);
                                 }
                                 break;
                             case GestureSign.Common.Constants.ArchivesExtension:
                                 {
                                     IEnumerable<IApplication> applications;
                                     IEnumerable<IGesture> gestures;
-                                    Archive.LoadFromArchive(file, out applications, out gestures);
+                                    List<ContinuousGesture> continuousGestures;
+                                    Archive.LoadFromArchive(file, out applications, out gestures, out continuousGestures);
+                                    ContinuousGestureCatalog.Merge(newContinuousGestures, continuousGestures, applications);
 
                                     if (applications != null)
                                         newApps.AddRange(applications);
@@ -608,7 +842,7 @@ namespace GestureSign.ControlPanel.MainWindowControls
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
-                        ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, newGestures);
+                        ExportImportDialog exportImportDialog = new ExportImportDialog(false, false, newApps, newGestures, newContinuousGestures);
                         exportImportDialog.ShowDialog();
                     }, DispatcherPriority.Background);
                 }

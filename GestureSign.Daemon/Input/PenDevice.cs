@@ -8,7 +8,7 @@ namespace GestureSign.Daemon.Input
     {
         public override Devices DeviceType => Devices.Pen;
 
-        public PenDevice(IntPtr rawInputBuffer, ref RAWINPUT raw) : base(rawInputBuffer, ref raw)
+        public PenDevice(IntPtr rawInputBuffer, ref RAWINPUT raw, SafeUnmanagedMemoryHandle preparsedData) : base(rawInputBuffer, ref raw, preparsedData)
         {
         }
 

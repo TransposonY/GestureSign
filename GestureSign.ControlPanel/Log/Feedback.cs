@@ -5,45 +5,83 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using GestureSign.Common;
 using GestureSign.Common.Configuration;
 using GestureSign.Common.Log;
 using Microsoft.Win32;
-using SharpRaven;
-using SharpRaven.Data;
+using Newtonsoft.Json;
 
 namespace GestureSign.ControlPanel.Log
 {
     public class Feedback
     {
         private const string Dsn = "https://a828c0c755fc493fa93c0f2ac7963e6d:4e74093b0f6a4a438a95b3bb85273e69@sentry.io/141461";
+        private static readonly Uri SentryDsn = new Uri(Dsn);
+        private static readonly Uri DeliveryEndpoint = new UriBuilder(SentryDsn)
+        {
+            UserName = string.Empty,
+            Password = string.Empty,
+            Path = "/api" + SentryDsn.AbsolutePath + "/store/"
+        }.Uri;
 
         public static string Send(string report)
         {
-            string sendError = null;
-            var ravenClient = new RavenClient(Dsn)
-            {
-                ErrorOnCapture = e =>
-                {
-                    Logging.LogException(e);
-                    sendError = e.Message;
-                },
-                Compression = true
-            };
+            return Send(report, DeliveryEndpoint, TimeSpan.FromSeconds(30));
+        }
 
-            const int chunkSize = 4096;
-            if (!String.IsNullOrWhiteSpace(report))
+        internal static string Send(string report, Uri endpoint, TimeSpan timeout)
+        {
+            if (string.IsNullOrWhiteSpace(report))
+                return null;
+
+            try
             {
-                foreach (string s in Split(report, chunkSize))
+                using (var cancellation = new CancellationTokenSource(timeout))
+                using (var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
+                    { Timeout = Timeout.InfiniteTimeSpan })
                 {
-                    if (s != string.Empty)
-                        ravenClient.Capture(new SentryEvent(s));
+                    string[] credentials = SentryDsn.UserInfo.Split(':');
+                    client.DefaultRequestHeaders.Add("X-Sentry-Auth",
+                        "Sentry sentry_version=7, sentry_key=" + credentials[0] +
+                        ", sentry_secret=" + credentials[1]);
+
+                    const int chunkSize = 4096;
+                    foreach (string chunk in Split(report, chunkSize))
+                    {
+                        if (chunk.Length == 0)
+                            continue;
+
+                        string payload = JsonConvert.SerializeObject(new
+                        {
+                            event_id = Guid.NewGuid().ToString("N"),
+                            timestamp = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                            platform = "csharp",
+                            level = "info",
+                            message = new { formatted = chunk }
+                        });
+                        using (var request = new HttpRequestMessage(HttpMethod.Post, endpoint))
+                        {
+                            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+                            // A drained SDK queue is not an acknowledgement from the server.
+                            using (var response = client.Send(request, HttpCompletionOption.ResponseHeadersRead,
+                                cancellation.Token))
+                            {
+                                response.EnsureSuccessStatusCode();
+                            }
+                        }
+                    }
                 }
+                return null;
             }
-
-            return sendError;
+            catch (Exception exception)
+            {
+                Logging.LogException(exception);
+                return exception.Message;
+            }
         }
 
         public static string OutputLog()
@@ -66,7 +104,7 @@ namespace GestureSign.ControlPanel.Log
             }
             result.AppendLine(version);
 
-            string directoryPath = Path.GetDirectoryName(new Uri(Application.ResourceAssembly.CodeBase).LocalPath);
+            string directoryPath = Path.GetDirectoryName(Application.ResourceAssembly.Location);
             if (directoryPath != null)
             {
                 result.AppendLine(directoryPath);

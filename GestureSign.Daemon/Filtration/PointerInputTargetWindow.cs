@@ -26,6 +26,7 @@ namespace GestureSign.Daemon.Filtration
             ResetIdPool();
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int BlockTouchInputThreshold
         {
             get { return _blockTouchInputThreshold; }

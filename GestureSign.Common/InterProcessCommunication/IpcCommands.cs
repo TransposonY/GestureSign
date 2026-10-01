@@ -11,6 +11,7 @@
         GotGesture,
         ConfigReload,
         SynDeviceState,
-        Exit
+        Exit,
+        LoadContinuousGestures
     }
 }

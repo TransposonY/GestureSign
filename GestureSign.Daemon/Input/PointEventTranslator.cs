@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using GestureSign.Common.Configuration;
 using GestureSign.Common.Input;
 using ManagedWinapi.Hooks;
 
@@ -9,14 +9,24 @@ namespace GestureSign.Daemon.Input
 {
     public class PointEventTranslator
     {
+        private readonly IInputSettings _settings;
+        private readonly Func<List<Point>[]> _capturedPoints;
         private int _lastPointsCount;
         private HashSet<MouseActions> _pressedMouseButton;
 
         internal Devices SourceDevice { get; private set; }
 
-        internal PointEventTranslator(InputProvider inputProvider)
+        /// <param name="capturedPoints">Strokes captured so far by the consumer of the translated events.</param>
+        internal PointEventTranslator(IInputSettings settings, Func<List<Point>[]> capturedPoints)
         {
+            _settings = settings;
+            _capturedPoints = capturedPoints;
             _pressedMouseButton = new HashSet<MouseActions>();
+        }
+
+        /// <summary>Subscribes to raw touch/pen frames and the low-level mouse hook.</summary>
+        internal void Attach(InputProvider inputProvider)
+        {
             inputProvider.PointsIntercepted += TranslateTouchEvent;
             inputProvider.LowLevelMouseHook.MouseDown += LowLevelMouseHook_MouseDown;
             inputProvider.LowLevelMouseHook.MouseMove += LowLevelMouseHook_MouseMove;
@@ -55,11 +65,11 @@ namespace GestureSign.Daemon.Input
 
         #endregion
 
-        #region Private Methods
+        #region Input Handlers
 
-        private void LowLevelMouseHook_MouseUp(LowLevelMouseMessage mouseMessage, ref bool handled)
+        internal void LowLevelMouseHook_MouseUp(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton)
+            if ((MouseActions)mouseMessage.Button == _settings.DrawingButton)
             {
                 var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
                 OnPointUp(args);
@@ -68,15 +78,15 @@ namespace GestureSign.Daemon.Input
             _pressedMouseButton.Remove((MouseActions)mouseMessage.Button);
         }
 
-        private void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
+        internal void LowLevelMouseHook_MouseMove(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
             var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
             OnPointMove(args);
         }
 
-        private void LowLevelMouseHook_MouseDown(LowLevelMouseMessage mouseMessage, ref bool handled)
+        internal void LowLevelMouseHook_MouseDown(LowLevelMouseMessage mouseMessage, ref bool handled)
         {
-            if ((MouseActions)mouseMessage.Button == AppConfig.DrawingButton && _pressedMouseButton.Count == 0)
+            if ((MouseActions)mouseMessage.Button == _settings.DrawingButton && _pressedMouseButton.Count == 0)
             {
                 var args = new InputPointsEventArgs(new List<InputPoint>(new[] { new InputPoint(1, mouseMessage.Point) }), Devices.Mouse);
                 OnPointDown(args);
@@ -85,7 +95,7 @@ namespace GestureSign.Daemon.Input
             _pressedMouseButton.Add((MouseActions)mouseMessage.Button);
         }
 
-        private void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
+        internal void TranslateTouchEvent(object sender, RawPointsDataMessageEventArgs e)
         {
             if ((e.SourceDevice & Devices.TouchDevice) != 0)
             {
@@ -105,7 +115,7 @@ namespace GestureSign.Daemon.Input
                 {
                     if (releaseCount != 0)
                         return;
-                    if (PointCapture.Instance.InputPoints.Any(p => p.Count > 10))
+                    if (_capturedPoints().Any(p => p.Count > 10))
                     {
                         OnPointMove(new InputPointsEventArgs(e.RawData, e.SourceDevice));
                         return;
@@ -131,7 +141,7 @@ namespace GestureSign.Daemon.Input
                     return;
                 }
 
-                var penSetting = AppConfig.PenGestureButton;
+                var penSetting = _settings.PenGestureButton;
                 bool drawByTip = (penSetting & DeviceStates.Tip) != 0;
                 bool drawByHover = (penSetting & DeviceStates.InRange) != 0;
 

@@ -1,0 +1,194 @@
+﻿<UserControl x:Class="GestureSign.ControlPanel.MainWindowControls.ContinuousGestures"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+             xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
+             xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             mc:Ignorable="d"
+             d:DesignHeight="400"
+             d:DesignWidth="450">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="ContinuousGestureViewSource"
+                              Source="{x:Static viewModel:ContinuousGestureItemProvider.Items}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="FingersText" />
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <componentmodel:SortDescription PropertyName="ContactCount"
+                                                Direction="Ascending" />
+                <componentmodel:SortDescription PropertyName="Direction"
+                                                Direction="Ascending" />
+                <componentmodel:SortDescription PropertyName="Name"
+                                                Direction="Ascending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!-- Ribbon -->
+        <Border Height="96"
+                Background="{StaticResource UiRibbonBrush}"
+                BorderBrush="{StaticResource UiRuleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="6,0">
+            <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource RibbonGroup}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="NewButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Click="NewButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.NewAction}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ContinuousGesture.New}" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Margin="2,2,0,0">
+                                <Button x:Name="EditButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Click="EditButton_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Edit}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Edit}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="DeleteButton"
+                                        Style="{StaticResource RibbonSmallButton}"
+                                        Margin="0,2,0,0"
+                                        Click="DeleteButton_Click"
+                                        IsEnabled="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource Icon.Delete}"
+                                               Width="16"
+                                               Height="16" />
+                                        <TextBlock Style="{StaticResource RibbonSmallCaption}"
+                                                   Text="{localization:LocalisedText Action.Delete}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource RibbonGroupCaption}"
+                                   Text="{localization:LocalisedText ContinuousGesture.Header}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+        <ListView x:Name="ContinuousGestureListView"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Source={StaticResource ContinuousGestureViewSource}}"
+                  ScrollViewer.PanningMode="VerticalOnly"
+                  SelectionMode="Extended"
+                  SelectionChanged="ContinuousGestureListView_SelectionChanged"
+                  BorderThickness="0"
+                  SelectedValuePath="Gesture">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="{localization:LocalisedText ContinuousGesture.Name}"
+                                    Width="200"
+                                    DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn Header="{localization:LocalisedText ContinuousGesture.Fingers}"
+                                    Width="100"
+                                    DisplayMemberBinding="{Binding Path=FingersText}" />
+                    <GridViewColumn Header="{localization:LocalisedText ContinuousGesture.Direction}"
+                                    Width="130"
+                                    DisplayMemberBinding="{Binding Path=DirectionText}" />
+                    <GridViewColumn Header="{localization:LocalisedText ContinuousGesture.UsedBy}"
+                                    Width="520">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=UsedBy}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Path=UsedBy}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander Style="{StaticResource NavExpander}">
+                                            <Expander.Header>
+                                                <TextBlock FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{StaticResource UiInkBrush}"
+                                                           HorizontalAlignment="Left">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0}  ( {1} )">
+                                                            <Binding Path="Name"
+                                                                     Mode="OneWay" />
+                                                            <Binding Path="ItemCount"
+                                                                     Mode="OneWay" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}"
+                       BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <EventSetter Event="MouseDoubleClick"
+                                 Handler="ListViewItem_OnMouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <!-- Empty catalog -->
+        <TextBlock Grid.Row="1"
+                   Margin="20,60,20,0"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   FontSize="14"
+                   Foreground="{StaticResource UiMutedBrush}"
+                   IsHitTestVisible="False"
+                   Text="{localization:LocalisedText ContinuousGesture.Empty}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ContinuousGestureListView, Path=HasItems}"
+                                     Value="False">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+</UserControl>

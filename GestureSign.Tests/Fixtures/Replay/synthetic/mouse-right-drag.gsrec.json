@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "source": "synthetic",
+  "description": "Mouse: right-button drag draws a gesture (DrawingButton = Right).",
+  "settings": {
+    "drawingButton": "Right",
+    "penGestureButton": 0,
+    "ignoreTouchInputWhenUsingPen": true,
+    "registerTouchPad": true,
+    "registerTouchScreen": true,
+    "minimumPointDistance": 20,
+    "isOrderByLocation": true,
+    "initialTimeout": 0
+  },
+  "environment": {
+    "screens": [
+      {
+        "deviceName": "\\\\.\\DISPLAY1",
+        "primary": true,
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "orientation": 0,
+    "pointerSize": 8
+  },
+  "devices": [],
+  "events": [
+    {
+      "t": 0,
+      "tickCount": 1000000,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 300,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "down",
+      "button": "Right",
+      "x": 800,
+      "y": 300,
+      "mouseData": 0
+    },
+    {
+      "t": 8,
+      "tickCount": 1000008,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 357,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 357,
+      "mouseData": 0
+    },
+    {
+      "t": 16,
+      "tickCount": 1000016,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 414,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 414,
+      "mouseData": 0
+    },
+    {
+      "t": 24,
+      "tickCount": 1000024,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 471,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 471,
+      "mouseData": 0
+    },
+    {
+      "t": 32,
+      "tickCount": 1000032,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 528,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 528,
+      "mouseData": 0
+    },
+    {
+      "t": 40,
+      "tickCount": 1000040,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 585,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 585,
+      "mouseData": 0
+    },
+    {
+      "t": 48,
+      "tickCount": 1000048,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 642,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 642,
+      "mouseData": 0
+    },
+    {
+      "t": 56,
+      "tickCount": 1000056,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 700,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 800,
+      "y": 700,
+      "mouseData": 0
+    },
+    {
+      "t": 64,
+      "tickCount": 1000064,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 700,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "up",
+      "button": "Right",
+      "x": 800,
+      "y": 700,
+      "mouseData": 0
+    }
+  ]
+}

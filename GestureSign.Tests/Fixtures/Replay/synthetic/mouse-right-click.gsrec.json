@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "source": "synthetic",
+  "description": "Mouse: right click without movement is replayed to the system.",
+  "settings": {
+    "drawingButton": "Right",
+    "penGestureButton": 0,
+    "ignoreTouchInputWhenUsingPen": true,
+    "registerTouchPad": true,
+    "registerTouchScreen": true,
+    "minimumPointDistance": 20,
+    "isOrderByLocation": true,
+    "initialTimeout": 0
+  },
+  "environment": {
+    "screens": [
+      {
+        "deviceName": "\\\\.\\DISPLAY1",
+        "primary": true,
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "orientation": 0,
+    "pointerSize": 8
+  },
+  "devices": [],
+  "events": [
+    {
+      "t": 0,
+      "tickCount": 1000000,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 300,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "down",
+      "button": "Right",
+      "x": 800,
+      "y": 300,
+      "mouseData": 0
+    },
+    {
+      "t": 8,
+      "tickCount": 1000008,
+      "type": "mouse",
+      "cursorX": 805,
+      "cursorY": 302,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "move",
+      "x": 805,
+      "y": 302,
+      "mouseData": 0
+    },
+    {
+      "t": 16,
+      "tickCount": 1000016,
+      "type": "mouse",
+      "cursorX": 805,
+      "cursorY": 302,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "up",
+      "button": "Right",
+      "x": 805,
+      "y": 302,
+      "mouseData": 0
+    }
+  ]
+}

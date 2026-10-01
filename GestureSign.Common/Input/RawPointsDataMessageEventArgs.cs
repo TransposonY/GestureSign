@@ -21,6 +21,9 @@ namespace GestureSign.Common.Input
         public List<RawData> RawData { get; set; }
         public Devices SourceDevice { get; set; }
 
+        /// <summary>Touchpad only: the physical (click-pad) button is pressed in this frame.</summary>
+        public bool ButtonDown { get; set; }
+
         #endregion
     }
 }

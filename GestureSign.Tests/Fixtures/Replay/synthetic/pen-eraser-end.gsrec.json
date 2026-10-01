@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "source": "synthetic",
+  "description": "Pen: inverted (eraser end) hover draws (PenGestureButton = invert + in range).",
+  "settings": {
+    "drawingButton": "None",
+    "penGestureButton": 10,
+    "ignoreTouchInputWhenUsingPen": true,
+    "registerTouchPad": true,
+    "registerTouchScreen": true,
+    "minimumPointDistance": 20,
+    "isOrderByLocation": true,
+    "initialTimeout": 0
+  },
+  "environment": {
+    "screens": [
+      {
+        "deviceName": "\\\\.\\DISPLAY1",
+        "primary": true,
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "orientation": 0,
+    "pointerSize": 8
+  },
+  "devices": [
+    {
+      "id": 1,
+      "name": "\\\\?\\HID#VID_04F3&PID_2B7C&Col03#5&2b3c4d5e&0&0002#{4d1e55b2-f16f-11cf-88cb-001111000030}",
+      "usagePage": 13,
+      "usage": 2,
+      "vendorId": 1267,
+      "productId": 11132,
+      "versionNumber": 256,
+      "preparsedData": "SGlkUCBLRFICAA0AAAAAAAAACgAKAAoACgAAAAoAAAAKAAAACgAAABAEAgANAAIDAQABAAEAAQACAAAAAgABAA0AIAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABFAEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0AAgIBAAEAAQABAAIAAAACAAEADQAgAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAPAAAAAAAAAAAAAEAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQACAQEAAQABAAEAAgAAAAIAAQANACAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARABEAAAAAAAAAAAAAgACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAIAAQABAAEAAQACAAAAAgABAA0AIAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCAEIAAAAAAAAAAAADAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0AAgUBAAEAAQABAAIAAAACAAEADQAgAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADIAMgAAAAAAAAAAAAQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQACABAAAQACABAAAgAAAAQAAQANACAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAwAAAAAAAAAAAABQAFAAAAAAAAAAAA+FIAAAAAAAD4UgAAEwAAAA0AAAABAAIAEAABAAQAEAACAAAABgABAA0AIAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxADEAAAAAAAAAAAAGAAYAAAAAAAAAAABsPgAAAAAAAGw+AAATAAAADQAAAA0AAgAQAAEABgAQAAIAAAAIAAEADQAgAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAMAAAAAAAAAAAAAcABwAAAAAAAAAAAP8AAAAAAAAAAAAAAAAAAAAAAAAADQACAAgAAQAIAAgAAgAAAAkAAQANACAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPQA9AAAAAAAAAAAACAAIAAAAAACB////fwAAAAAAAAAAAAAAAAAAAAAAAAANAAIACAABAAkACAACAAAACgABAA0AIAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+AD4AAAAAAAAAAAAJAAkAAAAAAIH///9/AAAAAAAAAAAAAAAAAAAAAAAAAAIADQAAAAEAAAABAAEAAAAgAA0AAAAAAAAAAAAAAAAA"
+    }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "tickCount": 1000000,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KXwMAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 8,
+      "tickCount": 1000008,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KboSAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 16,
+      "tickCount": 1000016,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KfgYAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 24,
+      "tickCount": 1000024,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KTYfAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 32,
+      "tickCount": 1000032,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KXQlAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 40,
+      "tickCount": 1000040,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AiR8KbIrAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    },
+    {
+      "t": 48,
+      "tickCount": 1000048,
+      "type": "hid",
+      "cursorX": 960,
+      "cursorY": 540,
+      "device": 1,
+      "sizeHid": 10,
+      "count": 1,
+      "data": "AgB8KbIrAAAAAA==",
+      "x": 0,
+      "y": 0,
+      "mouseData": 0
+    }
+  ]
+}

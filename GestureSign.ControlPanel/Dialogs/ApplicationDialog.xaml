@@ -21,7 +21,7 @@
                     BorderBrush="{StaticResource AccentColorBrush}"
                     Loaded="ApplicationDialog_OnLoaded"
                     ResizeMode="CanMinimize"
-                    MaxHeight="400"
+                    MaxHeight="480"
                     AllowDrop="True">
     <controls:MetroWindow.Resources>
         <converters:MatchStringConverter x:Key="MatchStringConverter" />
@@ -110,6 +110,39 @@
                      FontSize="14"
                      Text="{Binding ElementName=AppDialog,Path=ApplicationListViewItem.WindowTitle,Mode=TwoWay}"
                      Margin="10,5,10,0" />
+            <TextBlock x:Name="ApplicationIconTextBlock"
+                       HorizontalAlignment="Left"
+                       Text="{localization:LocalisedText ApplicationDialog.Icon}"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="10,5,0,0" />
+            <StackPanel Orientation="Horizontal"
+                        Margin="10,5,10,0">
+                <Border Width="48"
+                        Height="48"
+                        BorderBrush="{StaticResource MahApps.Brushes.Gray7}"
+                        BorderThickness="1">
+                    <Image x:Name="ApplicationIconPreview"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           Margin="2" />
+                </Border>
+                <StackPanel VerticalAlignment="Center"
+                            Margin="10,0,0,0">
+                    <Button x:Name="ChooseIconButton"
+                            Content="{localization:LocalisedText ApplicationDialog.ChooseIcon}"
+                            Click="ChooseIconButton_Click"
+                            FontSize="14"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,5" />
+                    <Button x:Name="ClearIconButton"
+                            Content="{localization:LocalisedText ApplicationDialog.ClearIcon}"
+                            Click="ClearIconButton_Click"
+                            FontSize="14"
+                            HorizontalAlignment="Left" />
+                </StackPanel>
+            </StackPanel>
+
         </StackPanel>
         <StackPanel Grid.Row="0"
                     Grid.Column="1"

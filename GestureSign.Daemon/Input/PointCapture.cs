@@ -31,20 +31,22 @@ namespace GestureSign.Daemon.Input
         private const uint WINEVENT_SKIPOWNPROCESS = 0x0002; // Don't call back for events on installer's process
         private const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
 
+        private readonly IInputSettings _settings;
+        private readonly ICaptureHost _host;
+
         // Create new Touch hook control to capture global input from Touch, and create an event translator to get formal events
         private readonly PointEventTranslator _pointEventTranslator;
         private readonly InputProvider _inputProvider;
         private readonly PointerInputTargetWindow _pointerInputTargetWindow;
         private readonly List<IPointPattern> _pointPatternCache = new List<IPointPattern>();
-        private readonly System.Threading.Timer _blockTouchDelayTimer;
+        private readonly ICaptureTimer _blockTouchDelayTimer;
         private SurfaceForm _surfaceForm;
 
-        private System.Threading.Timer _initialTimeoutTimer;
-        SynchronizationContext _currentContext;
+        private ICaptureTimer _initialTimeoutTimer;
 
         private Dictionary<int, List<Point>> _pointsCaptured;
         // Create variable to hold the only allowed instance of this class
-        static readonly PointCapture _Instance = new PointCapture();
+        private static PointCapture _instance;
 
         private CaptureMode _mode = CaptureMode.Normal;
         private volatile CaptureState _state;
@@ -78,8 +80,10 @@ namespace GestureSign.Daemon.Input
 
         public LowLevelMouseHook MouseHook
         {
-            get { return _inputProvider.LowLevelMouseHook; }
+            get { return _inputProvider?.LowLevelMouseHook; }
         }
+
+        internal PointEventTranslator Translator => _pointEventTranslator;
 
         public bool TemporarilyDisableCapture { get; set; }
 
@@ -187,14 +191,14 @@ namespace GestureSign.Daemon.Input
 
         public static PointCapture Instance
         {
-            get { return _Instance; }
+            get { return _instance ?? (_instance = new PointCapture()); }
         }
 
         #endregion
 
         #region Constructors
 
-        protected PointCapture()
+        protected PointCapture() : this(AppConfigInputSettings.Instance, new SystemCaptureHost())
         {
             _surfaceForm = new SurfaceForm();
 
@@ -210,18 +214,13 @@ namespace GestureSign.Daemon.Input
             };
 
             _inputProvider = new InputProvider();
-            _pointEventTranslator = new PointEventTranslator(_inputProvider);
-            _pointEventTranslator.PointDown += (PointEventTranslator_PointDown);
-            _pointEventTranslator.PointUp += (PointEventTranslator_PointUp);
-            _pointEventTranslator.PointMove += (PointEventTranslator_PointMove);
-
-            _currentContext = SynchronizationContext.Current;
+            _pointEventTranslator.Attach(_inputProvider);
 
             _winEventDele = WinEventProc;
             _winEventGch = GCHandle.Alloc(_winEventDele);
             _hWinEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_MINIMIZEEND, IntPtr.Zero, _winEventDele, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
-            if (AppConfig.UiAccess)
+            if (_settings.UiAccess)
             {
                 _pointerInputTargetWindow = new PointerInputTargetWindow();
                 ModeChanged += (o, e) =>
@@ -229,11 +228,25 @@ namespace GestureSign.Daemon.Input
                     if (e.Mode == CaptureMode.UserDisabled)
                         _pointerInputTargetWindow.BlockTouchInputThreshold = 0;
                 };
-                _blockTouchDelayTimer = new System.Threading.Timer(UpdateBlockTouchInputThresholdCallback, null, Timeout.Infinite, Timeout.Infinite);
+                _blockTouchDelayTimer = _host.CreateTimer(UpdateBlockTouchInputThresholdCallback);
                 ForegroundApplicationsChanged += PointCapture_ForegroundApplicationsChanged;
             }
 
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+        }
+
+        /// <summary>
+        /// Capture state machine without system input sources, overlay or hooks.
+        /// Feed it through <see cref="Translator"/>.
+        /// </summary>
+        internal PointCapture(IInputSettings settings, ICaptureHost host)
+        {
+            _settings = settings;
+            _host = host;
+            _pointEventTranslator = new PointEventTranslator(settings, () => InputPoints);
+            _pointEventTranslator.PointDown += (PointEventTranslator_PointDown);
+            _pointEventTranslator.PointUp += (PointEventTranslator_PointUp);
+            _pointEventTranslator.PointMove += (PointEventTranslator_PointMove);
         }
 
         #endregion
@@ -254,7 +267,8 @@ namespace GestureSign.Daemon.Input
                 }
                 _surfaceForm = null;
 
-                SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
+                if (_inputProvider != null)
+                    SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 if (_hWinEventHook != IntPtr.Zero)
                     UnhookWinEvent(_hWinEventHook);
                 if (_winEventGch.IsAllocated)
@@ -331,22 +345,22 @@ namespace GestureSign.Daemon.Input
         {
             if (State == CaptureState.Ready || State == CaptureState.Capturing || State == CaptureState.CapturingInvalid)
             {
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+                _host.SetHighPriority(true);
 
-                var timeout = AppConfig.InitialTimeout;
+                var timeout = _settings.InitialTimeout;
                 if (timeout > 0)
                 {
                     if (_initialTimeoutTimer == null)
                     {
-                        _initialTimeoutTimer = new System.Threading.Timer(InitialTimeoutCallback, null, Timeout.Infinite, Timeout.Infinite);
+                        _initialTimeoutTimer = _host.CreateTimer(InitialTimeoutCallback);
                     }
-                    _initialTimeoutTimer.Change(timeout, Timeout.Infinite);
+                    _initialTimeoutTimer.Change(timeout);
                 }
 
                 // Try to begin capture process, if capture started then don't notify other applications of a Point event, otherwise do
                 if (!TryBeginCapture(e.InputPointList))
                 {
-                    Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                    _host.SetHighPriority(false);
                 }
                 else e.Handled = Mode != CaptureMode.UserDisabled;
             }
@@ -375,7 +389,7 @@ namespace GestureSign.Daemon.Input
                     TemporarilyDisableCapture = false;
                     ToggleUserDisablePointCapture();
                 }
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                _host.SetHighPriority(false);
             }
             else if (State == CaptureState.CapturingInvalid && SourceDevice == Devices.Mouse)
             {
@@ -389,27 +403,9 @@ namespace GestureSign.Daemon.Input
                         Console.WriteLine($"{t.Exception.InnerException.GetType().Name}: {t.Exception.InnerException.Message}");
                     });
 
-                    var clickAsync = Task.Factory.StartNew(delegate
+                    var clickAsync = _host.RunInBackground(delegate
                     {
-                        InputSimulator simulator = new InputSimulator();
-                        switch (AppConfig.DrawingButton)
-                        {
-                            case MouseActions.Left:
-                                simulator.Mouse.LeftButtonClick();
-                                break;
-                            case MouseActions.Middle:
-                                simulator.Mouse.MiddleButtonClick();
-                                break;
-                            case MouseActions.Right:
-                                simulator.Mouse.RightButtonClick();
-                                break;
-                            case MouseActions.XButton1:
-                                simulator.Mouse.XButtonClick(1);
-                                break;
-                            case MouseActions.XButton2:
-                                simulator.Mouse.XButtonClick(2);
-                                break;
-                        }
+                        _host.SimulateMouseClick(_settings.DrawingButton);
                         State = CaptureState.Ready;
                     }).ContinueWith(observeExceptionsTask, TaskContinuationOptions.OnlyOnFaulted);
 
@@ -419,18 +415,18 @@ namespace GestureSign.Daemon.Input
                 {
                     State = CaptureState.Ready;
                 }
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                _host.SetHighPriority(false);
             }
             else if (State == CaptureState.TriggerFired)
             {
                 State = CaptureState.Ready;
                 e.Handled = Mode != CaptureMode.UserDisabled;
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+                _host.SetHighPriority(false);
             }
 
             UpdateBlockTouchInputThreshold();
             if (_initialTimeoutTimer != null)
-                _initialTimeoutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                _initialTimeoutTimer.Change(Timeout.Infinite);
         }
 
         #endregion
@@ -439,67 +435,43 @@ namespace GestureSign.Daemon.Input
 
         private void UpdateBlockTouchInputThreshold(int? threshold = null)
         {
-            if (!AppConfig.UiAccess) return;
+            if (!_settings.UiAccess) return;
 
             if (threshold != null)
                 _blockTouchInputThreshold = threshold;
             if (_blockTouchInputThreshold != null)
-                _blockTouchDelayTimer.Change(100, Timeout.Infinite);
+                _blockTouchDelayTimer.Change(100);
         }
 
-        private void UpdateBlockTouchInputThresholdCallback(object o)
+        private void UpdateBlockTouchInputThresholdCallback()
         {
             if (!_blockTouchInputThreshold.HasValue) return;
 
-            _currentContext.Post((state) =>
-            {
-                _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.GetValueOrDefault();
-                _blockTouchInputThreshold = null;
-            }, null);
+            _pointerInputTargetWindow.BlockTouchInputThreshold = _blockTouchInputThreshold.GetValueOrDefault();
+            _blockTouchInputThreshold = null;
         }
 
-        private void InitialTimeoutCallback(object o)
+        private void InitialTimeoutCallback()
         {
-            _currentContext.Post((state) =>
-            {
-                if (State != CaptureState.CapturingInvalid) return;
+            if (State != CaptureState.CapturingInvalid) return;
 
-                try
+            try
+            {
+                if (SourceDevice == Devices.TouchScreen && _pointerInputTargetWindow != null)
                 {
-                    if (SourceDevice == Devices.TouchScreen && _pointerInputTargetWindow != null)
-                    {
-                        if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
-                            _pointerInputTargetWindow.TemporarilyDisable();
-                    }
-                    else if (SourceDevice == Devices.Mouse)
-                    {
-                        InputSimulator simulator = new InputSimulator();
-                        switch (AppConfig.DrawingButton)
-                        {
-                            case MouseActions.Left:
-                                simulator.Mouse.LeftButtonDown();
-                                break;
-                            case MouseActions.Middle:
-                                simulator.Mouse.MiddleButtonDown();
-                                break;
-                            case MouseActions.Right:
-                                simulator.Mouse.RightButtonDown();
-                                break;
-                            case MouseActions.XButton1:
-                                simulator.Mouse.XButtonDown(1);
-                                break;
-                            case MouseActions.XButton2:
-                                simulator.Mouse.XButtonDown(2);
-                                break;
-                        }
-                    }
-                    State = CaptureState.Ready;
+                    if (_pointerInputTargetWindow.BlockTouchInputThreshold > 1)
+                        _pointerInputTargetWindow.TemporarilyDisable();
                 }
-                catch
+                else if (SourceDevice == Devices.Mouse)
                 {
-                    State = CaptureState.Ready;
+                    _host.SimulateMouseButtonDown(_settings.DrawingButton);
                 }
-            }, null);
+                State = CaptureState.Ready;
+            }
+            catch
+            {
+                State = CaptureState.Ready;
+            }
         }
 
         private bool TryBeginCapture(List<InputPoint> firstPoint)
@@ -508,7 +480,7 @@ namespace GestureSign.Daemon.Input
             PointsCapturedEventArgs captureStartedArgs;
             if (SourceDevice == Devices.TouchPad)
             {
-                _touchPadStartPoint = System.Windows.Forms.Cursor.Position;
+                _touchPadStartPoint = _host.CursorPosition;
                 captureStartedArgs = new PointsCapturedEventArgs(firstPoint.Select(p => new List<Point>() { p.Point }).ToList(), new List<Point>() { _touchPadStartPoint });
             }
             else
@@ -526,7 +498,7 @@ namespace GestureSign.Daemon.Input
 
             // Clear old gesture from point list so we can start adding the new captures points to the list 
             _pointsCaptured = new Dictionary<int, List<Point>>(firstPoint.Count);
-            if (AppConfig.IsOrderByLocation)
+            if (_settings.IsOrderByLocation)
             {
                 foreach (var rawData in firstPoint.OrderBy(p => p.Point.X))
                 {
@@ -569,15 +541,16 @@ namespace GestureSign.Daemon.Input
                 _pointPatternCache.Clear();
                 _pointPatternCache.Add(new PointPattern(_pointsCaptured.Values));
 
-                if (!NamedPipe.SendMessageAsync(IpcCommands.GotGesture, Constants.ControlPanel, _pointPatternCache.Select(p => p.Points).ToArray(), false).Result)
+                if (!_host.SendTrainingGesture(_pointPatternCache.Select(p => p.Points).ToArray()))
                     Mode = CaptureMode.Normal;
             }
 
             // Fire recognized event if we found a gesture match, otherwise throw not recognized event
-            if (GestureManager.Instance.GestureName != null)
+            string gestureName = _host.RecognizedGestureName;
+            if (gestureName != null)
             {
                 List<Point> capturedPoints = SourceDevice == Devices.TouchPad ? new List<Point>() { _touchPadStartPoint } : pointsInformation.FirstCapturedPoints;
-                OnGestureRecognized(new RecognitionEventArgs(GestureManager.Instance.GestureName, pointsInformation.Points, capturedPoints, _pointsCaptured.Keys.ToList()));
+                OnGestureRecognized(new RecognitionEventArgs(gestureName, pointsInformation.Points, capturedPoints, _pointsCaptured.Keys.ToList()));
             }
             //else
             //    OnGestureNotRecognized(new RecognitionEventArgs(pointsInformation.Points, pointsInformation.FirstCapturedPoints, _pointsCaptured.Keys.ToList()));
@@ -596,7 +569,7 @@ namespace GestureSign.Daemon.Input
         private void AddPoint(List<InputPoint> point)
         {
             bool getNewPoint = false;
-            int threshold = AppConfig.MinimumPointDistance;
+            int threshold = _settings.MinimumPointDistance;
             foreach (var p in point)
             {
                 // Don't accept point if it's within specified distance of last point unless it's the first point

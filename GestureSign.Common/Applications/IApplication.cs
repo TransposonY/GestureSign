@@ -15,6 +15,8 @@ namespace GestureSign.Common.Applications
         string MatchString { get; set; }
         bool IsRegEx { get; set; }
         string Group { get; set; }
+        byte[] Icon { get; set; }
+
 
         void AddAction(IAction Action);
         void Insert(int index, IAction action);

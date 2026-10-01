@@ -39,7 +39,6 @@
     <Store>Windows应用商店版</Store>
     <HelpPageUrl>https://zh.gesturesign.win/#/guide</HelpPageUrl>
     <Version>版本：  </Version>
-    <ReleaseDate>发布时间：  </ReleaseDate>
     <Information>作者:   TransposonY
 发现问题或建议欢迎反馈：
 553078206@qq.com
@@ -83,6 +82,11 @@ QQ交流群：576981420
     <LimitNumberOfFingers>手指数限制</LimitNumberOfFingers>
     <LimitNumberOfFingersInfo>至少 {0} 根手指</LimitNumberOfFingersInfo>
     <MatchActivatedWindow>匹配当前激活的窗口</MatchActivatedWindow>
+    <Icon>图标</Icon>
+    <ChooseIcon>选择图片...</ChooseIcon>
+    <ClearIcon>清除图标</ClearIcon>
+    <IconFileFilter>图片和图标文件</IconFileFilter>
+
     <Messages>
       <EmptyStringTitle>字段为空</EmptyStringTitle>
       <EmptyString>匹配字段不能为空，请重新输入匹配字段</EmptyString>
@@ -163,6 +167,26 @@ QQ交流群：576981420
     <Down>向下滑</Down>
     <Fingers>{0}根手指</Fingers>
     <Sort>排列方式</Sort>
+    <Search>搜索手势或命令...</Search>
+    <FingerCount>手指</FingerCount>
+    <AllFingers>全部</AllFingers>
+    <SixOrMoreFingers>6+</SixOrMoreFingers>
+    <Applications>应用程序</Applications>
+    <NewApplication>新建应用程序</NewApplication>
+    <MoveUp>上移</MoveUp>
+    <MoveDown>下移</MoveDown>
+    <RibbonApplication>应用程序</RibbonApplication>
+    <RibbonAction>动作</RibbonAction>
+    <RibbonFilter>按手指数筛选</RibbonFilter>
+    <RibbonBackup>备份</RibbonBackup>
+    <Enabled>启用</Enabled>
+    <ColumnName>名称</ColumnName>
+    <ColumnGesture>手势</ColumnGesture>
+    <ColumnCommand>命令</ColumnCommand>
+    <ColumnOn>启用</ColumnOn>
+    <ClickToSelectGesture>点击选择手势</ClickToSelectGesture>
+    <ActionsSummary>{0} 个动作</ActionsSummary>
+    <FingersStatus>手指: {0}</FingersStatus>
     <Messages>
       <DeleteConfirmTitle>删除确认</DeleteConfirmTitle>
       <DeleteCommandConfirm>确定要删除这 {0} 个命令吗？</DeleteCommandConfirm>
@@ -195,6 +219,45 @@ QQ交流群：576981420
     <ImportGesture>导入手势文件</ImportGesture>
     <GestureGroupHeader>{0}指手势 ({1}个)</GestureGroupHeader>
     <Applications>程序</Applications>
+    <DescriptionColumn>描述</DescriptionColumn>
+    <Filter>
+      <Input>输入</Input>
+      <All>全部</All>
+      <MouseOrOneFinger>鼠标 / 单指</MouseOrOneFinger>
+      <Fingers>{0}指</Fingers>
+      <FiveOrMoreFingers>5指以上</FiveOrMoreFingers>
+      <Shape>形状</Shape>
+      <AnyShape>不限</AnyShape>
+      <Line>直线</Line>
+      <Curve>曲线和拐角</Curve>
+      <Loop>环形</Loop>
+      <WithDot>带圆点</WithDot>
+      <WithDotInfo>仅显示有一根手指保持不动（圆点）的手势</WithDotInfo>
+      <AnyApplication>所有程序</AnyApplication>
+      <UsedBy>使用程序</UsedBy>
+      <SearchDescription>搜索描述...</SearchDescription>
+      <Showing>显示 {0} / {1}</Showing>
+      <Clear>清除筛选</Clear>
+      <NoMatches>没有符合筛选条件的手势。</NoMatches>
+    </Filter>
+    <Description>
+      <Mouse>鼠标 / 单指</Mouse>
+      <Fingers>{0}指</Fingers>
+      <WithDot>带圆点</WithDot>
+      <Line>直线</Line>
+      <Curve>曲线</Curve>
+      <Loop>环形</Loop>
+      <Right>向右</Right>
+      <UpRight>向右上</UpRight>
+      <Up>向上</Up>
+      <UpLeft>向左上</UpLeft>
+      <Left>向左</Left>
+      <DownLeft>向左下</DownLeft>
+      <Down>向下</Down>
+      <DownRight>向右下</DownRight>
+      <UsedBy>使用程序：{0}</UsedBy>
+      <Unused>未被任何动作使用</Unused>
+    </Description>
     <MouseActions>
       <None>未设置</None>
       <WheelForward>向前滚动</WheelForward>
@@ -212,6 +275,37 @@ QQ交流群：576981420
       <ImportComplete>已忽略 {0} 个已存在的手势，添加了 {1} 新个手势</ImportComplete>
     </Messages>
   </Gesture>
+  <ContinuousGesture>
+    <Header>连续手势</Header>
+    <New>新建</New>
+    <Name>名称</Name>
+    <Fingers>手指数</Fingers>
+    <Direction>方向</Direction>
+    <UsedBy>使用者</UsedBy>
+    <Empty>还没有连续手势。点击“新建”创建多指滑动手势并将其绑定到动作。</Empty>
+    <Dialog>
+      <NewTitle>新建连续手势</NewTitle>
+      <EditTitle>编辑连续手势</EditTitle>
+      <NameWatermark>请输入名称</NameWatermark>
+      <Motion>动作方式</Motion>
+      <BoundActions>已绑定的动作</BoundActions>
+      <NoBoundActions>尚未绑定任何动作</NoBoundActions>
+      <RemoveBinding>移除</RemoveBinding>
+      <Application>程序</Application>
+      <Action>动作</Action>
+      <AddBinding>添加</AddBinding>
+      <CurrentlyBound>{0}  (当前：{1})</CurrentlyBound>
+      <ReplaceHint>每个动作最多只能有一个连续手势，在此绑定将替换其当前的连续手势。</ReplaceHint>
+    </Dialog>
+    <Messages>
+      <DeleteConfirmTitle>删除连续手势</DeleteConfirmTitle>
+      <DeleteConfirm>确定删除“{0}”吗？使用它的动作将不再响应连续手势。</DeleteConfirm>
+      <InvalidTitle>无法保存</InvalidTitle>
+      <EmptyName>请输入名称。</EmptyName>
+      <DuplicateName>已存在名为“{0}”的连续手势。</DuplicateName>
+      <DuplicateMotion>“{0}”已使用相同的手指数和方向。</DuplicateMotion>
+    </Messages>
+  </ContinuousGesture>
   <RuningApplicationsFlyout>
     <Title>选择运行中的窗口</Title>
   </RuningApplicationsFlyout>
@@ -232,6 +326,16 @@ QQ交流群：576981420
   <Options>
     <Header>选项</Header>
     <Language>语言（重启生效）</Language>
+    <LanguageTitle>语言</LanguageTitle>
+    <LanguageHint>重启 GestureSign 后生效</LanguageHint>
+    <VisualFeedbackWidthLabel>轨迹宽度</VisualFeedbackWidthLabel>
+    <MinimumPointDistanceLabel>最小点距</MinimumPointDistanceLabel>
+    <Sections>
+      <InputDevices>输入设备</InputDevices>
+      <GestureTrail>手势轨迹</GestureTrail>
+      <Recognition>识别</Recognition>
+      <General>常规</General>
+    </Sections>
     <Opacity>不透明度 </Opacity>
     <VisualFeedbackWidth>轨迹宽度 {0:0} px</VisualFeedbackWidth>
     <Off>关闭</Off>
@@ -248,6 +352,8 @@ QQ交流群：576981420
     <DrawingButton>鼠标手势键：</DrawingButton>
     <TouchScreen>触屏手势</TouchScreen>
     <TouchPad>启用精确式触摸板手势</TouchPad>
+    <TouchPadTapToClick>单指轻点以单击</TouchPadTapToClick>
+    <TouchPadTapToClickTip>请在 Windows 触摸板设置中关闭“用单指点击以单击”。之后 GestureSign 仅在单指轻点时单击，多指轻点（例如一指按住、另一指轻点）只触发对应手势。</TouchPadTapToClickTip>
     <PenGesture>触控笔手势</PenGesture>
     <DeviceNotFound>（未找到可用设备）</DeviceNotFound>
     <PenGestureButtonDescription>请选择画出手势的方式:</PenGestureButtonDescription>
@@ -275,6 +381,7 @@ QQ交流群：576981420
       <OffLabel>隐藏</OffLabel>
     </ShowTrayIconSwitch>
     <GestureTrail>显示手势轨迹</GestureTrail>
+    <HideTwoFingerTrail>隐藏双指手势轨迹</HideTwoFingerTrail>
     <Messages>
       <LoadSettingErrorTitle>错误</LoadSettingErrorTitle>
       <LoadSettingError>无法载入设置</LoadSettingError>

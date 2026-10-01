@@ -53,6 +53,8 @@ namespace GestureSign.ControlPanel.ViewModel
 
         public int PatternCount { get; set; }
 
+        public string SearchKey { get; set; }
+
         public ICommand Command { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

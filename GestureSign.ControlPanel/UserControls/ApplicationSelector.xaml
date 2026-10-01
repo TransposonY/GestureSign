@@ -15,6 +15,8 @@
     <UserControl.Resources>
         <converters:ApplicationListHeaderConverter x:Key="ApplicationListHeaderConverter" />
         <converters:CommandConverter x:Key="CommandConverter" />
+        <converters:ApplicationIconConverter x:Key="ApplicationIconConverter" />
+
         <converters:GestureButtonImageConverter x:Key="GestureButtonImageConverter" />
         <converters:MatchUsing2StringConverter x:Key="MatchUsingToStringConverter" />
         <CollectionViewSource x:Key="ApplicationViewSource"
@@ -95,7 +97,7 @@
     <TabControl x:Name="AppTabControl">
         <TabItem Header="{Binding ElementName=AppListBox,Path=Items.Count}"
                  HeaderStringFormat="{localization:LocalisedText ExportImportDialog.ApplicationHeader}"
-                 controls:ControlsHelper.HeaderFontSize="22">
+                 FontSize="22">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -156,16 +158,24 @@
                             <Grid Height="50">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="36" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
                                 <CheckBox x:Name="AppCheckBox"
                                           IsChecked="{Binding IsSelected,Mode=TwoWay}"
                                           Margin="10,0,0,0"
                                           VerticalAlignment="Stretch" />
+                                <Image Source="{Binding Application.Icon, Converter={StaticResource ApplicationIconConverter}}"
+                                       Width="28"
+                                       Height="28"
+                                       Margin="2,0,0,0"
+                                       VerticalAlignment="Center"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Grid.Column="1" />
                                 <TextBlock Text="{Binding Application.Name}"
                                            VerticalAlignment="Center"
                                            Margin="5,0,0,0"
-                                           Grid.Column="1" />
+                                           Grid.Column="2" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -291,7 +301,7 @@
         </TabItem>
         <TabItem Header="{Binding ElementName=IgnoredListBox,Path=Items.Count}"
                  HeaderStringFormat="{localization:LocalisedText ExportImportDialog.IgnoreHeader}"
-                 controls:ControlsHelper.HeaderFontSize="22">
+                 FontSize="22">
             <ListBox x:Name="IgnoredListBox"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Source={StaticResource IgnoredAppViewSource}}">

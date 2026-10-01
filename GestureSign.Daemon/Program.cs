@@ -44,6 +44,7 @@ namespace GestureSign.Daemon
                         TriggerManager.Instance.Load();
 
                         GestureManager.Instance.Load(PointCapture.Instance);
+                        ContinuousGestureManager.Instance.LoadingTask.Wait();
                         ApplicationManager.Instance.Load(PointCapture.Instance);
                         // Create host control class and pass to plugins
                         HostControl hostControl = new HostControl()

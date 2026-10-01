@@ -1,231 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9DAFB30D-A24B-4A0F-8C72-49FC3142DA6B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GestureSign.Daemon</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>GestureSign</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
-    <PublishUrl>..\Publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uiAccessRelease|AnyCPU'">
-    <OutputPath>..\bin\uiAccessRelease\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>GestureSign.Daemon</RootNamespace>
+    <Title>GestureSignDaemon</Title>
+    <AssemblyTitle>GestureSignDaemon</AssemblyTitle>
+    <Description>GestureSign Daemon</Description>
+    <Company>TransposonY</Company>
+    <Product>GestureSign</Product>
     <ApplicationIcon>Resources\normal.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Centennial|AnyCPU'">
-    <OutputPath>..\bin\Centennial\</OutputPath>
-    <DefineConstants>TRACE;ConvertedDesktopApp</DefineConstants>
+    <ApplicationManifest>Properties\app.common.manifest</ApplicationManifest>
+    <ApplicationManifest Condition="'$(Configuration)' == 'uiAccessRelease'">Properties\app.uiAccessRelease.manifest</ApplicationManifest>
+    <OutputPath>..\bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Portable|AnyCPU'">
-    <OutputPath>..\bin\Portable\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  <PropertyGroup Condition="'$(Configuration)' == 'Centennial'">
+    <DefineConstants>$(DefineConstants);ConvertedDesktopApp</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
+    <ProjectReference Include="..\GestureSign.Common\GestureSign.Common.csproj" />
+    <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj" />
+    <ProjectReference Include="..\ManagedWinapi\ManagedWinapi.csproj" />
+    <ProjectReference Include="..\WindowsInput\WindowsInput.csproj" />
+    <ProjectReference Include="..\GestureSign.CorePlugins\GestureSign.CorePlugins.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\HidDevice.cs" />
-    <Compile Include="Input\IDevice.cs" />
-    <Compile Include="Input\InputPoint.cs" />
-    <Compile Include="Input\InputProvider.cs" />
-    <Compile Include="Input\InputPointsEventArgs.cs" />
-    <Compile Include="Input\MessageWindow.cs" />
-    <Compile Include="Input\TouchPadDevice.cs" />
-    <Compile Include="Input\TouchScreenDevice.cs" />
-    <Compile Include="Input\PenDevice.cs" />
-    <Compile Include="Native\DpiHelper.cs" />
-    <Compile Include="Native\RawInputDeclarations.cs" />
-    <Compile Include="Native\HidDeclarations.cs" />
-    <Compile Include="Native\HidReports.cs" />
-    <Compile Include="Native\NativeMethods.cs" />
-    <Compile Include="Native\PointerInfo.cs" />
-    <Compile Include="Filtration\PointerInputTargetWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Native\SafeUnmanagedMemoryHandle.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Surface\DiBitmap.cs" />
-    <Compile Include="MessageProcessor.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Input\PointCapture.cs" />
-    <Compile Include="Input\PointEventTranslator.cs" />
-    <Compile Include="Surface\SurfaceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TrayManager.cs" />
-    <Compile Include="Triggers\ContinuousGestureTrigger.cs" />
-    <Compile Include="Triggers\MouseTrigger.cs" />
-    <Compile Include="Triggers\TriggerFiredEventArgs.cs" />
-    <Compile Include="Triggers\HotKeyManager.cs" />
-    <Compile Include="Triggers\Trigger.cs" />
-    <Compile Include="Triggers\TriggerManager.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\app.common.manifest" />
-    <None Include="Properties\app.uiAccessRelease.manifest" />
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GestureSign.Common\GestureSign.Common.csproj">
-      <Project>{038047a4-e3f8-4b49-9762-7f63971b8319}</Project>
-      <Name>GestureSign.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GestureSign.PointPatterns\GestureSign.PointPatterns.csproj">
-      <Project>{69f91bd1-6986-4079-9537-ed1a1d8ebe06}</Project>
-      <Name>GestureSign.PointPatterns</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ManagedWinapi\ManagedWinapi.csproj">
-      <Project>{fbd3ec1e-47e2-4d2d-81c9-d6506125a09a}</Project>
-      <Name>ManagedWinapi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowsInput\WindowsInput.csproj">
-      <Project>{3549cd6f-80f8-450f-b99e-cf0a736b1f2a}</Project>
-      <Name>WindowsInput</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 和 x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Languages\Daemon\en.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Languages\Daemon\zh.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Languages\Daemon\*.xml" CopyToOutputDirectory="PreserveNewest" />
     <Resource Include="Resources\normal.ico" />
-    <None Include="Resources\normal_daemon.ico" />
-    <None Include="Resources\add.ico" />
-    <None Include="Resources\stop.ico" />
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DesignTime="True" DependentUpon="Resources.resx" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>del "$(ProjectDir)\Properties\app.manifest"
-
-if "$(ConfigurationName)"=="uiAccessRelease" (
-  copy "$(ProjectDir)\Properties\app.uiAccessRelease.manifest" "$(ProjectDir)\Properties\app.manifest"
-) else (
-  copy "$(ProjectDir)\Properties\app.common.manifest" "$(ProjectDir)\Properties\app.manifest"
-)</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

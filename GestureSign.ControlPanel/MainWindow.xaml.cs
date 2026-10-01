@@ -1,5 +1,7 @@
 ﻿using GestureSign.Common;
+using GestureSign.Common.Applications;
 using GestureSign.Common.Configuration;
+using GestureSign.Common.Gestures;
 using GestureSign.Common.Localization;
 using GestureSign.Common.Log;
 using GestureSign.ControlPanel.Common;
@@ -9,6 +11,7 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,13 +51,11 @@ namespace GestureSign.ControlPanel
 
         private void SetAboutInfo()
         {
-            string version = LocalizationProvider.Instance.GetTextValue("About.Version") +
-                             FileVersionInfo.GetVersionInfo(Application.ResourceAssembly.Location)
-                                 .FileVersion;
-            string releaseDate = LocalizationProvider.Instance.GetTextValue("About.ReleaseDate") +
-                                 new DateTime(2000, 1, 1).AddDays(Application.ResourceAssembly.GetName().Version.Build)
-                                     .AddSeconds(Application.ResourceAssembly.GetName().Version.Revision * 2);
-            this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0, version + "\r\n" + releaseDate + "\r\n");
+            string version = Application.ResourceAssembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                ?? Application.ResourceAssembly.GetName().Version.ToString();
+            this.AboutTextBox.Text = this.AboutTextBox.Text.Insert(0,
+                LocalizationProvider.Instance.GetTextValue("About.Version") + version + "\r\n");
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
@@ -64,7 +65,7 @@ namespace GestureSign.ControlPanel
                 var commandSource = sender as ICommandSource;
                 var uri = commandSource?.CommandParameter as string;
                 if (uri != null)
-                    Process.Start(uri);
+                    Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
             }
             catch (Exception exception)
             {
@@ -76,6 +77,22 @@ namespace GestureSign.ControlPanel
         private void SendFeedback_Click(object sender, RoutedEventArgs e)
         {
             SendFeedback();
+        }
+
+        private void QuickExport_Click(object sender, RoutedEventArgs e)
+        {
+            new ExportImportDialog(true, false, ApplicationManager.Instance.Applications, GestureManager.Instance.Gestures, ContinuousGestureManager.Instance.ContinuousGestures).ShowDialog();
+        }
+
+        private void QuickImport_Click(object sender, RoutedEventArgs e)
+        {
+            new DownloadWindow().Show();
+        }
+
+        private void ClearSearch_Click(object sender, RoutedEventArgs e)
+        {
+            AvailableActions.SearchText = string.Empty;
+            ActionSearchTextBox.Focus();
         }
 
         private bool ExistsNewerErrorLog()

@@ -1,0 +1,20 @@
+[
+  {"t":0,"stage":"raw","device":"Pen","contacts":[[0,6,384,540]]},
+  {"t":0,"stage":"capture","event":"started","firstPoints":[[384,540]]},
+  {"t":0,"stage":"translated","event":"down","device":"Pen","points":[[0,384,540]],"handled":true,"state":"CapturingInvalid"},
+  {"t":0,"stage":"host","effect":"priority:high"},
+  {"t":8,"stage":"raw","device":"Pen","contacts":[[0,6,576,540]]},
+  {"t":8,"stage":"translated","event":"move","device":"Pen","points":[[0,576,540]],"handled":false,"state":"Capturing"},
+  {"t":16,"stage":"raw","device":"Pen","contacts":[[0,6,768,540]]},
+  {"t":16,"stage":"translated","event":"move","device":"Pen","points":[[0,768,540]],"handled":false,"state":"Capturing"},
+  {"t":24,"stage":"raw","device":"Pen","contacts":[[0,6,960,540]]},
+  {"t":24,"stage":"translated","event":"move","device":"Pen","points":[[0,960,540]],"handled":false,"state":"Capturing"},
+  {"t":32,"stage":"raw","device":"Pen","contacts":[[0,6,1152,540]]},
+  {"t":32,"stage":"translated","event":"move","device":"Pen","points":[[0,1152,540]],"handled":false,"state":"Capturing"},
+  {"t":40,"stage":"raw","device":"Pen","contacts":[[0,6,1344,540]]},
+  {"t":40,"stage":"translated","event":"move","device":"Pen","points":[[0,1344,540]],"handled":false,"state":"Capturing"},
+  {"t":48,"stage":"raw","device":"Pen","contacts":[[0,0,1344,540]]},
+  {"t":48,"stage":"capture","event":"completed","strokes":[[[384,540],[576,540],[768,540],[960,540],[1152,540],[1344,540]]],"firstPoints":[[384,540]],"gesture":null},
+  {"t":48,"stage":"translated","event":"up","device":"Pen","points":[[0,1344,540]],"handled":true,"state":"Ready"},
+  {"t":48,"stage":"host","effect":"priority:normal"}
+]

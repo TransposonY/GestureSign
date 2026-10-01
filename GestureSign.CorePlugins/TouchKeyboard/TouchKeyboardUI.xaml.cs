@@ -53,6 +53,7 @@ namespace GestureSign.CorePlugins.TouchKeyboard
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
+                UseShellExecute = true,
                 FileName =
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles) +
                     @"\Microsoft Shared\ink\TabTip.exe"

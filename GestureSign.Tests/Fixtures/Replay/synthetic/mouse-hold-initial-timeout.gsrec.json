@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "source": "synthetic",
+  "description": "Mouse: holding the drawing button still past InitialTimeout hands the press back.",
+  "settings": {
+    "drawingButton": "Right",
+    "penGestureButton": 0,
+    "ignoreTouchInputWhenUsingPen": true,
+    "registerTouchPad": true,
+    "registerTouchScreen": true,
+    "minimumPointDistance": 20,
+    "isOrderByLocation": true,
+    "initialTimeout": 300
+  },
+  "environment": {
+    "screens": [
+      {
+        "deviceName": "\\\\.\\DISPLAY1",
+        "primary": true,
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "orientation": 0,
+    "pointerSize": 8
+  },
+  "devices": [],
+  "events": [
+    {
+      "t": 0,
+      "tickCount": 1000000,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 300,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "down",
+      "button": "Right",
+      "x": 800,
+      "y": 300,
+      "mouseData": 0
+    },
+    {
+      "t": 508,
+      "tickCount": 1000508,
+      "type": "mouse",
+      "cursorX": 800,
+      "cursorY": 300,
+      "device": 0,
+      "sizeHid": 0,
+      "count": 0,
+      "mouseMessage": "up",
+      "button": "Right",
+      "x": 800,
+      "y": 300,
+      "mouseData": 0
+    }
+  ]
+}

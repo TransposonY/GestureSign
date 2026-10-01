@@ -9,7 +9,6 @@
                       xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
                       xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
                       xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
-                      xmlns:common="clr-namespace:GestureSign.ControlPanel.Common"
                       mc:Ignorable="d"
                       Title="{localization:LocalisedText ActionDialog.EditActionTitle}"
                       FlowDirection="{StaticResource DefaultFlowDirection}"
@@ -27,7 +26,6 @@
             <converters:GestureImageConverter x:Key="GestureImageConverter" />
             <ObjectDataProvider x:Key="MouseActionDescription"
                                 ObjectType="{x:Type viewModel:MouseActionDescription}" />
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
@@ -49,84 +47,14 @@
     <StackPanel>
         <TabControl>
             <TabItem Header="{localization:LocalisedText Gesture.Header}"
-                     controls:ControlsHelper.HeaderFontSize="18">
+                     FontSize="18">
                 <StackPanel>
                     <usercontrols:GestureSelector x:Name="GestureSelector"
                                                   CurrentGesture="{Binding CurrentGesture, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type controls:MetroWindow}, Mode=FindAncestor}}" />
-                    <controls:ToggleSwitch x:Name="ContinuousGestureSwitch"
-                                           Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                           Margin="20,0,0,0"
-                                           Header="{localization:LocalisedText ActionDialog.Continuous}"
-                                           OffLabel="{localization:LocalisedText Options.OffLabel}"
-                                           OnLabel="{localization:LocalisedText Options.OnLabel}"
-                                           HorizontalAlignment="Left" />
-                    <TextBlock x:Name="ContinuousGestureText"
-                               Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                               HorizontalAlignment="Center"
-                               FontSize="14" />
-                    <Slider x:Name="ContactCountSlider"
-                            Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                            common:SliderTools.MoveToPointOnDrag="True"
-                            ValueChanged="ContactCountSlider_ValueChanged"
-                            Minimum="2"
-                            Maximum="10"
-                            IsMoveToPointEnabled="True"
-                            Margin="0,10,0,0"
-                            Width="310"
-                            SmallChange="1"
-                            IsSnapToTickEnabled="True" />
-                    <ListBox x:Name="GestureListBox"
-                             Visibility="{Binding ElementName=ContinuousGestureSwitch,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"
-                             Margin="20,10,20,0"
-                             SelectedIndex="0"
-                             SelectionChanged="GestureListBox_SelectionChanged">
-                        <ListBox.Resources>
-                            <Style x:Key="DirectionPathStyle"
-                                   TargetType="Path">
-                                <Setter Property="Data"
-                                        Value="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
-                                <Setter Property="Fill"
-                                        Value="Black" />
-                                <Setter Property="Stretch"
-                                        Value="Uniform" />
-                                <Setter Property="Margin"
-                                        Value="20,10" />
-                                <Setter Property="Width"
-                                        Value="26" />
-                                <Setter Property="Height"
-                                        Value="26" />
-                            </Style>
-                        </ListBox.Resources>
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <Path Style="{StaticResource DirectionPathStyle}"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Path.RenderTransform>
-                                <RotateTransform Angle="270" />
-                            </Path.RenderTransform>
-                        </Path>
-                        <Path Style="{StaticResource DirectionPathStyle}"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Path.RenderTransform>
-                                <RotateTransform Angle="90" />
-                            </Path.RenderTransform>
-                        </Path>
-                        <Path Style="{StaticResource DirectionPathStyle}">
-                        </Path>
-                        <Path Style="{StaticResource DirectionPathStyle}"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Path.RenderTransform>
-                                <RotateTransform Angle="180" />
-                            </Path.RenderTransform>
-                        </Path>
-                    </ListBox>
                 </StackPanel>
             </TabItem>
             <TabItem Header="{localization:LocalisedText ActionDialog.Advanced}"
-                     controls:ControlsHelper.HeaderFontSize="18">
+                     FontSize="18">
                 <StackPanel>
                     <TextBlock x:Name="KeyboardHotKeyTextBlock"
                                Text="{localization:LocalisedText ActionDialog.KeyboardHotKey}"
@@ -136,7 +64,7 @@
                                HorizontalAlignment="Left" />
                     <controls:HotKeyBox x:Name="HotKeyTextBox"
                                         AreModifierKeysRequired="True"
-                                        Watermark="{localization:LocalisedText ActionDialog.HotKeyWatermark}"
+                                        controls:TextBoxHelper.Watermark="{localization:LocalisedText ActionDialog.HotKeyWatermark}"
                                         FontSize="14"
                                         Margin="20,5,100,0">
                     </controls:HotKeyBox>

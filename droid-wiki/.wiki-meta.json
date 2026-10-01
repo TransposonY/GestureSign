@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-09-29T15:49:52.976Z",
+  "commitHash": "15392172d6bdfd5f20d5ef86060be40e430edc78",
+  "branch": "redesign-ribbon-ui",
+  "pageCount": 36,
+  "topLevelSections": [
+    "overview",
+    "by-the-numbers",
+    "lore",
+    "fun-facts",
+    "how-to-contribute",
+    "apps",
+    "features",
+    "libraries",
+    "security",
+    "cleanup-opportunities",
+    "reference"
+  ],
+  "pageOrder": [
+    "overview/index.md",
+    "overview/architecture.md",
+    "overview/getting-started.md",
+    "overview/glossary.md",
+    "by-the-numbers.md",
+    "lore.md",
+    "fun-facts.md",
+    "how-to-contribute/index.md",
+    "how-to-contribute/development-workflow.md",
+    "how-to-contribute/testing.md",
+    "how-to-contribute/debugging.md",
+    "how-to-contribute/patterns-and-conventions.md",
+    "how-to-contribute/tooling.md",
+    "apps/index.md",
+    "apps/daemon/index.md",
+    "apps/control-panel/index.md",
+    "apps/input-recorder.md",
+    "features/index.md",
+    "features/device-gestures.md",
+    "features/application-aware-actions.md",
+    "features/plugin-actions.md",
+    "features/triggers.md",
+    "features/import-export.md",
+    "libraries/index.md",
+    "libraries/common.md",
+    "libraries/core-plugins.md",
+    "libraries/extra-plugins.md",
+    "libraries/point-patterns.md",
+    "libraries/managed-winapi.md",
+    "libraries/windows-input.md",
+    "security.md",
+    "cleanup-opportunities.md",
+    "reference/index.md",
+    "reference/configuration.md",
+    "reference/data-models.md",
+    "reference/dependencies.md"
+  ],
+  "videoOverview": {
+    "status": "skipped",
+    "warnings": [
+      "User declined video overview generation"
+    ]
+  }
+}
