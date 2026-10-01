@@ -220,22 +220,56 @@ QQ交流群：576981420
     <GestureGroupHeader>{0}指手势 ({1}个)</GestureGroupHeader>
     <Applications>程序</Applications>
     <DescriptionColumn>描述</DescriptionColumn>
+    <ExportGesture>导出手势...</ExportGesture>
+    <Browse>
+      <FindApplication>查找程序...</FindApplication>
+      <ByInput>按输入</ByInput>
+      <ByApplication>按程序</ByApplication>
+      <AllGestures>全部手势</AllGestures>
+      <Global>全局</Global>
+      <Unused>未使用</Unused>
+    </Browse>
+    <Draw>
+      <Hint>画出你记得的手势</Hint>
+      <Mouse>鼠标</Mouse>
+      <Clear>清除</Clear>
+      <BestMatches>最佳匹配</BestMatches>
+      <UpdatesAsYouDraw>随绘制实时更新</UpdatesAsYouDraw>
+      <Placeholder>在画板上画出手势，最接近的匹配会显示在这里。</Placeholder>
+      <Match>匹配 {0}%</Match>
+      <ActionsOne>1 个动作</ActionsOne>
+      <ActionsMany>{0} 个动作</ActionsMany>
+    </Draw>
+    <List>
+      <AllGestures>全部手势</AllGestures>
+      <AllMouse>全部鼠标 / 单指手势</AllMouse>
+      <AllFingers>全部{0}指手势</AllFingers>
+      <AllFivePlus>全部5指以上手势</AllFivePlus>
+      <Ranked>按相似度排序 · {0}</Ranked>
+      <Count>{0} 个手势</Count>
+      <Sort>排序：{0}</Sort>
+      <SortBest>最佳匹配</SortBest>
+      <SortMostUsed>使用最多</SortMostUsed>
+      <SortDefault>默认顺序</SortDefault>
+    </List>
+    <Inspector>
+      <Empty>选择一个手势，查看它的使用情况。</Empty>
+      <Edit>编辑手势</Edit>
+      <Selected>已选择 {0} 个手势</Selected>
+      <StrokeOne>1 条移动轨迹</StrokeOne>
+      <StrokeMany>{0} 条移动轨迹</StrokeMany>
+      <UsedByOne>被 1 个动作使用</UsedByOne>
+      <UsedBy>被 {0} 个动作使用</UsedBy>
+    </Inspector>
+    <Status>
+      <Selected>已选择 {0} 项</Selected>
+      <UsedBy>被 {0} 使用</UsedBy>
+      <NotUsed>没有动作使用</NotUsed>
+    </Status>
     <Filter>
-      <Input>输入</Input>
-      <All>全部</All>
       <MouseOrOneFinger>鼠标 / 单指</MouseOrOneFinger>
       <Fingers>{0}指</Fingers>
       <FiveOrMoreFingers>5指以上</FiveOrMoreFingers>
-      <Shape>形状</Shape>
-      <AnyShape>不限</AnyShape>
-      <Line>直线</Line>
-      <Curve>曲线和拐角</Curve>
-      <Loop>环形</Loop>
-      <WithDot>带圆点</WithDot>
-      <WithDotInfo>仅显示有一根手指保持不动（圆点）的手势</WithDotInfo>
-      <AnyApplication>所有程序</AnyApplication>
-      <UsedBy>使用程序</UsedBy>
-      <SearchDescription>搜索描述...</SearchDescription>
       <Showing>显示 {0} / {1}</Showing>
       <Clear>清除筛选</Clear>
       <NoMatches>没有符合筛选条件的手势。</NoMatches>

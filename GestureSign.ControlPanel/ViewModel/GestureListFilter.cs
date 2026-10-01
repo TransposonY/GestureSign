@@ -5,34 +5,24 @@ using GestureSign.ControlPanel.Common;
 
 namespace GestureSign.ControlPanel.ViewModel
 {
-    /// <summary>Which shape chip is selected on the Gesture tab.</summary>
-    public enum GestureShapeFilter
-    {
-        Any,
-        Line,
-        Curve,
-        Loop
-    }
-
-    /// <summary>Filter bar state of the Gesture tab and the rules that apply it to a <see cref="GestureItem"/>.</summary>
+    /// <summary>Rail selection of the Gesture tab (input and application) and the rules that apply it to a <see cref="GestureItem"/>.</summary>
     public sealed class GestureListFilter
     {
-        /// <summary>Gestures using this many contacts or more match the last finger chip.</summary>
+        /// <summary>Gestures using this many contacts or more match the last finger entry.</summary>
         public const int MaximumFingerChip = 5;
 
-        /// <summary>0 for every gesture, otherwise the number of fingers (the last chip means "or more").</summary>
+        /// <summary>0 for every gesture, otherwise the number of fingers (the last entry means "or more").</summary>
         public int Fingers { get; set; }
-        public GestureShapeFilter Shape { get; set; }
-        public bool DotOnly { get; set; }
 
         /// <summary>Exact application name, or null for any application.</summary>
         public string Application { get; set; }
 
-        public string[] Tokens { get; set; } = ActionListFilter.EmptyTokens;
+        /// <summary>Only gestures that no action uses.</summary>
+        public bool UnusedOnly { get; set; }
 
         public bool IsActive
         {
-            get { return Fingers != 0 || Shape != GestureShapeFilter.Any || DotOnly || Application != null || Tokens.Length != 0; }
+            get { return Fingers != 0 || Application != null || UnusedOnly; }
         }
 
         public bool Matches(GestureItem item)
@@ -40,10 +30,8 @@ namespace GestureSign.ControlPanel.ViewModel
             if (item == null)
                 return false;
             return MatchesFingers(item.PatternCount, Fingers)
-                && MatchesShape(item.Shape, Shape)
-                && (!DotOnly || item.HasDot)
                 && (Application == null || System.Array.IndexOf(item.ApplicationNames, Application) >= 0)
-                && ActionListFilter.MatchesKey(item.SearchKey, Tokens);
+                && (!UnusedOnly || item.ActionCount == 0);
         }
 
         public static bool MatchesFingers(int contacts, int selected)
@@ -55,18 +43,7 @@ namespace GestureSign.ControlPanel.ViewModel
             return contacts == selected;
         }
 
-        public static bool MatchesShape(GestureShape shape, GestureShapeFilter selected)
-        {
-            switch (selected)
-            {
-                case GestureShapeFilter.Line: return shape == GestureShape.Line;
-                case GestureShapeFilter.Curve: return shape == GestureShape.Curve;
-                case GestureShapeFilter.Loop: return shape == GestureShape.Loop;
-                default: return true;
-            }
-        }
-
-        /// <summary>The words a user can search for: "2 fingers, with dot, curve, up-right".</summary>
+        /// <summary>The words that describe a gesture: "2 fingers, with dot, curve, up-right".</summary>
         public static string Describe(GestureShapeInfo info)
         {
             var localization = LocalizationProvider.Instance;

@@ -1,0 +1,51 @@
+<UserControl x:Class="GestureSign.ControlPanel.UserControls.GestureSketchPad"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
+             mc:Ignorable="d"
+             d:DesignHeight="116"
+             d:DesignWidth="200"
+             Cursor="Cross"
+             Focusable="False">
+    <!-- A dashed drawing surface: the stroke is orange, the held-finger dot (when the input has more than one finger) is ink -->
+    <Grid x:Name="Surface"
+          Background="{StaticResource UiRibbonBrush}"
+          ClipToBounds="True"
+          SnapsToDevicePixels="True"
+          MouseLeftButtonDown="Surface_MouseLeftButtonDown"
+          MouseMove="Surface_MouseMove"
+          MouseLeftButtonUp="Surface_MouseLeftButtonUp">
+        <Rectangle RadiusX="8"
+                   RadiusY="8"
+                   Margin="1"
+                   Stroke="#FF9FB0C8"
+                   StrokeThickness="1.5"
+                   StrokeDashArray="4 3"
+                   IsHitTestVisible="False" />
+        <Ellipse x:Name="AnchorDot"
+                 Width="9"
+                 Height="9"
+                 Margin="18,18,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Fill="{StaticResource UiInkBrush}"
+                 IsHitTestVisible="False" />
+        <Canvas IsHitTestVisible="False">
+            <Polyline x:Name="Trail"
+                      Stroke="#FFF26B21"
+                      StrokeThickness="4"
+                      StrokeLineJoin="Round"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round" />
+        </Canvas>
+        <TextBlock Margin="0,0,0,8"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   FontSize="12"
+                   Foreground="{StaticResource UiMutedBrush}"
+                   IsHitTestVisible="False"
+                   Text="{localization:LocalisedText Gesture.Draw.Hint}" />
+    </Grid>
+</UserControl>

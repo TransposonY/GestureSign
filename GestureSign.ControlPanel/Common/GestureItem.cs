@@ -12,14 +12,16 @@ namespace GestureSign.ControlPanel.Common
         public int PatternCount { get; set; }
         public DrawingImage GestureImage { get; set; }
 
-        /// <summary>A finger is held in place (the dot) while the others move.</summary>
-        public bool HasDot { get; set; }
-        public GestureShape Shape { get; set; }
+        /// <summary>Actions (across all applications) that run when this gesture is drawn.</summary>
+        public int ActionCount { get; set; }
 
-        /// <summary>Plain-language summary, e.g. "2 fingers, with dot, curve, up-right". Shown in tooltips and searched by the filter bar.</summary>
+        /// <summary>Strokes of the first step that actually move (the others are held fingers, drawn as dots).</summary>
+        public int MovingStrokeCount { get; set; }
+
+        /// <summary>Plain-language summary, e.g. "2 fingers, with dot, curve, up-right". Shown in tooltips and the inspector.</summary>
         public string Description { get; set; }
 
-        /// <summary>Lower-cased, whitespace-free text the description search matches against.</summary>
-        public string SearchKey { get; set; }
+        /// <summary>0-100 similarity to the stroke drawn on the sketch pad; 0 while nothing is drawn. Read by the list's sort.</summary>
+        public double Similarity { get; set; }
     }
 }

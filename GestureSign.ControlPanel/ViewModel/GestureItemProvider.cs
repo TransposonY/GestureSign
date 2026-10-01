@@ -87,18 +87,20 @@ namespace GestureSign.ControlPanel.ViewModel
                 var gesture = (Gesture)g;
                 string result = string.Empty;
                 var applicationNames = new List<string>();
+                int actionCount = 0;
                 foreach (IApplication application in apps)
                 {
-                    if (application.Actions.Any(a => a.GestureName == gesture.Name))
+                    int used = application.Actions.Count(a => a.GestureName == gesture.Name);
+                    if (used > 0)
                     {
                         result += $" {application.Name},";
                         applicationNames.Add(application.Name);
+                        actionCount += used;
                     }
                 }
                 result = result.TrimEnd(',');
 
                 var shape = GestureShapeAnalyzer.Analyze(gesture.PointPatterns);
-                string description = GestureListFilter.Describe(shape);
 
                 GestureItem newItem = new GestureItem()
                 {
@@ -107,10 +109,9 @@ namespace GestureSign.ControlPanel.ViewModel
                     PatternCount = gesture?.PointPatterns.Max(p => p.Points.Length) ?? 0,
                     Applications = result,
                     ApplicationNames = applicationNames.ToArray(),
-                    HasDot = shape.HasDot,
-                    Shape = shape.Shape,
-                    Description = description,
-                    SearchKey = ActionListFilter.BuildSearchKey(description, result),
+                    ActionCount = actionCount,
+                    MovingStrokeCount = gesture.PointPatterns.Length == 0 ? 0 : gesture.PointPatterns[0].Points.Count(s => s.Length > 1),
+                    Description = GestureListFilter.Describe(shape),
                     Gesture = gesture
                 };
                 GestureItems.Add(newItem);

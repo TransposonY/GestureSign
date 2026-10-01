@@ -292,6 +292,24 @@
                     <TextBlock Margin="20,0,0,0"
                                Text="{Binding ElementName=AvailableActions, Path=StatusFingersText}" />
                 </StackPanel>
+                <!-- Gesture tab: what is selected and where it is used -->
+                <TextBlock VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Text="{Binding ElementName=availableGestures, Path=StatusText}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=MainTabs, Path=SelectedIndex}"
+                                             Value="2">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </DockPanel>
         </Border>
     </Grid>

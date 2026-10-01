@@ -216,22 +216,56 @@ Email:ccfyzh@gmail.com
     <GestureGroupHeader>{0} Finger(s) Gesture  ( {1} )</GestureGroupHeader>
     <Applications>Applications</Applications>
     <DescriptionColumn>Description</DescriptionColumn>
+    <ExportGesture>Export Gestures...</ExportGesture>
+    <Browse>
+      <FindApplication>Find application...</FindApplication>
+      <ByInput>BY INPUT</ByInput>
+      <ByApplication>BY APPLICATION</ByApplication>
+      <AllGestures>All gestures</AllGestures>
+      <Global>Global</Global>
+      <Unused>Unused</Unused>
+    </Browse>
+    <Draw>
+      <Hint>Draw what you remember</Hint>
+      <Mouse>Mouse</Mouse>
+      <Clear>Clear</Clear>
+      <BestMatches>Best matches</BestMatches>
+      <UpdatesAsYouDraw>Updates as you draw</UpdatesAsYouDraw>
+      <Placeholder>Draw the gesture on the pad and the closest matches appear here.</Placeholder>
+      <Match>{0}% match</Match>
+      <ActionsOne>1 action</ActionsOne>
+      <ActionsMany>{0} actions</ActionsMany>
+    </Draw>
+    <List>
+      <AllGestures>All gestures</AllGestures>
+      <AllMouse>All mouse / 1 finger gestures</AllMouse>
+      <AllFingers>All {0}-finger gestures</AllFingers>
+      <AllFivePlus>All 5+ finger gestures</AllFivePlus>
+      <Ranked>Ranked by similarity · {0}</Ranked>
+      <Count>{0} gestures</Count>
+      <Sort>Sort: {0}</Sort>
+      <SortBest>Best match</SortBest>
+      <SortMostUsed>Most used</SortMostUsed>
+      <SortDefault>Default order</SortDefault>
+    </List>
+    <Inspector>
+      <Empty>Select a gesture to see where it is used.</Empty>
+      <Edit>Edit gesture</Edit>
+      <Selected>{0} gestures selected</Selected>
+      <StrokeOne>1 moving stroke</StrokeOne>
+      <StrokeMany>{0} moving strokes</StrokeMany>
+      <UsedByOne>Used by 1 action</UsedByOne>
+      <UsedBy>Used by {0} actions</UsedBy>
+    </Inspector>
+    <Status>
+      <Selected>{0} selected</Selected>
+      <UsedBy>used by {0}</UsedBy>
+      <NotUsed>not used by any action</NotUsed>
+    </Status>
     <Filter>
-      <Input>Input</Input>
-      <All>All</All>
       <MouseOrOneFinger>Mouse / 1 finger</MouseOrOneFinger>
       <Fingers>{0} fingers</Fingers>
       <FiveOrMoreFingers>5+ fingers</FiveOrMoreFingers>
-      <Shape>Shape</Shape>
-      <AnyShape>Any</AnyShape>
-      <Line>Straight lines</Line>
-      <Curve>Curves &amp; corners</Curve>
-      <Loop>Loops</Loop>
-      <WithDot>With dot</WithDot>
-      <WithDotInfo>Only gestures where one finger stays in place (the dot)</WithDotInfo>
-      <AnyApplication>Any application</AnyApplication>
-      <UsedBy>Used by</UsedBy>
-      <SearchDescription>Search description...</SearchDescription>
       <Showing>Showing {0} of {1}</Showing>
       <Clear>Clear filters</Clear>
       <NoMatches>No gestures match these filters.</NoMatches>

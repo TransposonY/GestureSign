@@ -6,33 +6,24 @@
              xmlns:localization="clr-namespace:GestureSign.Common.Localization;assembly=GestureSign.Common"
              xmlns:viewModel="clr-namespace:GestureSign.ControlPanel.ViewModel"
              xmlns:converters="clr-namespace:GestureSign.ControlPanel.Converters"
-             xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:userControls="clr-namespace:GestureSign.ControlPanel.UserControls"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d"
-             d:DesignHeight="400"
-             d:DesignWidth="450"
+             d:DesignHeight="600"
+             d:DesignWidth="1100"
              AllowDrop="True">
     <UserControl.Resources>
-        <converters:GroupHeaderConverter x:Key="GroupHeaderConverter" />
+        <converters:ApplicationIconConverter x:Key="ApplicationIconConverter" />
+        <converters:ApplicationFallbackIconConverter x:Key="ApplicationFallbackIconConverter" />
         <CollectionViewSource x:Key="GestureViewSource"
                               Filter="GestureViewSource_Filter"
-                              Source="{Binding Path=(viewModel:GestureItemProvider.GestureItems)}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="PatternCount" />
-            </CollectionViewSource.GroupDescriptions>
-            <CollectionViewSource.SortDescriptions>
-                <componentmodel:SortDescription PropertyName="PatternCount"
-                                                Direction="Ascending" />
-                <componentmodel:SortDescription PropertyName="Features"
-                                                Direction="Ascending" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
+                              Source="{Binding Path=(viewModel:GestureItemProvider.GestureItems)}" />
         <ItemsPanelTemplate x:Key="IconPanelTemplate">
             <WrapPanel IsItemsHost="True" />
         </ItemsPanelTemplate>
         <!-- Tile: just the drawn gesture; the description and applications appear on hover -->
         <DataTemplate x:Key="IconTemplate">
-            <Grid Width="128"
+            <Grid Width="104"
                   Height="76"
                   Background="Transparent">
                 <Grid.ToolTip>
@@ -70,7 +61,7 @@
             <Setter Property="OverridesDefaultStyle"
                     Value="True" />
             <Setter Property="Margin"
-                    Value="4" />
+                    Value="3" />
             <EventSetter Event="MouseDoubleClick"
                          Handler="ListViewItem_OnMouseDoubleClick" />
             <Setter Property="Template">
@@ -102,6 +93,9 @@
                                 <Setter TargetName="Bd"
                                         Property="BorderBrush"
                                         Value="{StaticResource UiChromeBrush}" />
+                                <Setter TargetName="Bd"
+                                        Property="BorderThickness"
+                                        Value="2" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -133,95 +127,448 @@
             </GridViewColumn>
         </GridView>
         <!-- Details view rows -->
-                <Style x:Key="GestureRowItem"
-                       TargetType="{x:Type ListViewItem}"
-                       BasedOn="{StaticResource {x:Type ListViewItem}}">
-                    <EventSetter Event="MouseDoubleClick"
-                                 Handler="ListViewItem_OnMouseDoubleClick" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                <Border x:Name="Bd"
-                                        Background="{TemplateBinding Background}"
-                                        SnapsToDevicePixels="true">
-                                    <Grid>
-                                        <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                            <GridViewRowPresenter.Resources>
-                                                <Style TargetType="{x:Type TextBlock}">
+        <Style x:Key="GestureRowItem"
+               TargetType="{x:Type ListViewItem}"
+               BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <EventSetter Event="MouseDoubleClick"
+                         Handler="ListViewItem_OnMouseDoubleClick" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="true">
+                            <Grid>
+                                <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <GridViewRowPresenter.Resources>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Foreground"
+                                                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=Foreground}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
+                                                             Value="True">
                                                     <Setter Property="Foreground"
-                                                            Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=Foreground}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
-                                                                     Value="True">
-                                                            <Setter Property="Foreground"
-                                                                    Value="{StaticResource UiInkBrush}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                                                     Value="False">
-                                                            <Setter Property="Foreground"
-                                                                    Value="{DynamicResource GrayNormalBrush}" />
-                                                        </DataTrigger>
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                                                           Value="False" />
-                                                                <Condition Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
-                                                                           Value="True" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <MultiDataTrigger.Setters>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{StaticResource UiInkBrush}" />
-                                                            </MultiDataTrigger.Setters>
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </GridViewRowPresenter.Resources>
-                                        </GridViewRowPresenter>
-                                        <ContentPresenter x:Name="contentPresenter"
-                                                          Visibility="Collapsed"
-                                                          Margin="{TemplateBinding Padding}"
-                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="GridView.ColumnCollection"
-                                             Value="{x:Null}">
-                                        <Setter TargetName="contentPresenter"
-                                                Property="Visibility"
+                                                            Value="{StaticResource UiInkBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                             Value="False">
+                                                    <Setter Property="Foreground"
+                                                            Value="{DynamicResource GrayNormalBrush}" />
+                                                </DataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                                   Value="False" />
+                                                        <Condition Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
+                                                                   Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.Setters>
+                                                        <Setter Property="Foreground"
+                                                                Value="{StaticResource UiInkBrush}" />
+                                                    </MultiDataTrigger.Setters>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </GridViewRowPresenter.Resources>
+                                </GridViewRowPresenter>
+                                <ContentPresenter x:Name="contentPresenter"
+                                                  Visibility="Collapsed"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="GridView.ColumnCollection"
+                                     Value="{x:Null}">
+                                <Setter TargetName="contentPresenter"
+                                        Property="Visibility"
+                                        Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsSelected"
+                                     Value="true">
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource UiInkBrush}" />
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="{StaticResource UiSelectedBrush}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsEnabled"
+                                               Value="False" />
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter TargetName="Bd"
+                                            Property="Background"
+                                            Value="{DynamicResource GrayBrush7}" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Rail rows (input, application): soft blue fill and blue text when selected -->
+        <Style x:Key="RailItem"
+               TargetType="ListBoxItem">
+            <Setter Property="OverridesDefaultStyle"
+                    Value="True" />
+            <Setter Property="Foreground"
+                    Value="{StaticResource UiInkBrush}" />
+            <Setter Property="FontSize"
+                    Value="13" />
+            <Setter Property="Margin"
+                    Value="0,1" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd"
+                                Background="Transparent"
+                                CornerRadius="5"
+                                Padding="8,0"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="{StaticResource UiRibbonHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="{StaticResource UiSelectedBrush}" />
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource UiChromeBrush}" />
+                                <Setter Property="FontWeight"
+                                        Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RailCaption"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="11" />
+            <Setter Property="Foreground"
+                    Value="{StaticResource UiMutedBrush}" />
+            <Setter Property="Margin"
+                    Value="8,14,0,4" />
+        </Style>
+
+        <!-- One finger count of the pad's input switch: solid chrome blue when on -->
+        <Style x:Key="FingerToggle"
+               TargetType="ToggleButton">
+            <Setter Property="OverridesDefaultStyle"
+                    Value="True" />
+            <Setter Property="FocusVisualStyle"
+                    Value="{x:Null}" />
+            <Setter Property="Foreground"
+                    Value="{StaticResource UiInkBrush}" />
+            <Setter Property="FontSize"
+                    Value="12" />
+            <Setter Property="Height"
+                    Value="22" />
+            <Setter Property="Margin"
+                    Value="1,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Seg"
+                                Background="Transparent"
+                                CornerRadius="3"
+                                Padding="8,0"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Seg"
+                                        Property="Background"
+                                        Value="{StaticResource UiRibbonHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked"
+                                     Value="True">
+                                <Setter TargetName="Seg"
+                                        Property="Background"
+                                        Value="{StaticResource UiChromeBrush}" />
+                                <Setter Property="Foreground"
+                                        Value="White" />
+                                <Setter Property="FontWeight"
+                                        Value="SemiBold" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter Property="Opacity"
+                                        Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Text that reads as a link -->
+        <Style x:Key="LinkButton"
+               TargetType="Button">
+            <Setter Property="OverridesDefaultStyle"
+                    Value="True" />
+            <Setter Property="Focusable"
+                    Value="False" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock x:Name="Caption"
+                                   FontSize="12"
+                                   Foreground="{StaticResource UiChromeBrush}"
+                                   Text="{TemplateBinding Content}" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Caption"
+                                        Property="TextDecorations"
+                                        Value="Underline" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- One of the closest matches to the drawn stroke; the best one is orange -->
+        <DataTemplate x:Key="MatchCardTemplate"
+                      DataType="{x:Type viewModel:GestureMatch}">
+            <Border x:Name="Card"
+                    MinWidth="60"
+                    Height="124"
+                    Margin="0,0,8,0"
+                    Background="White"
+                    BorderBrush="{StaticResource UiRuleBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="MatchCard_MouseLeftButtonUp">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Image Width="64"
+                           Height="64"
+                           Source="{Binding Item.GestureImage}" />
+                    <TextBlock x:Name="Percent"
+                               Margin="0,4,0,0"
+                               HorizontalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource UiInkBrush}"
+                               Text="{Binding PercentText}" />
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{StaticResource UiMutedBrush}"
+                               Text="{Binding ActionsText}" />
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsBest}"
+                             Value="True">
+                    <Setter TargetName="Card"
+                            Property="Background"
+                            Value="#FFFFF4EC" />
+                    <Setter TargetName="Card"
+                            Property="BorderBrush"
+                            Value="#FFF26B21" />
+                    <Setter TargetName="Card"
+                            Property="BorderThickness"
+                            Value="2" />
+                    <Setter TargetName="Percent"
+                            Property="Foreground"
+                            Value="#FFC24E0F" />
+                    <Setter TargetName="Percent"
+                            Property="FontWeight"
+                            Value="Bold" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Application icon with the generic glyph as fallback (same as the Action tab) -->
+        <DataTemplate x:Key="ApplicationOptionTemplate"
+                      DataType="{x:Type viewModel:GestureApplicationOption}">
+            <Grid Height="28">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid Width="20"
+                      Height="20"
+                      HorizontalAlignment="Left">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsUnused}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Image Width="16"
+                           Height="16"
+                           Source="{Binding Application, Converter={StaticResource ApplicationFallbackIconConverter}}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Application.Icon}"
+                                                 Value="{x:Null}">
+                                        <Setter Property="Visibility"
                                                 Value="Visible" />
-                                    </Trigger>
-                                    <Trigger Property="IsSelected"
-                                             Value="true">
-                                        <Setter Property="Foreground"
-                                                Value="{StaticResource UiInkBrush}" />
-                                        <Setter TargetName="Bd"
-                                                Property="Background"
-                                                Value="{StaticResource UiSelectedBrush}" />
-                                    </Trigger>
-                                    <MultiTrigger>
-                                        <MultiTrigger.Conditions>
-                                            <Condition Property="IsEnabled"
-                                                       Value="False" />
-                                            <Condition Property="IsSelected"
-                                                       Value="True" />
-                                        </MultiTrigger.Conditions>
-                                        <MultiTrigger.Setters>
-                                            <Setter TargetName="Bd"
-                                                    Property="Background"
-                                                    Value="{DynamicResource GrayBrush7}" />
-                                        </MultiTrigger.Setters>
-                                    </MultiTrigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                    <Image Width="16"
+                           Height="16"
+                           Source="{Binding Application.Icon, Converter={StaticResource ApplicationIconConverter}}"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                </Grid>
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Text="{Binding DisplayName}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="2"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="Normal"
+                           Foreground="{StaticResource UiMutedBrush}"
+                           Text="{Binding Count}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="InputOptionTemplate"
+                      DataType="{x:Type viewModel:GestureInputOption}">
+            <Grid Height="28">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center"
+                           Text="{Binding Label}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="Normal"
+                           Foreground="{StaticResource UiMutedBrush}"
+                           Text="{Binding Count}" />
+            </Grid>
+        </DataTemplate>
+        <!-- Action that uses the selected gesture -->
+        <DataTemplate x:Key="UsageTemplate"
+                      DataType="{x:Type viewModel:GestureUsage}">
+            <Border Height="34"
+                    BorderBrush="{StaticResource UiHairlineBrush}"
+                    BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="26" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Width="20"
+                          Height="20"
+                          HorizontalAlignment="Left">
+                        <Image Width="16"
+                               Height="16"
+                               Source="{Binding Application, Converter={StaticResource ApplicationFallbackIconConverter}}">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Application.Icon}"
+                                                     Value="{x:Null}">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <Image Width="16"
+                               Height="16"
+                               Source="{Binding Application.Icon, Converter={StaticResource ApplicationIconConverter}}"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Grid>
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               Foreground="{StaticResource UiInkBrush}"
+                               Text="{Binding ApplicationName}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="2"
+                               Margin="10,0,0,0"
+                               MaxWidth="120"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{StaticResource UiMutedBrush}"
+                               Text="{Binding ActionName}"
+                               TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Match cards share the width of the draw band; a narrow window keeps two of them -->
+        <ItemsPanelTemplate x:Key="MatchPanelWide">
+            <UniformGrid Rows="1"
+                         Columns="3" />
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="MatchPanelNarrow">
+            <UniformGrid Rows="1"
+                         Columns="2" />
+        </ItemsPanelTemplate>
+
+        <ContextMenu x:Key="SortMenu">
+            <MenuItem
+                      Header="{localization:LocalisedText Gesture.List.SortBest}"
+                      FontSize="14"
+                      Tag="Best"
+                      Click="SortMenuItem_Click" />
+            <MenuItem
+                      Header="{localization:LocalisedText Gesture.List.SortMostUsed}"
+                      FontSize="14"
+                      Tag="MostUsed"
+                      Click="SortMenuItem_Click" />
+            <MenuItem
+                      Header="{localization:LocalisedText Gesture.List.SortDefault}"
+                      FontSize="14"
+                      Tag="Default"
+                      Click="SortMenuItem_Click" />
+        </ContextMenu>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -276,19 +623,33 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
-                        <Button x:Name="ImportButton"
-                                Style="{StaticResource RibbonLargeButton}"
-                                MinWidth="56"
-                                Margin="0,4,0,0"
-                                Click="ImportGestureMenuItem_Click">
-                            <StackPanel>
-                                <Image Source="{StaticResource Icon.ImportLarge}"
-                                       Width="32"
-                                       Height="32" />
-                                <TextBlock Style="{StaticResource RibbonLargeCaption}"
-                                           Text="{localization:LocalisedText ExportImportDialog.ImportButton}" />
-                            </StackPanel>
-                        </Button>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <Button x:Name="ImportButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Click="ImportGestureMenuItem_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ImportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ImportButton}" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="ExportButton"
+                                    Style="{StaticResource RibbonLargeButton}"
+                                    MinWidth="56"
+                                    Click="ExportGestureButton_Click">
+                                <StackPanel>
+                                    <Image Source="{StaticResource Icon.ExportLarge}"
+                                           Width="32"
+                                           Height="32" />
+                                    <TextBlock Style="{StaticResource RibbonLargeCaption}"
+                                               Text="{localization:LocalisedText ExportImportDialog.ExportButton}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Style="{StaticResource RibbonGroupCaption}"
                                    Text="{localization:LocalisedText Action.RibbonBackup}" />
@@ -296,348 +657,430 @@
                 </Border>
             </StackPanel>
         </Border>
-        <!-- Filter bar: input (fingers) and shape chips, application and description search -->
-        <Border Grid.Row="1"
-                Background="White"
-                BorderBrush="{StaticResource UiRuleBrush}"
-                BorderThickness="0,0,0,1"
-                Padding="16,10">
-            <Grid>
+
+        <!-- ===== Body: browse rail | draw and results | inspector ===== -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="216" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="288" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Browse rail -->
+            <Border Background="{StaticResource UiRibbonBrush}"
+                    BorderBrush="{StaticResource UiRuleBrush}"
+                    BorderThickness="0,0,1,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              PanningMode="VerticalOnly">
+                    <StackPanel Margin="10,12,10,12">
+                        <Border Height="30"
+                                Background="White"
+                                BorderBrush="{StaticResource UiRuleBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{StaticResource Icon.Search}"
+                                       Width="14"
+                                       Height="14"
+                                       Margin="9,0,0,0"
+                                       VerticalAlignment="Center" />
+                                <TextBox x:Name="ApplicationSearchBox"
+                                         Grid.Column="1"
+                                         Margin="6,0,6,0"
+                                         Padding="0"
+                                         FontSize="12"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         VerticalContentAlignment="Center"
+                                         controls:TextBoxHelper.Watermark="{localization:LocalisedText Gesture.Browse.FindApplication}"
+                                         TextChanged="ApplicationSearch_TextChanged" />
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource RailCaption}"
+                                   Margin="8,16,0,4"
+                                   Text="{localization:LocalisedText Gesture.Browse.ByInput}" />
+                        <ListBox x:Name="InputList"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0"
+                                 ItemContainerStyle="{StaticResource RailItem}"
+                                 ItemTemplate="{StaticResource InputOptionTemplate}"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 SelectionChanged="InputList_SelectionChanged" />
+
+                        <TextBlock Style="{StaticResource RailCaption}"
+                                   Text="{localization:LocalisedText Gesture.Browse.ByApplication}" />
+                        <ListBox x:Name="ApplicationList"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0"
+                                 ItemContainerStyle="{StaticResource RailItem}"
+                                 ItemTemplate="{StaticResource ApplicationOptionTemplate}"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 PreviewMouseLeftButtonDown="ApplicationList_PreviewMouseLeftButtonDown"
+                                 SelectionChanged="ApplicationList_SelectionChanged" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Draw to find, then the ranked gestures -->
+            <Grid Grid.Column="1"
+                  Background="{StaticResource UiRibbonBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="56" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="210" />
-                </Grid.ColumnDefinitions>
 
-                <!-- Input -->
-                <TextBlock Style="{StaticResource FilterLabel}"
-                           Text="{localization:LocalisedText Gesture.Filter.Input}" />
-                <Border Grid.Column="1"
-                        Background="{StaticResource UiRibbonBrush}"
+                <Border Background="White"
                         BorderBrush="{StaticResource UiRuleBrush}"
-                        BorderThickness="1"
-                        CornerRadius="5"
-                        Padding="1">
-                    <StackPanel Orientation="Horizontal">
-                        <RadioButton x:Name="AllFingersRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     IsChecked="True"
-                                     Tag="0"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{localization:LocalisedText Gesture.Filter.All}" />
-                                <TextBlock x:Name="AllFingersCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                        <RadioButton x:Name="OneFingerRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     Tag="1"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{localization:LocalisedText Gesture.Filter.MouseOrOneFinger}" />
-                                <TextBlock x:Name="OneFingerCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                        <RadioButton x:Name="TwoFingersRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     Tag="2"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="TwoFingersLabel" />
-                                <TextBlock x:Name="TwoFingersCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                        <RadioButton x:Name="ThreeFingersRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     Tag="3"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="ThreeFingersLabel" />
-                                <TextBlock x:Name="ThreeFingersCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                        <RadioButton x:Name="FourFingersRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     Tag="4"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="FourFingersLabel" />
-                                <TextBlock x:Name="FourFingersCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                        <RadioButton x:Name="FiveFingersRadio"
-                                     Style="{StaticResource FilterSegment}"
-                                     GroupName="GestureFingerFilter"
-                                     Tag="5"
-                                     Checked="FingerFilter_Checked">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{localization:LocalisedText Gesture.Filter.FiveOrMoreFingers}" />
-                                <TextBlock x:Name="FiveFingersCount"
-                                           Margin="6,0,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7" />
-                            </StackPanel>
-                        </RadioButton>
-                    </StackPanel>
-                </Border>
-                <ComboBox x:Name="ApplicationFilterBox"
-                          Grid.Column="3"
-                          Height="30"
-                          ToolTip="{localization:LocalisedText Gesture.Filter.UsedBy}"
-                          SelectionChanged="ApplicationFilter_SelectionChanged" />
-
-                <!-- Shape -->
-                <TextBlock Grid.Row="1"
-                           Margin="0,10,0,0"
-                           Style="{StaticResource FilterLabel}"
-                           Text="{localization:LocalisedText Gesture.Filter.Shape}" />
-                <StackPanel Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="0,10,0,0"
-                            Orientation="Horizontal">
-                    <RadioButton x:Name="AnyShapeRadio"
-                                 Style="{StaticResource FilterChip}"
-                                 Content="{localization:LocalisedText Gesture.Filter.AnyShape}"
-                                 GroupName="GestureShapeFilter"
-                                 IsChecked="True"
-                                 Tag="Any"
-                                 Checked="ShapeFilter_Checked" />
-                    <RadioButton Style="{StaticResource FilterChip}"
-                                 Content="{localization:LocalisedText Gesture.Filter.Line}"
-                                 GroupName="GestureShapeFilter"
-                                 Tag="Line"
-                                 Checked="ShapeFilter_Checked" />
-                    <RadioButton Style="{StaticResource FilterChip}"
-                                 Content="{localization:LocalisedText Gesture.Filter.Curve}"
-                                 GroupName="GestureShapeFilter"
-                                 Tag="Curve"
-                                 Checked="ShapeFilter_Checked" />
-                    <RadioButton Style="{StaticResource FilterChip}"
-                                 Content="{localization:LocalisedText Gesture.Filter.Loop}"
-                                 GroupName="GestureShapeFilter"
-                                 Tag="Loop"
-                                 Checked="ShapeFilter_Checked" />
-                    <!-- Independent of the shape: combine it with any chip to its left -->
-                    <ToggleButton x:Name="DotToggle"
-                                  Style="{StaticResource FilterToggleChip}"
-                                  Margin="10,0,0,0"
-                                  ToolTip="{localization:LocalisedText Gesture.Filter.WithDotInfo}"
-                                  Checked="DotFilter_Changed"
-                                  Unchecked="DotFilter_Changed">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="7"
-                                     Height="7"
-                                     Margin="0,0,8,0"
-                                     Fill="{StaticResource UiChromeBrush}" />
-                            <TextBlock Text="{localization:LocalisedText Gesture.Filter.WithDot}" />
-                        </StackPanel>
-                    </ToggleButton>
-                </StackPanel>
-                <StackPanel Grid.Row="1"
-                            Grid.Column="2"
-                            Margin="0,10,12,0"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center">
-                    <TextBlock x:Name="ResultCountText"
-                               Style="{StaticResource FilterLabel}" />
-                    <Button x:Name="ClearFiltersButton"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Padding="0"
-                            Cursor="Hand"
-                            Focusable="False"
-                            OverridesDefaultStyle="True"
-                            Visibility="Collapsed"
-                            Click="ClearFilters_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <TextBlock x:Name="Caption"
-                                           FontSize="12"
-                                           Foreground="{StaticResource UiChromeBrush}"
-                                           Text="{localization:LocalisedText Gesture.Filter.Clear}" />
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver"
-                                             Value="True">
-                                        <Setter TargetName="Caption"
-                                                Property="TextDecorations"
-                                                Value="Underline" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-                <Border Grid.Row="1"
-                        Grid.Column="3"
-                        Margin="0,10,0,0"
-                        Height="30"
-                        Background="White"
-                        BorderBrush="{StaticResource UiRuleBrush}"
-                        BorderThickness="1"
-                        CornerRadius="3">
+                        BorderThickness="0,0,0,1"
+                        Padding="16,14">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Image Source="{StaticResource Icon.Search}"
-                               Width="14"
-                               Height="14"
-                               Margin="9,0,0,0"
-                               VerticalAlignment="Center" />
-                        <TextBox x:Name="DescriptionSearchBox"
-                                 Grid.Column="1"
-                                 Margin="4,0,0,0"
-                                 Padding="0"
-                                 FontSize="12"
-                                 BorderThickness="0"
-                                 Background="Transparent"
-                                 VerticalContentAlignment="Center"
-                                 controls:TextBoxHelper.Watermark="{localization:LocalisedText Gesture.Filter.SearchDescription}"
-                                 TextChanged="DescriptionSearch_TextChanged" />
+                        <StackPanel Width="200">
+                            <userControls:GestureSketchPad x:Name="SketchPad"
+                                                           Height="116"
+                                                           StrokeChanged="SketchPad_StrokeChanged" />
+                            <Grid Margin="0,8,0,0">
+                                <Border HorizontalAlignment="Left"
+                                        Background="White"
+                                        BorderBrush="{StaticResource UiRuleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ToggleButton x:Name="PadOneFinger"
+                                                      Style="{StaticResource FingerToggle}"
+                                                      Content="{localization:LocalisedText Gesture.Draw.Mouse}"
+                                                      Tag="1"
+                                                      Click="PadFingers_Click" />
+                                        <ToggleButton x:Name="PadTwoFingers"
+                                                      Style="{StaticResource FingerToggle}"
+                                                      Content="2"
+                                                      Tag="2"
+                                                      Click="PadFingers_Click" />
+                                        <ToggleButton x:Name="PadThreeFingers"
+                                                      Style="{StaticResource FingerToggle}"
+                                                      Content="3"
+                                                      Tag="3"
+                                                      Click="PadFingers_Click" />
+                                        <ToggleButton x:Name="PadFourFingers"
+                                                      Style="{StaticResource FingerToggle}"
+                                                      Content="4"
+                                                      Tag="4"
+                                                      Click="PadFingers_Click" />
+                                    </StackPanel>
+                                </Border>
+                                <Button HorizontalAlignment="Right"
+                                        Style="{StaticResource LinkButton}"
+                                        Content="{localization:LocalisedText Gesture.Draw.Clear}"
+                                        Click="ClearPad_Click" />
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Margin="16,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource UiInkBrush}"
+                                           Text="{localization:LocalisedText Gesture.Draw.BestMatches}" />
+                                <TextBlock Margin="10,0,0,0"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="12"
+                                           Foreground="{StaticResource UiMutedBrush}"
+                                           Text="{localization:LocalisedText Gesture.Draw.UpdatesAsYouDraw}" />
+                            </StackPanel>
+                            <Grid Height="124"
+                                  Margin="0,8,0,0">
+                                <Border x:Name="MatchPlaceholder"
+                                        Background="{StaticResource UiRibbonBrush}"
+                                        CornerRadius="8"
+                                        Padding="16">
+                                    <TextBlock x:Name="MatchPlaceholderText"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="{StaticResource UiMutedBrush}"
+                                               TextAlignment="Center"
+                                               TextWrapping="Wrap"
+                                               Text="{localization:LocalisedText Gesture.Draw.Placeholder}" />
+                                </Border>
+                                <ItemsControl x:Name="MatchCards"
+                                              Margin="0,0,-8,0"
+                                              ItemTemplate="{StaticResource MatchCardTemplate}"
+                                              Visibility="Collapsed">
+                                </ItemsControl>
+                            </Grid>
+                        </StackPanel>
                     </Grid>
                 </Border>
-            </Grid>
-        </Border>
 
-        <TextBlock x:Name="NoMatchesText"
-                   Grid.Row="2"
-                   Margin="0,40,0,0"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Top"
-                   Foreground="{StaticResource UiMutedBrush}"
-                   Text="{localization:LocalisedText Gesture.Filter.NoMatches}"
-                   Visibility="Collapsed" />
-        <ListView x:Name="lstAvailableGestures"
-                  Grid.Row="2"
-                  ItemsSource="{Binding Source={StaticResource GestureViewSource}}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.PanningMode="VerticalOnly"
-                  SelectionChanged="lstAvailableGestures_SelectionChanged"
-                  GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
-                  BorderThickness="0"
-                  SelectedValuePath="Gesture">
-            <ListView.Style>
-                <Style TargetType="ListView"
-                       BasedOn="{StaticResource {x:Type ListView}}">
-                    <Setter Property="ItemContainerStyle"
-                            Value="{StaticResource GestureTileItem}" />
-                    <Setter Property="Background"
-                            Value="{StaticResource UiRibbonBrush}" />
-                    <Setter Property="Padding"
-                            Value="12,0,12,8" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=LargeIconsMenuItem, Path=IsChecked}"
-                                     Value="True">
-                            <Setter Property="View"
-                                    Value="{x:Null}" />
-                            <Setter Property="ItemsPanel"
-                                    Value="{DynamicResource IconPanelTemplate}" />
-                            <Setter Property="ItemTemplate"
-                                    Value="{StaticResource IconTemplate}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ElementName=DetailsMenuItem, Path=IsChecked}"
-                                     Value="True">
-                            <Setter Property="View"
-                                    Value="{DynamicResource GridView}" />
+                <!-- List header -->
+                <Grid Grid.Row="1"
+                      Margin="16,12,16,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="ListTitleText"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource UiInkBrush}" />
+                    <TextBlock x:Name="ListSubtitleText"
+                               Grid.Column="1"
+                               Margin="10,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{StaticResource UiMutedBrush}"
+                               TextTrimming="CharacterEllipsis" />
+                    <Button x:Name="ClearFiltersButton"
+                            Grid.Column="2"
+                            Margin="12,0,12,0"
+                            Style="{StaticResource LinkButton}"
+                            Content="{localization:LocalisedText Gesture.Filter.Clear}"
+                            Visibility="Collapsed"
+                            Click="ClearFilters_Click" />
+                    <Button x:Name="SortButton"
+                            Grid.Column="3"
+                            Click="SortButton_Click"
+                            Cursor="Hand"
+                            Focusable="False"
+                            OverridesDefaultStyle="True">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Pill"
+                                        Height="24"
+                                        Background="White"
+                                        BorderBrush="{StaticResource UiRuleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="12,0">
+                                    <TextBlock x:Name="SortText"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="{StaticResource UiInkBrush}"
+                                               Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="Pill"
+                                                Property="Background"
+                                                Value="{StaticResource UiHoverBrush}" />
+                                        <Setter TargetName="Pill"
+                                                Property="BorderBrush"
+                                                Value="{StaticResource UiRibbonHoverBorderBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+
+                <TextBlock x:Name="NoMatchesText"
+                           Grid.Row="2"
+                           Margin="0,40,0,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"
+                           Foreground="{StaticResource UiMutedBrush}"
+                           Text="{localization:LocalisedText Gesture.Filter.NoMatches}"
+                           Visibility="Collapsed" />
+                <ListView x:Name="lstAvailableGestures"
+                          Grid.Row="2"
+                          ItemsSource="{Binding Source={StaticResource GestureViewSource}}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.PanningMode="VerticalOnly"
+                          SelectionChanged="lstAvailableGestures_SelectionChanged"
+                          GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
+                          BorderThickness="0"
+                          SelectedValuePath="Gesture">
+                    <ListView.Style>
+                        <Style TargetType="ListView"
+                               BasedOn="{StaticResource {x:Type ListView}}">
                             <Setter Property="ItemContainerStyle"
-                                    Value="{StaticResource GestureRowItem}" />
+                                    Value="{StaticResource GestureTileItem}" />
                             <Setter Property="Background"
-                                    Value="White" />
+                                    Value="{StaticResource UiRibbonBrush}" />
                             <Setter Property="Padding"
-                                    Value="0" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.Style>
-            <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander Style="{StaticResource NavExpander}">
-                                            <Expander.Header>
-                                                <DockPanel>
-                                                    <TextBlock FontSize="12"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{StaticResource UiInkBrush}"
-                                                               Margin="0"
-                                                               HorizontalAlignment="Left"
-                                                               DockPanel.Dock="Top">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding Converter="{StaticResource GroupHeaderConverter}">
-                                                                <Binding  Path="Name"
-                                                                          Mode="OneWay" />
-                                                                <Binding  Path="ItemCount"
-                                                                          Mode="OneWay" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                </DockPanel>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
+                                    Value="12,4,12,8" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=LargeIconsMenuItem, Path=IsChecked}"
+                                             Value="True">
+                                    <Setter Property="View"
+                                            Value="{x:Null}" />
+                                    <Setter Property="ItemsPanel"
+                                            Value="{DynamicResource IconPanelTemplate}" />
+                                    <Setter Property="ItemTemplate"
+                                            Value="{StaticResource IconTemplate}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=DetailsMenuItem, Path=IsChecked}"
+                                             Value="True">
+                                    <Setter Property="View"
+                                            Value="{DynamicResource GridView}" />
+                                    <Setter Property="ItemContainerStyle"
+                                            Value="{StaticResource GestureRowItem}" />
+                                    <Setter Property="Background"
+                                            Value="White" />
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListBox.GroupStyle>
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem x:Name="ViewMenuItem"
-                              Header="{localization:LocalisedText Gesture.View}"
-                              FontSize="16">
-                        <MenuItem x:Name="LargeIconsMenuItem"
-                                  Header="{localization:LocalisedText Gesture.LargeIcons}"
-                                  FontSize="16"
-                                  IsCheckable="True"
-                                  IsChecked="True"
-                                  Click="ViewMenuItem_Click" />
-                        <MenuItem x:Name="DetailsMenuItem"
-                                  Header="{localization:LocalisedText Gesture.Details}"
-                                  FontSize="16"
-                                  IsCheckable="True"
-                                  Click="ViewMenuItem_Click" />
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem x:Name="ImportGestureMenuItem"
-                              Header="{localization:LocalisedText Gesture.ImportGesture}"
-                              Click="ImportGestureMenuItem_Click"
-                              FontSize="16" />
-                </ContextMenu>
-            </ListView.ContextMenu>
-        </ListView>
+                    </ListView.Style>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="ViewMenuItem"
+                                      Header="{localization:LocalisedText Gesture.View}"
+                                      FontSize="16">
+                                <MenuItem x:Name="LargeIconsMenuItem"
+                                          Header="{localization:LocalisedText Gesture.LargeIcons}"
+                                          FontSize="16"
+                                          IsCheckable="True"
+                                          IsChecked="True"
+                                          Click="ViewMenuItem_Click" />
+                                <MenuItem x:Name="DetailsMenuItem"
+                                          Header="{localization:LocalisedText Gesture.Details}"
+                                          FontSize="16"
+                                          IsCheckable="True"
+                                          Click="ViewMenuItem_Click" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem x:Name="ImportGestureMenuItem"
+                                      Header="{localization:LocalisedText Gesture.ImportGesture}"
+                                      Click="ImportGestureMenuItem_Click"
+                                      FontSize="16" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </Grid>
+
+            <!-- Inspector -->
+            <Border Grid.Column="2"
+                    Background="White"
+                    BorderBrush="{StaticResource UiRuleBrush}"
+                    BorderThickness="1,0,0,0">
+                <Grid>
+                    <TextBlock x:Name="InspectorEmptyText"
+                               Margin="24"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{StaticResource UiMutedBrush}"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               Text="{localization:LocalisedText Gesture.Inspector.Empty}" />
+                    <Grid x:Name="InspectorContent"
+                          Margin="16"
+                          Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Height="140"
+                                Background="{StaticResource UiRibbonBrush}"
+                                CornerRadius="8">
+                            <Grid>
+                                <Image x:Name="InspectorImage"
+                                       Width="112"
+                                       Height="112"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                                <Border x:Name="InspectorMatchBadge"
+                                        Margin="10"
+                                        Padding="8,0"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Background="#FFFFF4EC"
+                                        BorderBrush="#FFF26B21"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Visibility="Collapsed">
+                                    <TextBlock x:Name="InspectorMatchText"
+                                               VerticalAlignment="Center"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               Foreground="#FFC24E0F" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <StackPanel Grid.Row="1"
+                                    Margin="0,12,0,0">
+                            <TextBlock x:Name="InspectorTitleText"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource UiInkBrush}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="InspectorSubtitleText"
+                                       Margin="0,2,0,0"
+                                       FontSize="12"
+                                       Foreground="{StaticResource UiMutedBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                        <TextBlock x:Name="UsedByHeaderText"
+                                   Grid.Row="2"
+                                   Margin="0,16,0,4"
+                                   FontSize="11"
+                                   Foreground="{StaticResource UiMutedBrush}" />
+                        <ScrollViewer Grid.Row="3"
+                                      VerticalScrollBarVisibility="Auto"
+                                      PanningMode="VerticalOnly">
+                            <StackPanel>
+                                <ItemsControl x:Name="UsageList"
+                                              ItemTemplate="{StaticResource UsageTemplate}" />
+                                <TextBlock x:Name="UnusedText"
+                                           Margin="0,6,0,0"
+                                           FontSize="12"
+                                           Foreground="{StaticResource UiMutedBrush}"
+                                           TextWrapping="Wrap"
+                                           Text="{localization:LocalisedText Gesture.Description.Unused}" />
+                            </StackPanel>
+                        </ScrollViewer>
+                        <Grid Grid.Row="4"
+                              Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="72" />
+                            </Grid.ColumnDefinitions>
+                            <Button Height="34"
+                                    controls:ControlsHelper.ContentCharacterCasing="Normal"
+                                    Background="{StaticResource UiChromeBrush}"
+                                    BorderBrush="{StaticResource UiChromeBrush}"
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    Content="{localization:LocalisedText Gesture.Inspector.Edit}"
+                                    Click="btnEditGesture_Click" />
+                            <Button Grid.Column="2"
+                                    controls:ControlsHelper.ContentCharacterCasing="Normal"
+                                    Height="34"
+                                    Background="White"
+                                    BorderBrush="{StaticResource UiRuleBrush}"
+                                    Foreground="{StaticResource UiDangerBrush}"
+                                    Content="{localization:LocalisedText Action.Delete}"
+                                    Click="btnDelGesture_Click" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>
